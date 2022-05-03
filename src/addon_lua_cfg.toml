@@ -1,0 +1,23 @@
+[sw_luadocs_ocr]
+win_title = "Stormworks"
+win_text = ""
+win_exclude_title = ""
+win_exclude_text = ""
+
+screen_width = 1920
+screen_height = 1080
+
+scroll_x = 960
+scroll_y = 540
+scroll_page_n = 1024
+scroll_once_n = 3
+scroll_threshold = 0
+
+capture_region_x1 = 312
+capture_region_y1 = 226
+capture_region_x2 = 1597
+capture_region_y2 = 989
+capture_template_ratio = 0.25
+
+activate_sleep_secs = 5
+scroll_sleep_secs = 2
