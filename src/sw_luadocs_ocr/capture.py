@@ -277,37 +277,39 @@ def capture(
     ctrl.scroll_sleep_secs = scroll_sleep_secs
 
     ctrl.activate(sleep=True)
-    ctrl.check_fullscreen()
-    scr_w = get_system_metrics(0)
-    scr_h = get_system_metrics(1)
-    if scr_w != screen_width or scr_h != screen_height:
-        raise ValueError(f"Screen size is not {screen_width}x{screen_height}")
+    try:
+        ctrl.check_fullscreen()
+        scr_w = get_system_metrics(0)
+        scr_h = get_system_metrics(1)
+        if scr_w != screen_width or scr_h != screen_height:
+            raise ValueError(f"Screen size is not {screen_width}x{screen_height}")
 
-    ctrl.mouse_wheel(
-        "up",
-        x=scroll_x,
-        y=scroll_y,
-        n=scroll_page_n,
-        sleep=True,
-    )
-    img = stitch_screenshot(
-        ctrl.scroll_and_screenshot(
-            scroll_direction="down",
-            scroll_x=scroll_x,
-            scroll_y=scroll_y,
-            scroll_n=scroll_once_n,
-            capture_output="numpy",
-            capture_region=capture_region,
-        ),
-        template_ratio=capture_template_ratio,
-        scroll_threshold=scroll_threshold,
-    )
-    ctrl.mouse_wheel(
-        "up",
-        x=scroll_x,
-        y=scroll_y,
-        n=scroll_page_n,
-        sleep=True,
-    )
-    ctrl.minimize(sleep=False)
+        ctrl.mouse_wheel(
+            "up",
+            x=scroll_x,
+            y=scroll_y,
+            n=scroll_page_n,
+            sleep=True,
+        )
+        img = stitch_screenshot(
+            ctrl.scroll_and_screenshot(
+                scroll_direction="down",
+                scroll_x=scroll_x,
+                scroll_y=scroll_y,
+                scroll_n=scroll_once_n,
+                capture_output="numpy",
+                capture_region=capture_region,
+            ),
+            template_ratio=capture_template_ratio,
+            scroll_threshold=scroll_threshold,
+        )
+        ctrl.mouse_wheel(
+            "up",
+            x=scroll_x,
+            y=scroll_y,
+            n=scroll_page_n,
+            sleep=True,
+        )
+    finally:
+        ctrl.minimize(sleep=False)
     return img
