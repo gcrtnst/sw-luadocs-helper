@@ -1,5 +1,5 @@
 import numpy as np
-import sw_luadocs_ocr.control
+import sw_luadocs_ocr.capture
 import unittest
 
 
@@ -9,7 +9,7 @@ class TestImageProcessing(unittest.TestCase):
         old_img = [[0]]
         new_img = [[0]]
         template_ratio = "0"
-        scroll_amount = sw_luadocs_ocr.control.calc_scroll_amount(
+        scroll_amount = sw_luadocs_ocr.capture.calc_scroll_amount(
             old_img, new_img, template_ratio=template_ratio
         )
         self.assertEqual(scroll_amount, 0)
@@ -19,7 +19,7 @@ class TestImageProcessing(unittest.TestCase):
         new_img = np.zeros((1, 2))
         template_ratio = 0
         with self.assertRaisesRegex(ValueError, r"^Image shape does not match$"):
-            sw_luadocs_ocr.control.calc_scroll_amount(
+            sw_luadocs_ocr.capture.calc_scroll_amount(
                 old_img, new_img, template_ratio=template_ratio
             )
 
@@ -28,7 +28,7 @@ class TestImageProcessing(unittest.TestCase):
         new_img = np.zeros(1)
         template_ratio = 0
         with self.assertRaisesRegex(ValueError, r"^The given data is not an image$"):
-            sw_luadocs_ocr.control.calc_scroll_amount(
+            sw_luadocs_ocr.capture.calc_scroll_amount(
                 old_img, new_img, template_ratio=template_ratio
             )
 
@@ -37,7 +37,7 @@ class TestImageProcessing(unittest.TestCase):
         new_img = np.zeros((1, 1, 1, 1))
         template_ratio = 0
         with self.assertRaisesRegex(ValueError, r"^The given data is not an image$"):
-            sw_luadocs_ocr.control.calc_scroll_amount(
+            sw_luadocs_ocr.capture.calc_scroll_amount(
                 old_img, new_img, template_ratio=template_ratio
             )
 
@@ -46,7 +46,7 @@ class TestImageProcessing(unittest.TestCase):
         new_img = np.zeros((0, 0))
         template_ratio = 0
         with self.assertRaisesRegex(ValueError, r"^The image is empty$"):
-            sw_luadocs_ocr.control.calc_scroll_amount(
+            sw_luadocs_ocr.capture.calc_scroll_amount(
                 old_img, new_img, template_ratio=template_ratio
             )
 
@@ -57,7 +57,7 @@ class TestImageProcessing(unittest.TestCase):
         with self.assertRaisesRegex(
             ValueError, r"^template_ratio is not within the range 0~1$"
         ):
-            sw_luadocs_ocr.control.calc_scroll_amount(
+            sw_luadocs_ocr.capture.calc_scroll_amount(
                 old_img, new_img, template_ratio=template_ratio
             )
 
@@ -68,7 +68,7 @@ class TestImageProcessing(unittest.TestCase):
         with self.assertRaisesRegex(
             ValueError, r"^template_ratio is not within the range 0~1$"
         ):
-            sw_luadocs_ocr.control.calc_scroll_amount(
+            sw_luadocs_ocr.capture.calc_scroll_amount(
                 old_img, new_img, template_ratio=template_ratio
             )
 
@@ -76,7 +76,7 @@ class TestImageProcessing(unittest.TestCase):
         old_img = np.zeros((1, 1))
         new_img = np.zeros((1, 1))
         template_ratio = 0
-        scroll_amount = sw_luadocs_ocr.control.calc_scroll_amount(
+        scroll_amount = sw_luadocs_ocr.capture.calc_scroll_amount(
             old_img, new_img, template_ratio=template_ratio
         )
         self.assertEqual(scroll_amount, 0)
@@ -85,7 +85,7 @@ class TestImageProcessing(unittest.TestCase):
         old_img = np.zeros((1, 1))
         new_img = np.zeros((1, 1))
         template_ratio = 1
-        scroll_amount = sw_luadocs_ocr.control.calc_scroll_amount(
+        scroll_amount = sw_luadocs_ocr.capture.calc_scroll_amount(
             old_img, new_img, template_ratio=template_ratio
         )
         self.assertEqual(scroll_amount, 0)
@@ -94,7 +94,7 @@ class TestImageProcessing(unittest.TestCase):
         old_img = np.zeros((1, 1, 3))
         new_img = np.zeros((1, 1, 3))
         template_ratio = 0
-        scroll_amount = sw_luadocs_ocr.control.calc_scroll_amount(
+        scroll_amount = sw_luadocs_ocr.capture.calc_scroll_amount(
             old_img, new_img, template_ratio=template_ratio
         )
         self.assertEqual(scroll_amount, 0)
@@ -103,7 +103,7 @@ class TestImageProcessing(unittest.TestCase):
         old_img = np.zeros((1, 1, 3))
         new_img = np.zeros((1, 1, 3))
         template_ratio = 1
-        scroll_amount = sw_luadocs_ocr.control.calc_scroll_amount(
+        scroll_amount = sw_luadocs_ocr.capture.calc_scroll_amount(
             old_img, new_img, template_ratio=template_ratio
         )
         self.assertEqual(scroll_amount, 0)
@@ -114,7 +114,7 @@ class TestImageProcessing(unittest.TestCase):
         new_img = np.zeros((3, 3))
         new_img[2, 1] = 1
         template_ratio = 0
-        scroll_amount = sw_luadocs_ocr.control.calc_scroll_amount(
+        scroll_amount = sw_luadocs_ocr.capture.calc_scroll_amount(
             old_img, new_img, template_ratio=template_ratio
         )
         self.assertEqual(scroll_amount, 1)
@@ -125,7 +125,7 @@ class TestImageProcessing(unittest.TestCase):
         new_img = np.zeros((3, 3))
         new_img[0, 1] = 1
         template_ratio = 0
-        scroll_amount = sw_luadocs_ocr.control.calc_scroll_amount(
+        scroll_amount = sw_luadocs_ocr.capture.calc_scroll_amount(
             old_img, new_img, template_ratio=template_ratio
         )
         self.assertEqual(scroll_amount, -1)
@@ -136,7 +136,7 @@ class TestImageProcessing(unittest.TestCase):
         new_img = np.zeros((3, 3, 3))
         new_img[2, 1, 1] = 1
         template_ratio = 0
-        scroll_amount = sw_luadocs_ocr.control.calc_scroll_amount(
+        scroll_amount = sw_luadocs_ocr.capture.calc_scroll_amount(
             old_img, new_img, template_ratio=template_ratio
         )
         self.assertEqual(scroll_amount, 1)
@@ -147,7 +147,7 @@ class TestImageProcessing(unittest.TestCase):
         new_img = np.zeros((3, 3, 3))
         new_img[0, 1, 1] = 1
         template_ratio = 0
-        scroll_amount = sw_luadocs_ocr.control.calc_scroll_amount(
+        scroll_amount = sw_luadocs_ocr.capture.calc_scroll_amount(
             old_img, new_img, template_ratio=template_ratio
         )
         self.assertEqual(scroll_amount, -1)
@@ -158,7 +158,7 @@ class TestImageProcessing(unittest.TestCase):
         new_img = np.zeros((3, 3, 3))
         new_img[2, 1, 1] = 1
         template_ratio = 1
-        scroll_amount = sw_luadocs_ocr.control.calc_scroll_amount(
+        scroll_amount = sw_luadocs_ocr.capture.calc_scroll_amount(
             old_img, new_img, template_ratio=template_ratio
         )
         self.assertEqual(scroll_amount, 0)
@@ -169,7 +169,7 @@ class TestImageProcessing(unittest.TestCase):
         new_img = np.zeros((3, 3, 3))
         new_img[0, 1, 1] = 1
         template_ratio = 1
-        scroll_amount = sw_luadocs_ocr.control.calc_scroll_amount(
+        scroll_amount = sw_luadocs_ocr.capture.calc_scroll_amount(
             old_img, new_img, template_ratio=template_ratio
         )
         self.assertEqual(scroll_amount, 0)
@@ -196,7 +196,7 @@ class TestImageProcessing(unittest.TestCase):
         new_img[7, 4] = 1
         new_img[8, 3] = 1
         template_ratio = 1 / 3
-        scroll_amount = sw_luadocs_ocr.control.calc_scroll_amount(
+        scroll_amount = sw_luadocs_ocr.capture.calc_scroll_amount(
             old_img, new_img, template_ratio=template_ratio
         )
         self.assertEqual(scroll_amount, 3)
@@ -207,7 +207,7 @@ class TestImageProcessing(unittest.TestCase):
         new_img = np.zeros((9, 9))
         new_img[8, 4] = 1
         template_ratio = 0
-        scroll_amount = sw_luadocs_ocr.control.calc_scroll_amount(
+        scroll_amount = sw_luadocs_ocr.capture.calc_scroll_amount(
             old_img, new_img, template_ratio=template_ratio
         )
         self.assertEqual(scroll_amount, 4)
@@ -218,7 +218,7 @@ class TestImageProcessing(unittest.TestCase):
         new_img = np.zeros((9, 9))
         new_img[0, 4] = 1
         template_ratio = 0
-        scroll_amount = sw_luadocs_ocr.control.calc_scroll_amount(
+        scroll_amount = sw_luadocs_ocr.capture.calc_scroll_amount(
             old_img, new_img, template_ratio=template_ratio
         )
         self.assertEqual(scroll_amount, -4)
@@ -229,7 +229,7 @@ class TestImageProcessing(unittest.TestCase):
         new_img = np.zeros((9, 9, 3))
         new_img[8, 4, 1] = 1
         template_ratio = 0
-        scroll_amount = sw_luadocs_ocr.control.calc_scroll_amount(
+        scroll_amount = sw_luadocs_ocr.capture.calc_scroll_amount(
             old_img, new_img, template_ratio=template_ratio
         )
         self.assertEqual(scroll_amount, 4)
@@ -240,7 +240,7 @@ class TestImageProcessing(unittest.TestCase):
         new_img = np.zeros((9, 9, 3))
         new_img[0, 4, 1] = 1
         template_ratio = 0
-        scroll_amount = sw_luadocs_ocr.control.calc_scroll_amount(
+        scroll_amount = sw_luadocs_ocr.capture.calc_scroll_amount(
             old_img, new_img, template_ratio=template_ratio
         )
         self.assertEqual(scroll_amount, -4)
@@ -267,7 +267,7 @@ class TestImageProcessing(unittest.TestCase):
         new_img[7, 4] = 1
         new_img[8, 5] = 1
         template_ratio = 1 / 3
-        scroll_amount = sw_luadocs_ocr.control.calc_scroll_amount(
+        scroll_amount = sw_luadocs_ocr.capture.calc_scroll_amount(
             old_img, new_img, template_ratio=template_ratio
         )
         self.assertEqual(scroll_amount, -3)
@@ -294,7 +294,7 @@ class TestImageProcessing(unittest.TestCase):
         new_img[7, 4, 1] = 1
         new_img[8, 3, 1] = 1
         template_ratio = 1 / 3
-        scroll_amount = sw_luadocs_ocr.control.calc_scroll_amount(
+        scroll_amount = sw_luadocs_ocr.capture.calc_scroll_amount(
             old_img, new_img, template_ratio=template_ratio
         )
         self.assertEqual(scroll_amount, 3)
@@ -321,7 +321,7 @@ class TestImageProcessing(unittest.TestCase):
         new_img[7, 4, 1] = 1
         new_img[8, 5, 1] = 1
         template_ratio = 1 / 3
-        scroll_amount = sw_luadocs_ocr.control.calc_scroll_amount(
+        scroll_amount = sw_luadocs_ocr.capture.calc_scroll_amount(
             old_img, new_img, template_ratio=template_ratio
         )
         self.assertEqual(scroll_amount, -3)
@@ -348,7 +348,7 @@ class TestImageProcessing(unittest.TestCase):
         new_img[7, 4, 1] = 1
         new_img[8, 3, 1] = 1
         template_ratio = 1
-        scroll_amount = sw_luadocs_ocr.control.calc_scroll_amount(
+        scroll_amount = sw_luadocs_ocr.capture.calc_scroll_amount(
             old_img, new_img, template_ratio=template_ratio
         )
         self.assertEqual(scroll_amount, 0)
@@ -375,7 +375,7 @@ class TestImageProcessing(unittest.TestCase):
         new_img[7, 4, 1] = 1
         new_img[8, 5, 1] = 1
         template_ratio = 1
-        scroll_amount = sw_luadocs_ocr.control.calc_scroll_amount(
+        scroll_amount = sw_luadocs_ocr.capture.calc_scroll_amount(
             old_img, new_img, template_ratio=template_ratio
         )
         self.assertEqual(scroll_amount, 0)
@@ -385,7 +385,7 @@ class TestImageProcessing(unittest.TestCase):
         iterable = []
         template_ratio = 0.25
         scroll_threshold = "0"
-        gen_img = sw_luadocs_ocr.control.stitch_screenshot(
+        gen_img = sw_luadocs_ocr.capture.stitch_screenshot(
             iterable, template_ratio=template_ratio, scroll_threshold=scroll_threshold
         )
         self.assertIsNone(gen_img)
@@ -395,7 +395,7 @@ class TestImageProcessing(unittest.TestCase):
         template_ratio = 0.25
         scroll_threshold = -1
         with self.assertRaisesRegex(ValueError, r"^scroll_threshold is less than 0$"):
-            sw_luadocs_ocr.control.stitch_screenshot(
+            sw_luadocs_ocr.capture.stitch_screenshot(
                 iterable,
                 template_ratio=template_ratio,
                 scroll_threshold=scroll_threshold,
@@ -405,7 +405,7 @@ class TestImageProcessing(unittest.TestCase):
         iterable = [[[0]]]
         template_ratio = 0.25
         scroll_threshold = 0
-        gen_img = sw_luadocs_ocr.control.stitch_screenshot(
+        gen_img = sw_luadocs_ocr.capture.stitch_screenshot(
             iterable, template_ratio=template_ratio, scroll_threshold=scroll_threshold
         )
         self.assertIsInstance(gen_img, np.ndarray)
@@ -415,7 +415,7 @@ class TestImageProcessing(unittest.TestCase):
         iterable = [img1, img1]
         template_ratio = 0.25
         scroll_threshold = 3
-        gen_img = sw_luadocs_ocr.control.stitch_screenshot(
+        gen_img = sw_luadocs_ocr.capture.stitch_screenshot(
             iterable, template_ratio=template_ratio, scroll_threshold=scroll_threshold
         )
         self.assertTrue(np.array_equal(gen_img, img1))
@@ -429,7 +429,7 @@ class TestImageProcessing(unittest.TestCase):
         iterable = [img1, img2]
         template_ratio = 1
         scroll_threshold = 0
-        gen_img = sw_luadocs_ocr.control.stitch_screenshot(
+        gen_img = sw_luadocs_ocr.capture.stitch_screenshot(
             iterable, template_ratio=template_ratio, scroll_threshold=scroll_threshold
         )
         self.assertTrue(np.array_equal(gen_img, img1))
@@ -446,7 +446,7 @@ class TestImageProcessing(unittest.TestCase):
         iterable = [img1, img2]
         template_ratio = 0
         scroll_threshold = 0
-        gen_img = sw_luadocs_ocr.control.stitch_screenshot(
+        gen_img = sw_luadocs_ocr.capture.stitch_screenshot(
             iterable, template_ratio=template_ratio, scroll_threshold=scroll_threshold
         )
         self.assertTrue(np.array_equal(gen_img, img0))
@@ -463,7 +463,7 @@ class TestImageProcessing(unittest.TestCase):
         iterable = [img1, img2]
         template_ratio = 0
         scroll_threshold = 0
-        gen_img = sw_luadocs_ocr.control.stitch_screenshot(
+        gen_img = sw_luadocs_ocr.capture.stitch_screenshot(
             iterable, template_ratio=template_ratio, scroll_threshold=scroll_threshold
         )
         self.assertTrue(np.array_equal(gen_img, img0))
@@ -482,7 +482,7 @@ class TestImageProcessing(unittest.TestCase):
         iterable = [img1, img2]
         template_ratio = 0
         scroll_threshold = 0
-        gen_img = sw_luadocs_ocr.control.stitch_screenshot(
+        gen_img = sw_luadocs_ocr.capture.stitch_screenshot(
             iterable, template_ratio=template_ratio, scroll_threshold=scroll_threshold
         )
         self.assertTrue(np.array_equal(gen_img, img0))
@@ -501,7 +501,7 @@ class TestImageProcessing(unittest.TestCase):
         iterable = [img1, img2]
         template_ratio = 0
         scroll_threshold = 0
-        gen_img = sw_luadocs_ocr.control.stitch_screenshot(
+        gen_img = sw_luadocs_ocr.capture.stitch_screenshot(
             iterable, template_ratio=template_ratio, scroll_threshold=scroll_threshold
         )
         self.assertTrue(np.array_equal(gen_img, img0))
@@ -523,7 +523,7 @@ class TestImageProcessing(unittest.TestCase):
         iterable = [img1, img2, img3]
         template_ratio = 0
         scroll_threshold = 0
-        gen_img = sw_luadocs_ocr.control.stitch_screenshot(
+        gen_img = sw_luadocs_ocr.capture.stitch_screenshot(
             iterable, template_ratio=template_ratio, scroll_threshold=scroll_threshold
         )
         self.assertTrue(np.array_equal(gen_img, img0))
@@ -545,7 +545,7 @@ class TestImageProcessing(unittest.TestCase):
         iterable = [img1, img2, img3]
         template_ratio = 0
         scroll_threshold = 0
-        gen_img = sw_luadocs_ocr.control.stitch_screenshot(
+        gen_img = sw_luadocs_ocr.capture.stitch_screenshot(
             iterable, template_ratio=template_ratio, scroll_threshold=scroll_threshold
         )
         self.assertTrue(np.array_equal(gen_img, img0))

@@ -3,7 +3,7 @@ import imageio.v3
 import pathlib
 
 from . import config as mdl_config
-from . import control as mdl_control
+from . import capture as mdl_capture
 
 
 def capture_main(cfg, *, ahk_exe=None, capture_file=None):
@@ -14,7 +14,7 @@ def capture_main(cfg, *, ahk_exe=None, capture_file=None):
     if capture_file is not None:
         capture_file = pathlib.Path(capture_file)
 
-    ctrl = mdl_control.StormworksController(
+    ctrl = mdl_capture.StormworksController(
         ahk_executable_path=str(ahk_exe) if ahk_exe is not None else "",
         title=cfg["win_title"],
         text=cfg["win_text"],
@@ -26,8 +26,8 @@ def capture_main(cfg, *, ahk_exe=None, capture_file=None):
 
     ctrl.activate(sleep=True)
     ctrl.check_fullscreen()
-    scr_w = mdl_control.get_system_metrics(0)
-    scr_h = mdl_control.get_system_metrics(1)
+    scr_w = mdl_capture.get_system_metrics(0)
+    scr_h = mdl_capture.get_system_metrics(1)
     if scr_w != cfg["screen_width"] or scr_h != cfg["screen_height"]:
         raise ValueError(
             f'Screen size is not {cfg["screen_width"]}x{cfg["screen_height"]}'
@@ -40,7 +40,7 @@ def capture_main(cfg, *, ahk_exe=None, capture_file=None):
         n=cfg["scroll_page_n"],
         sleep=True,
     )
-    img = mdl_control.stitch_screenshot(
+    img = mdl_capture.stitch_screenshot(
         ctrl.scroll_and_screenshot(
             scroll_direction="down",
             scroll_x=cfg["scroll_x"],
