@@ -303,13 +303,6 @@ def capture(
             template_ratio=capture_template_ratio,
             scroll_threshold=scroll_threshold,
         )
-        ctrl.mouse_wheel(
-            "up",
-            x=scroll_x,
-            y=scroll_y,
-            n=scroll_page_n,
-            sleep=True,
-        )
     finally:
         ctrl.minimize(sleep=False)
     return img
