@@ -39,7 +39,7 @@ def main(*, args=None, exit_on_error=True):
     parser.add_argument(
         "-c", "--config", type=pathlib.Path, required=True, help="configuration file"
     )
-    parser_group = parser.add_subparsers(required=True)
+    parser_group = parser.add_subparsers(required=True, metavar="COMMAND")
 
     parser_capture = parser_group.add_parser(
         "capture", help="capture Stormworks in-game Lua API documentation"
