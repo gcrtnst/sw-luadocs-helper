@@ -4,6 +4,7 @@ import pathlib
 import toml
 
 from . import capture as capture_module
+from . import ocr as ocr_module
 
 
 def capture_main(ns, cfg):
@@ -34,6 +35,12 @@ def capture_main(ns, cfg):
     imageio.v3.imwrite(ns.capture_file, img)
 
 
+def preprocess_main(ns, cfg):
+    img = imageio.v3.imread(ns.input_file)
+    img = ocr_module.preprocess(img)
+    imageio.v3.imwrite(ns.output_file, img)
+
+
 def main(*, args=None, exit_on_error=True):
     parser = argparse.ArgumentParser(exit_on_error=exit_on_error)
     parser.add_argument(
@@ -52,6 +59,17 @@ def main(*, args=None, exit_on_error=True):
     )
     parser_capture.add_argument(
         "--ahk-exe", type=pathlib.Path, help="AutoHotKey executable file"
+    )
+
+    parser_preprocess = parser_group.add_parser(
+        "preprocess", help="preprocess images for OCR"
+    )
+    parser_preprocess.set_defaults(func=preprocess_main)
+    parser_preprocess.add_argument(
+        "input_file", type=pathlib.Path, help="screenshot of API documentation"
+    )
+    parser_preprocess.add_argument(
+        "output_file", type=pathlib.Path, help="preprocessed image"
     )
 
     ns = parser.parse_args(args=args)
