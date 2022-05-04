@@ -1,6 +1,7 @@
 import argparse
-import imageio.v3
+import numpy as np
 import pathlib
+import PIL.Image
 import toml
 
 from . import capture as capture_module
@@ -32,13 +33,13 @@ def capture_main(ns, cfg):
         activate_sleep_secs=capture_cfg["activate_sleep_secs"],
         scroll_sleep_secs=capture_cfg["scroll_sleep_secs"],
     )
-    imageio.v3.imwrite(ns.capture_file, img)
+    PIL.Image.fromarray(img).save(ns.capture_file)
 
 
 def preprocess_main(ns, cfg):
-    img = imageio.v3.imread(ns.input_file)
+    img = np.array(PIL.Image.open(ns.input_file))
     img = ocr_module.preprocess(img)
-    imageio.v3.imwrite(ns.output_file, img)
+    PIL.Image.fromarray(img).save(ns.output_file)
 
 
 def main(*, args=None, exit_on_error=True):
