@@ -46,10 +46,9 @@ def main(*, args=None, exit_on_error=True):
     )
     parser_capture.set_defaults(func=capture_main)
     parser_capture.add_argument(
-        "--capture-file",
+        "capture_file",
         type=pathlib.Path,
         help="file to save screenshots",
-        required=True,
     )
     parser_capture.add_argument(
         "--ahk-exe", type=pathlib.Path, help="AutoHotKey executable file"
