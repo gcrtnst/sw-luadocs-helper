@@ -4,7 +4,6 @@ import pathlib
 
 from . import config as mdl_config
 from . import control as mdl_control
-from . import image as mdl_image
 
 
 def capture_main(cfg, *, ahk_exe=None, capture_file=None):
@@ -41,7 +40,7 @@ def capture_main(cfg, *, ahk_exe=None, capture_file=None):
         n=cfg["scroll_page_n"],
         sleep=True,
     )
-    img = mdl_image.stitch_screenshot(
+    img = mdl_control.stitch_screenshot(
         ctrl.scroll_and_screenshot(
             scroll_direction="down",
             scroll_x=cfg["scroll_x"],
