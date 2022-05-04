@@ -6,20 +6,11 @@ import re
 import time
 
 
-def screenshot(capture_output="pil", region=None):
-    # Do not run this function concurrently with itself or
-    # with any other function that uses the Desktop Duplication API.
-
-    # We create a D3DShot instance for each operation,
-    # to avoid D3DShot getting stuck when D3DCtx is changed.
-    # Note:
-    #   This workaround does not work with d3dshot>=0.15,
-    #   because the D3DShot instance is not released.
-    # Related issues:
-    #   - https://github.com/SerpentAI/D3DShot/issues/38
-    #   - https://github.com/SerpentAI/D3DShot/issues/30
-    d = d3dshot.create(capture_output=capture_output)
-    return d.screenshot(region=region)
+def ahkid_to_hwnd(ahk_id):
+    ahk_id = str(ahk_id)
+    if re.match(r"(?i)^0[xX][0-9A-Fa-f]+$", ahk_id) is None:
+        raise ValueError("Not an ahk_id")
+    return int(ahk_id, base=16)
 
 
 def get_client_rect(hwnd):
@@ -61,11 +52,20 @@ def get_system_metrics(idx):
     return GetSystemMetrics(idx)
 
 
-def ahkid_to_hwnd(ahk_id):
-    ahk_id = str(ahk_id)
-    if re.match(r"(?i)^0[xX][0-9A-Fa-f]+$", ahk_id) is None:
-        raise ValueError("Not an ahk_id")
-    return int(ahk_id, base=16)
+def screenshot(capture_output="pil", region=None):
+    # Do not run this function concurrently with itself or
+    # with any other function that uses the Desktop Duplication API.
+
+    # We create a D3DShot instance for each operation,
+    # to avoid D3DShot getting stuck when D3DCtx is changed.
+    # Note:
+    #   This workaround does not work with d3dshot>=0.15,
+    #   because the D3DShot instance is not released.
+    # Related issues:
+    #   - https://github.com/SerpentAI/D3DShot/issues/38
+    #   - https://github.com/SerpentAI/D3DShot/issues/30
+    d = d3dshot.create(capture_output=capture_output)
+    return d.screenshot(region=region)
 
 
 class StormworksController:
