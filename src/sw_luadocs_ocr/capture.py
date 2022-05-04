@@ -78,7 +78,7 @@ class StormworksController:
         title="Stormworks",
         text="",
         exclude_title="",
-        exclude_text=""
+        exclude_text="",
     ):
         self._ahk = ahk.AHK(executable_path=ahk_executable_path)
         self._win = self._ahk.win_get(
@@ -159,7 +159,7 @@ class StormworksController:
         scroll_y=None,
         scroll_n=None,
         capture_output="pil",
-        capture_region=None
+        capture_region=None,
     ):
         while True:
             yield self.screenshot(capture_output=capture_output, region=capture_region)
