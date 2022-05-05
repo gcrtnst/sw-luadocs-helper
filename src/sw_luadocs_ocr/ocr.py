@@ -21,3 +21,39 @@ def convert_image(
 def preprocess(img):
     img = convert_image(img, dst_mode="RGB")
     return 255 - np.amax(img, axis=2)
+
+
+def parse_tesseract_data(data):
+    if not isinstance(data, dict):
+        raise TypeError("data is not dict")
+    for key in "level", "left", "top", "width", "height", "text":
+        if key not in data:
+            raise KeyError("missing key in data")
+
+    line_list = []
+    idx = 0
+    box = None
+    txt = None
+    while idx < len(data["level"]):
+        if data["level"][idx] == 4:
+            box = (
+                data["left"][idx],
+                data["top"][idx],
+                data["width"][idx],
+                data["height"][idx],
+            )
+            idx += 1
+
+            txt = []
+            while idx < len(data["level"]):
+                if data["level"][idx] < 5:
+                    break
+                elif data["level"][idx] == 5:
+                    txt.append(data["text"][idx])
+                idx += 1
+            txt = " ".join(txt)
+            line = {"txt": txt, "box": box}
+            line_list.append(line)
+        else:
+            idx += 1
+    return line_list
