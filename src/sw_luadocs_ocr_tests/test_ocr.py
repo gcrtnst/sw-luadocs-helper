@@ -39,6 +39,138 @@ class TestOCR(unittest.TestCase):
         with self.assertRaises(KeyError):
             sw_luadocs_ocr.ocr.parse_tesseract_data(data)
 
+        # data["level"] is not list
+        data = {
+            "level": None,
+            "left": [],
+            "top": [],
+            "width": [],
+            "height": [],
+            "text": [],
+        }
+        with self.assertRaises(TypeError):
+            sw_luadocs_ocr.ocr.parse_tesseract_data(data)
+
+        # data["left"] is not list
+        data = {
+            "level": [],
+            "left": None,
+            "top": [],
+            "width": [],
+            "height": [],
+            "text": [],
+        }
+        with self.assertRaises(TypeError):
+            sw_luadocs_ocr.ocr.parse_tesseract_data(data)
+
+        # data["top"] is not list
+        data = {
+            "level": [],
+            "left": [],
+            "top": None,
+            "width": [],
+            "height": [],
+            "text": [],
+        }
+        with self.assertRaises(TypeError):
+            sw_luadocs_ocr.ocr.parse_tesseract_data(data)
+
+        # data["width"] is not list
+        data = {
+            "level": [],
+            "left": [],
+            "top": [],
+            "width": None,
+            "height": [],
+            "text": [],
+        }
+        with self.assertRaises(TypeError):
+            sw_luadocs_ocr.ocr.parse_tesseract_data(data)
+
+        # data["height"] is not list
+        data = {
+            "level": [],
+            "left": [],
+            "top": [],
+            "width": [],
+            "height": None,
+            "text": [],
+        }
+        with self.assertRaises(TypeError):
+            sw_luadocs_ocr.ocr.parse_tesseract_data(data)
+
+        # data["text"] is not list
+        data = {
+            "level": [],
+            "left": [],
+            "top": [],
+            "width": [],
+            "height": [],
+            "text": None,
+        }
+        with self.assertRaises(TypeError):
+            sw_luadocs_ocr.ocr.parse_tesseract_data(data)
+
+        # wrong length of data["left"]
+        data = {
+            "level": [],
+            "left": [0],
+            "top": [],
+            "width": [],
+            "height": [],
+            "text": [],
+        }
+        with self.assertRaises(ValueError):
+            sw_luadocs_ocr.ocr.parse_tesseract_data(data)
+
+        # wrong length of data["top"]
+        data = {
+            "level": [],
+            "left": [],
+            "top": [0],
+            "width": [],
+            "height": [],
+            "text": [],
+        }
+        with self.assertRaises(ValueError):
+            sw_luadocs_ocr.ocr.parse_tesseract_data(data)
+
+        # wrong length of data["width"]
+        data = {
+            "level": [],
+            "left": [],
+            "top": [],
+            "width": [0],
+            "height": [],
+            "text": [],
+        }
+        with self.assertRaises(ValueError):
+            sw_luadocs_ocr.ocr.parse_tesseract_data(data)
+
+        # wrong length of data["height"]
+        data = {
+            "level": [],
+            "left": [],
+            "top": [],
+            "width": [],
+            "height": [0],
+            "text": [],
+        }
+        with self.assertRaises(ValueError):
+            sw_luadocs_ocr.ocr.parse_tesseract_data(data)
+
+        # wrong length of data["text"]
+        data = {
+            "level": [],
+            "left": [],
+            "top": [],
+            "width": [],
+            "height": [],
+            "text": [0],
+        }
+        with self.assertRaises(ValueError):
+            sw_luadocs_ocr.ocr.parse_tesseract_data(data)
+
         # no data
         data = {
             "level": [],

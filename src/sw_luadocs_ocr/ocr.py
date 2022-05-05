@@ -28,7 +28,11 @@ def parse_tesseract_data(data):
         raise TypeError("data is not dict")
     for key in "level", "left", "top", "width", "height", "text":
         if key not in data:
-            raise KeyError("missing key in data")
+            raise KeyError(f'data["{key}"] is missing')
+        if not isinstance(data[key], list):
+            raise TypeError(f'data["{key}"] is not list')
+        if len(data[key]) != len(data["level"]):
+            raise ValueError("list lengths do not match")
 
     line_list = []
     idx = 0
