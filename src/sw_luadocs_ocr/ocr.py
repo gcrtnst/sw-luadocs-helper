@@ -1,9 +1,23 @@
 import numpy as np
 import PIL.Image
-import PIL.ImageOps
+
+
+def convert_image(
+    img,
+    src_mode=None,
+    dst_mode=None,
+    matrix=None,
+    dither=None,
+    palette=PIL.Image.Palette.WEB,
+    colors=256,
+):
+    pil = PIL.Image.fromarray(img, mode=src_mode)
+    pil = pil.convert(
+        mode=dst_mode, matrix=matrix, dither=dither, palette=palette, colors=colors
+    )
+    return np.asarray(pil)
 
 
 def preprocess(img):
-    pil = PIL.Image.fromarray(img)
-    pil = PIL.ImageOps.invert(pil)
-    return np.array(pil)
+    img = convert_image(img, dst_mode="RGB")
+    return 255 - np.amax(img, axis=2)
