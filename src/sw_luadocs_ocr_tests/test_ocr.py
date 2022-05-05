@@ -180,8 +180,8 @@ class TestOCR(unittest.TestCase):
             "height": [],
             "text": [],
         }
-        line_list = sw_luadocs_ocr.ocr.parse_tesseract_data(data)
-        self.assertEqual(line_list, [])
+        ocr_line_list = sw_luadocs_ocr.ocr.parse_tesseract_data(data)
+        self.assertEqual(ocr_line_list, [])
 
         # no line
         data = {
@@ -192,8 +192,8 @@ class TestOCR(unittest.TestCase):
             "height": [0, 0, 0, 0],
             "text": ["", "", "", ""],
         }
-        line_list = sw_luadocs_ocr.ocr.parse_tesseract_data(data)
-        self.assertEqual(line_list, [])
+        ocr_line_list = sw_luadocs_ocr.ocr.parse_tesseract_data(data)
+        self.assertEqual(ocr_line_list, [])
 
         # line only
         data = {
@@ -204,8 +204,8 @@ class TestOCR(unittest.TestCase):
             "height": [3],
             "text": ["text"],
         }
-        line_list = sw_luadocs_ocr.ocr.parse_tesseract_data(data)
-        self.assertEqual(line_list, [{"txt": "", "box": (0, 1, 2, 3)}])
+        ocr_line_list = sw_luadocs_ocr.ocr.parse_tesseract_data(data)
+        self.assertEqual(ocr_line_list, [{"txt": "", "box": (0, 1, 2, 3)}])
 
         # line and other
         data = {
@@ -216,9 +216,9 @@ class TestOCR(unittest.TestCase):
             "height": [1, 2, 3, 4, 5, 6],
             "text": ["1", "2", "3", "4", "5", "6"],
         }
-        line_list = sw_luadocs_ocr.ocr.parse_tesseract_data(data)
+        ocr_line_list = sw_luadocs_ocr.ocr.parse_tesseract_data(data)
         self.assertEqual(
-            line_list,
+            ocr_line_list,
             [{"txt": "", "box": (4, 4, 4, 4)}, {"txt": "", "box": (6, 6, 6, 6)}],
         )
 
@@ -231,8 +231,8 @@ class TestOCR(unittest.TestCase):
             "height": [4, 5],
             "text": ["4", "5"],
         }
-        line_list = sw_luadocs_ocr.ocr.parse_tesseract_data(data)
-        self.assertEqual(line_list, [{"txt": "5", "box": (4, 4, 4, 4)}])
+        ocr_line_list = sw_luadocs_ocr.ocr.parse_tesseract_data(data)
+        self.assertEqual(ocr_line_list, [{"txt": "5", "box": (4, 4, 4, 4)}])
 
         # multiple text only
         data = {
@@ -243,8 +243,8 @@ class TestOCR(unittest.TestCase):
             "height": [4, 5, 6],
             "text": ["4", "5", "6"],
         }
-        line_list = sw_luadocs_ocr.ocr.parse_tesseract_data(data)
-        self.assertEqual(line_list, [{"txt": "5 6", "box": (4, 4, 4, 4)}])
+        ocr_line_list = sw_luadocs_ocr.ocr.parse_tesseract_data(data)
+        self.assertEqual(ocr_line_list, [{"txt": "5 6", "box": (4, 4, 4, 4)}])
 
         # multiple text and other
         data = {
@@ -255,8 +255,8 @@ class TestOCR(unittest.TestCase):
             "height": [1, 2, 3, 4],
             "text": ["1", "2", "3", "4"],
         }
-        line_list = sw_luadocs_ocr.ocr.parse_tesseract_data(data)
-        self.assertEqual(line_list, [{"txt": "2 4", "box": (1, 1, 1, 1)}])
+        ocr_line_list = sw_luadocs_ocr.ocr.parse_tesseract_data(data)
+        self.assertEqual(ocr_line_list, [{"txt": "2 4", "box": (1, 1, 1, 1)}])
 
         # line and text
         data = {
@@ -267,9 +267,9 @@ class TestOCR(unittest.TestCase):
             "height": [1, 2, 3, 4, 5],
             "text": ["1", "2", "3", "4", "5"],
         }
-        line_list = sw_luadocs_ocr.ocr.parse_tesseract_data(data)
+        ocr_line_list = sw_luadocs_ocr.ocr.parse_tesseract_data(data)
         self.assertEqual(
-            line_list,
+            ocr_line_list,
             [{"txt": "2", "box": (1, 1, 1, 1)}, {"txt": "5", "box": (4, 4, 4, 4)}],
         )
 
@@ -425,9 +425,9 @@ class TestOCR(unittest.TestCase):
                 "matrix.invert(matrix1)",
             ],
         }
-        line_list = sw_luadocs_ocr.ocr.parse_tesseract_data(data)
+        ocr_line_list = sw_luadocs_ocr.ocr.parse_tesseract_data(data)
         self.assertEqual(
-            line_list,
+            ocr_line_list,
             [
                 {"txt": "Multiply two matrices together.", "box": (2, 13, 273, 19)},
                 {

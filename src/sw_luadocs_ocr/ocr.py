@@ -34,7 +34,7 @@ def parse_tesseract_data(data):
         if len(data[key]) != len(data["level"]):
             raise ValueError("list lengths do not match")
 
-    line_list = []
+    ocr_line_list = []
     idx = 0
     box = None
     txt = None
@@ -56,8 +56,8 @@ def parse_tesseract_data(data):
                     txt.append(data["text"][idx])
                 idx += 1
             txt = " ".join(txt)
-            line = {"txt": txt, "box": box}
-            line_list.append(line)
+            ocr_line = {"txt": txt, "box": box}
+            ocr_line_list.append(ocr_line)
         else:
             idx += 1
-    return line_list
+    return ocr_line_list
