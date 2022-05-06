@@ -69,7 +69,7 @@ def preprocess(img):
 def recognize_line(tess_tsv):
     tess_tsv = as_tesseract_tsv(tess_tsv)
 
-    ocr_line_list = []
+    rline_list = []
     idx = 0
     box = None
     conf = None
@@ -94,8 +94,8 @@ def recognize_line(tess_tsv):
                     conf = min(conf, tess_tsv["conf"][idx])
                 idx += 1
             txt = " ".join(txt)
-            ocr_line = {"txt": txt, "box": box, "conf": conf}
-            ocr_line_list.append(ocr_line)
+            rline = {"txt": txt, "box": box, "conf": conf}
+            rline_list.append(rline)
         else:
             idx += 1
-    return ocr_line_list
+    return rline_list
