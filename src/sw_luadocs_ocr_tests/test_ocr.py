@@ -5,44 +5,6 @@ import unittest
 
 class TestOCR(unittest.TestCase):
     def test_as_tesseract_tsv(self):
-        # wrong type of v
-        v = []
-        with self.assertRaises(TypeError):
-            sw_luadocs_ocr.ocr.as_tesseract_tsv(v)
-
-        v = {
-            "level": [],
-            "page_num": [],
-            "block_num": [],
-            "par_num": [],
-            "line_num": [],
-            "word_num": [],
-            "left": [],
-            "top": [],
-            "width": [],
-            "height": [],
-            "conf": [],
-            "text": [],
-        }
-        for key in v:
-            # missing key
-            v2 = copy.deepcopy(v)
-            del v2[key]
-            with self.assertRaises(KeyError):
-                sw_luadocs_ocr.ocr.as_tesseract_tsv(v2)
-
-            # wrong type of v[key]
-            v2 = copy.deepcopy(v)
-            v2[key] = None
-            with self.assertRaises(TypeError):
-                sw_luadocs_ocr.ocr.as_tesseract_tsv(v2)
-
-            # wrong length of v[key]
-            v2 = copy.deepcopy(v)
-            v2[key] = [1]
-            with self.assertRaises(ValueError):
-                sw_luadocs_ocr.ocr.as_tesseract_tsv(v2)
-
         # type conversion
         v = {
             "level": ["0", "1"],
@@ -95,6 +57,27 @@ class TestOCR(unittest.TestCase):
         tess_tsv = sw_luadocs_ocr.ocr.as_tesseract_tsv(v)
         self.assertIsNot(tess_tsv, v)
         self.assertEqual(tess_tsv, v)
+
+        # wrong length of v[key]
+        v = {
+            "level": [0],
+            "page_num": [0],
+            "block_num": [0],
+            "par_num": [0],
+            "line_num": [0],
+            "word_num": [0],
+            "left": [0],
+            "top": [0],
+            "width": [0],
+            "height": [0],
+            "conf": [0],
+            "text": [0],
+        }
+        for key in v:
+            v2 = copy.deepcopy(v)
+            v2[key] = [0, 1]
+            with self.assertRaises(ValueError):
+                sw_luadocs_ocr.ocr.as_tesseract_tsv(v2)
 
     def test_as_recognized_line(self):
         # type convertsion

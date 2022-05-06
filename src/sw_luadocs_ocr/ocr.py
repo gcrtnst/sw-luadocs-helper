@@ -19,29 +19,6 @@ def convert_image(
 
 
 def as_tesseract_tsv(v):
-    if not isinstance(v, dict):
-        raise TypeError("v is not dict")
-    for key in (
-        "level",
-        "page_num",
-        "block_num",
-        "par_num",
-        "line_num",
-        "word_num",
-        "left",
-        "top",
-        "width",
-        "height",
-        "conf",
-        "text",
-    ):
-        if key not in v:
-            raise KeyError(f'v["{key}"] is missing')
-        if not isinstance(v[key], list):
-            raise TypeError(f'v["{key}"] is not list')
-        if len(v[key]) != len(v["level"]):
-            raise ValueError("list lengths do not match")
-
     tess_tsv = {}
     for key in (
         "level",
@@ -58,6 +35,11 @@ def as_tesseract_tsv(v):
         tess_tsv[key] = list(map(int, v[key]))
     tess_tsv["conf"] = list(map(float, v["conf"]))
     tess_tsv["text"] = list(map(str, v["text"]))
+
+    for key in tess_tsv:
+        if len(tess_tsv[key]) != len(tess_tsv["level"]):
+            raise ValueError("list lengths do not match")
+
     return tess_tsv
 
 
