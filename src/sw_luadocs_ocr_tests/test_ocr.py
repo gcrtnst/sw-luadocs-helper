@@ -149,7 +149,7 @@ class TestOCR(unittest.TestCase):
             "text": ["text"],
         }
         ocr_line_list = sw_luadocs_ocr.ocr.recognize_line(tess_tsv)
-        self.assertEqual(ocr_line_list, [{"txt": "", "box": (0, 1, 2, 3)}])
+        self.assertEqual(ocr_line_list, [{"txt": "", "box": (0, 1, 2, 3), "conf": 100}])
 
         # line and other
         tess_tsv = {
@@ -169,7 +169,10 @@ class TestOCR(unittest.TestCase):
         ocr_line_list = sw_luadocs_ocr.ocr.recognize_line(tess_tsv)
         self.assertEqual(
             ocr_line_list,
-            [{"txt": "", "box": (4, 4, 4, 4)}, {"txt": "", "box": (6, 6, 6, 6)}],
+            [
+                {"txt": "", "box": (4, 4, 4, 4), "conf": 100},
+                {"txt": "", "box": (6, 6, 6, 6), "conf": 100},
+            ],
         )
 
         # single text only
@@ -184,11 +187,11 @@ class TestOCR(unittest.TestCase):
             "top": [4, 5],
             "width": [4, 5],
             "height": [4, 5],
-            "conf": [0, 0],
+            "conf": [40, 50],
             "text": ["4", "5"],
         }
         ocr_line_list = sw_luadocs_ocr.ocr.recognize_line(tess_tsv)
-        self.assertEqual(ocr_line_list, [{"txt": "5", "box": (4, 4, 4, 4)}])
+        self.assertEqual(ocr_line_list, [{"txt": "5", "box": (4, 4, 4, 4), "conf": 50}])
 
         # multiple text only
         tess_tsv = {
@@ -202,11 +205,13 @@ class TestOCR(unittest.TestCase):
             "top": [4, 5, 6],
             "width": [4, 5, 6],
             "height": [4, 5, 6],
-            "conf": [0, 0, 0],
+            "conf": [40, 50, 60],
             "text": ["4", "5", "6"],
         }
         ocr_line_list = sw_luadocs_ocr.ocr.recognize_line(tess_tsv)
-        self.assertEqual(ocr_line_list, [{"txt": "5 6", "box": (4, 4, 4, 4)}])
+        self.assertEqual(
+            ocr_line_list, [{"txt": "5 6", "box": (4, 4, 4, 4), "conf": 50}]
+        )
 
         # multiple text and other
         tess_tsv = {
@@ -220,11 +225,13 @@ class TestOCR(unittest.TestCase):
             "top": [1, 2, 3, 4],
             "width": [1, 2, 3, 4],
             "height": [1, 2, 3, 4],
-            "conf": [0, 0, 0, 0],
+            "conf": [10, 40, 20, 30],
             "text": ["1", "2", "3", "4"],
         }
         ocr_line_list = sw_luadocs_ocr.ocr.recognize_line(tess_tsv)
-        self.assertEqual(ocr_line_list, [{"txt": "2 4", "box": (1, 1, 1, 1)}])
+        self.assertEqual(
+            ocr_line_list, [{"txt": "2 4", "box": (1, 1, 1, 1), "conf": 30}]
+        )
 
         # line and text
         tess_tsv = {
@@ -238,13 +245,16 @@ class TestOCR(unittest.TestCase):
             "top": [1, 2, 3, 4, 5],
             "width": [1, 2, 3, 4, 5],
             "height": [1, 2, 3, 4, 5],
-            "conf": [0, 0, 0, 0, 0],
+            "conf": [0, 20, 0, 0, 50],
             "text": ["1", "2", "3", "4", "5"],
         }
         ocr_line_list = sw_luadocs_ocr.ocr.recognize_line(tess_tsv)
         self.assertEqual(
             ocr_line_list,
-            [{"txt": "2", "box": (1, 1, 1, 1)}, {"txt": "5", "box": (4, 4, 4, 4)}],
+            [
+                {"txt": "2", "box": (1, 1, 1, 1), "conf": 20},
+                {"txt": "5", "box": (4, 4, 4, 4), "conf": 50},
+            ],
         )
 
         tess_tsv = {
@@ -553,15 +563,21 @@ class TestOCR(unittest.TestCase):
         self.assertEqual(
             ocr_line_list,
             [
-                {"txt": "Multiply two matrices together.", "box": (2, 10, 273, 19)},
+                {
+                    "txt": "Multiply two matrices together.",
+                    "box": (2, 10, 273, 19),
+                    "conf": 96.058655,
+                },
                 {
                     "txt": "out_matrix = matrix.multiply(matrixl, matrix2)",
                     "box": (14, 34, 432, 16),
+                    "conf": 76.489006,
                 },
-                {"txt": "Invert a matrix.", "box": (1, 70, 133, 14)},
+                {"txt": "Invert a matrix.", "box": (1, 70, 133, 14), "conf": 96.569305},
                 {
                     "txt": "out_matrix = matrix.invert(matrix1)",
                     "box": (14, 93, 328, 16),
+                    "conf": 75.015419,
                 },
             ],
         )

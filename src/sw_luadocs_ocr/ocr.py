@@ -72,6 +72,7 @@ def recognize_line(tess_tsv):
     ocr_line_list = []
     idx = 0
     box = None
+    conf = None
     txt = None
     while idx < len(tess_tsv["level"]):
         if tess_tsv["level"][idx] == 4:
@@ -81,6 +82,7 @@ def recognize_line(tess_tsv):
                 tess_tsv["width"][idx],
                 tess_tsv["height"][idx],
             )
+            conf = 100.0
             idx += 1
 
             txt = []
@@ -89,9 +91,10 @@ def recognize_line(tess_tsv):
                     break
                 elif tess_tsv["level"][idx] == 5:
                     txt.append(tess_tsv["text"][idx])
+                    conf = min(conf, tess_tsv["conf"][idx])
                 idx += 1
             txt = " ".join(txt)
-            ocr_line = {"txt": txt, "box": box}
+            ocr_line = {"txt": txt, "box": box, "conf": conf}
             ocr_line_list.append(ocr_line)
         else:
             idx += 1
