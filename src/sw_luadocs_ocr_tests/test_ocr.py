@@ -96,7 +96,7 @@ class TestOCR(unittest.TestCase):
         self.assertIsNot(tess_tsv, v)
         self.assertEqual(tess_tsv, v)
 
-    def test_parse_tesseract_data(self):
+    def test_recognize_line(self):
         # empty tess_tsv
         tess_tsv = {
             "level": [],
@@ -112,7 +112,7 @@ class TestOCR(unittest.TestCase):
             "conf": [],
             "text": [],
         }
-        ocr_line_list = sw_luadocs_ocr.ocr.parse_tesseract_data(tess_tsv)
+        ocr_line_list = sw_luadocs_ocr.ocr.recognize_line(tess_tsv)
         self.assertEqual(ocr_line_list, [])
 
         # no line
@@ -130,7 +130,7 @@ class TestOCR(unittest.TestCase):
             "conf": [0, 0, 0, 0],
             "text": ["", "", "", ""],
         }
-        ocr_line_list = sw_luadocs_ocr.ocr.parse_tesseract_data(tess_tsv)
+        ocr_line_list = sw_luadocs_ocr.ocr.recognize_line(tess_tsv)
         self.assertEqual(ocr_line_list, [])
 
         # line only
@@ -148,7 +148,7 @@ class TestOCR(unittest.TestCase):
             "conf": [0],
             "text": ["text"],
         }
-        ocr_line_list = sw_luadocs_ocr.ocr.parse_tesseract_data(tess_tsv)
+        ocr_line_list = sw_luadocs_ocr.ocr.recognize_line(tess_tsv)
         self.assertEqual(ocr_line_list, [{"txt": "", "box": (0, 1, 2, 3)}])
 
         # line and other
@@ -166,7 +166,7 @@ class TestOCR(unittest.TestCase):
             "conf": [0, 0, 0, 0, 0, 0],
             "text": ["1", "2", "3", "4", "5", "6"],
         }
-        ocr_line_list = sw_luadocs_ocr.ocr.parse_tesseract_data(tess_tsv)
+        ocr_line_list = sw_luadocs_ocr.ocr.recognize_line(tess_tsv)
         self.assertEqual(
             ocr_line_list,
             [{"txt": "", "box": (4, 4, 4, 4)}, {"txt": "", "box": (6, 6, 6, 6)}],
@@ -187,7 +187,7 @@ class TestOCR(unittest.TestCase):
             "conf": [0, 0],
             "text": ["4", "5"],
         }
-        ocr_line_list = sw_luadocs_ocr.ocr.parse_tesseract_data(tess_tsv)
+        ocr_line_list = sw_luadocs_ocr.ocr.recognize_line(tess_tsv)
         self.assertEqual(ocr_line_list, [{"txt": "5", "box": (4, 4, 4, 4)}])
 
         # multiple text only
@@ -205,7 +205,7 @@ class TestOCR(unittest.TestCase):
             "conf": [0, 0, 0],
             "text": ["4", "5", "6"],
         }
-        ocr_line_list = sw_luadocs_ocr.ocr.parse_tesseract_data(tess_tsv)
+        ocr_line_list = sw_luadocs_ocr.ocr.recognize_line(tess_tsv)
         self.assertEqual(ocr_line_list, [{"txt": "5 6", "box": (4, 4, 4, 4)}])
 
         # multiple text and other
@@ -223,7 +223,7 @@ class TestOCR(unittest.TestCase):
             "conf": [0, 0, 0, 0],
             "text": ["1", "2", "3", "4"],
         }
-        ocr_line_list = sw_luadocs_ocr.ocr.parse_tesseract_data(tess_tsv)
+        ocr_line_list = sw_luadocs_ocr.ocr.recognize_line(tess_tsv)
         self.assertEqual(ocr_line_list, [{"txt": "2 4", "box": (1, 1, 1, 1)}])
 
         # line and text
@@ -241,7 +241,7 @@ class TestOCR(unittest.TestCase):
             "conf": [0, 0, 0, 0, 0],
             "text": ["1", "2", "3", "4", "5"],
         }
-        ocr_line_list = sw_luadocs_ocr.ocr.parse_tesseract_data(tess_tsv)
+        ocr_line_list = sw_luadocs_ocr.ocr.recognize_line(tess_tsv)
         self.assertEqual(
             ocr_line_list,
             [{"txt": "2", "box": (1, 1, 1, 1)}, {"txt": "5", "box": (4, 4, 4, 4)}],
@@ -549,7 +549,7 @@ class TestOCR(unittest.TestCase):
                 "matrix.invert(matrix1)",
             ],
         }
-        ocr_line_list = sw_luadocs_ocr.ocr.parse_tesseract_data(tess_tsv)
+        ocr_line_list = sw_luadocs_ocr.ocr.recognize_line(tess_tsv)
         self.assertEqual(
             ocr_line_list,
             [

@@ -66,7 +66,7 @@ def preprocess(img):
     return 255 - np.amax(img, axis=2)
 
 
-def parse_tesseract_data(tess_tsv):
+def recognize_line(tess_tsv):
     tess_tsv = as_tesseract_tsv(tess_tsv)
 
     ocr_line_list = []
