@@ -54,6 +54,14 @@ def as_recognized_line(v):
     return rline
 
 
+def as_recognized_line_list(v):
+    rline_list = []
+    for rline in v:
+        rline = as_recognized_line(rline)
+        rline_list.append(rline)
+    return rline_list
+
+
 def preprocess(img):
     img = convert_image(img, dst_mode="RGB")
     return 255 - np.amax(img, axis=2)

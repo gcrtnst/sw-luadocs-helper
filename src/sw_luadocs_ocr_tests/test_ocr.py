@@ -96,6 +96,35 @@ class TestOCR(unittest.TestCase):
         with self.assertRaises(ValueError):
             sw_luadocs_ocr.ocr.as_recognized_line(v)
 
+    def test_as_recognized_line_list(self):
+        # type conversion
+        v = (
+            {"txt": 0, "box": ["1", "2", "3", "4"], "conf": "5"},
+            {
+                "txt": 6,
+                "box": ["7", "8", "9", "10"],
+                "conf": "11",
+            },
+        )
+        rline_list = sw_luadocs_ocr.ocr.as_recognized_line_list(v)
+        self.assertEqual(
+            rline_list,
+            [
+                {"txt": "0", "box": (1, 2, 3, 4), "conf": 5},
+                {
+                    "txt": "6",
+                    "box": (7, 8, 9, 10),
+                    "conf": 11,
+                },
+            ],
+        )
+
+        # copy
+        v = []
+        rline_list = sw_luadocs_ocr.ocr.as_recognized_line_list(v)
+        self.assertIsNot(rline_list, v)
+        self.assertEqual(rline_list, v)
+
     def test_recognize_line(self):
         # empty tess_tsv
         tess_tsv = {
