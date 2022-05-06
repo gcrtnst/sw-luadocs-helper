@@ -18,42 +18,77 @@ def convert_image(
     return np.asarray(pil)
 
 
+def as_tesseract_tsv(v):
+    if not isinstance(v, dict):
+        raise TypeError("v is not dict")
+    for key in (
+        "level",
+        "page_num",
+        "block_num",
+        "par_num",
+        "line_num",
+        "word_num",
+        "left",
+        "top",
+        "width",
+        "height",
+        "conf",
+        "text",
+    ):
+        if key not in v:
+            raise KeyError(f'v["{key}"] is missing')
+        if not isinstance(v[key], list):
+            raise TypeError(f'v["{key}"] is not list')
+        if len(v[key]) != len(v["level"]):
+            raise ValueError("list lengths do not match")
+
+    tess_tsv = {}
+    for key in (
+        "level",
+        "page_num",
+        "block_num",
+        "par_num",
+        "line_num",
+        "word_num",
+        "left",
+        "top",
+        "width",
+        "height",
+    ):
+        tess_tsv[key] = list(map(int, v[key]))
+    tess_tsv["conf"] = list(map(float, v["conf"]))
+    tess_tsv["text"] = list(map(str, v["text"]))
+    return tess_tsv
+
+
 def preprocess(img):
     img = convert_image(img, dst_mode="RGB")
     return 255 - np.amax(img, axis=2)
 
 
-def parse_tesseract_data(data):
-    if not isinstance(data, dict):
-        raise TypeError("data is not dict")
-    for key in "level", "left", "top", "width", "height", "text":
-        if key not in data:
-            raise KeyError(f'data["{key}"] is missing')
-        if not isinstance(data[key], list):
-            raise TypeError(f'data["{key}"] is not list')
-        if len(data[key]) != len(data["level"]):
-            raise ValueError("list lengths do not match")
+def parse_tesseract_data(tess_tsv):
+    tess_tsv = as_tesseract_tsv(tess_tsv)
 
     ocr_line_list = []
     idx = 0
     box = None
     txt = None
-    while idx < len(data["level"]):
-        if data["level"][idx] == 4:
+    while idx < len(tess_tsv["level"]):
+        if tess_tsv["level"][idx] == 4:
             box = (
-                data["left"][idx],
-                data["top"][idx],
-                data["width"][idx],
-                data["height"][idx],
+                tess_tsv["left"][idx],
+                tess_tsv["top"][idx],
+                tess_tsv["width"][idx],
+                tess_tsv["height"][idx],
             )
             idx += 1
 
             txt = []
-            while idx < len(data["level"]):
-                if data["level"][idx] < 5:
+            while idx < len(tess_tsv["level"]):
+                if tess_tsv["level"][idx] < 5:
                     break
-                elif data["level"][idx] == 5:
-                    txt.append(data["text"][idx])
+                elif tess_tsv["level"][idx] == 5:
+                    txt.append(tess_tsv["text"][idx])
                 idx += 1
             txt = " ".join(txt)
             ocr_line = {"txt": txt, "box": box}
