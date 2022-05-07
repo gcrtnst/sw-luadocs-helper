@@ -95,8 +95,9 @@ class TestOCR(unittest.TestCase):
             "conf": [],
             "text": [],
         }
-        rline_list = sw_luadocs_ocr.ocr.combine_tesstsv_into_tessline(tesstsv)
-        self.assertEqual(rline_list, [])
+        tessline_list = sw_luadocs_ocr.ocr.combine_tesstsv_into_tessline(tesstsv)
+        tessline_list = list(tessline_list)
+        self.assertEqual(tessline_list, [])
 
         # no line
         tesstsv = {
@@ -113,8 +114,9 @@ class TestOCR(unittest.TestCase):
             "conf": [0, 0, 0, 0],
             "text": ["", "", "", ""],
         }
-        rline_list = sw_luadocs_ocr.ocr.combine_tesstsv_into_tessline(tesstsv)
-        self.assertEqual(rline_list, [])
+        tessline_list = sw_luadocs_ocr.ocr.combine_tesstsv_into_tessline(tesstsv)
+        tessline_list = list(tessline_list)
+        self.assertEqual(tessline_list, [])
 
         # line only
         tesstsv = {
@@ -131,8 +133,9 @@ class TestOCR(unittest.TestCase):
             "conf": [0],
             "text": ["text"],
         }
-        rline_list = sw_luadocs_ocr.ocr.combine_tesstsv_into_tessline(tesstsv)
-        self.assertEqual(rline_list, [{"txt": "", "box": (0, 1, 2, 3)}])
+        tessline_list = sw_luadocs_ocr.ocr.combine_tesstsv_into_tessline(tesstsv)
+        tessline_list = list(tessline_list)
+        self.assertEqual(tessline_list, [{"txt": "", "box": (0, 1, 2, 3)}])
 
         # line and other
         tesstsv = {
@@ -149,9 +152,10 @@ class TestOCR(unittest.TestCase):
             "conf": [0, 0, 0, 0, 0, 0],
             "text": ["1", "2", "3", "4", "5", "6"],
         }
-        rline_list = sw_luadocs_ocr.ocr.combine_tesstsv_into_tessline(tesstsv)
+        tessline_list = sw_luadocs_ocr.ocr.combine_tesstsv_into_tessline(tesstsv)
+        tessline_list = list(tessline_list)
         self.assertEqual(
-            rline_list,
+            tessline_list,
             [
                 {"txt": "", "box": (4, 4, 4, 4)},
                 {"txt": "", "box": (6, 6, 6, 6)},
@@ -173,8 +177,9 @@ class TestOCR(unittest.TestCase):
             "conf": [0, 0],
             "text": ["4", "5"],
         }
-        rline_list = sw_luadocs_ocr.ocr.combine_tesstsv_into_tessline(tesstsv)
-        self.assertEqual(rline_list, [{"txt": "5", "box": (4, 4, 4, 4)}])
+        tessline_list = sw_luadocs_ocr.ocr.combine_tesstsv_into_tessline(tesstsv)
+        tessline_list = list(tessline_list)
+        self.assertEqual(tessline_list, [{"txt": "5", "box": (4, 4, 4, 4)}])
 
         # multiple text only
         tesstsv = {
@@ -191,8 +196,9 @@ class TestOCR(unittest.TestCase):
             "conf": [0, 0, 0],
             "text": ["4", "5", "6"],
         }
-        rline_list = sw_luadocs_ocr.ocr.combine_tesstsv_into_tessline(tesstsv)
-        self.assertEqual(rline_list, [{"txt": "5 6", "box": (4, 4, 4, 4)}])
+        tessline_list = sw_luadocs_ocr.ocr.combine_tesstsv_into_tessline(tesstsv)
+        tessline_list = list(tessline_list)
+        self.assertEqual(tessline_list, [{"txt": "5 6", "box": (4, 4, 4, 4)}])
 
         # multiple text and other
         tesstsv = {
@@ -209,8 +215,9 @@ class TestOCR(unittest.TestCase):
             "conf": [0, 0, 0, 0],
             "text": ["1", "2", "3", "4"],
         }
-        rline_list = sw_luadocs_ocr.ocr.combine_tesstsv_into_tessline(tesstsv)
-        self.assertEqual(rline_list, [{"txt": "2 4", "box": (1, 1, 1, 1)}])
+        tessline_list = sw_luadocs_ocr.ocr.combine_tesstsv_into_tessline(tesstsv)
+        tessline_list = list(tessline_list)
+        self.assertEqual(tessline_list, [{"txt": "2 4", "box": (1, 1, 1, 1)}])
 
         # line and text
         tesstsv = {
@@ -227,9 +234,10 @@ class TestOCR(unittest.TestCase):
             "conf": [0, 0, 0, 0, 0],
             "text": ["1", "2", "3", "4", "5"],
         }
-        rline_list = sw_luadocs_ocr.ocr.combine_tesstsv_into_tessline(tesstsv)
+        tessline_list = sw_luadocs_ocr.ocr.combine_tesstsv_into_tessline(tesstsv)
+        tessline_list = list(tessline_list)
         self.assertEqual(
-            rline_list,
+            tessline_list,
             [
                 {"txt": "2", "box": (1, 1, 1, 1)},
                 {"txt": "5", "box": (4, 4, 4, 4)},
@@ -538,9 +546,10 @@ class TestOCR(unittest.TestCase):
                 "matrix.invert(matrix1)",
             ],
         }
-        rline_list = sw_luadocs_ocr.ocr.combine_tesstsv_into_tessline(tesstsv)
+        tessline_list = sw_luadocs_ocr.ocr.combine_tesstsv_into_tessline(tesstsv)
+        tessline_list = list(tessline_list)
         self.assertEqual(
-            rline_list,
+            tessline_list,
             [
                 {
                     "txt": "Multiply two matrices together.",

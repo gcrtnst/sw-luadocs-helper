@@ -51,7 +51,6 @@ def preprocess(img):
 def combine_tesstsv_into_tessline(tesstsv):
     tesstsv = as_tesstsv(tesstsv)
 
-    rline_list = []
     idx = 0
     box = None
     txt = None
@@ -73,8 +72,6 @@ def combine_tesstsv_into_tessline(tesstsv):
                     txt.append(tesstsv["text"][idx])
                 idx += 1
             txt = " ".join(txt)
-            rline = {"txt": txt, "box": box}
-            rline_list.append(rline)
+            yield {"txt": txt, "box": box}
         else:
             idx += 1
-    return rline_list
