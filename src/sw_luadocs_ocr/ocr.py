@@ -47,7 +47,6 @@ def as_tessline(v):
     tessline = {}
     tessline["txt"] = str(v["txt"])
     tessline["box"] = tuple(map(int, v["box"]))
-    tessline["conf"] = float(v["conf"])
 
     if len(tessline["box"]) != 4:
         raise ValueError('v["box"] length is invalid')
