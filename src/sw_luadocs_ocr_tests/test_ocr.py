@@ -734,3 +734,24 @@ class TestOCR(unittest.TestCase):
             bg_thresh_rgb=(0, 0, 0),
         )
         self.assertEqual(kind, "head")
+
+    def test_calc_code_indent(self):
+        # space_w <= 0
+        with self.assertRaises(ValueError):
+            sw_luadocs_ocr.ocr.calc_code_indent(line_x=0, base_x=0, space_w=0)
+
+        # line_x < base_x
+        indent = sw_luadocs_ocr.ocr.calc_code_indent(line_x=0, base_x=1, space_w=0.1)
+        self.assertEqual(indent, 0)
+
+        # zero
+        indent = sw_luadocs_ocr.ocr.calc_code_indent(line_x=1, base_x=1, space_w=0.1)
+        self.assertEqual(indent, 0)
+
+        # normal
+        indent = sw_luadocs_ocr.ocr.calc_code_indent(line_x=2, base_x=1, space_w=0.1)
+        self.assertEqual(indent, 10)
+
+        # round
+        indent = sw_luadocs_ocr.ocr.calc_code_indent(line_x=2, base_x=1, space_w=0.4)
+        self.assertEqual(indent, 2)

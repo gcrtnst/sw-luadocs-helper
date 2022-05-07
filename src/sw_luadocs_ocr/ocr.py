@@ -119,3 +119,14 @@ def categorize_line(*, capture_img, tessline, code_x, head_thresh_s, bg_thresh_r
     )
     char_h, char_l, char_s = char_h * 255, char_l * 255, char_s * 255
     return "head" if char_s >= head_thresh_s else "body"
+
+
+def calc_code_indent(*, line_x, base_x, space_w):
+    line_x = int(line_x)
+    base_x = int(base_x)
+    space_w = float(space_w)
+
+    if space_w <= 0:
+        raise ValueError("space_w is less than zero")
+
+    return max(0, round((line_x - base_x) / space_w))
