@@ -18,7 +18,7 @@ def convert_image(
     return np.asarray(pil)
 
 
-def as_tesseract_tsv(v):
+def as_tesstsv(v):
     tess_tsv = {}
     for key in (
         "level",
@@ -49,7 +49,7 @@ def preprocess(img):
 
 
 def combine_tesstsv_into_tessline(tess_tsv):
-    tess_tsv = as_tesseract_tsv(tess_tsv)
+    tess_tsv = as_tesstsv(tess_tsv)
 
     rline_list = []
     idx = 0

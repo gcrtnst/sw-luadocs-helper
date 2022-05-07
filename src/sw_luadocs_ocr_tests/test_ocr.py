@@ -4,7 +4,7 @@ import unittest
 
 
 class TestOCR(unittest.TestCase):
-    def test_as_tesseract_tsv(self):
+    def test_as_tesstsv(self):
         # type conversion
         v = {
             "level": ["0", "1"],
@@ -20,7 +20,7 @@ class TestOCR(unittest.TestCase):
             "conf": ["0.5", "1.5"],
             "text": [100, 101],
         }
-        tess_tsv = sw_luadocs_ocr.ocr.as_tesseract_tsv(v)
+        tess_tsv = sw_luadocs_ocr.ocr.as_tesstsv(v)
         self.assertEqual(
             tess_tsv,
             {
@@ -54,7 +54,7 @@ class TestOCR(unittest.TestCase):
             "conf": [0.5, 1.5],
             "text": ["100", "101"],
         }
-        tess_tsv = sw_luadocs_ocr.ocr.as_tesseract_tsv(v)
+        tess_tsv = sw_luadocs_ocr.ocr.as_tesstsv(v)
         self.assertIsNot(tess_tsv, v)
         self.assertEqual(tess_tsv, v)
 
@@ -77,7 +77,7 @@ class TestOCR(unittest.TestCase):
             v2 = copy.deepcopy(v)
             v2[key] = [0, 1]
             with self.assertRaises(ValueError):
-                sw_luadocs_ocr.ocr.as_tesseract_tsv(v2)
+                sw_luadocs_ocr.ocr.as_tesstsv(v2)
 
     def test_combine_tesstsv_into_tessline(self):
         # empty tess_tsv
