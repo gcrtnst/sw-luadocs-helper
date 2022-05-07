@@ -43,6 +43,17 @@ def as_tesstsv(v):
     return tesstsv
 
 
+def as_recognized_line(v):
+    rline = {}
+    rline["txt"] = str(v["txt"])
+    rline["box"] = tuple(map(int, v["box"]))
+    rline["conf"] = float(v["conf"])
+
+    if len(rline["box"]) != 4:
+        raise ValueError('v["box"] length is invalid')
+    return rline
+
+
 def preprocess(img):
     img = convert_image(img, dst_mode="RGB")
     return 255 - np.amax(img, axis=2)
