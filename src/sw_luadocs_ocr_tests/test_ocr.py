@@ -79,22 +79,22 @@ class TestOCR(unittest.TestCase):
             with self.assertRaises(ValueError):
                 sw_luadocs_ocr.ocr.as_tesstsv(v2)
 
-    def test_as_recognized_line(self):
+    def as_tessline(self):
         # type convertsion
         v = {"txt": 0, "box": ["1", "2", "3", "4"], "conf": "5"}
-        rline = sw_luadocs_ocr.ocr.as_recognized_line(v)
+        rline = sw_luadocs_ocr.ocr.as_tessline(v)
         self.assertEqual(rline, {"txt": "0", "box": (1, 2, 3, 4), "conf": 5.0})
 
         # copy
         v = {"txt": "0", "box": (1, 2, 3, 4), "conf": 5.0}
-        rline = sw_luadocs_ocr.ocr.as_recognized_line(v)
+        rline = sw_luadocs_ocr.ocr.as_tessline(v)
         self.assertIsNot(rline, v)
         self.assertEqual(rline, v)
 
         # box length
         v = {"txt": "0", "box": (1, 2, 3, 4, 5), "conf": 5.0}
         with self.assertRaises(ValueError):
-            sw_luadocs_ocr.ocr.as_recognized_line(v)
+            sw_luadocs_ocr.ocr.as_tessline(v)
 
     def test_combine_tesstsv_into_tessline(self):
         # empty tesstsv

@@ -43,7 +43,7 @@ def as_tesstsv(v):
     return tesstsv
 
 
-def as_recognized_line(v):
+def as_tessline(v):
     rline = {}
     rline["txt"] = str(v["txt"])
     rline["box"] = tuple(map(int, v["box"]))
