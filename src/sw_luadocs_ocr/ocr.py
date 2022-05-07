@@ -44,14 +44,14 @@ def as_tesstsv(v):
 
 
 def as_tessline(v):
-    rline = {}
-    rline["txt"] = str(v["txt"])
-    rline["box"] = tuple(map(int, v["box"]))
-    rline["conf"] = float(v["conf"])
+    tessline = {}
+    tessline["txt"] = str(v["txt"])
+    tessline["box"] = tuple(map(int, v["box"]))
+    tessline["conf"] = float(v["conf"])
 
-    if len(rline["box"]) != 4:
+    if len(tessline["box"]) != 4:
         raise ValueError('v["box"] length is invalid')
-    return rline
+    return tessline
 
 
 def preprocess(img):

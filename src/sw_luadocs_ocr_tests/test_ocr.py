@@ -82,14 +82,14 @@ class TestOCR(unittest.TestCase):
     def as_tessline(self):
         # type convertsion
         v = {"txt": 0, "box": ["1", "2", "3", "4"], "conf": "5"}
-        rline = sw_luadocs_ocr.ocr.as_tessline(v)
-        self.assertEqual(rline, {"txt": "0", "box": (1, 2, 3, 4), "conf": 5.0})
+        tessline = sw_luadocs_ocr.ocr.as_tessline(v)
+        self.assertEqual(tessline, {"txt": "0", "box": (1, 2, 3, 4), "conf": 5.0})
 
         # copy
         v = {"txt": "0", "box": (1, 2, 3, 4), "conf": 5.0}
-        rline = sw_luadocs_ocr.ocr.as_tessline(v)
-        self.assertIsNot(rline, v)
-        self.assertEqual(rline, v)
+        tessline = sw_luadocs_ocr.ocr.as_tessline(v)
+        self.assertIsNot(tessline, v)
+        self.assertEqual(tessline, v)
 
         # box length
         v = {"txt": "0", "box": (1, 2, 3, 4, 5), "conf": 5.0}
