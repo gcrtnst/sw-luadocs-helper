@@ -48,7 +48,7 @@ def preprocess(img):
     return 255 - np.amax(img, axis=2)
 
 
-def recognize_line(tess_tsv):
+def combine_tesstsv_into_tessline(tess_tsv):
     tess_tsv = as_tesseract_tsv(tess_tsv)
 
     rline_list = []
