@@ -1,4 +1,5 @@
 import copy
+import numpy as np
 import sw_luadocs_ocr.ocr
 import unittest
 
@@ -583,3 +584,153 @@ class TestOCR(unittest.TestCase):
                 },
             ],
         )
+
+    def test_categorize_line(self):
+        # code
+        kind = sw_luadocs_ocr.ocr.categorize_line(
+            capture_img=np.zeros((1, 1, 3), dtype=np.uint8),
+            tessline={"txt": "", "box": (1, 0, 0, 0)},
+            code_x=1,
+            head_thresh_s=0,
+            bg_thresh_rgb=(0, 0, 0),
+        )
+        self.assertEqual(kind, "code")
+
+        # body: empty box
+        kind = sw_luadocs_ocr.ocr.categorize_line(
+            capture_img=np.zeros((1, 1, 3), dtype=np.uint8),
+            tessline={"txt": "", "box": (0, 0, 0, 0)},
+            code_x=1,
+            head_thresh_s=0,
+            bg_thresh_rgb=(0, 0, 0),
+        )
+        self.assertEqual(kind, "body")
+
+        # body: bg only
+        kind = sw_luadocs_ocr.ocr.categorize_line(
+            capture_img=np.zeros((10, 10, 3), dtype=np.uint8),
+            tessline={"txt": "", "box": (0, 0, 1, 1)},
+            code_x=1,
+            head_thresh_s=0,
+            bg_thresh_rgb=(0, 0, 0),
+        )
+        self.assertEqual(kind, "body")
+
+        # body: low saturation
+        kind = sw_luadocs_ocr.ocr.categorize_line(
+            capture_img=np.ones((10, 10, 3), dtype=np.uint8),
+            tessline={"txt": "", "box": (0, 0, 1, 1)},
+            code_x=1,
+            head_thresh_s=1,
+            bg_thresh_rgb=(0, 0, 0),
+        )
+        self.assertEqual(kind, "body")
+
+        # head
+        kind = sw_luadocs_ocr.ocr.categorize_line(
+            capture_img=np.ones((10, 10, 3), dtype=np.uint8),
+            tessline={"txt": "", "box": (0, 0, 1, 1)},
+            code_x=1,
+            head_thresh_s=0,
+            bg_thresh_rgb=(0, 0, 0),
+        )
+        self.assertEqual(kind, "head")
+
+        # crop
+        capture_img = np.ones((10, 10, 3), dtype=np.uint8)
+        capture_img[2:6, 1:4, :] = 0
+        kind = sw_luadocs_ocr.ocr.categorize_line(
+            capture_img=capture_img,
+            tessline={"txt": "", "box": (1, 2, 3, 4)},
+            code_x=10,
+            head_thresh_s=0,
+            bg_thresh_rgb=(0, 0, 0),
+        )
+        self.assertEqual(kind, "body")
+
+        # bg_thresh: body
+        kind = sw_luadocs_ocr.ocr.categorize_line(
+            capture_img=np.ones((10, 10, 3), dtype=np.uint8),
+            tessline={"txt": "", "box": (0, 0, 1, 1)},
+            code_x=1,
+            head_thresh_s=0,
+            bg_thresh_rgb=(1, 1, 1),
+        )
+        self.assertEqual(kind, "body")
+
+        # bg_thresh: r
+        kind = sw_luadocs_ocr.ocr.categorize_line(
+            capture_img=np.ones((10, 10, 3), dtype=np.uint8),
+            tessline={"txt": "", "box": (0, 0, 1, 1)},
+            code_x=1,
+            head_thresh_s=0,
+            bg_thresh_rgb=(0, 1, 1),
+        )
+        self.assertEqual(kind, "head")
+
+        # bg_thresh: g
+        kind = sw_luadocs_ocr.ocr.categorize_line(
+            capture_img=np.ones((10, 10, 3), dtype=np.uint8),
+            tessline={"txt": "", "box": (0, 0, 1, 1)},
+            code_x=1,
+            head_thresh_s=0,
+            bg_thresh_rgb=(1, 0, 1),
+        )
+        self.assertEqual(kind, "head")
+
+        # bg_thresh: b
+        kind = sw_luadocs_ocr.ocr.categorize_line(
+            capture_img=np.ones((10, 10, 3), dtype=np.uint8),
+            tessline={"txt": "", "box": (0, 0, 1, 1)},
+            code_x=1,
+            head_thresh_s=0,
+            bg_thresh_rgb=(1, 1, 0),
+        )
+        self.assertEqual(kind, "head")
+
+        # saturation: zero
+        capture_img = np.ones((10, 10, 3), dtype=np.uint8)
+        kind = sw_luadocs_ocr.ocr.categorize_line(
+            capture_img=capture_img,
+            tessline={"txt": "", "box": (0, 0, 10, 10)},
+            code_x=1,
+            head_thresh_s=1,
+            bg_thresh_rgb=(0, 0, 0),
+        )
+        self.assertEqual(kind, "body")
+
+        # saturation: r max
+        capture_img = np.ones((10, 10, 3), dtype=np.uint8)
+        capture_img[:, :, 0] = 255
+        kind = sw_luadocs_ocr.ocr.categorize_line(
+            capture_img=capture_img,
+            tessline={"txt": "", "box": (0, 0, 10, 10)},
+            code_x=1,
+            head_thresh_s=255,
+            bg_thresh_rgb=(0, 0, 0),
+        )
+        self.assertEqual(kind, "head")
+
+        # saturation: g max
+        capture_img = np.ones((10, 10, 3), dtype=np.uint8)
+        capture_img[:, :, 1] = 255
+        kind = sw_luadocs_ocr.ocr.categorize_line(
+            capture_img=capture_img,
+            tessline={"txt": "", "box": (0, 0, 10, 10)},
+            code_x=1,
+            head_thresh_s=255,
+            bg_thresh_rgb=(0, 0, 0),
+        )
+        self.assertEqual(kind, "head")
+
+        # saturation: b max
+        capture_img = np.ones((10, 10, 3), dtype=np.uint8)
+        capture_img[:, :, 2] = 255
+        kind = sw_luadocs_ocr.ocr.categorize_line(
+            capture_img=capture_img,
+            tessline={"txt": "", "box": (0, 0, 10, 10)},
+            code_x=1,
+            head_thresh_s=255,
+            bg_thresh_rgb=(0, 0, 0),
+        )
+        self.assertEqual(kind, "head")

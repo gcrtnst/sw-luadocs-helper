@@ -1,3 +1,4 @@
+import colorsys
 import numpy as np
 import PIL.Image
 
@@ -85,3 +86,36 @@ def combine_tesstsv_into_tessline(tesstsv):
             yield {"txt": txt, "box": box}
         else:
             idx += 1
+
+
+def categorize_line(*, capture_img, tessline, code_x, head_thresh_s, bg_thresh_rgb):
+    capture_img = convert_image(capture_img, dst_mode="RGB")
+    tessline = as_tessline(tessline)
+    code_x = int(code_x)
+    head_thresh_s = int(head_thresh_s)
+    bg_thresh_r, bg_thresh_g, bg_thresh_b = map(int, bg_thresh_rgb)
+
+    line_x, line_y, line_w, line_h = tessline["box"]
+    if line_x >= code_x:
+        return "code"
+
+    capture_line_img = capture_img[line_y : line_y + line_h, line_x : line_x + line_w]
+    capture_line_thresh = np.zeros(capture_line_img.shape, dtype=np.uint8)
+    capture_line_thresh[:, :, 0] = bg_thresh_r
+    capture_line_thresh[:, :, 1] = bg_thresh_g
+    capture_line_thresh[:, :, 2] = bg_thresh_b
+    capture_line_mask = np.any(
+        capture_line_img > capture_line_thresh, axis=2, keepdims=True
+    )
+    capture_line_mask = np.broadcast_to(capture_line_mask, capture_line_img.shape)
+    if not np.any(capture_line_mask):
+        return "body"
+
+    char_r, char_g, char_b = np.average(
+        capture_line_img, axis=(0, 1), weights=capture_line_mask
+    )
+    char_h, char_l, char_s = colorsys.rgb_to_hls(
+        char_r / 255, char_g / 255, char_b / 255
+    )
+    char_h, char_l, char_s = char_h * 255, char_l * 255, char_s * 255
+    return "head" if char_s >= head_thresh_s else "body"
