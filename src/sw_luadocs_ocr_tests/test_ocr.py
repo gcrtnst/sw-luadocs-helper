@@ -20,9 +20,9 @@ class TestOCR(unittest.TestCase):
             "conf": ["0.5", "1.5"],
             "text": [100, 101],
         }
-        tess_tsv = sw_luadocs_ocr.ocr.as_tesstsv(v)
+        tesstsv = sw_luadocs_ocr.ocr.as_tesstsv(v)
         self.assertEqual(
-            tess_tsv,
+            tesstsv,
             {
                 "level": [0, 1],
                 "page_num": [10, 11],
@@ -54,9 +54,9 @@ class TestOCR(unittest.TestCase):
             "conf": [0.5, 1.5],
             "text": ["100", "101"],
         }
-        tess_tsv = sw_luadocs_ocr.ocr.as_tesstsv(v)
-        self.assertIsNot(tess_tsv, v)
-        self.assertEqual(tess_tsv, v)
+        tesstsv = sw_luadocs_ocr.ocr.as_tesstsv(v)
+        self.assertIsNot(tesstsv, v)
+        self.assertEqual(tesstsv, v)
 
         # wrong length of v[key]
         v = {
@@ -80,8 +80,8 @@ class TestOCR(unittest.TestCase):
                 sw_luadocs_ocr.ocr.as_tesstsv(v2)
 
     def test_combine_tesstsv_into_tessline(self):
-        # empty tess_tsv
-        tess_tsv = {
+        # empty tesstsv
+        tesstsv = {
             "level": [],
             "page_num": [],
             "block_num": [],
@@ -95,11 +95,11 @@ class TestOCR(unittest.TestCase):
             "conf": [],
             "text": [],
         }
-        rline_list = sw_luadocs_ocr.ocr.combine_tesstsv_into_tessline(tess_tsv)
+        rline_list = sw_luadocs_ocr.ocr.combine_tesstsv_into_tessline(tesstsv)
         self.assertEqual(rline_list, [])
 
         # no line
-        tess_tsv = {
+        tesstsv = {
             "level": [1, 2, 3, 5],
             "page_num": [1, 1, 1, 1],
             "block_num": [1, 1, 1, 1],
@@ -113,11 +113,11 @@ class TestOCR(unittest.TestCase):
             "conf": [0, 0, 0, 0],
             "text": ["", "", "", ""],
         }
-        rline_list = sw_luadocs_ocr.ocr.combine_tesstsv_into_tessline(tess_tsv)
+        rline_list = sw_luadocs_ocr.ocr.combine_tesstsv_into_tessline(tesstsv)
         self.assertEqual(rline_list, [])
 
         # line only
-        tess_tsv = {
+        tesstsv = {
             "level": [4],
             "page_num": [1],
             "block_num": [1],
@@ -131,11 +131,11 @@ class TestOCR(unittest.TestCase):
             "conf": [0],
             "text": ["text"],
         }
-        rline_list = sw_luadocs_ocr.ocr.combine_tesstsv_into_tessline(tess_tsv)
+        rline_list = sw_luadocs_ocr.ocr.combine_tesstsv_into_tessline(tesstsv)
         self.assertEqual(rline_list, [{"txt": "", "box": (0, 1, 2, 3), "conf": 100}])
 
         # line and other
-        tess_tsv = {
+        tesstsv = {
             "level": [1, 2, 3, 4, 3, 4],
             "page_num": [1, 1, 1, 1, 1, 1],
             "block_num": [1, 1, 1, 1, 1, 1],
@@ -149,7 +149,7 @@ class TestOCR(unittest.TestCase):
             "conf": [0, 0, 0, 0, 0, 0],
             "text": ["1", "2", "3", "4", "5", "6"],
         }
-        rline_list = sw_luadocs_ocr.ocr.combine_tesstsv_into_tessline(tess_tsv)
+        rline_list = sw_luadocs_ocr.ocr.combine_tesstsv_into_tessline(tesstsv)
         self.assertEqual(
             rline_list,
             [
@@ -159,7 +159,7 @@ class TestOCR(unittest.TestCase):
         )
 
         # single text only
-        tess_tsv = {
+        tesstsv = {
             "level": [4, 5],
             "page_num": [1, 1],
             "block_num": [1, 1],
@@ -173,11 +173,11 @@ class TestOCR(unittest.TestCase):
             "conf": [40, 50],
             "text": ["4", "5"],
         }
-        rline_list = sw_luadocs_ocr.ocr.combine_tesstsv_into_tessline(tess_tsv)
+        rline_list = sw_luadocs_ocr.ocr.combine_tesstsv_into_tessline(tesstsv)
         self.assertEqual(rline_list, [{"txt": "5", "box": (4, 4, 4, 4), "conf": 50}])
 
         # multiple text only
-        tess_tsv = {
+        tesstsv = {
             "level": [4, 5, 5],
             "page_num": [1, 1, 1],
             "block_num": [1, 1, 1],
@@ -191,11 +191,11 @@ class TestOCR(unittest.TestCase):
             "conf": [40, 50, 60],
             "text": ["4", "5", "6"],
         }
-        rline_list = sw_luadocs_ocr.ocr.combine_tesstsv_into_tessline(tess_tsv)
+        rline_list = sw_luadocs_ocr.ocr.combine_tesstsv_into_tessline(tesstsv)
         self.assertEqual(rline_list, [{"txt": "5 6", "box": (4, 4, 4, 4), "conf": 50}])
 
         # multiple text and other
-        tess_tsv = {
+        tesstsv = {
             "level": [4, 5, 6, 5],
             "page_num": [1, 1, 1, 1],
             "block_num": [1, 1, 1, 1],
@@ -209,11 +209,11 @@ class TestOCR(unittest.TestCase):
             "conf": [10, 40, 20, 30],
             "text": ["1", "2", "3", "4"],
         }
-        rline_list = sw_luadocs_ocr.ocr.combine_tesstsv_into_tessline(tess_tsv)
+        rline_list = sw_luadocs_ocr.ocr.combine_tesstsv_into_tessline(tesstsv)
         self.assertEqual(rline_list, [{"txt": "2 4", "box": (1, 1, 1, 1), "conf": 30}])
 
         # line and text
-        tess_tsv = {
+        tesstsv = {
             "level": [4, 5, 3, 4, 5],
             "page_num": [1, 1, 1, 1, 1],
             "block_num": [1, 1, 1, 1, 1],
@@ -227,7 +227,7 @@ class TestOCR(unittest.TestCase):
             "conf": [0, 20, 0, 0, 50],
             "text": ["1", "2", "3", "4", "5"],
         }
-        rline_list = sw_luadocs_ocr.ocr.combine_tesstsv_into_tessline(tess_tsv)
+        rline_list = sw_luadocs_ocr.ocr.combine_tesstsv_into_tessline(tesstsv)
         self.assertEqual(
             rline_list,
             [
@@ -236,7 +236,7 @@ class TestOCR(unittest.TestCase):
             ],
         )
 
-        tess_tsv = {
+        tesstsv = {
             "level": [
                 1,
                 2,
@@ -538,7 +538,7 @@ class TestOCR(unittest.TestCase):
                 "matrix.invert(matrix1)",
             ],
         }
-        rline_list = sw_luadocs_ocr.ocr.combine_tesstsv_into_tessline(tess_tsv)
+        rline_list = sw_luadocs_ocr.ocr.combine_tesstsv_into_tessline(tesstsv)
         self.assertEqual(
             rline_list,
             [

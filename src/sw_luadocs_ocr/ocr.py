@@ -19,7 +19,7 @@ def convert_image(
 
 
 def as_tesstsv(v):
-    tess_tsv = {}
+    tesstsv = {}
     for key in (
         "level",
         "page_num",
@@ -32,15 +32,15 @@ def as_tesstsv(v):
         "width",
         "height",
     ):
-        tess_tsv[key] = list(map(int, v[key]))
-    tess_tsv["conf"] = list(map(float, v["conf"]))
-    tess_tsv["text"] = list(map(str, v["text"]))
+        tesstsv[key] = list(map(int, v[key]))
+    tesstsv["conf"] = list(map(float, v["conf"]))
+    tesstsv["text"] = list(map(str, v["text"]))
 
-    for key in tess_tsv:
-        if len(tess_tsv[key]) != len(tess_tsv["level"]):
+    for key in tesstsv:
+        if len(tesstsv[key]) != len(tesstsv["level"]):
             raise ValueError("list lengths do not match")
 
-    return tess_tsv
+    return tesstsv
 
 
 def preprocess(img):
@@ -48,32 +48,32 @@ def preprocess(img):
     return 255 - np.amax(img, axis=2)
 
 
-def combine_tesstsv_into_tessline(tess_tsv):
-    tess_tsv = as_tesstsv(tess_tsv)
+def combine_tesstsv_into_tessline(tesstsv):
+    tesstsv = as_tesstsv(tesstsv)
 
     rline_list = []
     idx = 0
     box = None
     conf = None
     txt = None
-    while idx < len(tess_tsv["level"]):
-        if tess_tsv["level"][idx] == 4:
+    while idx < len(tesstsv["level"]):
+        if tesstsv["level"][idx] == 4:
             box = (
-                tess_tsv["left"][idx],
-                tess_tsv["top"][idx],
-                tess_tsv["width"][idx],
-                tess_tsv["height"][idx],
+                tesstsv["left"][idx],
+                tesstsv["top"][idx],
+                tesstsv["width"][idx],
+                tesstsv["height"][idx],
             )
             conf = 100.0
             idx += 1
 
             txt = []
-            while idx < len(tess_tsv["level"]):
-                if tess_tsv["level"][idx] < 5:
+            while idx < len(tesstsv["level"]):
+                if tesstsv["level"][idx] < 5:
                     break
-                elif tess_tsv["level"][idx] == 5:
-                    txt.append(tess_tsv["text"][idx])
-                    conf = min(conf, tess_tsv["conf"][idx])
+                elif tesstsv["level"][idx] == 5:
+                    txt.append(tesstsv["text"][idx])
+                    conf = min(conf, tesstsv["conf"][idx])
                 idx += 1
             txt = " ".join(txt)
             rline = {"txt": txt, "box": box, "conf": conf}
