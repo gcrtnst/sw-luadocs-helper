@@ -54,7 +54,6 @@ def combine_tesstsv_into_tessline(tesstsv):
     rline_list = []
     idx = 0
     box = None
-    conf = None
     txt = None
     while idx < len(tesstsv["level"]):
         if tesstsv["level"][idx] == 4:
@@ -64,7 +63,6 @@ def combine_tesstsv_into_tessline(tesstsv):
                 tesstsv["width"][idx],
                 tesstsv["height"][idx],
             )
-            conf = 100.0
             idx += 1
 
             txt = []
@@ -73,10 +71,9 @@ def combine_tesstsv_into_tessline(tesstsv):
                     break
                 elif tesstsv["level"][idx] == 5:
                     txt.append(tesstsv["text"][idx])
-                    conf = min(conf, tesstsv["conf"][idx])
                 idx += 1
             txt = " ".join(txt)
-            rline = {"txt": txt, "box": box, "conf": conf}
+            rline = {"txt": txt, "box": box}
             rline_list.append(rline)
         else:
             idx += 1
