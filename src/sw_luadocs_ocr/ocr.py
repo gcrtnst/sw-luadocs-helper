@@ -88,11 +88,11 @@ def combine_tesstsv_into_tessline(tesstsv):
             idx += 1
 
 
-def categorize_line(
-    *, capture_img, tessline, code_thresh_x, head_thresh_s, bg_thresh_rgb
+def categorize_tessline(
+    *, tessline, capture_img, code_thresh_x, head_thresh_s, bg_thresh_rgb
 ):
-    capture_img = convert_image(capture_img, dst_mode="RGB")
     tessline = as_tessline(tessline)
+    capture_img = convert_image(capture_img, dst_mode="RGB")
     code_thresh_x = int(code_thresh_x)
     head_thresh_s = int(head_thresh_s)
     bg_thresh_r, bg_thresh_g, bg_thresh_b = map(int, bg_thresh_rgb)
