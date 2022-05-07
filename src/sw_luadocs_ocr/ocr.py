@@ -132,3 +132,29 @@ def calc_code_indent(*, line_x, base_x, space_w):
         raise ValueError("space_w is less than zero")
 
     return max(0, round((line_x - base_x) / space_w))
+
+
+class Line:
+    def __init__(self, *, txt, kind, box):
+        self._txt = str(txt)
+        self._kind = str(kind)
+        self._box = tuple(map(int, box))
+
+        if self._kind not in ("head", "body", "code"):
+            raise ValueError("invalid kind")
+        if len(self._box) != 4:
+            raise ValueError("invalid box length")
+        if self._box[0] < 0 or self._box[1] < 0 or self._box[2] < 0 or self._box[3] < 0:
+            raise ValueError("invalid box")
+
+    @property
+    def txt(self):
+        return self._txt
+
+    @property
+    def kind(self):
+        return self._kind
+
+    @property
+    def box(self):
+        return self._box

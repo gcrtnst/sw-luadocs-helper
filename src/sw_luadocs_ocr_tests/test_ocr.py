@@ -755,3 +755,60 @@ class TestOCR(unittest.TestCase):
         # round
         indent = sw_luadocs_ocr.ocr.calc_code_indent(line_x=2, base_x=1, space_w=0.4)
         self.assertEqual(indent, 2)
+
+
+class TestOCRLine(unittest.TestCase):
+    def test_init(self):
+        # type conversion
+        ocrline = sw_luadocs_ocr.ocr.Line(txt=0, kind="head", box=["1", "2", "3", "4"])
+        self.assertEqual(ocrline.txt, "0")
+        self.assertEqual(ocrline.kind, "head")
+        self.assertEqual(ocrline.box, (1, 2, 3, 4))
+
+        # kind check: head
+        ocrline = sw_luadocs_ocr.ocr.Line(txt="", kind="head", box=(1, 2, 3, 4))
+        self.assertEqual(ocrline.kind, "head")
+
+        # kind check: body
+        ocrline = sw_luadocs_ocr.ocr.Line(txt="", kind="body", box=(1, 2, 3, 4))
+        self.assertEqual(ocrline.kind, "body")
+
+        # kind check: code
+        ocrline = sw_luadocs_ocr.ocr.Line(txt="", kind="code", box=(1, 2, 3, 4))
+        self.assertEqual(ocrline.kind, "code")
+
+        # kind check: invalid
+        with self.assertRaises(ValueError):
+            sw_luadocs_ocr.ocr.Line(txt="", kind="invalid", box=(1, 2, 3, 4))
+
+        # box length: ok
+        ocrline = sw_luadocs_ocr.ocr.Line(txt="", kind="head", box=(1, 2, 3, 4))
+        self.assertEqual(ocrline.box, (1, 2, 3, 4))
+
+        # box length: small
+        with self.assertRaises(ValueError):
+            sw_luadocs_ocr.ocr.Line(txt="", kind="head", box=(1, 2, 3))
+
+        # box length: big
+        with self.assertRaises(ValueError):
+            sw_luadocs_ocr.ocr.Line(txt="", kind="head", box=(1, 2, 3, 4, 5))
+
+        # box: ok
+        ocrline = sw_luadocs_ocr.ocr.Line(txt="", kind="head", box=(0, 0, 0, 0))
+        self.assertEqual(ocrline.box, (0, 0, 0, 0))
+
+        # box: x < 0
+        with self.assertRaises(ValueError):
+            sw_luadocs_ocr.ocr.Line(txt="", kind="head", box=(-1, 0, 0, 0))
+
+        # box: y < 0
+        with self.assertRaises(ValueError):
+            sw_luadocs_ocr.ocr.Line(txt="", kind="head", box=(0, -1, 0, 0))
+
+        # box: w < 0
+        with self.assertRaises(ValueError):
+            sw_luadocs_ocr.ocr.Line(txt="", kind="head", box=(0, 0, -1, 0))
+
+        # box: h < 0
+        with self.assertRaises(ValueError):
+            sw_luadocs_ocr.ocr.Line(txt="", kind="head", box=(0, 0, 0, -1))
