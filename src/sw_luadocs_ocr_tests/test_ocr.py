@@ -933,3 +933,88 @@ class TestOCR(unittest.TestCase):
         self.assertEqual(ocrline.txt, "a")
         self.assertEqual(ocrline.kind, "body")
         self.assertEqual(ocrline.box, (1, 2, 3, 4))
+
+    def test_create_ocrpara_list(self):
+        # empty
+        ocrline_list = []
+        ocrpara_list = sw_luadocs_ocr.ocr.create_ocrpara_list(ocrline_list)
+        self.assertEqual(ocrpara_list, [])
+
+        # single head
+        ocrline_list = [
+            sw_luadocs_ocr.ocr.OCRLine(txt="a", kind="head", box=(0, 0, 0, 0)),
+        ]
+        ocrpara_list = sw_luadocs_ocr.ocr.create_ocrpara_list(ocrline_list)
+        self.assertEqual(
+            ocrpara_list, [sw_luadocs_ocr.ocr.OCRParagraph(txt="a", kind="head")]
+        )
+
+        # single body
+        ocrline_list = [
+            sw_luadocs_ocr.ocr.OCRLine(txt="a", kind="body", box=(0, 0, 0, 0)),
+        ]
+        ocrpara_list = sw_luadocs_ocr.ocr.create_ocrpara_list(ocrline_list)
+        self.assertEqual(
+            ocrpara_list, [sw_luadocs_ocr.ocr.OCRParagraph(txt="a", kind="body")]
+        )
+
+        # single code
+        ocrline_list = [
+            sw_luadocs_ocr.ocr.OCRLine(txt="a", kind="code", box=(0, 0, 0, 0)),
+        ]
+        ocrpara_list = sw_luadocs_ocr.ocr.create_ocrpara_list(ocrline_list)
+        self.assertEqual(
+            ocrpara_list, [sw_luadocs_ocr.ocr.OCRParagraph(txt="a", kind="code")]
+        )
+
+        # multiple head
+        ocrline_list = [
+            sw_luadocs_ocr.ocr.OCRLine(txt="a", kind="head", box=(0, 0, 0, 0)),
+            sw_luadocs_ocr.ocr.OCRLine(txt="b", kind="head", box=(0, 0, 0, 0)),
+        ]
+        ocrpara_list = sw_luadocs_ocr.ocr.create_ocrpara_list(ocrline_list)
+        self.assertEqual(
+            ocrpara_list,
+            [
+                sw_luadocs_ocr.ocr.OCRParagraph(txt="a", kind="head"),
+                sw_luadocs_ocr.ocr.OCRParagraph(txt="b", kind="head"),
+            ],
+        )
+
+        # multiple body
+        ocrline_list = [
+            sw_luadocs_ocr.ocr.OCRLine(txt="a", kind="body", box=(0, 0, 0, 0)),
+            sw_luadocs_ocr.ocr.OCRLine(txt="b", kind="body", box=(0, 0, 0, 0)),
+        ]
+        ocrpara_list = sw_luadocs_ocr.ocr.create_ocrpara_list(ocrline_list)
+        self.assertEqual(
+            ocrpara_list, [sw_luadocs_ocr.ocr.OCRParagraph(txt="a b", kind="body")]
+        )
+
+        # multiple code
+        ocrline_list = [
+            sw_luadocs_ocr.ocr.OCRLine(txt="a", kind="code", box=(0, 0, 0, 0)),
+            sw_luadocs_ocr.ocr.OCRLine(txt="b", kind="code", box=(0, 0, 0, 0)),
+        ]
+        ocrpara_list = sw_luadocs_ocr.ocr.create_ocrpara_list(ocrline_list)
+        self.assertEqual(
+            ocrpara_list, [sw_luadocs_ocr.ocr.OCRParagraph(txt="a\nb", kind="code")]
+        )
+
+        # mix kind
+        ocrline_list = [
+            sw_luadocs_ocr.ocr.OCRLine(txt="a", kind="head", box=(0, 0, 0, 0)),
+            sw_luadocs_ocr.ocr.OCRLine(txt="b", kind="body", box=(0, 0, 0, 0)),
+            sw_luadocs_ocr.ocr.OCRLine(txt="c", kind="code", box=(0, 0, 0, 0)),
+            sw_luadocs_ocr.ocr.OCRLine(txt="d", kind="head", box=(0, 0, 0, 0)),
+        ]
+        ocrpara_list = sw_luadocs_ocr.ocr.create_ocrpara_list(ocrline_list)
+        self.assertEqual(
+            ocrpara_list,
+            [
+                sw_luadocs_ocr.ocr.OCRParagraph(txt="a", kind="head"),
+                sw_luadocs_ocr.ocr.OCRParagraph(txt="b", kind="body"),
+                sw_luadocs_ocr.ocr.OCRParagraph(txt="c", kind="code"),
+                sw_luadocs_ocr.ocr.OCRParagraph(txt="d", kind="head"),
+            ],
+        )

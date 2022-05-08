@@ -225,3 +225,37 @@ def create_ocrline(
         txt = " " * indent + txt
 
     return OCRLine(txt=txt, kind=kind, box=tessline["box"])
+
+
+def create_ocrpara_list(ocrline_list):
+    ocrline_list = list(ocrline_list)
+    for ocrline in ocrline_list:
+        if not isinstance(ocrline, OCRLine):
+            raise TypeError
+
+    ocrpara_list = []
+    idx = 0
+    while idx < len(ocrline_list):
+        kind = ocrline_list[idx].kind
+
+        txt = None
+        if kind == "head":
+            txt = ocrline_list[idx].txt
+            idx += 1
+        else:
+            idx_start = idx
+            idx_end = idx
+            idx += 1
+            while idx < len(ocrline_list) and ocrline_list[idx].kind == kind:
+                idx_end = idx
+                idx += 1
+
+            txt = (ocrline.txt for ocrline in ocrline_list[idx_start : idx_end + 1])
+            if kind == "code":
+                txt = "\n".join(txt)
+            else:
+                txt = " ".join(txt)
+
+        ocrpara = OCRParagraph(txt=txt, kind=kind)
+        ocrpara_list.append(ocrpara)
+    return ocrpara_list
