@@ -3,6 +3,49 @@ import numpy as np
 import PIL.Image
 
 
+class OCRLine:
+    def __init__(self, *, txt, kind, box):
+        self._txt = str(txt)
+        self._kind = str(kind)
+        self._box = tuple(map(int, box))
+
+        if self._kind not in ("head", "body", "code"):
+            raise ValueError("invalid kind")
+        if len(self._box) != 4:
+            raise ValueError("invalid box length")
+        if self._box[0] < 0 or self._box[1] < 0 or self._box[2] < 0 or self._box[3] < 0:
+            raise ValueError("invalid box")
+
+    @property
+    def txt(self):
+        return self._txt
+
+    @property
+    def kind(self):
+        return self._kind
+
+    @property
+    def box(self):
+        return self._box
+
+
+class OCRParagraph:
+    def __init__(self, *, txt, kind):
+        self._txt = str(txt)
+        self._kind = str(kind)
+
+        if self._kind not in ("head", "body", "code"):
+            raise ValueError("invalid kind")
+
+    @property
+    def txt(self):
+        return self._txt
+
+    @property
+    def kind(self):
+        return self._kind
+
+
 def convert_image(
     img,
     src_mode=None,
@@ -158,46 +201,3 @@ def create_ocrline(
         txt = " " * indent + txt
 
     return OCRLine(txt=txt, kind=kind, box=tessline["box"])
-
-
-class OCRLine:
-    def __init__(self, *, txt, kind, box):
-        self._txt = str(txt)
-        self._kind = str(kind)
-        self._box = tuple(map(int, box))
-
-        if self._kind not in ("head", "body", "code"):
-            raise ValueError("invalid kind")
-        if len(self._box) != 4:
-            raise ValueError("invalid box length")
-        if self._box[0] < 0 or self._box[1] < 0 or self._box[2] < 0 or self._box[3] < 0:
-            raise ValueError("invalid box")
-
-    @property
-    def txt(self):
-        return self._txt
-
-    @property
-    def kind(self):
-        return self._kind
-
-    @property
-    def box(self):
-        return self._box
-
-
-class OCRParagraph:
-    def __init__(self, *, txt, kind):
-        self._txt = str(txt)
-        self._kind = str(kind)
-
-        if self._kind not in ("head", "body", "code"):
-            raise ValueError("invalid kind")
-
-    @property
-    def txt(self):
-        return self._txt
-
-    @property
-    def kind(self):
-        return self._kind
