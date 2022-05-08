@@ -756,6 +756,54 @@ class TestOCR(unittest.TestCase):
         indent = sw_luadocs_ocr.ocr.calc_code_indent(line_x=2, base_x=1, space_w=0.4)
         self.assertEqual(indent, 2)
 
+    def test_create_ocrline(self):
+        # code_thresh_x: code
+        ocrline = sw_luadocs_ocr.ocr.create_ocrline(
+            tessline={"txt": "", "box": (9, 0, 1, 1)},
+            capture_img=np.zeros((10, 10, 3), dtype=np.uint8),
+            bg_thresh_rgb=(40, 40, 40),
+            head_thresh_s=9,
+            code_base_x=14,
+            code_space_w=9.5,
+        )
+        self.assertEqual(ocrline.kind, "code")
+
+        # code_thresh_x: body
+        ocrline = sw_luadocs_ocr.ocr.create_ocrline(
+            tessline={"txt": "", "box": (8, 0, 1, 1)},
+            capture_img=np.zeros((10, 10, 3), dtype=np.uint8),
+            bg_thresh_rgb=(40, 40, 40),
+            head_thresh_s=9,
+            code_base_x=14,
+            code_space_w=9.5,
+        )
+        self.assertEqual(ocrline.kind, "body")
+
+        # indent
+        ocrline = sw_luadocs_ocr.ocr.create_ocrline(
+            tessline={"txt": "a", "box": (52, 0, 1, 1)},
+            capture_img=np.zeros((100, 100, 3), dtype=np.uint8),
+            bg_thresh_rgb=(40, 40, 40),
+            head_thresh_s=9,
+            code_base_x=14,
+            code_space_w=9.5,
+        )
+        self.assertEqual(ocrline.txt, "    a")
+
+        # init
+        ocrline = sw_luadocs_ocr.ocr.create_ocrline(
+            tessline={"txt": "a", "box": (1, 2, 3, 4)},
+            capture_img=np.zeros((10, 10, 3), dtype=np.uint8),
+            bg_thresh_rgb=(40, 40, 40),
+            head_thresh_s=9,
+            code_base_x=14,
+            code_space_w=9.5,
+        )
+        self.assertIsInstance(ocrline, sw_luadocs_ocr.ocr.OCRLine)
+        self.assertEqual(ocrline.txt, "a")
+        self.assertEqual(ocrline.kind, "body")
+        self.assertEqual(ocrline.box, (1, 2, 3, 4))
+
 
 class TestOCRLine(unittest.TestCase):
     def test_init(self):
@@ -814,54 +862,6 @@ class TestOCRLine(unittest.TestCase):
         # box: h < 0
         with self.assertRaises(ValueError):
             sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(0, 0, 0, -1))
-
-    def test_from_tessline(self):
-        # code_thresh_x: code
-        ocrline = sw_luadocs_ocr.ocr.OCRLine.from_tessline(
-            tessline={"txt": "", "box": (9, 0, 1, 1)},
-            capture_img=np.zeros((10, 10, 3), dtype=np.uint8),
-            bg_thresh_rgb=(40, 40, 40),
-            head_thresh_s=9,
-            code_base_x=14,
-            code_space_w=9.5,
-        )
-        self.assertEqual(ocrline.kind, "code")
-
-        # code_thresh_x: body
-        ocrline = sw_luadocs_ocr.ocr.OCRLine.from_tessline(
-            tessline={"txt": "", "box": (8, 0, 1, 1)},
-            capture_img=np.zeros((10, 10, 3), dtype=np.uint8),
-            bg_thresh_rgb=(40, 40, 40),
-            head_thresh_s=9,
-            code_base_x=14,
-            code_space_w=9.5,
-        )
-        self.assertEqual(ocrline.kind, "body")
-
-        # indent
-        ocrline = sw_luadocs_ocr.ocr.OCRLine.from_tessline(
-            tessline={"txt": "a", "box": (52, 0, 1, 1)},
-            capture_img=np.zeros((100, 100, 3), dtype=np.uint8),
-            bg_thresh_rgb=(40, 40, 40),
-            head_thresh_s=9,
-            code_base_x=14,
-            code_space_w=9.5,
-        )
-        self.assertEqual(ocrline.txt, "    a")
-
-        # init
-        ocrline = sw_luadocs_ocr.ocr.OCRLine.from_tessline(
-            tessline={"txt": "a", "box": (1, 2, 3, 4)},
-            capture_img=np.zeros((10, 10, 3), dtype=np.uint8),
-            bg_thresh_rgb=(40, 40, 40),
-            head_thresh_s=9,
-            code_base_x=14,
-            code_space_w=9.5,
-        )
-        self.assertIsInstance(ocrline, sw_luadocs_ocr.ocr.OCRLine)
-        self.assertEqual(ocrline.txt, "a")
-        self.assertEqual(ocrline.kind, "body")
-        self.assertEqual(ocrline.box, (1, 2, 3, 4))
 
 
 class TestOCRParagraph(unittest.TestCase):
