@@ -10,11 +10,11 @@ class OCRLine:
         self._box = tuple(map(int, box))
 
         if self._kind not in ("head", "body", "code"):
-            raise ValueError("invalid kind")
-        if len(self._box) != 4:
-            raise ValueError("invalid box length")
-        if self._box[0] < 0 or self._box[1] < 0 or self._box[2] < 0 or self._box[3] < 0:
-            raise ValueError("invalid box")
+            raise ValueError
+
+        box_x, box_y, box_w, box_h = self._box
+        if box_x < 0 or box_y < 0 or box_w < 1 or box_h < 1:
+            raise ValueError
 
     def __repr__(self):
         return f"{__name__}.OCRLine(txt={repr(self.txt)}, kind={repr(self.kind)}, box={repr(self.box)})"

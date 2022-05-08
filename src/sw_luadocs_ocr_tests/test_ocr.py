@@ -43,49 +43,49 @@ class TestOCRLine(unittest.TestCase):
             sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(1, 2, 3, 4, 5))
 
         # box: ok
-        ocrline = sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(0, 0, 0, 0))
-        self.assertEqual(ocrline.box, (0, 0, 0, 0))
+        ocrline = sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(0, 0, 1, 1))
+        self.assertEqual(ocrline.box, (0, 0, 1, 1))
 
         # box: x < 0
         with self.assertRaises(ValueError):
-            sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(-1, 0, 0, 0))
+            sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(-1, 0, 1, 1))
 
         # box: y < 0
         with self.assertRaises(ValueError):
-            sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(0, -1, 0, 0))
+            sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(0, -1, 1, 1))
 
         # box: w < 0
         with self.assertRaises(ValueError):
-            sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(0, 0, -1, 0))
+            sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(0, 0, 0, 1))
 
         # box: h < 0
         with self.assertRaises(ValueError):
-            sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(0, 0, 0, -1))
+            sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(0, 0, 1, 0))
 
     def test_eq(self):
         # type mismatch
-        lop = sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(0, 0, 0, 0))
+        lop = sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(0, 0, 1, 1))
         rop = None
         self.assertNotEqual(lop, rop)
 
         # txt mismatch
-        lop = sw_luadocs_ocr.ocr.OCRLine(txt="a", kind="head", box=(0, 0, 0, 0))
-        rop = sw_luadocs_ocr.ocr.OCRLine(txt="b", kind="head", box=(0, 0, 0, 0))
+        lop = sw_luadocs_ocr.ocr.OCRLine(txt="a", kind="head", box=(0, 0, 1, 1))
+        rop = sw_luadocs_ocr.ocr.OCRLine(txt="b", kind="head", box=(0, 0, 1, 1))
         self.assertNotEqual(lop, rop)
 
         # kind mismatch
-        lop = sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(0, 0, 0, 0))
-        rop = sw_luadocs_ocr.ocr.OCRLine(txt="", kind="body", box=(0, 0, 0, 0))
+        lop = sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(0, 0, 1, 1))
+        rop = sw_luadocs_ocr.ocr.OCRLine(txt="", kind="body", box=(0, 0, 1, 1))
         self.assertNotEqual(lop, rop)
 
         # box mismatch
-        lop = sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(0, 0, 0, 0))
-        rop = sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(0, 0, 0, 1))
+        lop = sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(0, 0, 1, 1))
+        rop = sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(0, 0, 1, 2))
         self.assertNotEqual(lop, rop)
 
         # match
-        lop = sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(0, 0, 0, 0))
-        rop = sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(0, 0, 0, 0))
+        lop = sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(0, 0, 1, 1))
+        rop = sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(0, 0, 1, 1))
         self.assertEqual(lop, rop)
 
 
@@ -944,7 +944,7 @@ class TestOCR(unittest.TestCase):
         # single head
         ocrpara_list = sw_luadocs_ocr.ocr.create_ocrpara_list(
             ocrline_list=[
-                sw_luadocs_ocr.ocr.OCRLine(txt="a", kind="head", box=(0, 0, 0, 0)),
+                sw_luadocs_ocr.ocr.OCRLine(txt="a", kind="head", box=(0, 0, 1, 1)),
             ],
             code_line_h=16.5,
         )
@@ -955,7 +955,7 @@ class TestOCR(unittest.TestCase):
         # single body
         ocrpara_list = sw_luadocs_ocr.ocr.create_ocrpara_list(
             ocrline_list=[
-                sw_luadocs_ocr.ocr.OCRLine(txt="a", kind="body", box=(0, 0, 0, 0)),
+                sw_luadocs_ocr.ocr.OCRLine(txt="a", kind="body", box=(0, 0, 1, 1)),
             ],
             code_line_h=16.5,
         )
@@ -966,7 +966,7 @@ class TestOCR(unittest.TestCase):
         # single code
         ocrpara_list = sw_luadocs_ocr.ocr.create_ocrpara_list(
             ocrline_list=[
-                sw_luadocs_ocr.ocr.OCRLine(txt="a", kind="code", box=(0, 0, 0, 0)),
+                sw_luadocs_ocr.ocr.OCRLine(txt="a", kind="code", box=(0, 0, 1, 1)),
             ],
             code_line_h=16.5,
         )
@@ -977,8 +977,8 @@ class TestOCR(unittest.TestCase):
         # multiple head
         ocrpara_list = sw_luadocs_ocr.ocr.create_ocrpara_list(
             ocrline_list=[
-                sw_luadocs_ocr.ocr.OCRLine(txt="a", kind="head", box=(0, 0, 0, 0)),
-                sw_luadocs_ocr.ocr.OCRLine(txt="b", kind="head", box=(0, 0, 0, 0)),
+                sw_luadocs_ocr.ocr.OCRLine(txt="a", kind="head", box=(0, 0, 1, 1)),
+                sw_luadocs_ocr.ocr.OCRLine(txt="b", kind="head", box=(0, 0, 1, 1)),
             ],
             code_line_h=16.5,
         )
@@ -993,8 +993,8 @@ class TestOCR(unittest.TestCase):
         # multiple body
         ocrpara_list = sw_luadocs_ocr.ocr.create_ocrpara_list(
             ocrline_list=[
-                sw_luadocs_ocr.ocr.OCRLine(txt="a", kind="body", box=(0, 0, 0, 0)),
-                sw_luadocs_ocr.ocr.OCRLine(txt="b", kind="body", box=(0, 0, 0, 0)),
+                sw_luadocs_ocr.ocr.OCRLine(txt="a", kind="body", box=(0, 0, 1, 1)),
+                sw_luadocs_ocr.ocr.OCRLine(txt="b", kind="body", box=(0, 0, 1, 1)),
             ],
             code_line_h=16.5,
         )
@@ -1005,8 +1005,8 @@ class TestOCR(unittest.TestCase):
         # multiple code
         ocrpara_list = sw_luadocs_ocr.ocr.create_ocrpara_list(
             ocrline_list=[
-                sw_luadocs_ocr.ocr.OCRLine(txt="a", kind="code", box=(0, 0, 0, 0)),
-                sw_luadocs_ocr.ocr.OCRLine(txt="b", kind="code", box=(0, 0, 0, 0)),
+                sw_luadocs_ocr.ocr.OCRLine(txt="a", kind="code", box=(0, 0, 1, 1)),
+                sw_luadocs_ocr.ocr.OCRLine(txt="b", kind="code", box=(0, 0, 1, 1)),
             ],
             code_line_h=16.5,
         )
@@ -1017,8 +1017,8 @@ class TestOCR(unittest.TestCase):
         # code linefeed: normal
         ocrpara_list = sw_luadocs_ocr.ocr.create_ocrpara_list(
             ocrline_list=[
-                sw_luadocs_ocr.ocr.OCRLine(txt="a", kind="code", box=(0, 0, 0, 0)),
-                sw_luadocs_ocr.ocr.OCRLine(txt="b", kind="code", box=(0, 33, 0, 0)),
+                sw_luadocs_ocr.ocr.OCRLine(txt="a", kind="code", box=(0, 0, 1, 1)),
+                sw_luadocs_ocr.ocr.OCRLine(txt="b", kind="code", box=(0, 33, 1, 1)),
             ],
             code_line_h=16.5,
         )
@@ -1029,8 +1029,8 @@ class TestOCR(unittest.TestCase):
         # code linefeed: round
         ocrpara_list = sw_luadocs_ocr.ocr.create_ocrpara_list(
             ocrline_list=[
-                sw_luadocs_ocr.ocr.OCRLine(txt="a", kind="code", box=(0, 0, 0, 0)),
-                sw_luadocs_ocr.ocr.OCRLine(txt="b", kind="code", box=(0, 45, 0, 0)),
+                sw_luadocs_ocr.ocr.OCRLine(txt="a", kind="code", box=(0, 0, 1, 1)),
+                sw_luadocs_ocr.ocr.OCRLine(txt="b", kind="code", box=(0, 45, 1, 1)),
             ],
             code_line_h=16.5,
         )
@@ -1041,10 +1041,10 @@ class TestOCR(unittest.TestCase):
         # mix kind
         ocrpara_list = sw_luadocs_ocr.ocr.create_ocrpara_list(
             ocrline_list=[
-                sw_luadocs_ocr.ocr.OCRLine(txt="a", kind="head", box=(0, 0, 0, 0)),
-                sw_luadocs_ocr.ocr.OCRLine(txt="b", kind="body", box=(0, 0, 0, 0)),
-                sw_luadocs_ocr.ocr.OCRLine(txt="c", kind="code", box=(0, 0, 0, 0)),
-                sw_luadocs_ocr.ocr.OCRLine(txt="d", kind="head", box=(0, 0, 0, 0)),
+                sw_luadocs_ocr.ocr.OCRLine(txt="a", kind="head", box=(0, 0, 1, 1)),
+                sw_luadocs_ocr.ocr.OCRLine(txt="b", kind="body", box=(0, 0, 1, 1)),
+                sw_luadocs_ocr.ocr.OCRLine(txt="c", kind="code", box=(0, 0, 1, 1)),
+                sw_luadocs_ocr.ocr.OCRLine(txt="d", kind="head", box=(0, 0, 1, 1)),
             ],
             code_line_h=16.5,
         )
