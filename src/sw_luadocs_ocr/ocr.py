@@ -72,6 +72,7 @@ class OCRParagraph:
 
 def convert_image(
     img,
+    *,
     src_mode=None,
     dst_mode=None,
     matrix=None,
