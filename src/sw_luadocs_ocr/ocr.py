@@ -227,11 +227,12 @@ def create_ocrline(
     return OCRLine(txt=txt, kind=kind, box=tessline["box"])
 
 
-def create_ocrpara_list(ocrline_list):
+def create_ocrpara_list(*, ocrline_list, code_line_h):
     ocrline_list = list(ocrline_list)
     for ocrline in ocrline_list:
         if not isinstance(ocrline, OCRLine):
             raise TypeError
+    code_line_h = float(code_line_h)
 
     ocrpara_list = []
     idx = 0
@@ -250,11 +251,18 @@ def create_ocrpara_list(ocrline_list):
                 idx_end = idx
                 idx += 1
 
-            txt = (ocrline.txt for ocrline in ocrline_list[idx_start : idx_end + 1])
-            if kind == "code":
-                txt = "\n".join(txt)
+            if kind == "body":
+                txt = " ".join(
+                    ocrline.txt for ocrline in ocrline_list[idx_start : idx_end + 1]
+                )
             else:
-                txt = " ".join(txt)
+                txt = ocrline_list[idx_start].txt
+                for idx_sub in range(idx_start + 1, idx_end + 1):
+                    ocrline_prev_y = ocrline_list[idx_sub - 1].box[1]
+                    ocrline_curr_y = ocrline_list[idx_sub].box[1]
+                    num_lf = round((ocrline_curr_y - ocrline_prev_y) / code_line_h)
+                    num_lf = max(1, num_lf)
+                    txt += "\n" * num_lf + ocrline_list[idx_sub].txt
 
         ocrpara = OCRParagraph(txt=txt, kind=kind)
         ocrpara_list.append(ocrpara)
