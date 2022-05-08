@@ -147,6 +147,39 @@ class Line:
         if self._box[0] < 0 or self._box[1] < 0 or self._box[2] < 0 or self._box[3] < 0:
             raise ValueError("invalid box")
 
+    @classmethod
+    def from_tessline(
+        cls,
+        *,
+        tessline,
+        capture_img,
+        bg_thresh_rgb,
+        head_thresh_s,
+        code_base_x,
+        code_space_w
+    ):
+        tessline = as_tessline(tessline)
+        code_base_x = int(code_base_x)
+        code_space_w = float(code_space_w)
+
+        code_thresh_x = int(max(0, code_base_x - code_space_w / 2))
+        kind = categorize_tessline(
+            tessline=tessline,
+            capture_img=capture_img,
+            code_thresh_x=code_thresh_x,
+            head_thresh_s=head_thresh_s,
+            bg_thresh_rgb=bg_thresh_rgb,
+        )
+
+        txt = tessline["txt"]
+        if kind == "code":
+            indent = calc_code_indent(
+                line_x=tessline["box"][0], base_x=code_base_x, space_w=code_space_w
+            )
+            txt = " " * indent + txt
+
+        return cls(txt=txt, kind=kind, box=tessline["box"])
+
     @property
     def txt(self):
         return self._txt
