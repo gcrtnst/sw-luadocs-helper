@@ -191,3 +191,20 @@ class Line:
     @property
     def box(self):
         return self._box
+
+
+class Paragraph:
+    def __init__(self, *, txt, kind):
+        self._txt = str(txt)
+        self._kind = str(kind)
+
+        if self._kind not in ("head", "body", "code"):
+            raise ValueError("invalid kind")
+
+    @property
+    def txt(self):
+        return self._txt
+
+    @property
+    def kind(self):
+        return self._kind

@@ -860,3 +860,27 @@ class TestOCRLine(unittest.TestCase):
         self.assertEqual(ocrline.txt, "a")
         self.assertEqual(ocrline.kind, "body")
         self.assertEqual(ocrline.box, (1, 2, 3, 4))
+
+
+class TestOCRParagraph(unittest.TestCase):
+    def test_init(self):
+        # type conversion
+        ocrpara = sw_luadocs_ocr.ocr.Paragraph(txt=0, kind="head")
+        self.assertEqual(ocrpara.txt, "0")
+        self.assertEqual(ocrpara.kind, "head")
+
+        # kind check: head
+        ocrpara = sw_luadocs_ocr.ocr.Paragraph(txt="", kind="head")
+        self.assertEqual(ocrpara.kind, "head")
+
+        # kind check: body
+        ocrpara = sw_luadocs_ocr.ocr.Paragraph(txt="", kind="body")
+        self.assertEqual(ocrpara.kind, "body")
+
+        # kind check: code
+        ocrpara = sw_luadocs_ocr.ocr.Paragraph(txt="", kind="code")
+        self.assertEqual(ocrpara.kind, "code")
+
+        # kind check: invalid
+        with self.assertRaises(ValueError):
+            sw_luadocs_ocr.ocr.Paragraph(txt="", kind="invalid")
