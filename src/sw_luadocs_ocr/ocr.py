@@ -16,6 +16,19 @@ class OCRLine:
         if self._box[0] < 0 or self._box[1] < 0 or self._box[2] < 0 or self._box[3] < 0:
             raise ValueError("invalid box")
 
+    def __repr__(self):
+        return f"{__name__}.OCRLine(txt={repr(self.txt)}, kind={repr(self.kind)}, box={repr(self.box)})"
+
+    def __eq__(self, other):
+        if not isinstance(other, type(self)):
+            return False
+        return (
+            self.txt == other.txt and self.kind == other.kind and self.box == other.box
+        )
+
+    def __hash__(self):
+        return hash((self.txt, self.kind, self.box))
+
     @property
     def txt(self):
         return self._txt
@@ -36,6 +49,17 @@ class OCRParagraph:
 
         if self._kind not in ("head", "body", "code"):
             raise ValueError("invalid kind")
+
+    def __repr__(self):
+        return f"{__name__}.OCRParagraph(txt={repr(self.txt)}, kind={repr(self.kind)})"
+
+    def __eq__(self, other):
+        if not isinstance(other, type(self)):
+            return False
+        return self.txt == other.txt and self.kind == other.kind
+
+    def __hash__(self):
+        return hash((self.txt, self.kind))
 
     @property
     def txt(self):

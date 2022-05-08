@@ -62,6 +62,32 @@ class TestOCRLine(unittest.TestCase):
         with self.assertRaises(ValueError):
             sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(0, 0, 0, -1))
 
+    def test_eq(self):
+        # type mismatch
+        lop = sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(0, 0, 0, 0))
+        rop = None
+        self.assertNotEqual(lop, rop)
+
+        # txt mismatch
+        lop = sw_luadocs_ocr.ocr.OCRLine(txt="a", kind="head", box=(0, 0, 0, 0))
+        rop = sw_luadocs_ocr.ocr.OCRLine(txt="b", kind="head", box=(0, 0, 0, 0))
+        self.assertNotEqual(lop, rop)
+
+        # kind mismatch
+        lop = sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(0, 0, 0, 0))
+        rop = sw_luadocs_ocr.ocr.OCRLine(txt="", kind="body", box=(0, 0, 0, 0))
+        self.assertNotEqual(lop, rop)
+
+        # box mismatch
+        lop = sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(0, 0, 0, 0))
+        rop = sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(0, 0, 0, 1))
+        self.assertNotEqual(lop, rop)
+
+        # match
+        lop = sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(0, 0, 0, 0))
+        rop = sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(0, 0, 0, 0))
+        self.assertEqual(lop, rop)
+
 
 class TestOCRParagraph(unittest.TestCase):
     def test_init(self):
@@ -85,6 +111,27 @@ class TestOCRParagraph(unittest.TestCase):
         # kind check: invalid
         with self.assertRaises(ValueError):
             sw_luadocs_ocr.ocr.OCRParagraph(txt="", kind="invalid")
+
+    def test_eq(self):
+        # type mismatch
+        lop = sw_luadocs_ocr.ocr.OCRParagraph(txt="", kind="head")
+        rop = None
+        self.assertNotEqual(lop, rop)
+
+        # txt mismatch
+        lop = sw_luadocs_ocr.ocr.OCRParagraph(txt="a", kind="head")
+        rop = sw_luadocs_ocr.ocr.OCRParagraph(txt="b", kind="head")
+        self.assertNotEqual(lop, rop)
+
+        # kind mismatch
+        lop = sw_luadocs_ocr.ocr.OCRParagraph(txt="", kind="head")
+        rop = sw_luadocs_ocr.ocr.OCRParagraph(txt="", kind="body")
+        self.assertNotEqual(lop, rop)
+
+        # match
+        lop = sw_luadocs_ocr.ocr.OCRParagraph(txt="", kind="head")
+        rop = sw_luadocs_ocr.ocr.OCRParagraph(txt="", kind="head")
+        self.assertEqual(lop, rop)
 
 
 class TestOCR(unittest.TestCase):
