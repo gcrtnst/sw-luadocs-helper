@@ -760,62 +760,64 @@ class TestOCR(unittest.TestCase):
 class TestOCRLine(unittest.TestCase):
     def test_init(self):
         # type conversion
-        ocrline = sw_luadocs_ocr.ocr.Line(txt=0, kind="head", box=["1", "2", "3", "4"])
+        ocrline = sw_luadocs_ocr.ocr.OCRLine(
+            txt=0, kind="head", box=["1", "2", "3", "4"]
+        )
         self.assertEqual(ocrline.txt, "0")
         self.assertEqual(ocrline.kind, "head")
         self.assertEqual(ocrline.box, (1, 2, 3, 4))
 
         # kind check: head
-        ocrline = sw_luadocs_ocr.ocr.Line(txt="", kind="head", box=(1, 2, 3, 4))
+        ocrline = sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(1, 2, 3, 4))
         self.assertEqual(ocrline.kind, "head")
 
         # kind check: body
-        ocrline = sw_luadocs_ocr.ocr.Line(txt="", kind="body", box=(1, 2, 3, 4))
+        ocrline = sw_luadocs_ocr.ocr.OCRLine(txt="", kind="body", box=(1, 2, 3, 4))
         self.assertEqual(ocrline.kind, "body")
 
         # kind check: code
-        ocrline = sw_luadocs_ocr.ocr.Line(txt="", kind="code", box=(1, 2, 3, 4))
+        ocrline = sw_luadocs_ocr.ocr.OCRLine(txt="", kind="code", box=(1, 2, 3, 4))
         self.assertEqual(ocrline.kind, "code")
 
         # kind check: invalid
         with self.assertRaises(ValueError):
-            sw_luadocs_ocr.ocr.Line(txt="", kind="invalid", box=(1, 2, 3, 4))
+            sw_luadocs_ocr.ocr.OCRLine(txt="", kind="invalid", box=(1, 2, 3, 4))
 
         # box length: ok
-        ocrline = sw_luadocs_ocr.ocr.Line(txt="", kind="head", box=(1, 2, 3, 4))
+        ocrline = sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(1, 2, 3, 4))
         self.assertEqual(ocrline.box, (1, 2, 3, 4))
 
         # box length: small
         with self.assertRaises(ValueError):
-            sw_luadocs_ocr.ocr.Line(txt="", kind="head", box=(1, 2, 3))
+            sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(1, 2, 3))
 
         # box length: big
         with self.assertRaises(ValueError):
-            sw_luadocs_ocr.ocr.Line(txt="", kind="head", box=(1, 2, 3, 4, 5))
+            sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(1, 2, 3, 4, 5))
 
         # box: ok
-        ocrline = sw_luadocs_ocr.ocr.Line(txt="", kind="head", box=(0, 0, 0, 0))
+        ocrline = sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(0, 0, 0, 0))
         self.assertEqual(ocrline.box, (0, 0, 0, 0))
 
         # box: x < 0
         with self.assertRaises(ValueError):
-            sw_luadocs_ocr.ocr.Line(txt="", kind="head", box=(-1, 0, 0, 0))
+            sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(-1, 0, 0, 0))
 
         # box: y < 0
         with self.assertRaises(ValueError):
-            sw_luadocs_ocr.ocr.Line(txt="", kind="head", box=(0, -1, 0, 0))
+            sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(0, -1, 0, 0))
 
         # box: w < 0
         with self.assertRaises(ValueError):
-            sw_luadocs_ocr.ocr.Line(txt="", kind="head", box=(0, 0, -1, 0))
+            sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(0, 0, -1, 0))
 
         # box: h < 0
         with self.assertRaises(ValueError):
-            sw_luadocs_ocr.ocr.Line(txt="", kind="head", box=(0, 0, 0, -1))
+            sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(0, 0, 0, -1))
 
     def test_from_tessline(self):
         # code_thresh_x: code
-        ocrline = sw_luadocs_ocr.ocr.Line.from_tessline(
+        ocrline = sw_luadocs_ocr.ocr.OCRLine.from_tessline(
             tessline={"txt": "", "box": (9, 0, 1, 1)},
             capture_img=np.zeros((10, 10, 3), dtype=np.uint8),
             bg_thresh_rgb=(40, 40, 40),
@@ -826,7 +828,7 @@ class TestOCRLine(unittest.TestCase):
         self.assertEqual(ocrline.kind, "code")
 
         # code_thresh_x: body
-        ocrline = sw_luadocs_ocr.ocr.Line.from_tessline(
+        ocrline = sw_luadocs_ocr.ocr.OCRLine.from_tessline(
             tessline={"txt": "", "box": (8, 0, 1, 1)},
             capture_img=np.zeros((10, 10, 3), dtype=np.uint8),
             bg_thresh_rgb=(40, 40, 40),
@@ -837,7 +839,7 @@ class TestOCRLine(unittest.TestCase):
         self.assertEqual(ocrline.kind, "body")
 
         # indent
-        ocrline = sw_luadocs_ocr.ocr.Line.from_tessline(
+        ocrline = sw_luadocs_ocr.ocr.OCRLine.from_tessline(
             tessline={"txt": "a", "box": (52, 0, 1, 1)},
             capture_img=np.zeros((100, 100, 3), dtype=np.uint8),
             bg_thresh_rgb=(40, 40, 40),
@@ -848,7 +850,7 @@ class TestOCRLine(unittest.TestCase):
         self.assertEqual(ocrline.txt, "    a")
 
         # init
-        ocrline = sw_luadocs_ocr.ocr.Line.from_tessline(
+        ocrline = sw_luadocs_ocr.ocr.OCRLine.from_tessline(
             tessline={"txt": "a", "box": (1, 2, 3, 4)},
             capture_img=np.zeros((10, 10, 3), dtype=np.uint8),
             bg_thresh_rgb=(40, 40, 40),
@@ -856,7 +858,7 @@ class TestOCRLine(unittest.TestCase):
             code_base_x=14,
             code_space_w=9.5,
         )
-        self.assertIsInstance(ocrline, sw_luadocs_ocr.ocr.Line)
+        self.assertIsInstance(ocrline, sw_luadocs_ocr.ocr.OCRLine)
         self.assertEqual(ocrline.txt, "a")
         self.assertEqual(ocrline.kind, "body")
         self.assertEqual(ocrline.box, (1, 2, 3, 4))
@@ -865,22 +867,22 @@ class TestOCRLine(unittest.TestCase):
 class TestOCRParagraph(unittest.TestCase):
     def test_init(self):
         # type conversion
-        ocrpara = sw_luadocs_ocr.ocr.Paragraph(txt=0, kind="head")
+        ocrpara = sw_luadocs_ocr.ocr.OCRParagraph(txt=0, kind="head")
         self.assertEqual(ocrpara.txt, "0")
         self.assertEqual(ocrpara.kind, "head")
 
         # kind check: head
-        ocrpara = sw_luadocs_ocr.ocr.Paragraph(txt="", kind="head")
+        ocrpara = sw_luadocs_ocr.ocr.OCRParagraph(txt="", kind="head")
         self.assertEqual(ocrpara.kind, "head")
 
         # kind check: body
-        ocrpara = sw_luadocs_ocr.ocr.Paragraph(txt="", kind="body")
+        ocrpara = sw_luadocs_ocr.ocr.OCRParagraph(txt="", kind="body")
         self.assertEqual(ocrpara.kind, "body")
 
         # kind check: code
-        ocrpara = sw_luadocs_ocr.ocr.Paragraph(txt="", kind="code")
+        ocrpara = sw_luadocs_ocr.ocr.OCRParagraph(txt="", kind="code")
         self.assertEqual(ocrpara.kind, "code")
 
         # kind check: invalid
         with self.assertRaises(ValueError):
-            sw_luadocs_ocr.ocr.Paragraph(txt="", kind="invalid")
+            sw_luadocs_ocr.ocr.OCRParagraph(txt="", kind="invalid")

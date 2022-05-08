@@ -134,7 +134,7 @@ def calc_code_indent(*, line_x, base_x, space_w):
     return max(0, round((line_x - base_x) / space_w))
 
 
-class Line:
+class OCRLine:
     def __init__(self, *, txt, kind, box):
         self._txt = str(txt)
         self._kind = str(kind)
@@ -193,7 +193,7 @@ class Line:
         return self._box
 
 
-class Paragraph:
+class OCRParagraph:
     def __init__(self, *, txt, kind):
         self._txt = str(txt)
         self._kind = str(kind)
