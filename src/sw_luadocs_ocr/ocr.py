@@ -16,19 +16,6 @@ class OCRLine:
         if box_x < 0 or box_y < 0 or box_w < 1 or box_h < 1:
             raise ValueError
 
-    def __repr__(self):
-        return f"{__name__}.OCRLine(txt={repr(self.txt)}, kind={repr(self.kind)}, box={repr(self.box)})"
-
-    def __eq__(self, other):
-        if not isinstance(other, type(self)):
-            return False
-        return (
-            self.txt == other.txt and self.kind == other.kind and self.box == other.box
-        )
-
-    def __hash__(self):
-        return hash((self.txt, self.kind, self.box))
-
     @property
     def txt(self):
         return self._txt

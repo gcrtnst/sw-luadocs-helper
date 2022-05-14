@@ -62,32 +62,6 @@ class TestOCRLine(unittest.TestCase):
         with self.assertRaises(ValueError):
             sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(0, 0, 1, 0))
 
-    def test_eq(self):
-        # type mismatch
-        lop = sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(0, 0, 1, 1))
-        rop = None
-        self.assertNotEqual(lop, rop)
-
-        # txt mismatch
-        lop = sw_luadocs_ocr.ocr.OCRLine(txt="a", kind="head", box=(0, 0, 1, 1))
-        rop = sw_luadocs_ocr.ocr.OCRLine(txt="b", kind="head", box=(0, 0, 1, 1))
-        self.assertNotEqual(lop, rop)
-
-        # kind mismatch
-        lop = sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(0, 0, 1, 1))
-        rop = sw_luadocs_ocr.ocr.OCRLine(txt="", kind="body", box=(0, 0, 1, 1))
-        self.assertNotEqual(lop, rop)
-
-        # box mismatch
-        lop = sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(0, 0, 1, 1))
-        rop = sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(0, 0, 1, 2))
-        self.assertNotEqual(lop, rop)
-
-        # match
-        lop = sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(0, 0, 1, 1))
-        rop = sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(0, 0, 1, 1))
-        self.assertEqual(lop, rop)
-
 
 class TestOCRParagraph(unittest.TestCase):
     def test_init(self):
