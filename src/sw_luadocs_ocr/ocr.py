@@ -28,32 +28,20 @@ class OCRLine:
         object.__setattr__(self, "box", box)
 
 
+@dataclasses.dataclass(frozen=True, kw_only=True, slots=True)
 class OCRParagraph:
-    def __init__(self, *, txt, kind):
-        self._txt = str(txt)
-        self._kind = str(kind)
+    txt: typing.Any
+    kind: typing.Any
 
-        if self._kind not in ("head", "body", "code"):
-            raise ValueError("invalid kind")
+    def __post_init__(self):
+        txt = str(self.txt)
+        kind = str(self.kind)
 
-    def __repr__(self):
-        return f"{__name__}.OCRParagraph(txt={repr(self.txt)}, kind={repr(self.kind)})"
+        if kind not in ("head", "body", "code"):
+            raise ValueError
 
-    def __eq__(self, other):
-        if not isinstance(other, type(self)):
-            return False
-        return self.txt == other.txt and self.kind == other.kind
-
-    def __hash__(self):
-        return hash((self.txt, self.kind))
-
-    @property
-    def txt(self):
-        return self._txt
-
-    @property
-    def kind(self):
-        return self._kind
+        object.__setattr__(self, "txt", txt)
+        object.__setattr__(self, "kind", kind)
 
 
 def convert_image(

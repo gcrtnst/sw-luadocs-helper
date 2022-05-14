@@ -86,27 +86,6 @@ class TestOCRParagraph(unittest.TestCase):
         with self.assertRaises(ValueError):
             sw_luadocs_ocr.ocr.OCRParagraph(txt="", kind="invalid")
 
-    def test_eq(self):
-        # type mismatch
-        lop = sw_luadocs_ocr.ocr.OCRParagraph(txt="", kind="head")
-        rop = None
-        self.assertNotEqual(lop, rop)
-
-        # txt mismatch
-        lop = sw_luadocs_ocr.ocr.OCRParagraph(txt="a", kind="head")
-        rop = sw_luadocs_ocr.ocr.OCRParagraph(txt="b", kind="head")
-        self.assertNotEqual(lop, rop)
-
-        # kind mismatch
-        lop = sw_luadocs_ocr.ocr.OCRParagraph(txt="", kind="head")
-        rop = sw_luadocs_ocr.ocr.OCRParagraph(txt="", kind="body")
-        self.assertNotEqual(lop, rop)
-
-        # match
-        lop = sw_luadocs_ocr.ocr.OCRParagraph(txt="", kind="head")
-        rop = sw_luadocs_ocr.ocr.OCRParagraph(txt="", kind="head")
-        self.assertEqual(lop, rop)
-
 
 class TestOCR(unittest.TestCase):
     def test_as_tesstsv(self):
