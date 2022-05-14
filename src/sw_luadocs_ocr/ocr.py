@@ -81,7 +81,7 @@ def as_tesstsv(v):
 
     for key in tesstsv:
         if len(tesstsv[key]) != len(tesstsv["level"]):
-            raise ValueError("list lengths do not match")
+            raise ValueError
 
     return tesstsv
 
