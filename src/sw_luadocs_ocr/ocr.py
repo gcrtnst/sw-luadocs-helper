@@ -1,32 +1,31 @@
 import colorsys
+import dataclasses
 import numpy as np
 import PIL.Image
+import typing
 
 
+@dataclasses.dataclass(frozen=True, kw_only=True, slots=True)
 class OCRLine:
-    def __init__(self, *, txt, kind, box):
-        self._txt = str(txt)
-        self._kind = str(kind)
-        self._box = tuple(map(int, box))
+    txt: typing.Any
+    kind: typing.Any
+    box: typing.Any
 
-        if self._kind not in ("head", "body", "code"):
+    def __post_init__(self):
+        txt = str(self.txt)
+        kind = str(self.kind)
+        box = tuple(map(int, self.box))
+
+        if kind not in ("head", "body", "code"):
             raise ValueError
 
-        box_x, box_y, box_w, box_h = self._box
+        box_x, box_y, box_w, box_h = box
         if box_x < 0 or box_y < 0 or box_w < 1 or box_h < 1:
             raise ValueError
 
-    @property
-    def txt(self):
-        return self._txt
-
-    @property
-    def kind(self):
-        return self._kind
-
-    @property
-    def box(self):
-        return self._box
+        object.__setattr__(self, "txt", txt)
+        object.__setattr__(self, "kind", kind)
+        object.__setattr__(self, "box", box)
 
 
 class OCRParagraph:

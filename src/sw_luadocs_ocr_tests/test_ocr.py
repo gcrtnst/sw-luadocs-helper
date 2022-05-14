@@ -54,11 +54,11 @@ class TestOCRLine(unittest.TestCase):
         with self.assertRaises(ValueError):
             sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(0, -1, 1, 1))
 
-        # box: w < 0
+        # box: w < 1
         with self.assertRaises(ValueError):
             sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(0, 0, 0, 1))
 
-        # box: h < 0
+        # box: h < 1
         with self.assertRaises(ValueError):
             sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(0, 0, 1, 0))
 
