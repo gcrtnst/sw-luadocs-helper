@@ -4,7 +4,7 @@ import sw_luadocs_ocr.ocr
 import unittest
 
 
-class TestOCRLinePreInit(unittest.TestCase):
+class TestOCRLinePostInit(unittest.TestCase):
     def test_type(self):
         ocrline = sw_luadocs_ocr.ocr.OCRLine(
             txt=0, kind="head", box=["1", "2", "3", "4"]
