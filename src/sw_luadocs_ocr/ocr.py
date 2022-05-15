@@ -110,11 +110,8 @@ class OCRLine:
 
     def __post_init__(self):
         txt = str(self.txt)
-        kind = str(self.kind)
+        kind = as_kind(self.kind)
         box = as_box(self.box)
-
-        if kind not in ("head", "body", "code"):
-            raise ValueError
 
         object.__setattr__(self, "txt", txt)
         object.__setattr__(self, "kind", kind)
@@ -128,10 +125,7 @@ class OCRParagraph:
 
     def __post_init__(self):
         txt = str(self.txt)
-        kind = str(self.kind)
-
-        if kind not in ("head", "body", "code"):
-            raise ValueError
+        kind = as_kind(self.kind)
 
         object.__setattr__(self, "txt", txt)
         object.__setattr__(self, "kind", kind)

@@ -638,14 +638,6 @@ class TestOCRLinePostInit(unittest.TestCase):
         self.assertEqual(ocrline.kind, "head")
         self.assertEqual(ocrline.box, (1, 2, 3, 4))
 
-    def test_kind_valid(self):
-        for kind in "head", "body", "code":
-            with self.subTest(kind=kind):
-                ocrline = sw_luadocs_ocr.ocr.OCRLine(
-                    txt="", kind=kind, box=(1, 2, 3, 4)
-                )
-                self.assertEqual(ocrline.kind, kind)
-
     def test_kind_invalid(self):
         with self.assertRaises(ValueError):
             sw_luadocs_ocr.ocr.OCRLine(txt="", kind="invalid", box=(1, 2, 3, 4))
@@ -656,12 +648,6 @@ class TestOCRParagraphPostInit(unittest.TestCase):
         ocrpara = sw_luadocs_ocr.ocr.OCRParagraph(txt=0, kind="head")
         self.assertEqual(ocrpara.txt, "0")
         self.assertEqual(ocrpara.kind, "head")
-
-    def test_kind_valid(self):
-        for kind in "head", "body", "code":
-            with self.subTest(kind=kind):
-                ocrpara = sw_luadocs_ocr.ocr.OCRParagraph(txt="", kind=kind)
-                self.assertEqual(ocrpara.kind, kind)
 
     def test_kind_invalid(self):
         with self.assertRaises(ValueError):
