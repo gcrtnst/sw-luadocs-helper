@@ -145,35 +145,6 @@ def preprocess_image(img):
     return 255 - np.amax(img, axis=2)
 
 
-def combine_tesstsv_into_tessline(tesstsv):
-    tesstsv = as_tesstsv(tesstsv)
-
-    idx = 0
-    box = None
-    txt = None
-    while idx < len(tesstsv["level"]):
-        if tesstsv["level"][idx] == 4:
-            box = (
-                tesstsv["left"][idx],
-                tesstsv["top"][idx],
-                tesstsv["width"][idx],
-                tesstsv["height"][idx],
-            )
-            idx += 1
-
-            txt = []
-            while idx < len(tesstsv["level"]):
-                if tesstsv["level"][idx] < 5:
-                    break
-                elif tesstsv["level"][idx] == 5:
-                    txt.append(tesstsv["text"][idx])
-                idx += 1
-            txt = " ".join(txt)
-            yield {"txt": txt, "box": box}
-        else:
-            idx += 1
-
-
 def categorize_tessline(
     *, tessline, capture_img, code_thresh_x, head_thresh_s, bg_thresh_rgb
 ):
