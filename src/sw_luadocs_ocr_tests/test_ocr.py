@@ -151,6 +151,26 @@ class TestOCRParagraphPostInit(unittest.TestCase):
             sw_luadocs_ocr.ocr.OCRParagraph(txt="", kind="invalid")
 
 
+class TestPreprocessImage(unittest.TestCase):
+    def test_axis(self):
+        input_img = np.array([[51, 102], [153, 204]], dtype=np.uint8)
+        expected_img = np.array([[204, 153], [102, 51]], dtype=np.uint8)
+        output_img = sw_luadocs_ocr.ocr.preprocess_image(input_img)
+        self.assertTrue(np.array_equal(output_img, expected_img))
+
+    def test_value(self):
+        input_img = np.array(
+            [[[0, 0, 0], [0, 0, 1]], [[0, 2, 0], [3, 0, 0]]],
+            dtype=np.uint8,
+        )
+        expected_img = np.array(
+            [[255, 254], [253, 252]],
+            dtype=np.uint8,
+        )
+        output_img = sw_luadocs_ocr.ocr.preprocess_image(input_img)
+        self.assertTrue(np.array_equal(output_img, expected_img))
+
+
 class TestOCR(unittest.TestCase):
     def as_tessline(self):
         # type convertsion
