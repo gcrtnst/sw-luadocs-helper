@@ -5,6 +5,23 @@ import PIL.Image
 import typing
 
 
+def convert_image(
+    img,
+    *,
+    src_mode=None,
+    dst_mode=None,
+    matrix=None,
+    dither=None,
+    palette=PIL.Image.Palette.WEB,
+    colors=256,
+):
+    pil = PIL.Image.fromarray(img, mode=src_mode)
+    pil = pil.convert(
+        mode=dst_mode, matrix=matrix, dither=dither, palette=palette, colors=colors
+    )
+    return np.asarray(pil)
+
+
 def as_box(v):
     box_x, box_y, box_w, box_h = map(int, v)
     if box_x < 0 or box_y < 0 or box_w < 1 or box_h < 1:
@@ -58,23 +75,6 @@ class OCRParagraph:
 
         object.__setattr__(self, "txt", txt)
         object.__setattr__(self, "kind", kind)
-
-
-def convert_image(
-    img,
-    *,
-    src_mode=None,
-    dst_mode=None,
-    matrix=None,
-    dither=None,
-    palette=PIL.Image.Palette.WEB,
-    colors=256,
-):
-    pil = PIL.Image.fromarray(img, mode=src_mode)
-    pil = pil.convert(
-        mode=dst_mode, matrix=matrix, dither=dither, palette=palette, colors=colors
-    )
-    return np.asarray(pil)
 
 
 def as_tesstsv(v):
