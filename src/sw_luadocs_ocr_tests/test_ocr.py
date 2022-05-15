@@ -6,7 +6,7 @@ import unittest
 
 class TestAsBox(unittest.TestCase):
     def test_type(self):
-        box = sw_luadocs_ocr.ocr.as_box([10, 11, 12, 13])
+        box = sw_luadocs_ocr.ocr.as_box(["10", "11", "12", "13"])
         self.assertEqual(box, (10, 11, 12, 13))
 
     def test_valid(self):
