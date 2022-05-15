@@ -13,6 +13,19 @@ def as_box(v):
 
 
 @dataclasses.dataclass(frozen=True, kw_only=True, slots=True)
+class TesseractLine:
+    txt: typing.Any
+    box: typing.Any
+
+    def __post_init__(self):
+        txt = str(self.txt)
+        box = as_box(self.box)
+
+        object.__setattr__(self, "txt", txt)
+        object.__setattr__(self, "box", box)
+
+
+@dataclasses.dataclass(frozen=True, kw_only=True, slots=True)
 class OCRLine:
     txt: typing.Any
     kind: typing.Any

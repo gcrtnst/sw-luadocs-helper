@@ -28,6 +28,13 @@ class TestAsBox(unittest.TestCase):
                     sw_luadocs_ocr.ocr.as_box(v)
 
 
+class TestTesseractLinePostInit(unittest.TestCase):
+    def test_type(self):
+        tessline = sw_luadocs_ocr.ocr.TesseractLine(txt=0, box=["10", "11", "12", "13"])
+        self.assertEqual(tessline.txt, "0")
+        self.assertEqual(tessline.box, (10, 11, 12, 13))
+
+
 class TestOCRLinePostInit(unittest.TestCase):
     def test_type(self):
         ocrline = sw_luadocs_ocr.ocr.OCRLine(
