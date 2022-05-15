@@ -4,6 +4,83 @@ import sw_luadocs_ocr.ocr
 import unittest
 
 
+class TestAsTessTSV(unittest.TestCase):
+    def test_type(self):
+        v = {
+            "level": ("0", "1"),
+            "page_num": ("10", "11"),
+            "block_num": ("20", "21"),
+            "par_num": ("30", "31"),
+            "line_num": ("40", "41"),
+            "word_num": ("50", "51"),
+            "left": ("60", "61"),
+            "top": ("70", "71"),
+            "width": ("80", "81"),
+            "height": ("90", "91"),
+            "conf": ("0.5", "1.5"),
+            "text": (100, 101),
+        }
+        tesstsv = sw_luadocs_ocr.ocr.as_tesstsv(v)
+        self.assertEqual(
+            tesstsv,
+            {
+                "level": [0, 1],
+                "page_num": [10, 11],
+                "block_num": [20, 21],
+                "par_num": [30, 31],
+                "line_num": [40, 41],
+                "word_num": [50, 51],
+                "left": [60, 61],
+                "top": [70, 71],
+                "width": [80, 81],
+                "height": [90, 91],
+                "conf": [0.5, 1.5],
+                "text": ["100", "101"],
+            },
+        )
+
+    def test_copy(self):
+        v = {
+            "level": [0, 1],
+            "page_num": [10, 11],
+            "block_num": [20, 21],
+            "par_num": [30, 31],
+            "line_num": [40, 41],
+            "word_num": [50, 51],
+            "left": [60, 61],
+            "top": [70, 71],
+            "width": [80, 81],
+            "height": [90, 91],
+            "conf": [0.5, 1.5],
+            "text": ["100", "101"],
+        }
+        tesstsv = sw_luadocs_ocr.ocr.as_tesstsv(v)
+        self.assertIsNot(tesstsv, v)
+        self.assertEqual(tesstsv, v)
+
+    def test_len(self):
+        v1 = {
+            "level": [0],
+            "page_num": [0],
+            "block_num": [0],
+            "par_num": [0],
+            "line_num": [0],
+            "word_num": [0],
+            "left": [0],
+            "top": [0],
+            "width": [0],
+            "height": [0],
+            "conf": [0],
+            "text": [0],
+        }
+        for key in v1:
+            with self.subTest(key=key):
+                v2 = copy.deepcopy(v1)
+                v2[key] = [0, 1]
+                with self.assertRaises(ValueError):
+                    sw_luadocs_ocr.ocr.as_tesstsv(v2)
+
+
 class TestAsBox(unittest.TestCase):
     def test_type(self):
         box = sw_luadocs_ocr.ocr.as_box(["10", "11", "12", "13"])
@@ -75,81 +152,6 @@ class TestOCRParagraphPostInit(unittest.TestCase):
 
 
 class TestOCR(unittest.TestCase):
-    def test_as_tesstsv(self):
-        # type conversion
-        v = {
-            "level": ["0", "1"],
-            "page_num": ["10", "11"],
-            "block_num": ["20", "21"],
-            "par_num": ["30", "31"],
-            "line_num": ["40", "41"],
-            "word_num": ["50", "51"],
-            "left": ["60", "61"],
-            "top": ["70", "71"],
-            "width": ["80", "81"],
-            "height": ["90", "91"],
-            "conf": ["0.5", "1.5"],
-            "text": [100, 101],
-        }
-        tesstsv = sw_luadocs_ocr.ocr.as_tesstsv(v)
-        self.assertEqual(
-            tesstsv,
-            {
-                "level": [0, 1],
-                "page_num": [10, 11],
-                "block_num": [20, 21],
-                "par_num": [30, 31],
-                "line_num": [40, 41],
-                "word_num": [50, 51],
-                "left": [60, 61],
-                "top": [70, 71],
-                "width": [80, 81],
-                "height": [90, 91],
-                "conf": [0.5, 1.5],
-                "text": ["100", "101"],
-            },
-        )
-
-        # copy
-        v = {
-            "level": [0, 1],
-            "page_num": [10, 11],
-            "block_num": [20, 21],
-            "par_num": [30, 31],
-            "line_num": [40, 41],
-            "word_num": [50, 51],
-            "left": [60, 61],
-            "top": [70, 71],
-            "width": [80, 81],
-            "height": [90, 91],
-            "conf": [0.5, 1.5],
-            "text": ["100", "101"],
-        }
-        tesstsv = sw_luadocs_ocr.ocr.as_tesstsv(v)
-        self.assertIsNot(tesstsv, v)
-        self.assertEqual(tesstsv, v)
-
-        # wrong length of v[key]
-        v = {
-            "level": [0],
-            "page_num": [0],
-            "block_num": [0],
-            "par_num": [0],
-            "line_num": [0],
-            "word_num": [0],
-            "left": [0],
-            "top": [0],
-            "width": [0],
-            "height": [0],
-            "conf": [0],
-            "text": [0],
-        }
-        for key in v:
-            v2 = copy.deepcopy(v)
-            v2[key] = [0, 1]
-            with self.assertRaises(ValueError):
-                sw_luadocs_ocr.ocr.as_tesstsv(v2)
-
     def as_tessline(self):
         # type convertsion
         v = {"txt": 0, "box": ["1", "2", "3", "4"]}
