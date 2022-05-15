@@ -112,7 +112,7 @@ def as_tessline(v):
     return tessline
 
 
-def preprocess(img):
+def preprocess_image(img):
     img = convert_image(img, dst_mode="RGB")
     return 255 - np.amax(img, axis=2)
 
