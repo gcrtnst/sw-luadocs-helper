@@ -692,9 +692,9 @@ class TestOCR(unittest.TestCase):
         with self.assertRaises(ValueError):
             sw_luadocs_ocr.ocr.as_tessline(v)
 
-    def test_categorize_tessline(self):
+    def test_categorize_line(self):
         # code
-        kind = sw_luadocs_ocr.ocr.categorize_tessline(
+        kind = sw_luadocs_ocr.ocr.categorize_line(
             tessline={"txt": "", "box": (1, 0, 0, 0)},
             capture_img=np.zeros((1, 1, 3), dtype=np.uint8),
             code_thresh_x=1,
@@ -704,7 +704,7 @@ class TestOCR(unittest.TestCase):
         self.assertEqual(kind, "code")
 
         # body: empty box
-        kind = sw_luadocs_ocr.ocr.categorize_tessline(
+        kind = sw_luadocs_ocr.ocr.categorize_line(
             tessline={"txt": "", "box": (0, 0, 0, 0)},
             capture_img=np.zeros((1, 1, 3), dtype=np.uint8),
             code_thresh_x=1,
@@ -714,7 +714,7 @@ class TestOCR(unittest.TestCase):
         self.assertEqual(kind, "body")
 
         # body: bg only
-        kind = sw_luadocs_ocr.ocr.categorize_tessline(
+        kind = sw_luadocs_ocr.ocr.categorize_line(
             tessline={"txt": "", "box": (0, 0, 1, 1)},
             capture_img=np.zeros((10, 10, 3), dtype=np.uint8),
             code_thresh_x=1,
@@ -724,7 +724,7 @@ class TestOCR(unittest.TestCase):
         self.assertEqual(kind, "body")
 
         # body: low saturation
-        kind = sw_luadocs_ocr.ocr.categorize_tessline(
+        kind = sw_luadocs_ocr.ocr.categorize_line(
             tessline={"txt": "", "box": (0, 0, 1, 1)},
             capture_img=np.ones((10, 10, 3), dtype=np.uint8),
             code_thresh_x=1,
@@ -734,7 +734,7 @@ class TestOCR(unittest.TestCase):
         self.assertEqual(kind, "body")
 
         # head
-        kind = sw_luadocs_ocr.ocr.categorize_tessline(
+        kind = sw_luadocs_ocr.ocr.categorize_line(
             tessline={"txt": "", "box": (0, 0, 1, 1)},
             capture_img=np.ones((10, 10, 3), dtype=np.uint8),
             code_thresh_x=1,
@@ -746,7 +746,7 @@ class TestOCR(unittest.TestCase):
         # crop
         capture_img = np.ones((10, 10, 3), dtype=np.uint8)
         capture_img[2:6, 1:4, :] = 0
-        kind = sw_luadocs_ocr.ocr.categorize_tessline(
+        kind = sw_luadocs_ocr.ocr.categorize_line(
             tessline={"txt": "", "box": (1, 2, 3, 4)},
             capture_img=capture_img,
             code_thresh_x=10,
@@ -756,7 +756,7 @@ class TestOCR(unittest.TestCase):
         self.assertEqual(kind, "body")
 
         # bg_thresh: body
-        kind = sw_luadocs_ocr.ocr.categorize_tessline(
+        kind = sw_luadocs_ocr.ocr.categorize_line(
             tessline={"txt": "", "box": (0, 0, 1, 1)},
             capture_img=np.ones((10, 10, 3), dtype=np.uint8),
             code_thresh_x=1,
@@ -766,7 +766,7 @@ class TestOCR(unittest.TestCase):
         self.assertEqual(kind, "body")
 
         # bg_thresh: r
-        kind = sw_luadocs_ocr.ocr.categorize_tessline(
+        kind = sw_luadocs_ocr.ocr.categorize_line(
             tessline={"txt": "", "box": (0, 0, 1, 1)},
             capture_img=np.ones((10, 10, 3), dtype=np.uint8),
             code_thresh_x=1,
@@ -776,7 +776,7 @@ class TestOCR(unittest.TestCase):
         self.assertEqual(kind, "head")
 
         # bg_thresh: g
-        kind = sw_luadocs_ocr.ocr.categorize_tessline(
+        kind = sw_luadocs_ocr.ocr.categorize_line(
             tessline={"txt": "", "box": (0, 0, 1, 1)},
             capture_img=np.ones((10, 10, 3), dtype=np.uint8),
             code_thresh_x=1,
@@ -786,7 +786,7 @@ class TestOCR(unittest.TestCase):
         self.assertEqual(kind, "head")
 
         # bg_thresh: b
-        kind = sw_luadocs_ocr.ocr.categorize_tessline(
+        kind = sw_luadocs_ocr.ocr.categorize_line(
             tessline={"txt": "", "box": (0, 0, 1, 1)},
             capture_img=np.ones((10, 10, 3), dtype=np.uint8),
             code_thresh_x=1,
@@ -797,7 +797,7 @@ class TestOCR(unittest.TestCase):
 
         # saturation: zero
         capture_img = np.ones((10, 10, 3), dtype=np.uint8)
-        kind = sw_luadocs_ocr.ocr.categorize_tessline(
+        kind = sw_luadocs_ocr.ocr.categorize_line(
             tessline={"txt": "", "box": (0, 0, 10, 10)},
             capture_img=capture_img,
             code_thresh_x=1,
@@ -809,7 +809,7 @@ class TestOCR(unittest.TestCase):
         # saturation: r max
         capture_img = np.ones((10, 10, 3), dtype=np.uint8)
         capture_img[:, :, 0] = 255
-        kind = sw_luadocs_ocr.ocr.categorize_tessline(
+        kind = sw_luadocs_ocr.ocr.categorize_line(
             tessline={"txt": "", "box": (0, 0, 10, 10)},
             capture_img=capture_img,
             code_thresh_x=1,
@@ -821,7 +821,7 @@ class TestOCR(unittest.TestCase):
         # saturation: g max
         capture_img = np.ones((10, 10, 3), dtype=np.uint8)
         capture_img[:, :, 1] = 255
-        kind = sw_luadocs_ocr.ocr.categorize_tessline(
+        kind = sw_luadocs_ocr.ocr.categorize_line(
             tessline={"txt": "", "box": (0, 0, 10, 10)},
             capture_img=capture_img,
             code_thresh_x=1,
@@ -833,7 +833,7 @@ class TestOCR(unittest.TestCase):
         # saturation: b max
         capture_img = np.ones((10, 10, 3), dtype=np.uint8)
         capture_img[:, :, 2] = 255
-        kind = sw_luadocs_ocr.ocr.categorize_tessline(
+        kind = sw_luadocs_ocr.ocr.categorize_line(
             tessline={"txt": "", "box": (0, 0, 10, 10)},
             capture_img=capture_img,
             code_thresh_x=1,

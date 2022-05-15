@@ -146,7 +146,7 @@ def preprocess_image(img):
     return 255 - np.amax(img, axis=2)
 
 
-def categorize_tessline(
+def categorize_line(
     *, tessline, capture_img, code_thresh_x, head_thresh_s, bg_thresh_rgb
 ):
     tessline = as_tessline(tessline)
@@ -200,7 +200,7 @@ def create_ocrline(
     code_space_w = float(code_space_w)
 
     code_thresh_x = int(max(0, code_base_x - code_space_w / 2))
-    kind = categorize_tessline(
+    kind = categorize_line(
         tessline=tessline,
         capture_img=capture_img,
         code_thresh_x=code_thresh_x,
