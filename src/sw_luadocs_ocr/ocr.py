@@ -22,6 +22,31 @@ def convert_image(
     return np.asarray(pil)
 
 
+def as_tesstsv(v):
+    tesstsv = {}
+    for key in (
+        "level",
+        "page_num",
+        "block_num",
+        "par_num",
+        "line_num",
+        "word_num",
+        "left",
+        "top",
+        "width",
+        "height",
+    ):
+        tesstsv[key] = list(map(int, v[key]))
+    tesstsv["conf"] = list(map(float, v["conf"]))
+    tesstsv["text"] = list(map(str, v["text"]))
+
+    for key in tesstsv:
+        if len(tesstsv[key]) != len(tesstsv["level"]):
+            raise ValueError
+
+    return tesstsv
+
+
 def as_box(v):
     box_x, box_y, box_w, box_h = map(int, v)
     if box_x < 0 or box_y < 0 or box_w < 1 or box_h < 1:
@@ -75,31 +100,6 @@ class OCRParagraph:
 
         object.__setattr__(self, "txt", txt)
         object.__setattr__(self, "kind", kind)
-
-
-def as_tesstsv(v):
-    tesstsv = {}
-    for key in (
-        "level",
-        "page_num",
-        "block_num",
-        "par_num",
-        "line_num",
-        "word_num",
-        "left",
-        "top",
-        "width",
-        "height",
-    ):
-        tesstsv[key] = list(map(int, v[key]))
-    tesstsv["conf"] = list(map(float, v["conf"]))
-    tesstsv["text"] = list(map(str, v["text"]))
-
-    for key in tesstsv:
-        if len(tesstsv[key]) != len(tesstsv["level"]):
-            raise ValueError
-
-    return tesstsv
 
 
 def as_tessline(v):
