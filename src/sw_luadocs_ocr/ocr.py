@@ -54,6 +54,13 @@ def as_box(v):
     return box_x, box_y, box_w, box_h
 
 
+def as_kind(v):
+    kind = str(v)
+    if kind not in ("head", "body", "code"):
+        raise ValueError
+    return kind
+
+
 @dataclasses.dataclass(frozen=True, kw_only=True, slots=True)
 class TesseractLine:
     txt: typing.Any

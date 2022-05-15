@@ -105,6 +105,18 @@ class TestAsBox(unittest.TestCase):
                     sw_luadocs_ocr.ocr.as_box(v)
 
 
+class TestAsKind(unittest.TestCase):
+    def test_valid(self):
+        for v in "head", "body", "code":
+            with self.subTest(v=v):
+                kind = sw_luadocs_ocr.ocr.as_kind(v)
+                self.assertEqual(kind, v)
+
+    def test_invalid(self):
+        with self.assertRaises(ValueError):
+            sw_luadocs_ocr.ocr.as_kind("invliad")
+
+
 class TestTesseractLinePostInit(unittest.TestCase):
     def test_type(self):
         tessline = sw_luadocs_ocr.ocr.TesseractLine(txt=0, box=["10", "11", "12", "13"])
