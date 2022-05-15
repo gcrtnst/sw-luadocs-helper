@@ -4,6 +4,30 @@ import sw_luadocs_ocr.ocr
 import unittest
 
 
+class TestAsBox(unittest.TestCase):
+    def test_type(self):
+        box = sw_luadocs_ocr.ocr.as_box([10, 11, 12, 13])
+        self.assertEqual(box, (10, 11, 12, 13))
+
+    def test_valid(self):
+        v = (0, 0, 1, 1)
+        box = sw_luadocs_ocr.ocr.as_box(v)
+        self.assertEqual(box, v)
+
+    def test_invalid(self):
+        for v in (
+            (0, 0, 1),
+            (0, 0, 1, 1, 1),
+            (-1, 0, 1, 1),
+            (0, -1, 1, 1),
+            (0, 0, 0, 1),
+            (0, 0, 1, 0),
+        ):
+            with self.subTest(v=v):
+                with self.assertRaises(ValueError):
+                    sw_luadocs_ocr.ocr.as_box(v)
+
+
 class TestOCRLinePostInit(unittest.TestCase):
     def test_type(self):
         ocrline = sw_luadocs_ocr.ocr.OCRLine(

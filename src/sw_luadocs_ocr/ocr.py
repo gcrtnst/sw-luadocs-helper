@@ -5,6 +5,13 @@ import PIL.Image
 import typing
 
 
+def as_box(v):
+    box_x, box_y, box_w, box_h = map(int, v)
+    if box_x < 0 or box_y < 0 or box_w < 1 or box_h < 1:
+        raise ValueError
+    return box_x, box_y, box_w, box_h
+
+
 @dataclasses.dataclass(frozen=True, kw_only=True, slots=True)
 class OCRLine:
     txt: typing.Any
