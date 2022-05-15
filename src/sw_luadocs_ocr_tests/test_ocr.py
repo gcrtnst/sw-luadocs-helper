@@ -4,9 +4,8 @@ import sw_luadocs_ocr.ocr
 import unittest
 
 
-class TestOCRLine(unittest.TestCase):
-    def test_init(self):
-        # type conversion
+class TestOCRLinePreInit(unittest.TestCase):
+    def test_type(self):
         ocrline = sw_luadocs_ocr.ocr.OCRLine(
             txt=0, kind="head", box=["1", "2", "3", "4"]
         )
@@ -14,53 +13,35 @@ class TestOCRLine(unittest.TestCase):
         self.assertEqual(ocrline.kind, "head")
         self.assertEqual(ocrline.box, (1, 2, 3, 4))
 
-        # kind check: head
-        ocrline = sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(1, 2, 3, 4))
-        self.assertEqual(ocrline.kind, "head")
+    def test_kind_valid(self):
+        for kind in "head", "body", "code":
+            with self.subTest(kind=kind):
+                ocrline = sw_luadocs_ocr.ocr.OCRLine(
+                    txt="", kind=kind, box=(1, 2, 3, 4)
+                )
+                self.assertEqual(ocrline.kind, kind)
 
-        # kind check: body
-        ocrline = sw_luadocs_ocr.ocr.OCRLine(txt="", kind="body", box=(1, 2, 3, 4))
-        self.assertEqual(ocrline.kind, "body")
-
-        # kind check: code
-        ocrline = sw_luadocs_ocr.ocr.OCRLine(txt="", kind="code", box=(1, 2, 3, 4))
-        self.assertEqual(ocrline.kind, "code")
-
-        # kind check: invalid
+    def test_kind_invalid(self):
         with self.assertRaises(ValueError):
             sw_luadocs_ocr.ocr.OCRLine(txt="", kind="invalid", box=(1, 2, 3, 4))
 
-        # box length: ok
-        ocrline = sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(1, 2, 3, 4))
-        self.assertEqual(ocrline.box, (1, 2, 3, 4))
+    def test_box_valid(self):
+        box = (0, 0, 1, 1)
+        ocrline = sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=box)
+        self.assertEqual(ocrline.box, box)
 
-        # box length: small
-        with self.assertRaises(ValueError):
-            sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(1, 2, 3))
-
-        # box length: big
-        with self.assertRaises(ValueError):
-            sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(1, 2, 3, 4, 5))
-
-        # box: ok
-        ocrline = sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(0, 0, 1, 1))
-        self.assertEqual(ocrline.box, (0, 0, 1, 1))
-
-        # box: x < 0
-        with self.assertRaises(ValueError):
-            sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(-1, 0, 1, 1))
-
-        # box: y < 0
-        with self.assertRaises(ValueError):
-            sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(0, -1, 1, 1))
-
-        # box: w < 1
-        with self.assertRaises(ValueError):
-            sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(0, 0, 0, 1))
-
-        # box: h < 1
-        with self.assertRaises(ValueError):
-            sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(0, 0, 1, 0))
+    def test_box_invalid(self):
+        for box in (
+            (0, 0, 1),
+            (0, 0, 1, 1, 1),
+            (-1, 0, 1, 1),
+            (0, -1, 1, 1),
+            (0, 0, 0, 1),
+            (0, 0, 1, 0),
+        ):
+            with self.subTest(box=box):
+                with self.assertRaises(ValueError):
+                    sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=box)
 
 
 class TestOCRParagraph(unittest.TestCase):
