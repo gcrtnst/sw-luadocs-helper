@@ -49,24 +49,6 @@ class TestOCRLinePostInit(unittest.TestCase):
         with self.assertRaises(ValueError):
             sw_luadocs_ocr.ocr.OCRLine(txt="", kind="invalid", box=(1, 2, 3, 4))
 
-    def test_box_valid(self):
-        box = (0, 0, 1, 1)
-        ocrline = sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=box)
-        self.assertEqual(ocrline.box, box)
-
-    def test_box_invalid(self):
-        for box in (
-            (0, 0, 1),
-            (0, 0, 1, 1, 1),
-            (-1, 0, 1, 1),
-            (0, -1, 1, 1),
-            (0, 0, 0, 1),
-            (0, 0, 1, 0),
-        ):
-            with self.subTest(box=box):
-                with self.assertRaises(ValueError):
-                    sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=box)
-
 
 class TestOCRParagraphPostInit(unittest.TestCase):
     def test_type(self):

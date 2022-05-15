@@ -21,13 +21,9 @@ class OCRLine:
     def __post_init__(self):
         txt = str(self.txt)
         kind = str(self.kind)
-        box = tuple(map(int, self.box))
+        box = as_box(self.box)
 
         if kind not in ("head", "body", "code"):
-            raise ValueError
-
-        box_x, box_y, box_w, box_h = box
-        if box_x < 0 or box_y < 0 or box_w < 1 or box_h < 1:
             raise ValueError
 
         object.__setattr__(self, "txt", txt)
