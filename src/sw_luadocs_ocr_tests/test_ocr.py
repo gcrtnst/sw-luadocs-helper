@@ -1014,6 +1014,37 @@ class TestCategorizeLine(unittest.TestCase):
         self.assertEqual(kind, "body")
 
 
+class TestCalcCodeIndent(unittest.TestCase):
+    def test_type(self):
+        indent = sw_luadocs_ocr.ocr.calc_code_indent(
+            line_x="34", base_x="12", space_w="0.5"
+        )
+        self.assertEqual(indent, 44)
+
+    def test_validate(self):
+        for kwargs in [
+            {"line_x": -1, "base_x": 0, "space_w": 0.1},
+            {"line_x": 0, "base_x": -1, "space_w": 0.1},
+            {"line_x": 0, "base_x": 0, "space_w": float("nan")},
+            {"line_x": 0, "base_x": 0, "space_w": 0},
+        ]:
+            with self.subTest(kwargs=kwargs):
+                with self.assertRaises(ValueError):
+                    sw_luadocs_ocr.ocr.calc_code_indent(**kwargs)
+
+    def test_zero(self):
+        indent = sw_luadocs_ocr.ocr.calc_code_indent(line_x=12, base_x=34, space_w=0.5)
+        self.assertEqual(indent, 0)
+
+    def test_normal(self):
+        indent = sw_luadocs_ocr.ocr.calc_code_indent(line_x=34, base_x=12, space_w=0.5)
+        self.assertEqual(indent, 44)
+
+    def test_round(self):
+        indent = sw_luadocs_ocr.ocr.calc_code_indent(line_x=34, base_x=12, space_w=3)
+        self.assertEqual(indent, 7)
+
+
 class TestOCR(unittest.TestCase):
     def as_tessline(self):
         # type convertsion
@@ -1031,27 +1062,6 @@ class TestOCR(unittest.TestCase):
         v = {"txt": "0", "box": (1, 2, 3, 4, 5)}
         with self.assertRaises(ValueError):
             sw_luadocs_ocr.ocr.as_tessline(v)
-
-    def test_calc_code_indent(self):
-        # space_w <= 0
-        with self.assertRaises(ValueError):
-            sw_luadocs_ocr.ocr.calc_code_indent(line_x=0, base_x=0, space_w=0)
-
-        # line_x < base_x
-        indent = sw_luadocs_ocr.ocr.calc_code_indent(line_x=0, base_x=1, space_w=0.1)
-        self.assertEqual(indent, 0)
-
-        # zero
-        indent = sw_luadocs_ocr.ocr.calc_code_indent(line_x=1, base_x=1, space_w=0.1)
-        self.assertEqual(indent, 0)
-
-        # normal
-        indent = sw_luadocs_ocr.ocr.calc_code_indent(line_x=2, base_x=1, space_w=0.1)
-        self.assertEqual(indent, 10)
-
-        # round
-        indent = sw_luadocs_ocr.ocr.calc_code_indent(line_x=2, base_x=1, space_w=0.4)
-        self.assertEqual(indent, 2)
 
     def test_create_ocrline(self):
         # code_thresh_x: code

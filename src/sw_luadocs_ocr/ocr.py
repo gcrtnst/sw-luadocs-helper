@@ -1,5 +1,6 @@
 import colorsys
 import dataclasses
+import math
 import numpy as np
 import PIL.Image
 import typing
@@ -209,8 +210,8 @@ def calc_code_indent(*, line_x, base_x, space_w):
     base_x = int(base_x)
     space_w = float(space_w)
 
-    if space_w <= 0:
-        raise ValueError("space_w is less than zero")
+    if line_x < 0 or base_x < 0 or not math.isfinite(space_w) or space_w <= 0:
+        raise ValueError
 
     return max(0, round((line_x - base_x) / space_w))
 
