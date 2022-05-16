@@ -149,13 +149,36 @@ def preprocess_image(img):
 def categorize_line(
     *, tessline, capture_img, code_thresh_x, head_thresh_s, bg_thresh_rgb
 ):
-    tessline = as_tessline(tessline)
     capture_img = convert_image(capture_img, dst_mode="RGB")
     code_thresh_x = int(code_thresh_x)
     head_thresh_s = int(head_thresh_s)
     bg_thresh_r, bg_thresh_g, bg_thresh_b = map(int, bg_thresh_rgb)
 
-    line_x, line_y, line_w, line_h = tessline["box"]
+    if not isinstance(tessline, TesseractLine):
+        raise TypeError
+
+    line_x, line_y, line_w, line_h = tessline.box
+    capture_img_h, capture_img_w, _ = capture_img.shape
+    if (
+        capture_img_w <= line_x
+        or capture_img_h <= line_y
+        or capture_img_w <= line_x + line_w - 1
+        or capture_img_h <= line_y + line_h - 1
+        or capture_img_w <= 0
+        or capture_img_h <= 0
+        or code_thresh_x < 0
+        or capture_img_w <= code_thresh_x
+        or head_thresh_s < 0
+        or 255 < head_thresh_s
+        or bg_thresh_r < 0
+        or 255 < bg_thresh_r
+        or bg_thresh_g < 0
+        or 255 < bg_thresh_g
+        or bg_thresh_b < 0
+        or 255 < bg_thresh_b
+    ):
+        raise ValueError
+
     if line_x >= code_thresh_x:
         return "code"
 
