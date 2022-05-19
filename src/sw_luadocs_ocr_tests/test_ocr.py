@@ -679,8 +679,8 @@ class TestCategorizeLine(unittest.TestCase):
         kind = sw_luadocs_ocr.ocr.categorize_line(
             tessline=sw_luadocs_ocr.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
             capture_img=np.zeros((1, 1, 3), dtype=np.uint8),
-            code_thresh_x=0,
             head_thresh_s=0,
+            code_thresh_x=0,
             bg_thresh_rgb=(0, 0, 0),
         )
         self.assertEqual(kind, "code")
@@ -689,8 +689,8 @@ class TestCategorizeLine(unittest.TestCase):
         kind = sw_luadocs_ocr.ocr.categorize_line(
             tessline=sw_luadocs_ocr.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
             capture_img=np.full((1, 2, 4), 255, dtype=np.uint8),
-            code_thresh_x="1",
             head_thresh_s="0",
+            code_thresh_x="1",
             bg_thresh_rgb=("0", "0", "0"),
         )
         self.assertEqual(kind, "head")
@@ -700,8 +700,8 @@ class TestCategorizeLine(unittest.TestCase):
             sw_luadocs_ocr.ocr.categorize_line(
                 tessline=None,
                 capture_img=np.zeros((1, 1, 3), dtype=np.uint8),
-                code_thresh_x=0,
                 head_thresh_s=0,
+                code_thresh_x=0,
                 bg_thresh_rgb=(0, 0, 0),
             )
 
@@ -710,113 +710,113 @@ class TestCategorizeLine(unittest.TestCase):
             {
                 "tessline": sw_luadocs_ocr.ocr.TesseractLine(txt="", box=(1, 0, 1, 1)),
                 "capture_img": np.zeros((1, 1, 3), dtype=np.uint8),
-                "code_thresh_x": 0,
                 "head_thresh_s": 0,
+                "code_thresh_x": 0,
                 "bg_thresh_rgb": (0, 0, 0),
             },
             {
                 "tessline": sw_luadocs_ocr.ocr.TesseractLine(txt="", box=(0, 1, 1, 1)),
                 "capture_img": np.zeros((1, 1, 3), dtype=np.uint8),
-                "code_thresh_x": 0,
                 "head_thresh_s": 0,
+                "code_thresh_x": 0,
                 "bg_thresh_rgb": (0, 0, 0),
             },
             {
                 "tessline": sw_luadocs_ocr.ocr.TesseractLine(txt="", box=(0, 0, 2, 1)),
                 "capture_img": np.zeros((1, 1, 3), dtype=np.uint8),
-                "code_thresh_x": 0,
                 "head_thresh_s": 0,
+                "code_thresh_x": 0,
                 "bg_thresh_rgb": (0, 0, 0),
             },
             {
                 "tessline": sw_luadocs_ocr.ocr.TesseractLine(txt="", box=(0, 0, 1, 2)),
                 "capture_img": np.zeros((1, 1, 3), dtype=np.uint8),
-                "code_thresh_x": 0,
                 "head_thresh_s": 0,
+                "code_thresh_x": 0,
                 "bg_thresh_rgb": (0, 0, 0),
             },
             {
                 "tessline": sw_luadocs_ocr.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
                 "capture_img": np.zeros((0, 1, 3), dtype=np.uint8),
-                "code_thresh_x": 0,
                 "head_thresh_s": 0,
+                "code_thresh_x": 0,
                 "bg_thresh_rgb": (0, 0, 0),
             },
             {
                 "tessline": sw_luadocs_ocr.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
                 "capture_img": np.zeros((1, 0, 3), dtype=np.uint8),
+                "head_thresh_s": 0,
                 "code_thresh_x": 0,
-                "head_thresh_s": 0,
                 "bg_thresh_rgb": (0, 0, 0),
             },
             {
                 "tessline": sw_luadocs_ocr.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
                 "capture_img": np.zeros((1, 1, 3), dtype=np.uint8),
-                "code_thresh_x": -1,
-                "head_thresh_s": 0,
-                "bg_thresh_rgb": (0, 0, 0),
-            },
-            {
-                "tessline": sw_luadocs_ocr.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
-                "capture_img": np.zeros((1, 1, 3), dtype=np.uint8),
-                "code_thresh_x": 1,
-                "head_thresh_s": 0,
-                "bg_thresh_rgb": (0, 0, 0),
-            },
-            {
-                "tessline": sw_luadocs_ocr.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
-                "capture_img": np.zeros((1, 1, 3), dtype=np.uint8),
-                "code_thresh_x": 0,
                 "head_thresh_s": -1,
+                "code_thresh_x": 0,
                 "bg_thresh_rgb": (0, 0, 0),
             },
             {
                 "tessline": sw_luadocs_ocr.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
                 "capture_img": np.zeros((1, 1, 3), dtype=np.uint8),
-                "code_thresh_x": 0,
                 "head_thresh_s": 256,
+                "code_thresh_x": 0,
                 "bg_thresh_rgb": (0, 0, 0),
             },
             {
                 "tessline": sw_luadocs_ocr.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
                 "capture_img": np.zeros((1, 1, 3), dtype=np.uint8),
-                "code_thresh_x": 0,
                 "head_thresh_s": 0,
+                "code_thresh_x": -1,
+                "bg_thresh_rgb": (0, 0, 0),
+            },
+            {
+                "tessline": sw_luadocs_ocr.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
+                "capture_img": np.zeros((1, 1, 3), dtype=np.uint8),
+                "head_thresh_s": 0,
+                "code_thresh_x": 1,
+                "bg_thresh_rgb": (0, 0, 0),
+            },
+            {
+                "tessline": sw_luadocs_ocr.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
+                "capture_img": np.zeros((1, 1, 3), dtype=np.uint8),
+                "head_thresh_s": 0,
+                "code_thresh_x": 0,
                 "bg_thresh_rgb": (-1, 0, 0),
             },
             {
                 "tessline": sw_luadocs_ocr.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
                 "capture_img": np.zeros((1, 1, 3), dtype=np.uint8),
-                "code_thresh_x": 0,
                 "head_thresh_s": 0,
+                "code_thresh_x": 0,
                 "bg_thresh_rgb": (256, 0, 0),
             },
             {
                 "tessline": sw_luadocs_ocr.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
                 "capture_img": np.zeros((1, 1, 3), dtype=np.uint8),
-                "code_thresh_x": 0,
                 "head_thresh_s": 0,
+                "code_thresh_x": 0,
                 "bg_thresh_rgb": (0, -1, 0),
             },
             {
                 "tessline": sw_luadocs_ocr.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
                 "capture_img": np.zeros((1, 1, 3), dtype=np.uint8),
-                "code_thresh_x": 0,
                 "head_thresh_s": 0,
+                "code_thresh_x": 0,
                 "bg_thresh_rgb": (0, 256, 0),
             },
             {
                 "tessline": sw_luadocs_ocr.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
                 "capture_img": np.zeros((1, 1, 3), dtype=np.uint8),
-                "code_thresh_x": 0,
                 "head_thresh_s": 0,
+                "code_thresh_x": 0,
                 "bg_thresh_rgb": (0, 0, -1),
             },
             {
                 "tessline": sw_luadocs_ocr.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
                 "capture_img": np.zeros((1, 1, 3), dtype=np.uint8),
-                "code_thresh_x": 0,
                 "head_thresh_s": 0,
+                "code_thresh_x": 0,
                 "bg_thresh_rgb": (0, 0, 256),
             },
         ]:
@@ -828,8 +828,8 @@ class TestCategorizeLine(unittest.TestCase):
         kind = sw_luadocs_ocr.ocr.categorize_line(
             tessline=sw_luadocs_ocr.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
             capture_img=np.zeros((1, 1, 3), dtype=np.uint8),
-            code_thresh_x=0,
             head_thresh_s=0,
+            code_thresh_x=0,
             bg_thresh_rgb=(0, 0, 0),
         )
         self.assertEqual(kind, "code")
@@ -840,8 +840,8 @@ class TestCategorizeLine(unittest.TestCase):
         kind = sw_luadocs_ocr.ocr.categorize_line(
             tessline=sw_luadocs_ocr.ocr.TesseractLine(txt="", box=(2, 3, 1, 1)),
             capture_img=capture_img,
-            code_thresh_x=3,
             head_thresh_s=0,
+            code_thresh_x=3,
             bg_thresh_rgb=(0, 0, 0),
         )
         self.assertEqual(kind, "head")
@@ -852,8 +852,8 @@ class TestCategorizeLine(unittest.TestCase):
         kind = sw_luadocs_ocr.ocr.categorize_line(
             tessline=sw_luadocs_ocr.ocr.TesseractLine(txt="", box=(0, 0, 2, 1)),
             capture_img=capture_img,
-            code_thresh_x=1,
             head_thresh_s=0,
+            code_thresh_x=1,
             bg_thresh_rgb=(0, 0, 0),
         )
         self.assertEqual(kind, "head")
@@ -864,8 +864,8 @@ class TestCategorizeLine(unittest.TestCase):
         kind = sw_luadocs_ocr.ocr.categorize_line(
             tessline=sw_luadocs_ocr.ocr.TesseractLine(txt="", box=(0, 0, 1, 3)),
             capture_img=capture_img,
-            code_thresh_x=1,
             head_thresh_s=0,
+            code_thresh_x=1,
             bg_thresh_rgb=(0, 0, 0),
         )
         self.assertEqual(kind, "head")
@@ -874,8 +874,8 @@ class TestCategorizeLine(unittest.TestCase):
         kind = sw_luadocs_ocr.ocr.categorize_line(
             tessline=sw_luadocs_ocr.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
             capture_img=np.full((2, 2, 3), 255, dtype=np.uint8),
-            code_thresh_x=1,
             head_thresh_s=0,
+            code_thresh_x=1,
             bg_thresh_rgb=(255, 255, 255),
         )
         self.assertEqual(kind, "body")
@@ -886,8 +886,8 @@ class TestCategorizeLine(unittest.TestCase):
         kind = sw_luadocs_ocr.ocr.categorize_line(
             tessline=sw_luadocs_ocr.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
             capture_img=capture_img,
-            code_thresh_x=1,
             head_thresh_s=0,
+            code_thresh_x=1,
             bg_thresh_rgb=(2, 255, 255),
         )
         self.assertEqual(kind, "head")
@@ -898,8 +898,8 @@ class TestCategorizeLine(unittest.TestCase):
         kind = sw_luadocs_ocr.ocr.categorize_line(
             tessline=sw_luadocs_ocr.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
             capture_img=capture_img,
-            code_thresh_x=1,
             head_thresh_s=0,
+            code_thresh_x=1,
             bg_thresh_rgb=(255, 2, 255),
         )
         self.assertEqual(kind, "head")
@@ -910,8 +910,8 @@ class TestCategorizeLine(unittest.TestCase):
         kind = sw_luadocs_ocr.ocr.categorize_line(
             tessline=sw_luadocs_ocr.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
             capture_img=capture_img,
-            code_thresh_x=1,
             head_thresh_s=0,
+            code_thresh_x=1,
             bg_thresh_rgb=(255, 255, 2),
         )
         self.assertEqual(kind, "head")
@@ -920,8 +920,8 @@ class TestCategorizeLine(unittest.TestCase):
         kind = sw_luadocs_ocr.ocr.categorize_line(
             tessline=sw_luadocs_ocr.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
             capture_img=np.zeros((2, 2, 3), dtype=np.uint8),
-            code_thresh_x=1,
             head_thresh_s=0,
+            code_thresh_x=1,
             bg_thresh_rgb=(255, 255, 255),
         )
         self.assertEqual(kind, "body")
@@ -937,8 +937,8 @@ class TestCategorizeLine(unittest.TestCase):
         kind = sw_luadocs_ocr.ocr.categorize_line(
             tessline=sw_luadocs_ocr.ocr.TesseractLine(txt="", box=(0, 0, 2, 1)),
             capture_img=capture_img,
-            code_thresh_x=1,
             head_thresh_s=1,
+            code_thresh_x=1,
             bg_thresh_rgb=(0, 0, 0),
         )
         self.assertEqual(kind, "body")
@@ -947,8 +947,8 @@ class TestCategorizeLine(unittest.TestCase):
         kind = sw_luadocs_ocr.ocr.categorize_line(
             tessline=sw_luadocs_ocr.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
             capture_img=np.full((2, 2, 3), 1, dtype=np.uint8),
-            code_thresh_x=1,
             head_thresh_s=1,
+            code_thresh_x=1,
             bg_thresh_rgb=(0, 0, 0),
         )
         self.assertEqual(kind, "body")
@@ -959,8 +959,8 @@ class TestCategorizeLine(unittest.TestCase):
         kind = sw_luadocs_ocr.ocr.categorize_line(
             tessline=sw_luadocs_ocr.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
             capture_img=capture_img,
-            code_thresh_x=1,
             head_thresh_s=255,
+            code_thresh_x=1,
             bg_thresh_rgb=(0, 0, 0),
         )
         self.assertEqual(kind, "head")
@@ -971,8 +971,8 @@ class TestCategorizeLine(unittest.TestCase):
         kind = sw_luadocs_ocr.ocr.categorize_line(
             tessline=sw_luadocs_ocr.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
             capture_img=capture_img,
-            code_thresh_x=1,
             head_thresh_s=255,
+            code_thresh_x=1,
             bg_thresh_rgb=(0, 0, 0),
         )
         self.assertEqual(kind, "head")
@@ -983,8 +983,8 @@ class TestCategorizeLine(unittest.TestCase):
         kind = sw_luadocs_ocr.ocr.categorize_line(
             tessline=sw_luadocs_ocr.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
             capture_img=capture_img,
-            code_thresh_x=1,
             head_thresh_s=255,
+            code_thresh_x=1,
             bg_thresh_rgb=(0, 0, 0),
         )
         self.assertEqual(kind, "head")
@@ -998,8 +998,8 @@ class TestCategorizeLine(unittest.TestCase):
         kind = sw_luadocs_ocr.ocr.categorize_line(
             tessline=sw_luadocs_ocr.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
             capture_img=capture_img,
-            code_thresh_x=1,
             head_thresh_s=43,
+            code_thresh_x=1,
             bg_thresh_rgb=(0, 0, 0),
         )
         self.assertEqual(kind, "head")
@@ -1007,8 +1007,8 @@ class TestCategorizeLine(unittest.TestCase):
         kind = sw_luadocs_ocr.ocr.categorize_line(
             tessline=sw_luadocs_ocr.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
             capture_img=capture_img,
-            code_thresh_x=1,
             head_thresh_s=44,
+            code_thresh_x=1,
             bg_thresh_rgb=(0, 0, 0),
         )
         self.assertEqual(kind, "body")

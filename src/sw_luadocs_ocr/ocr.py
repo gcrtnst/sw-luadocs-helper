@@ -138,11 +138,11 @@ def preprocess_image(capture_img):
 
 
 def categorize_line(
-    *, tessline, capture_img, code_thresh_x, head_thresh_s, bg_thresh_rgb
+    *, tessline, capture_img, head_thresh_s, code_thresh_x, bg_thresh_rgb
 ):
     capture_img = convert_image(capture_img, dst_mode="RGB")
-    code_thresh_x = int(code_thresh_x)
     head_thresh_s = int(head_thresh_s)
+    code_thresh_x = int(code_thresh_x)
     bg_thresh_r, bg_thresh_g, bg_thresh_b = map(int, bg_thresh_rgb)
 
     if not isinstance(tessline, TesseractLine):
@@ -157,10 +157,10 @@ def categorize_line(
         or capture_img_h <= line_y + line_h - 1
         or capture_img_w <= 0
         or capture_img_h <= 0
-        or code_thresh_x < 0
-        or capture_img_w <= code_thresh_x
         or head_thresh_s < 0
         or 255 < head_thresh_s
+        or code_thresh_x < 0
+        or capture_img_w <= code_thresh_x
         or bg_thresh_r < 0
         or 255 < bg_thresh_r
         or bg_thresh_g < 0
@@ -217,8 +217,8 @@ def tessline_to_ocrline(
     kind = categorize_line(
         tessline=tessline,
         capture_img=capture_img,
-        code_thresh_x=code_thresh_x,
         head_thresh_s=head_thresh_s,
+        code_thresh_x=code_thresh_x,
         bg_thresh_rgb=bg_thresh_rgb,
     )
 
