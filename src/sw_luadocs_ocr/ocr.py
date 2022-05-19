@@ -142,9 +142,9 @@ def as_tessline(v):
     return tessline
 
 
-def preprocess_image(img):
-    img = convert_image(img, dst_mode="RGB")
-    return 255 - np.amax(img, axis=2)
+def preprocess_image(capture_img):
+    capture_img = convert_image(capture_img, dst_mode="RGB")
+    return 255 - np.amax(capture_img, axis=2)
 
 
 def categorize_line(
