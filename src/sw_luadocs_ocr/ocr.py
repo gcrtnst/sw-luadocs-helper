@@ -132,16 +132,6 @@ class OCRParagraph:
         object.__setattr__(self, "kind", kind)
 
 
-def as_tessline(v):
-    tessline = {}
-    tessline["txt"] = str(v["txt"])
-    tessline["box"] = tuple(map(int, v["box"]))
-
-    if len(tessline["box"]) != 4:
-        raise ValueError('v["box"] length is invalid')
-    return tessline
-
-
 def preprocess_image(capture_img):
     capture_img = convert_image(capture_img, dst_mode="RGB")
     return 255 - np.amax(capture_img, axis=2)

@@ -1046,23 +1046,6 @@ class TestCalcCodeIndent(unittest.TestCase):
 
 
 class TestOCR(unittest.TestCase):
-    def as_tessline(self):
-        # type convertsion
-        v = {"txt": 0, "box": ["1", "2", "3", "4"]}
-        tessline = sw_luadocs_ocr.ocr.as_tessline(v)
-        self.assertEqual(tessline, {"txt": "0", "box": (1, 2, 3, 4)})
-
-        # copy
-        v = {"txt": "0", "box": (1, 2, 3, 4)}
-        tessline = sw_luadocs_ocr.ocr.as_tessline(v)
-        self.assertIsNot(tessline, v)
-        self.assertEqual(tessline, v)
-
-        # box length
-        v = {"txt": "0", "box": (1, 2, 3, 4, 5)}
-        with self.assertRaises(ValueError):
-            sw_luadocs_ocr.ocr.as_tessline(v)
-
     def test_create_ocrline(self):
         # code_thresh_x: code
         ocrline = sw_luadocs_ocr.ocr.create_ocrline(
