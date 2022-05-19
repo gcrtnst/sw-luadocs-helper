@@ -1045,55 +1045,263 @@ class TestCalcCodeIndent(unittest.TestCase):
         self.assertEqual(indent, 7)
 
 
-class TestOCR(unittest.TestCase):
-    def test_tessline_to_ocrline(self):
-        # code_thresh_x: code
-        ocrline = sw_luadocs_ocr.ocr.tessline_to_ocrline(
-            tessline={"txt": "", "box": (9, 0, 1, 1)},
-            capture_img=np.zeros((10, 10, 3), dtype=np.uint8),
-            bg_thresh_rgb=(40, 40, 40),
-            head_thresh_s=9,
-            code_base_x=14,
-            code_space_w=9.5,
-        )
-        self.assertEqual(ocrline.kind, "code")
+class TestTesslineToOCRLine(unittest.TestCase):
+    def test_type_error(self):
+        with self.assertRaises(TypeError):
+            sw_luadocs_ocr.ocr.tessline_to_ocrline(
+                tessline=None,
+                capture_img=np.zeros((1, 1, 3), dtype=np.uint8),
+                head_thresh_s=0,
+                code_base_x=0,
+                code_space_w=1,
+                bg_thresh_rgb=(0, 0, 0),
+            )
 
-        # code_thresh_x: body
+    def test_type_normalize(self):
         ocrline = sw_luadocs_ocr.ocr.tessline_to_ocrline(
-            tessline={"txt": "", "box": (8, 0, 1, 1)},
-            capture_img=np.zeros((10, 10, 3), dtype=np.uint8),
-            bg_thresh_rgb=(40, 40, 40),
-            head_thresh_s=9,
-            code_base_x=14,
-            code_space_w=9.5,
+            tessline=sw_luadocs_ocr.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
+            capture_img=np.zeros((1, 1), dtype=np.uint8),
+            head_thresh_s=0,
+            code_base_x="0",
+            code_space_w="0.1",
+            bg_thresh_rgb=(0, 0, 0),
         )
-        self.assertEqual(ocrline.kind, "body")
+        self.assertEqual(
+            ocrline, sw_luadocs_ocr.ocr.OCRLine(txt="", kind="code", box=(0, 0, 1, 1))
+        )
 
-        # indent
+    def test_validate_pass(self):
+        for kwargs in [
+            {
+                "tessline": sw_luadocs_ocr.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
+                "capture_img": np.zeros((1, 1, 3), dtype=np.uint8),
+                "head_thresh_s": 0,
+                "code_base_x": 0,
+                "code_space_w": 0.1,
+                "bg_thresh_rgb": (0, 0, 0),
+            },
+            {
+                "tessline": sw_luadocs_ocr.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
+                "capture_img": np.zeros((1, 2, 3), dtype=np.uint8),
+                "head_thresh_s": 0,
+                "code_base_x": 1,
+                "code_space_w": 0.1,
+                "bg_thresh_rgb": (0, 0, 0),
+            },
+        ]:
+            with self.subTest(kwargs=kwargs):
+                sw_luadocs_ocr.ocr.tessline_to_ocrline(**kwargs)
+
+    def test_validate_error(self):
+        for kwargs in [
+            {
+                "tessline": sw_luadocs_ocr.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
+                "capture_img": np.zeros((0, 1, 3), dtype=np.uint8),
+                "head_thresh_s": 0,
+                "code_base_x": 0,
+                "code_space_w": 1,
+                "bg_thresh_rgb": (0, 0, 0),
+            },
+            {
+                "tessline": sw_luadocs_ocr.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
+                "capture_img": np.zeros((1, 0, 3), dtype=np.uint8),
+                "head_thresh_s": 0,
+                "code_base_x": 0,
+                "code_space_w": 1,
+                "bg_thresh_rgb": (0, 0, 0),
+            },
+            {
+                "tessline": sw_luadocs_ocr.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
+                "capture_img": np.zeros((1, 1, 3), dtype=np.uint8),
+                "head_thresh_s": 0,
+                "code_base_x": -1,
+                "code_space_w": 1,
+                "bg_thresh_rgb": (0, 0, 0),
+            },
+            {
+                "tessline": sw_luadocs_ocr.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
+                "capture_img": np.zeros((1, 1, 3), dtype=np.uint8),
+                "head_thresh_s": 0,
+                "code_base_x": 1,
+                "code_space_w": 1,
+                "bg_thresh_rgb": (0, 0, 0),
+            },
+            {
+                "tessline": sw_luadocs_ocr.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
+                "capture_img": np.zeros((1, 1, 3), dtype=np.uint8),
+                "head_thresh_s": 0,
+                "code_base_x": 0,
+                "code_space_w": float("nan"),
+                "bg_thresh_rgb": (0, 0, 0),
+            },
+            {
+                "tessline": sw_luadocs_ocr.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
+                "capture_img": np.zeros((1, 1, 3), dtype=np.uint8),
+                "head_thresh_s": 0,
+                "code_base_x": 0,
+                "code_space_w": 0,
+                "bg_thresh_rgb": (0, 0, 0),
+            },
+        ]:
+            with self.subTest(kwargs=kwargs):
+                with self.assertRaises(ValueError):
+                    sw_luadocs_ocr.ocr.tessline_to_ocrline(**kwargs)
+
+    def test_codethresh_min(self):
         ocrline = sw_luadocs_ocr.ocr.tessline_to_ocrline(
-            tessline={"txt": "a", "box": (52, 0, 1, 1)},
+            tessline=sw_luadocs_ocr.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
+            capture_img=np.zeros((1, 1, 3), dtype=np.uint8),
+            head_thresh_s=0,
+            code_base_x=0,
+            code_space_w=100,
+            bg_thresh_rgb=(0, 0, 0),
+        )
+        self.assertEqual(
+            ocrline, sw_luadocs_ocr.ocr.OCRLine(txt="", kind="code", box=(0, 0, 1, 1))
+        )
+
+    def test_codethresh_max(self):
+        ocrline = sw_luadocs_ocr.ocr.tessline_to_ocrline(
+            tessline=sw_luadocs_ocr.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
+            capture_img=np.zeros((1, 10, 3), dtype=np.uint8),
+            head_thresh_s=0,
+            code_base_x=9,
+            code_space_w=0.1,
+            bg_thresh_rgb=(0, 0, 0),
+        )
+        self.assertEqual(
+            ocrline, sw_luadocs_ocr.ocr.OCRLine(txt="", kind="body", box=(0, 0, 1, 1))
+        )
+
+    def test_codethresh_normal(self):
+        kwargs = {
+            "tessline": sw_luadocs_ocr.ocr.TesseractLine(txt="", box=(2, 0, 1, 1)),
+            "capture_img": np.zeros((1, 10, 3), dtype=np.uint8),
+            "head_thresh_s": 0,
+            "code_base_x": 6,
+            "code_space_w": 4.1,
+            "bg_thresh_rgb": (0, 0, 0),
+        }
+        ocrline = sw_luadocs_ocr.ocr.tessline_to_ocrline(**kwargs)
+        self.assertEqual(
+            ocrline, sw_luadocs_ocr.ocr.OCRLine(txt="", kind="body", box=(2, 0, 1, 1))
+        )
+
+        kwargs["tessline"] = sw_luadocs_ocr.ocr.TesseractLine(txt="", box=(3, 0, 1, 1))
+        ocrline = sw_luadocs_ocr.ocr.tessline_to_ocrline(**kwargs)
+        self.assertEqual(
+            ocrline, sw_luadocs_ocr.ocr.OCRLine(txt="", kind="code", box=(3, 0, 1, 1))
+        )
+
+    def test_indent_head(self):
+        ocrline = sw_luadocs_ocr.ocr.tessline_to_ocrline(
+            tessline=sw_luadocs_ocr.ocr.TesseractLine(txt="", box=(1, 0, 1, 1)),
+            capture_img=np.full((1, 4, 3), 255, dtype=np.uint8),
+            head_thresh_s=0,
+            code_base_x=3,
+            code_space_w=0.1,
+            bg_thresh_rgb=(0, 0, 0),
+        )
+        self.assertEqual(
+            ocrline, sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(1, 0, 1, 1))
+        )
+
+    def test_indent_body(self):
+        ocrline = sw_luadocs_ocr.ocr.tessline_to_ocrline(
+            tessline=sw_luadocs_ocr.ocr.TesseractLine(txt="", box=(1, 0, 1, 1)),
+            capture_img=np.zeros((1, 4, 3), dtype=np.uint8),
+            head_thresh_s=0,
+            code_base_x=3,
+            code_space_w=0.1,
+            bg_thresh_rgb=(0, 0, 0),
+        )
+        self.assertEqual(
+            ocrline, sw_luadocs_ocr.ocr.OCRLine(txt="", kind="body", box=(1, 0, 1, 1))
+        )
+
+    def test_indent_code(self):
+        ocrline = sw_luadocs_ocr.ocr.tessline_to_ocrline(
+            tessline=sw_luadocs_ocr.ocr.TesseractLine(txt="", box=(1, 0, 1, 1)),
+            capture_img=np.zeros((1, 2, 3), dtype=np.uint8),
+            head_thresh_s=0,
+            code_base_x=0,
+            code_space_w=0.1,
+            bg_thresh_rgb=(0, 0, 0),
+        )
+        self.assertEqual(
+            ocrline,
+            sw_luadocs_ocr.ocr.OCRLine(txt=" " * 10, kind="code", box=(1, 0, 1, 1)),
+        )
+
+    def test_kind_head(self):
+        ocrline = sw_luadocs_ocr.ocr.tessline_to_ocrline(
+            tessline=sw_luadocs_ocr.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
+            capture_img=np.full((1, 3, 3), 255, dtype=np.uint8),
+            head_thresh_s=0,
+            code_base_x=2,
+            code_space_w=0.1,
+            bg_thresh_rgb=(0, 0, 0),
+        )
+        self.assertEqual(
+            ocrline, sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(0, 0, 1, 1))
+        )
+
+    def test_kind_body(self):
+        ocrline = sw_luadocs_ocr.ocr.tessline_to_ocrline(
+            tessline=sw_luadocs_ocr.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
+            capture_img=np.zeros((1, 3, 3), dtype=np.uint8),
+            head_thresh_s=0,
+            code_base_x=2,
+            code_space_w=0.1,
+            bg_thresh_rgb=(0, 0, 0),
+        )
+        self.assertEqual(
+            ocrline, sw_luadocs_ocr.ocr.OCRLine(txt="", kind="body", box=(0, 0, 1, 1))
+        )
+
+    def test_kind_code(self):
+        ocrline = sw_luadocs_ocr.ocr.tessline_to_ocrline(
+            tessline=sw_luadocs_ocr.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
+            capture_img=np.zeros((1, 1, 3), dtype=np.uint8),
+            head_thresh_s=0,
+            code_base_x=0,
+            code_space_w=0.1,
+            bg_thresh_rgb=(0, 0, 0),
+        )
+        self.assertEqual(
+            ocrline, sw_luadocs_ocr.ocr.OCRLine(txt="", kind="code", box=(0, 0, 1, 1))
+        )
+
+    def test_txt(self):
+        ocrline = sw_luadocs_ocr.ocr.tessline_to_ocrline(
+            tessline=sw_luadocs_ocr.ocr.TesseractLine(txt="abc", box=(0, 0, 1, 1)),
+            capture_img=np.zeros((1, 1, 3), dtype=np.uint8),
+            head_thresh_s=0,
+            code_base_x=0,
+            code_space_w=0.1,
+            bg_thresh_rgb=(0, 0, 0),
+        )
+        self.assertEqual(
+            ocrline,
+            sw_luadocs_ocr.ocr.OCRLine(txt="abc", kind="code", box=(0, 0, 1, 1)),
+        )
+
+    def test_box(self):
+        ocrline = sw_luadocs_ocr.ocr.tessline_to_ocrline(
+            tessline=sw_luadocs_ocr.ocr.TesseractLine(txt="", box=(10, 11, 12, 13)),
             capture_img=np.zeros((100, 100, 3), dtype=np.uint8),
-            bg_thresh_rgb=(40, 40, 40),
-            head_thresh_s=9,
-            code_base_x=14,
-            code_space_w=9.5,
+            head_thresh_s=0,
+            code_base_x=0,
+            code_space_w=100,
+            bg_thresh_rgb=(0, 0, 0),
         )
-        self.assertEqual(ocrline.txt, "    a")
-
-        # init
-        ocrline = sw_luadocs_ocr.ocr.tessline_to_ocrline(
-            tessline={"txt": "a", "box": (1, 2, 3, 4)},
-            capture_img=np.zeros((10, 10, 3), dtype=np.uint8),
-            bg_thresh_rgb=(40, 40, 40),
-            head_thresh_s=9,
-            code_base_x=14,
-            code_space_w=9.5,
+        self.assertEqual(
+            ocrline,
+            sw_luadocs_ocr.ocr.OCRLine(txt="", kind="code", box=(10, 11, 12, 13)),
         )
-        self.assertIsInstance(ocrline, sw_luadocs_ocr.ocr.OCRLine)
-        self.assertEqual(ocrline.txt, "a")
-        self.assertEqual(ocrline.kind, "body")
-        self.assertEqual(ocrline.box, (1, 2, 3, 4))
 
+
+class TestOCR(unittest.TestCase):
     def test_create_ocrpara_list(self):
         # empty
         ocrpara_list = sw_luadocs_ocr.ocr.create_ocrpara_list(

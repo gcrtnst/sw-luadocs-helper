@@ -207,13 +207,28 @@ def calc_code_indent(*, line_x, base_x, space_w):
 
 
 def tessline_to_ocrline(
-    *, tessline, capture_img, bg_thresh_rgb, head_thresh_s, code_base_x, code_space_w
+    *, tessline, capture_img, head_thresh_s, code_base_x, code_space_w, bg_thresh_rgb
 ):
-    tessline = as_tessline(tessline)
+    capture_img = convert_image(capture_img, dst_mode="RGB")
     code_base_x = int(code_base_x)
     code_space_w = float(code_space_w)
 
-    code_thresh_x = int(max(0, code_base_x - code_space_w / 2))
+    if not isinstance(tessline, TesseractLine):
+        raise TypeError
+
+    capture_img_h, capture_img_w, _ = capture_img.shape
+    if (
+        capture_img_w <= 0
+        or capture_img_h <= 0
+        or code_base_x < 0
+        or capture_img_w <= code_base_x
+        or not math.isfinite(code_space_w)
+        or code_space_w <= 0
+    ):
+        raise ValueError
+
+    code_thresh_x = int(code_base_x - code_space_w / 2)
+    code_thresh_x = max(0, min(capture_img_w - 1, code_thresh_x))
     kind = categorize_line(
         tessline=tessline,
         capture_img=capture_img,
@@ -222,14 +237,14 @@ def tessline_to_ocrline(
         bg_thresh_rgb=bg_thresh_rgb,
     )
 
-    txt = tessline["txt"]
+    txt = tessline.txt
     if kind == "code":
         indent = calc_code_indent(
-            line_x=tessline["box"][0], base_x=code_base_x, space_w=code_space_w
+            line_x=tessline.box[0], base_x=code_base_x, space_w=code_space_w
         )
         txt = " " * indent + txt
 
-    return OCRLine(txt=txt, kind=kind, box=tessline["box"])
+    return OCRLine(txt=txt, kind=kind, box=tessline.box)
 
 
 def create_ocrpara_list(*, ocrline_list, code_line_h):
