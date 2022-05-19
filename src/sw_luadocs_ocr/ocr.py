@@ -206,7 +206,7 @@ def calc_code_indent(*, line_x, base_x, space_w):
     return max(0, round((line_x - base_x) / space_w))
 
 
-def create_ocrline(
+def tessline_to_ocrline(
     *, tessline, capture_img, bg_thresh_rgb, head_thresh_s, code_base_x, code_space_w
 ):
     tessline = as_tessline(tessline)
