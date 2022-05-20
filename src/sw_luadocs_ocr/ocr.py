@@ -206,6 +206,36 @@ def calc_code_indent(*, line_x, base_x, space_w):
     return max(0, round((line_x - base_x) / space_w))
 
 
+def tesstsv_to_tessline(tesstsv):
+    tesstsv = as_tesstsv(tesstsv)
+
+    idx = 0
+    tessline_list = []
+    while idx < len(tesstsv["level"]):
+        if tesstsv["level"][idx] != 4:
+            idx += 1
+            continue
+
+        box = (
+            tesstsv["left"][idx],
+            tesstsv["top"][idx],
+            tesstsv["width"][idx],
+            tesstsv["height"][idx],
+        )
+        idx += 1
+
+        txt = []
+        while idx < len(tesstsv["level"]):
+            if tesstsv["level"][idx] < 5:
+                break
+            if tesstsv["level"][idx] == 5:
+                txt.append(tesstsv["text"][idx])
+            idx += 1
+        txt = " ".join(txt)
+        tessline_list.append(TesseractLine(txt=txt, box=box))
+    return tessline_list
+
+
 def tessline_to_ocrline(
     *, tessline, capture_img, head_thresh_s, code_base_x, code_space_w, bg_thresh_rgb
 ):
