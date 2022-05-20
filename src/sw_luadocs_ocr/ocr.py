@@ -179,17 +179,6 @@ def calc_char_count(*, pos1, pos2, size, vmin):
     return max(vmin, round((pos2 - pos1) / size))
 
 
-def calc_code_indent(*, line_x, base_x, space_w):
-    line_x = int(line_x)
-    base_x = int(base_x)
-    space_w = float(space_w)
-
-    if line_x < 0 or base_x < 0 or not math.isfinite(space_w) or space_w <= 0:
-        raise ValueError
-
-    return max(0, round((line_x - base_x) / space_w))
-
-
 def tesstsv_to_tessline(tesstsv):
     tesstsv = as_tesstsv(tesstsv)
 
@@ -253,8 +242,11 @@ def tessline_to_ocrline(
 
     txt = tessline.txt
     if kind == "code":
-        indent = calc_code_indent(
-            line_x=tessline.box[0], base_x=code_base_x, space_w=code_space_w
+        indent = calc_char_count(
+            pos1=code_base_x,
+            pos2=tessline.box[0],
+            size=code_space_w,
+            vmin=0,
         )
         txt = " " * indent + txt
 

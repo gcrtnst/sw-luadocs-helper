@@ -544,37 +544,6 @@ class TestCalcCharCount(unittest.TestCase):
         self.assertEqual(cnt, 45)
 
 
-class TestCalcCodeIndent(unittest.TestCase):
-    def test_type(self):
-        indent = sw_luadocs_ocr.ocr.calc_code_indent(
-            line_x="34", base_x="12", space_w="0.5"
-        )
-        self.assertEqual(indent, 44)
-
-    def test_validate(self):
-        for kwargs in [
-            {"line_x": -1, "base_x": 0, "space_w": 0.1},
-            {"line_x": 0, "base_x": -1, "space_w": 0.1},
-            {"line_x": 0, "base_x": 0, "space_w": float("nan")},
-            {"line_x": 0, "base_x": 0, "space_w": 0},
-        ]:
-            with self.subTest(kwargs=kwargs):
-                with self.assertRaises(ValueError):
-                    sw_luadocs_ocr.ocr.calc_code_indent(**kwargs)
-
-    def test_zero(self):
-        indent = sw_luadocs_ocr.ocr.calc_code_indent(line_x=12, base_x=34, space_w=0.5)
-        self.assertEqual(indent, 0)
-
-    def test_normal(self):
-        indent = sw_luadocs_ocr.ocr.calc_code_indent(line_x=34, base_x=12, space_w=0.5)
-        self.assertEqual(indent, 44)
-
-    def test_round(self):
-        indent = sw_luadocs_ocr.ocr.calc_code_indent(line_x=34, base_x=12, space_w=3)
-        self.assertEqual(indent, 7)
-
-
 class TestTessTSVToTessline(unittest.TestCase):
     def test_type(self):
         with self.assertRaises(ValueError):
