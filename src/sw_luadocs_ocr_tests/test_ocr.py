@@ -509,6 +509,41 @@ class TestCategorizeLine(unittest.TestCase):
         self.assertEqual(kind, "body")
 
 
+class TestCalcCharCount(unittest.TestCase):
+    def test_type(self):
+        cnt = sw_luadocs_ocr.ocr.calc_char_count(
+            pos1="12", pos2="34", size="0.5", vmin="0"
+        )
+        self.assertEqual(cnt, 44)
+
+    def test_validate_pass(self):
+        cnt = sw_luadocs_ocr.ocr.calc_char_count(pos1=0, pos2=0, size=0.1, vmin=0)
+        self.assertEqual(cnt, 0)
+
+    def test_validate_error(self):
+        for kwargs in [
+            {"pos1": -1, "pos2": 0, "size": 0.1, "vmin": 0},
+            {"pos1": 0, "pos2": -1, "size": 0.1, "vmin": 0},
+            {"pos1": 0, "pos2": 0, "size": float("nan"), "vmin": 0},
+            {"pos1": 0, "pos2": 0, "size": 0, "vmin": 0},
+        ]:
+            with self.subTest(kwargs=kwargs):
+                with self.assertRaises(ValueError):
+                    sw_luadocs_ocr.ocr.calc_char_count(**kwargs)
+
+    def test_normal(self):
+        cnt = sw_luadocs_ocr.ocr.calc_char_count(pos1=12, pos2=34, size=0.5, vmin=0)
+        self.assertEqual(cnt, 44)
+
+    def test_round(self):
+        cnt = sw_luadocs_ocr.ocr.calc_char_count(pos1=12, pos2=34, size=3, vmin=0)
+        self.assertEqual(cnt, 7)
+
+    def test_vmin(self):
+        cnt = sw_luadocs_ocr.ocr.calc_char_count(pos1=12, pos2=34, size=0.5, vmin=45)
+        self.assertEqual(cnt, 45)
+
+
 class TestCalcCodeIndent(unittest.TestCase):
     def test_type(self):
         indent = sw_luadocs_ocr.ocr.calc_code_indent(

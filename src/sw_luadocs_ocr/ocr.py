@@ -167,6 +167,18 @@ def categorize_line(
     return "head" if char_s >= head_thresh_s else "body"
 
 
+def calc_char_count(*, pos1, pos2, size, vmin):
+    pos1 = int(pos1)
+    pos2 = int(pos2)
+    size = float(size)
+    vmin = int(vmin)
+
+    if pos1 < 0 or pos2 < 0 or not math.isfinite(size) or size <= 0:
+        raise ValueError
+
+    return max(vmin, round((pos2 - pos1) / size))
+
+
 def calc_code_indent(*, line_x, base_x, space_w):
     line_x = int(line_x)
     base_x = int(base_x)
