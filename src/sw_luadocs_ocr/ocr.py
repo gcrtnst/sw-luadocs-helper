@@ -74,34 +74,6 @@ class TesseractLine:
         object.__setattr__(self, "txt", txt)
         object.__setattr__(self, "box", box)
 
-    @classmethod
-    def iter_from_tesstsv(cls, tesstsv):
-        tesstsv = as_tesstsv(tesstsv)
-
-        idx = 0
-        while idx < len(tesstsv["level"]):
-            if tesstsv["level"][idx] != 4:
-                idx += 1
-                continue
-
-            box = (
-                tesstsv["left"][idx],
-                tesstsv["top"][idx],
-                tesstsv["width"][idx],
-                tesstsv["height"][idx],
-            )
-            idx += 1
-
-            txt = []
-            while idx < len(tesstsv["level"]):
-                if tesstsv["level"][idx] < 5:
-                    break
-                if tesstsv["level"][idx] == 5:
-                    txt.append(tesstsv["text"][idx])
-                idx += 1
-            txt = " ".join(txt)
-            yield cls(txt=txt, box=box)
-
 
 @dataclasses.dataclass(frozen=True, kw_only=True, slots=True)
 class OCRLine:
