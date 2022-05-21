@@ -323,6 +323,28 @@ def convert_ocrline_to_ocrpara_bodyonly(ocrline_list, *, body_line_h):
     return ocrpara_list
 
 
+def convert_ocrline_to_ocrpara_codeonly(ocrline_list, *, code_line_h):
+    ocrline_list = as_ocrline_list(ocrline_list)
+
+    for ocrline in ocrline_list:
+        if ocrline.kind != "code":
+            raise ValueError
+
+    if len(ocrline_list) <= 0:
+        return []
+
+    txt = ocrline_list[0].txt
+    for idx in range(1, len(ocrline_list)):
+        numlf = calc_char_count(
+            pos1=ocrline_list[idx - 1].box[1],
+            pos2=ocrline_list[idx].box[1],
+            size=code_line_h,
+            vmin=1,
+        )
+        txt += "\n" * numlf + ocrline_list[idx].txt
+    return [OCRParagraph(txt=txt, kind="code")]
+
+
 def create_ocrpara_list(*, ocrline_list, code_line_h):
     ocrline_list = list(ocrline_list)
     for ocrline in ocrline_list:
