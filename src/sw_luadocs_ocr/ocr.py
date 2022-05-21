@@ -179,7 +179,7 @@ def calc_char_count(*, pos1, pos2, size, vmin):
     return max(vmin, round((pos2 - pos1) / size))
 
 
-def tesstsv_to_tessline(tesstsv):
+def convert_tesstsv_to_tessline(tesstsv):
     tesstsv = as_tesstsv(tesstsv)
 
     idx = 0
@@ -209,7 +209,7 @@ def tesstsv_to_tessline(tesstsv):
     return tessline_list
 
 
-def tessline_to_ocrline(
+def convert_tessline_to_ocrline(
     *, tessline, capture_img, head_thresh_s, code_base_x, code_space_w, bg_thresh_rgb
 ):
     capture_img = convert_image(capture_img, dst_mode="RGB")
