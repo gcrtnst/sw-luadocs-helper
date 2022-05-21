@@ -363,6 +363,19 @@ def convert_ocrline_to_ocrpara_monokind(ocrline_list, *, body_line_h, code_line_
     raise RuntimeError
 
 
+def convert_ocrline_to_ocrpara(ocrline_list, *, body_line_h, code_line_h):
+    ocrline_list = as_ocrline_list(ocrline_list)
+
+    ocrpara_list = []
+    for sl in group_ocrline(ocrline_list):
+        ocrpara_list.extend(
+            convert_ocrline_to_ocrpara_monokind(
+                ocrline_list[sl], body_line_h=body_line_h, code_line_h=code_line_h
+            )
+        )
+    return ocrpara_list
+
+
 def create_ocrpara_list(*, ocrline_list, code_line_h):
     ocrline_list = list(ocrline_list)
     for ocrline in ocrline_list:

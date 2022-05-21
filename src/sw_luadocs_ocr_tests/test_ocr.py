@@ -1764,6 +1764,42 @@ class TestConvertOCRLineToOCRParaMonoKind(unittest.TestCase):
         )
 
 
+class TestConvertOCRLineToOCRPara(unittest.TestCase):
+    def test_type(self):
+        with self.assertRaises(TypeError):
+            sw_luadocs_ocr.ocr.convert_ocrline_to_ocrpara(
+                [None], body_line_h=0.1, code_line_h=0.1
+            )
+
+    def test_empty(self):
+        ocrpara_list = sw_luadocs_ocr.ocr.convert_ocrline_to_ocrpara(
+            [], body_line_h=0.1, code_line_h=0.1
+        )
+        self.assertEqual(ocrpara_list, [])
+
+    def test_normal(self):
+        ocrpara_list = sw_luadocs_ocr.ocr.convert_ocrline_to_ocrpara(
+            [
+                sw_luadocs_ocr.ocr.OCRLine(txt="a", kind="head", box=(0, 0, 1, 1)),
+                sw_luadocs_ocr.ocr.OCRLine(txt="b", kind="body", box=(0, 1, 1, 1)),
+                sw_luadocs_ocr.ocr.OCRLine(txt="c", kind="body", box=(0, 2, 1, 1)),
+                sw_luadocs_ocr.ocr.OCRLine(txt="d", kind="code", box=(0, 3, 1, 1)),
+                sw_luadocs_ocr.ocr.OCRLine(txt="e", kind="code", box=(0, 4, 1, 1)),
+            ],
+            body_line_h=0.1,
+            code_line_h=10,
+        )
+        self.assertEqual(
+            ocrpara_list,
+            [
+                sw_luadocs_ocr.ocr.OCRParagraph(txt="a", kind="head"),
+                sw_luadocs_ocr.ocr.OCRParagraph(txt="b", kind="body"),
+                sw_luadocs_ocr.ocr.OCRParagraph(txt="c", kind="body"),
+                sw_luadocs_ocr.ocr.OCRParagraph(txt="d\ne", kind="code"),
+            ],
+        )
+
+
 class TestOCR(unittest.TestCase):
     def test_create_ocrpara_list(self):
         # empty
