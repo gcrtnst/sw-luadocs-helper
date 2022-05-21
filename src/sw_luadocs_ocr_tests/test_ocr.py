@@ -1713,6 +1713,57 @@ class TestConvertOCRLineToOCRParaCodeOnly(unittest.TestCase):
                 self.assertEqual(actual_ocrpara_list, expected_ocrpara_list)
 
 
+class TestConvertOCRLineToOCRParaMonoKind(unittest.TestCase):
+    def test_type(self):
+        with self.assertRaises(TypeError):
+            sw_luadocs_ocr.ocr.convert_ocrline_to_ocrpara_monokind(
+                [None], body_line_h=0.1, code_line_h=0.1
+            )
+
+    def test_empty(self):
+        ocrpara_list = sw_luadocs_ocr.ocr.convert_ocrline_to_ocrpara_monokind(
+            [], body_line_h=0.1, code_line_h=0.1
+        )
+        self.assertEqual(ocrpara_list, [])
+
+    def test_head(self):
+        ocrpara_list = sw_luadocs_ocr.ocr.convert_ocrline_to_ocrpara_monokind(
+            [sw_luadocs_ocr.ocr.OCRLine(txt="a", kind="head", box=(0, 0, 1, 1))],
+            body_line_h=0.1,
+            code_line_h=0.1,
+        )
+        self.assertEqual(
+            ocrpara_list, [sw_luadocs_ocr.ocr.OCRParagraph(txt="a", kind="head")]
+        )
+
+    def test_body(self):
+        ocrpara_list = sw_luadocs_ocr.ocr.convert_ocrline_to_ocrpara_monokind(
+            [
+                sw_luadocs_ocr.ocr.OCRLine(txt="a", kind="body", box=(0, 0, 1, 1)),
+                sw_luadocs_ocr.ocr.OCRLine(txt="b", kind="body", box=(0, 1, 1, 1)),
+            ],
+            body_line_h=10,
+            code_line_h=0.1,
+        )
+        self.assertEqual(
+            ocrpara_list, [sw_luadocs_ocr.ocr.OCRParagraph(txt="a b", kind="body")]
+        )
+
+    def test_code(self):
+        ocrpara_list = sw_luadocs_ocr.ocr.convert_ocrline_to_ocrpara_monokind(
+            [
+                sw_luadocs_ocr.ocr.OCRLine(txt="a", kind="code", box=(0, 0, 1, 1)),
+                sw_luadocs_ocr.ocr.OCRLine(txt="b", kind="code", box=(0, 1, 1, 1)),
+            ],
+            body_line_h=10,
+            code_line_h=0.1,
+        )
+        self.assertEqual(
+            ocrpara_list,
+            [sw_luadocs_ocr.ocr.OCRParagraph(txt="a" + "\n" * 10 + "b", kind="code")],
+        )
+
+
 class TestOCR(unittest.TestCase):
     def test_create_ocrpara_list(self):
         # empty

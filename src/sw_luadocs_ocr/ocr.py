@@ -345,6 +345,24 @@ def convert_ocrline_to_ocrpara_codeonly(ocrline_list, *, code_line_h):
     return [OCRParagraph(txt=txt, kind="code")]
 
 
+def convert_ocrline_to_ocrpara_monokind(ocrline_list, *, body_line_h, code_line_h):
+    ocrline_list = as_ocrline_list(ocrline_list)
+
+    if len(ocrline_list) <= 0:
+        return []
+    if ocrline_list[0].kind == "head":
+        return convert_ocrline_to_ocrpara_headonly(ocrline_list)
+    if ocrline_list[0].kind == "body":
+        return convert_ocrline_to_ocrpara_bodyonly(
+            ocrline_list, body_line_h=body_line_h
+        )
+    if ocrline_list[0].kind == "code":
+        return convert_ocrline_to_ocrpara_codeonly(
+            ocrline_list, code_line_h=code_line_h
+        )
+    raise RuntimeError
+
+
 def create_ocrpara_list(*, ocrline_list, code_line_h):
     ocrline_list = list(ocrline_list)
     for ocrline in ocrline_list:
