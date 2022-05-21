@@ -1567,7 +1567,7 @@ class TestConvertOCRLineToOCRParaBodyOnly(unittest.TestCase):
                 sw_luadocs_ocr.ocr.OCRLine(txt="a", kind="body", box=(0, 0, 1, 1)),
                 sw_luadocs_ocr.ocr.OCRLine(txt="b", kind="body", box=(0, 1, 1, 1)),
             ],
-            body_line_h=0.1,
+            body_line_h=0.5,
         )
         self.assertEqual(
             ocrpara_list,
@@ -1578,7 +1578,7 @@ class TestConvertOCRLineToOCRParaBodyOnly(unittest.TestCase):
         )
 
     def test_numlf_lss(self):
-        for pos1, pos2, size in [(1, 1, 0.1), (0, 0, 0.1), (0, 1, 10)]:
+        for pos1, pos2, size in [(1, 1, 0.5), (0, 0, 0.5), (0, 1, 10)]:
             with self.subTest(pos1=pos1, pos2=pos2, size=size):
                 ocrpara_list = sw_luadocs_ocr.ocr.convert_ocrline_to_ocrpara_bodyonly(
                     [
