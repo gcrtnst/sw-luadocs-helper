@@ -288,6 +288,41 @@ def convert_ocrline_to_ocrpara_headonly(ocrline_list):
     return ocrpara_list
 
 
+def convert_ocrline_to_ocrpara_bodyonly(ocrline_list, *, body_line_h):
+    ocrline_list = as_ocrline_list(ocrline_list)
+
+    for ocrline in ocrline_list:
+        if ocrline.kind != "body":
+            raise ValueError
+
+    idx = 0
+    sl_list = []
+    while idx < len(ocrline_list):
+        sl_start = idx
+        idx += 1
+        while idx < len(ocrline_list):
+            numlf = calc_char_count(
+                pos1=ocrline_list[idx - 1].box[1],
+                pos2=ocrline_list[idx].box[1],
+                size=body_line_h,
+                vmin=1,
+            )
+            if numlf > 1:
+                break
+            idx += 1
+        sl_stop = idx
+        sl_list.append(slice(sl_start, sl_stop))
+
+    ocrpara_list = []
+    for sl in sl_list:
+        ocrpara_list.append(
+            OCRParagraph(
+                txt=" ".join(ocrline.txt for ocrline in ocrline_list[sl]), kind="body"
+            )
+        )
+    return ocrpara_list
+
+
 def create_ocrpara_list(*, ocrline_list, code_line_h):
     ocrline_list = list(ocrline_list)
     for ocrline in ocrline_list:
