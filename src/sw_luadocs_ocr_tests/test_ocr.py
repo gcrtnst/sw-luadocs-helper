@@ -1386,7 +1386,7 @@ class TestConvertTesslineToOCRLine(unittest.TestCase):
         )
 
 
-class TestConvertOCRLineToOCRPara(unittest.TestCase):
+class TestConvertOCRLineToOCRParaHeadOnly(unittest.TestCase):
     def test_type(self):
         with self.assertRaises(TypeError):
             sw_luadocs_ocr.ocr.convert_ocrline_to_ocrpara_headonly([None])
