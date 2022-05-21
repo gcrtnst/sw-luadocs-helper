@@ -544,6 +544,82 @@ class TestCalcCharCount(unittest.TestCase):
         self.assertEqual(cnt, 45)
 
 
+class TestGroupOCRLine(unittest.TestCase):
+    def test_type(self):
+        def ocrline_gen():
+            yield sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(0, 0, 1, 1))
+            yield sw_luadocs_ocr.ocr.OCRLine(txt="", kind="body", box=(0, 0, 1, 1))
+            yield sw_luadocs_ocr.ocr.OCRLine(txt="", kind="code", box=(0, 0, 1, 1))
+
+        sl_list = sw_luadocs_ocr.ocr.group_ocrline(ocrline_gen())
+        self.assertEqual(sl_list, [slice(0, 1), slice(1, 2), slice(2, 3)])
+
+    def test_validate_pass(self):
+        sl_list = sw_luadocs_ocr.ocr.group_ocrline(
+            [
+                sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
+                sw_luadocs_ocr.ocr.OCRLine(txt="", kind="body", box=(0, 0, 1, 1)),
+                sw_luadocs_ocr.ocr.OCRLine(txt="", kind="code", box=(0, 0, 1, 1)),
+            ]
+        )
+        self.assertEqual(sl_list, [slice(0, 1), slice(1, 2), slice(2, 3)])
+
+    def test_validate_error(self):
+        for ocrline_list in [
+            [
+                None,
+                sw_luadocs_ocr.ocr.OCRLine(txt="", kind="body", box=(0, 0, 1, 1)),
+                sw_luadocs_ocr.ocr.OCRLine(txt="", kind="code", box=(0, 0, 1, 1)),
+            ],
+            [
+                sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
+                None,
+                sw_luadocs_ocr.ocr.OCRLine(txt="", kind="code", box=(0, 0, 1, 1)),
+            ],
+            [
+                sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
+                sw_luadocs_ocr.ocr.OCRLine(txt="", kind="body", box=(0, 0, 1, 1)),
+                None,
+            ],
+        ]:
+            with self.subTest(ocrline_list=ocrline_list):
+                with self.assertRaises(TypeError):
+                    sw_luadocs_ocr.ocr.group_ocrline(ocrline_list)
+
+    def test_empty(self):
+        sl_list = sw_luadocs_ocr.ocr.group_ocrline([])
+        self.assertEqual(sl_list, [])
+
+    def test_single(self):
+        sl_list = sw_luadocs_ocr.ocr.group_ocrline(
+            [sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(0, 0, 1, 1))]
+        )
+        self.assertEqual(sl_list, [slice(0, 1)])
+
+    def test_diffkind(self):
+        sl_list = sw_luadocs_ocr.ocr.group_ocrline(
+            [
+                sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
+                sw_luadocs_ocr.ocr.OCRLine(txt="", kind="body", box=(0, 0, 1, 1)),
+                sw_luadocs_ocr.ocr.OCRLine(txt="", kind="code", box=(0, 0, 1, 1)),
+            ]
+        )
+        self.assertEqual(sl_list, [slice(0, 1), slice(1, 2), slice(2, 3)])
+
+    def test_samekind(self):
+        sl_list = sw_luadocs_ocr.ocr.group_ocrline(
+            [
+                sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
+                sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
+                sw_luadocs_ocr.ocr.OCRLine(txt="", kind="body", box=(0, 0, 1, 1)),
+                sw_luadocs_ocr.ocr.OCRLine(txt="", kind="body", box=(0, 0, 1, 1)),
+                sw_luadocs_ocr.ocr.OCRLine(txt="", kind="code", box=(0, 0, 1, 1)),
+                sw_luadocs_ocr.ocr.OCRLine(txt="", kind="code", box=(0, 0, 1, 1)),
+            ]
+        )
+        self.assertEqual(sl_list, [slice(0, 2), slice(2, 4), slice(4, 6)])
+
+
 class TestConvertTessTSVToTessline(unittest.TestCase):
     def test_type(self):
         with self.assertRaises(ValueError):

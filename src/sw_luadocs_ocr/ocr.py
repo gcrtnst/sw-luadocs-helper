@@ -179,6 +179,25 @@ def calc_char_count(*, pos1, pos2, size, vmin):
     return max(vmin, round((pos2 - pos1) / size))
 
 
+def group_ocrline(ocrline_list):
+    ocrline_list = list(ocrline_list)
+
+    for ocrline in ocrline_list:
+        if not isinstance(ocrline, OCRLine):
+            raise TypeError
+
+    idx = 0
+    sl_list = []
+    while idx < len(ocrline_list):
+        sl_start = idx
+        sl_kind = ocrline_list[idx].kind
+        while idx < len(ocrline_list) and ocrline_list[idx].kind == sl_kind:
+            idx += 1
+        sl_stop = idx
+        sl_list.append(slice(sl_start, sl_stop))
+    return sl_list
+
+
 def convert_tesstsv_to_tessline(tesstsv):
     tesstsv = as_tesstsv(tesstsv)
 
