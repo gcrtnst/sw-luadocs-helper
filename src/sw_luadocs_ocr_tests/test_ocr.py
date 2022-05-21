@@ -149,6 +149,54 @@ class TestOCRParagraphPostInit(unittest.TestCase):
             sw_luadocs_ocr.ocr.OCRParagraph(txt="", kind="invalid")
 
 
+class TestAsOCRLineList(unittest.TestCase):
+    def test_type(self):
+        v = [
+            sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
+            sw_luadocs_ocr.ocr.OCRLine(txt="", kind="body", box=(0, 0, 1, 1)),
+            sw_luadocs_ocr.ocr.OCRLine(txt="", kind="code", box=(0, 0, 1, 1)),
+        ]
+
+        def gen():
+            yield from v
+
+        ocrline_list = sw_luadocs_ocr.ocr.as_ocrline_list(gen())
+        self.assertIsInstance(ocrline_list, list)
+        self.assertEqual(ocrline_list, v)
+
+    def test_validate_pass(self):
+        v = [
+            sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
+            sw_luadocs_ocr.ocr.OCRLine(txt="", kind="body", box=(0, 0, 1, 1)),
+            sw_luadocs_ocr.ocr.OCRLine(txt="", kind="code", box=(0, 0, 1, 1)),
+        ]
+        ocrline_list = sw_luadocs_ocr.ocr.as_ocrline_list(v)
+        self.assertIsInstance(ocrline_list, list)
+        self.assertEqual(ocrline_list, v)
+
+    def test_validate_error(self):
+        for v in [
+            [
+                None,
+                sw_luadocs_ocr.ocr.OCRLine(txt="", kind="body", box=(0, 0, 1, 1)),
+                sw_luadocs_ocr.ocr.OCRLine(txt="", kind="code", box=(0, 0, 1, 1)),
+            ],
+            [
+                sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
+                None,
+                sw_luadocs_ocr.ocr.OCRLine(txt="", kind="code", box=(0, 0, 1, 1)),
+            ],
+            [
+                sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
+                sw_luadocs_ocr.ocr.OCRLine(txt="", kind="body", box=(0, 0, 1, 1)),
+                None,
+            ],
+        ]:
+            with self.subTest(v=v):
+                with self.assertRaises(TypeError):
+                    sw_luadocs_ocr.ocr.as_ocrline_list(v)
+
+
 class TestPreprocessImage(unittest.TestCase):
     def test_axis(self):
         input_img = np.array([[51, 102], [153, 204]], dtype=np.uint8)

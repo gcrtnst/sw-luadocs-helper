@@ -104,6 +104,15 @@ class OCRParagraph:
         object.__setattr__(self, "kind", kind)
 
 
+def as_ocrline_list(v):
+    ocrline_list = []
+    for ocrline in v:
+        if not isinstance(ocrline, OCRLine):
+            raise TypeError
+        ocrline_list.append(ocrline)
+    return ocrline_list
+
+
 def preprocess_image(capture_img):
     capture_img = convert_image(capture_img, dst_mode="RGB")
     return 255 - np.amax(capture_img, axis=2)
