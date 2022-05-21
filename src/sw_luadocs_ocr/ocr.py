@@ -189,11 +189,7 @@ def calc_char_count(*, pos1, pos2, size, vmin):
 
 
 def group_ocrline(ocrline_list):
-    ocrline_list = list(ocrline_list)
-
-    for ocrline in ocrline_list:
-        if not isinstance(ocrline, OCRLine):
-            raise TypeError
+    ocrline_list = as_ocrline_list(ocrline_list)
 
     idx = 0
     sl_list = []
