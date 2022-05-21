@@ -1386,6 +1386,70 @@ class TestConvertTesslineToOCRLine(unittest.TestCase):
         )
 
 
+class TestConvertOCRLineToOCRPara(unittest.TestCase):
+    def test_type(self):
+        with self.assertRaises(TypeError):
+            sw_luadocs_ocr.ocr.convert_ocrline_to_ocrpara_headonly([None])
+
+    def test_empty(self):
+        ocrpara_list = sw_luadocs_ocr.ocr.convert_ocrline_to_ocrpara_headonly([])
+        self.assertEqual(ocrpara_list, [])
+
+    def test_kind_error(self):
+        for ocrline_list in [
+            [
+                sw_luadocs_ocr.ocr.OCRLine(txt="", kind="body", box=(0, 0, 1, 1)),
+                sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
+                sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
+            ],
+            [
+                sw_luadocs_ocr.ocr.OCRLine(txt="", kind="code", box=(0, 0, 1, 1)),
+                sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
+                sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
+            ],
+            [
+                sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
+                sw_luadocs_ocr.ocr.OCRLine(txt="", kind="body", box=(0, 0, 1, 1)),
+                sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
+            ],
+            [
+                sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
+                sw_luadocs_ocr.ocr.OCRLine(txt="", kind="code", box=(0, 0, 1, 1)),
+                sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
+            ],
+            [
+                sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
+                sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
+                sw_luadocs_ocr.ocr.OCRLine(txt="", kind="body", box=(0, 0, 1, 1)),
+            ],
+            [
+                sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
+                sw_luadocs_ocr.ocr.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
+                sw_luadocs_ocr.ocr.OCRLine(txt="", kind="code", box=(0, 0, 1, 1)),
+            ],
+        ]:
+            with self.subTest(ocrline_list=ocrline_list):
+                with self.assertRaises(ValueError):
+                    sw_luadocs_ocr.ocr.convert_ocrline_to_ocrpara_headonly(ocrline_list)
+
+    def test_convert(self):
+        ocrpara_list = sw_luadocs_ocr.ocr.convert_ocrline_to_ocrpara_headonly(
+            [
+                sw_luadocs_ocr.ocr.OCRLine(txt="a", kind="head", box=(0, 0, 1, 1)),
+                sw_luadocs_ocr.ocr.OCRLine(txt="b", kind="head", box=(0, 0, 1, 1)),
+                sw_luadocs_ocr.ocr.OCRLine(txt="c", kind="head", box=(0, 0, 1, 1)),
+            ]
+        )
+        self.assertEqual(
+            ocrpara_list,
+            [
+                sw_luadocs_ocr.ocr.OCRParagraph(txt="a", kind="head"),
+                sw_luadocs_ocr.ocr.OCRParagraph(txt="b", kind="head"),
+                sw_luadocs_ocr.ocr.OCRParagraph(txt="c", kind="head"),
+            ],
+        )
+
+
 class TestOCR(unittest.TestCase):
     def test_create_ocrpara_list(self):
         # empty

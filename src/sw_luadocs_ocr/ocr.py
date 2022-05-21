@@ -277,6 +277,17 @@ def convert_tessline_to_ocrline(
     return OCRLine(txt=txt, kind=kind, box=tessline.box)
 
 
+def convert_ocrline_to_ocrpara_headonly(ocrline_list):
+    ocrline_list = as_ocrline_list(ocrline_list)
+
+    ocrpara_list = []
+    for ocrline in ocrline_list:
+        if ocrline.kind != "head":
+            raise ValueError
+        ocrpara_list.append(OCRParagraph(txt=ocrline.txt, kind=ocrline.kind))
+    return ocrpara_list
+
+
 def create_ocrpara_list(*, ocrline_list, code_line_h):
     ocrline_list = list(ocrline_list)
     for ocrline in ocrline_list:
