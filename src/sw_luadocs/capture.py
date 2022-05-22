@@ -4,15 +4,7 @@ import ctypes.wintypes
 import cv2
 import d3dshot
 import numpy as np
-import re
 import time
-
-
-def ahkid_to_hwnd(ahk_id):
-    ahk_id = str(ahk_id)
-    if re.match(r"^0x[0-9a-f]+$", ahk_id, flags=re.ASCII | re.IGNORECASE) is None:
-        raise ValueError
-    return int(ahk_id, base=16)
 
 
 def get_client_rect(hwnd):
@@ -95,7 +87,7 @@ class StormworksController:
         self.minimize_sleep_secs = 5
 
     def hwnd(self):
-        return ahkid_to_hwnd(self._win.id)
+        return int(self._win.id, base=16)
 
     def client_pos(self):
         hwnd = self.hwnd()
