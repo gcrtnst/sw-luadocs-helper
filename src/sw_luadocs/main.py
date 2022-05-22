@@ -5,7 +5,7 @@ import PIL.Image
 import toml
 
 from . import capture as capture_module
-from . import ocr as ocr_module
+from . import recognize as recognize_module
 
 
 def capture_main(ns, cfg):
@@ -38,7 +38,7 @@ def capture_main(ns, cfg):
 
 def preprocess_main(ns, cfg):
     img = np.array(PIL.Image.open(ns.input_file))
-    img = ocr_module.preprocess_image(img)
+    img = recognize_module.preprocess_image(img)
     PIL.Image.fromarray(img).save(ns.output_file)
 
 

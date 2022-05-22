@@ -1,6 +1,6 @@
 import copy
 import numpy as np
-import sw_luadocs.ocr
+import sw_luadocs.recognize
 import unittest
 
 
@@ -20,7 +20,7 @@ class TestAsTessTSV(unittest.TestCase):
             "conf": ("0.5", "1.5"),
             "text": (100, 101),
         }
-        tesstsv = sw_luadocs.ocr.as_tesstsv(v)
+        tesstsv = sw_luadocs.recognize.as_tesstsv(v)
         self.assertEqual(
             tesstsv,
             {
@@ -54,7 +54,7 @@ class TestAsTessTSV(unittest.TestCase):
             "conf": [0.5, 1.5],
             "text": ["100", "101"],
         }
-        tesstsv = sw_luadocs.ocr.as_tesstsv(v)
+        tesstsv = sw_luadocs.recognize.as_tesstsv(v)
         self.assertIsNot(tesstsv, v)
         self.assertEqual(tesstsv, v)
 
@@ -78,17 +78,17 @@ class TestAsTessTSV(unittest.TestCase):
                 v2 = copy.deepcopy(v1)
                 v2[key] = [0, 1]
                 with self.assertRaises(ValueError):
-                    sw_luadocs.ocr.as_tesstsv(v2)
+                    sw_luadocs.recognize.as_tesstsv(v2)
 
 
 class TestAsBox(unittest.TestCase):
     def test_type(self):
-        box = sw_luadocs.ocr.as_box(["10", "11", "12", "13"])
+        box = sw_luadocs.recognize.as_box(["10", "11", "12", "13"])
         self.assertEqual(box, (10, 11, 12, 13))
 
     def test_valid(self):
         v = (0, 0, 1, 1)
-        box = sw_luadocs.ocr.as_box(v)
+        box = sw_luadocs.recognize.as_box(v)
         self.assertEqual(box, v)
 
     def test_invalid(self):
@@ -102,31 +102,33 @@ class TestAsBox(unittest.TestCase):
         ):
             with self.subTest(v=v):
                 with self.assertRaises(ValueError):
-                    sw_luadocs.ocr.as_box(v)
+                    sw_luadocs.recognize.as_box(v)
 
 
 class TestAsKind(unittest.TestCase):
     def test_valid(self):
         for v in "head", "body", "code":
             with self.subTest(v=v):
-                kind = sw_luadocs.ocr.as_kind(v)
+                kind = sw_luadocs.recognize.as_kind(v)
                 self.assertEqual(kind, v)
 
     def test_invalid(self):
         with self.assertRaises(ValueError):
-            sw_luadocs.ocr.as_kind("invliad")
+            sw_luadocs.recognize.as_kind("invliad")
 
 
 class TestTesseractLinePostInit(unittest.TestCase):
     def test_type(self):
-        tessline = sw_luadocs.ocr.TesseractLine(txt=0, box=["10", "11", "12", "13"])
+        tessline = sw_luadocs.recognize.TesseractLine(
+            txt=0, box=["10", "11", "12", "13"]
+        )
         self.assertEqual(tessline.txt, "0")
         self.assertEqual(tessline.box, (10, 11, 12, 13))
 
 
 class TestOCRLinePostInit(unittest.TestCase):
     def test_type(self):
-        ocrline = sw_luadocs.ocr.OCRLine(
+        ocrline = sw_luadocs.recognize.OCRLine(
             txt=0, kind="head", box=["1", "2", "3", "4"]
         )
         self.assertEqual(ocrline.txt, "0")
@@ -135,42 +137,42 @@ class TestOCRLinePostInit(unittest.TestCase):
 
     def test_kind_invalid(self):
         with self.assertRaises(ValueError):
-            sw_luadocs.ocr.OCRLine(txt="", kind="invalid", box=(1, 2, 3, 4))
+            sw_luadocs.recognize.OCRLine(txt="", kind="invalid", box=(1, 2, 3, 4))
 
 
 class TestOCRParagraphPostInit(unittest.TestCase):
     def test_type(self):
-        ocrpara = sw_luadocs.ocr.OCRParagraph(txt=0, kind="head")
+        ocrpara = sw_luadocs.recognize.OCRParagraph(txt=0, kind="head")
         self.assertEqual(ocrpara.txt, "0")
         self.assertEqual(ocrpara.kind, "head")
 
     def test_kind_invalid(self):
         with self.assertRaises(ValueError):
-            sw_luadocs.ocr.OCRParagraph(txt="", kind="invalid")
+            sw_luadocs.recognize.OCRParagraph(txt="", kind="invalid")
 
 
 class TestAsOCRLineList(unittest.TestCase):
     def test_type(self):
         v = [
-            sw_luadocs.ocr.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
-            sw_luadocs.ocr.OCRLine(txt="", kind="body", box=(0, 0, 1, 1)),
-            sw_luadocs.ocr.OCRLine(txt="", kind="code", box=(0, 0, 1, 1)),
+            sw_luadocs.recognize.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
+            sw_luadocs.recognize.OCRLine(txt="", kind="body", box=(0, 0, 1, 1)),
+            sw_luadocs.recognize.OCRLine(txt="", kind="code", box=(0, 0, 1, 1)),
         ]
 
         def gen():
             yield from v
 
-        ocrline_list = sw_luadocs.ocr.as_ocrline_list(gen())
+        ocrline_list = sw_luadocs.recognize.as_ocrline_list(gen())
         self.assertIsInstance(ocrline_list, list)
         self.assertEqual(ocrline_list, v)
 
     def test_validate_pass(self):
         v = [
-            sw_luadocs.ocr.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
-            sw_luadocs.ocr.OCRLine(txt="", kind="body", box=(0, 0, 1, 1)),
-            sw_luadocs.ocr.OCRLine(txt="", kind="code", box=(0, 0, 1, 1)),
+            sw_luadocs.recognize.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
+            sw_luadocs.recognize.OCRLine(txt="", kind="body", box=(0, 0, 1, 1)),
+            sw_luadocs.recognize.OCRLine(txt="", kind="code", box=(0, 0, 1, 1)),
         ]
-        ocrline_list = sw_luadocs.ocr.as_ocrline_list(v)
+        ocrline_list = sw_luadocs.recognize.as_ocrline_list(v)
         self.assertIsInstance(ocrline_list, list)
         self.assertEqual(ocrline_list, v)
 
@@ -178,30 +180,30 @@ class TestAsOCRLineList(unittest.TestCase):
         for v in [
             [
                 None,
-                sw_luadocs.ocr.OCRLine(txt="", kind="body", box=(0, 0, 1, 1)),
-                sw_luadocs.ocr.OCRLine(txt="", kind="code", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="", kind="body", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="", kind="code", box=(0, 0, 1, 1)),
             ],
             [
-                sw_luadocs.ocr.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
                 None,
-                sw_luadocs.ocr.OCRLine(txt="", kind="code", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="", kind="code", box=(0, 0, 1, 1)),
             ],
             [
-                sw_luadocs.ocr.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
-                sw_luadocs.ocr.OCRLine(txt="", kind="body", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="", kind="body", box=(0, 0, 1, 1)),
                 None,
             ],
         ]:
             with self.subTest(v=v):
                 with self.assertRaises(TypeError):
-                    sw_luadocs.ocr.as_ocrline_list(v)
+                    sw_luadocs.recognize.as_ocrline_list(v)
 
 
 class TestPreprocessImage(unittest.TestCase):
     def test_axis(self):
         input_img = np.array([[51, 102], [153, 204]], dtype=np.uint8)
         expected_img = np.array([[204, 153], [102, 51]], dtype=np.uint8)
-        output_img = sw_luadocs.ocr.preprocess_image(input_img)
+        output_img = sw_luadocs.recognize.preprocess_image(input_img)
         self.assertTrue(np.array_equal(output_img, expected_img))
 
     def test_value(self):
@@ -213,14 +215,14 @@ class TestPreprocessImage(unittest.TestCase):
             [[255, 254], [253, 252]],
             dtype=np.uint8,
         )
-        output_img = sw_luadocs.ocr.preprocess_image(input_img)
+        output_img = sw_luadocs.recognize.preprocess_image(input_img)
         self.assertTrue(np.array_equal(output_img, expected_img))
 
 
 class TestCategorizeLine(unittest.TestCase):
     def test_validate_ok(self):
-        kind = sw_luadocs.ocr.categorize_line(
-            tessline=sw_luadocs.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
+        kind = sw_luadocs.recognize.categorize_line(
+            tessline=sw_luadocs.recognize.TesseractLine(txt="", box=(0, 0, 1, 1)),
             capture_img=np.zeros((1, 1, 3), dtype=np.uint8),
             head_thresh_s=0,
             code_thresh_x=0,
@@ -229,8 +231,8 @@ class TestCategorizeLine(unittest.TestCase):
         self.assertEqual(kind, "code")
 
     def test_validate_conv(self):
-        kind = sw_luadocs.ocr.categorize_line(
-            tessline=sw_luadocs.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
+        kind = sw_luadocs.recognize.categorize_line(
+            tessline=sw_luadocs.recognize.TesseractLine(txt="", box=(0, 0, 1, 1)),
             capture_img=np.full((1, 2, 4), 255, dtype=np.uint8),
             head_thresh_s="0",
             code_thresh_x="1",
@@ -240,7 +242,7 @@ class TestCategorizeLine(unittest.TestCase):
 
     def test_validate_type(self):
         with self.assertRaises(TypeError):
-            sw_luadocs.ocr.categorize_line(
+            sw_luadocs.recognize.categorize_line(
                 tessline=None,
                 capture_img=np.zeros((1, 1, 3), dtype=np.uint8),
                 head_thresh_s=0,
@@ -251,112 +253,144 @@ class TestCategorizeLine(unittest.TestCase):
     def test_validate_value(self):
         for kwargs in [
             {
-                "tessline": sw_luadocs.ocr.TesseractLine(txt="", box=(1, 0, 1, 1)),
+                "tessline": sw_luadocs.recognize.TesseractLine(
+                    txt="", box=(1, 0, 1, 1)
+                ),
                 "capture_img": np.zeros((1, 1, 3), dtype=np.uint8),
                 "head_thresh_s": 0,
                 "code_thresh_x": 0,
                 "bg_thresh_rgb": (0, 0, 0),
             },
             {
-                "tessline": sw_luadocs.ocr.TesseractLine(txt="", box=(0, 1, 1, 1)),
+                "tessline": sw_luadocs.recognize.TesseractLine(
+                    txt="", box=(0, 1, 1, 1)
+                ),
                 "capture_img": np.zeros((1, 1, 3), dtype=np.uint8),
                 "head_thresh_s": 0,
                 "code_thresh_x": 0,
                 "bg_thresh_rgb": (0, 0, 0),
             },
             {
-                "tessline": sw_luadocs.ocr.TesseractLine(txt="", box=(0, 0, 2, 1)),
+                "tessline": sw_luadocs.recognize.TesseractLine(
+                    txt="", box=(0, 0, 2, 1)
+                ),
                 "capture_img": np.zeros((1, 1, 3), dtype=np.uint8),
                 "head_thresh_s": 0,
                 "code_thresh_x": 0,
                 "bg_thresh_rgb": (0, 0, 0),
             },
             {
-                "tessline": sw_luadocs.ocr.TesseractLine(txt="", box=(0, 0, 1, 2)),
+                "tessline": sw_luadocs.recognize.TesseractLine(
+                    txt="", box=(0, 0, 1, 2)
+                ),
                 "capture_img": np.zeros((1, 1, 3), dtype=np.uint8),
                 "head_thresh_s": 0,
                 "code_thresh_x": 0,
                 "bg_thresh_rgb": (0, 0, 0),
             },
             {
-                "tessline": sw_luadocs.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
+                "tessline": sw_luadocs.recognize.TesseractLine(
+                    txt="", box=(0, 0, 1, 1)
+                ),
                 "capture_img": np.zeros((0, 1, 3), dtype=np.uint8),
                 "head_thresh_s": 0,
                 "code_thresh_x": 0,
                 "bg_thresh_rgb": (0, 0, 0),
             },
             {
-                "tessline": sw_luadocs.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
+                "tessline": sw_luadocs.recognize.TesseractLine(
+                    txt="", box=(0, 0, 1, 1)
+                ),
                 "capture_img": np.zeros((1, 0, 3), dtype=np.uint8),
                 "head_thresh_s": 0,
                 "code_thresh_x": 0,
                 "bg_thresh_rgb": (0, 0, 0),
             },
             {
-                "tessline": sw_luadocs.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
+                "tessline": sw_luadocs.recognize.TesseractLine(
+                    txt="", box=(0, 0, 1, 1)
+                ),
                 "capture_img": np.zeros((1, 1, 3), dtype=np.uint8),
                 "head_thresh_s": -1,
                 "code_thresh_x": 0,
                 "bg_thresh_rgb": (0, 0, 0),
             },
             {
-                "tessline": sw_luadocs.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
+                "tessline": sw_luadocs.recognize.TesseractLine(
+                    txt="", box=(0, 0, 1, 1)
+                ),
                 "capture_img": np.zeros((1, 1, 3), dtype=np.uint8),
                 "head_thresh_s": 256,
                 "code_thresh_x": 0,
                 "bg_thresh_rgb": (0, 0, 0),
             },
             {
-                "tessline": sw_luadocs.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
+                "tessline": sw_luadocs.recognize.TesseractLine(
+                    txt="", box=(0, 0, 1, 1)
+                ),
                 "capture_img": np.zeros((1, 1, 3), dtype=np.uint8),
                 "head_thresh_s": 0,
                 "code_thresh_x": -1,
                 "bg_thresh_rgb": (0, 0, 0),
             },
             {
-                "tessline": sw_luadocs.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
+                "tessline": sw_luadocs.recognize.TesseractLine(
+                    txt="", box=(0, 0, 1, 1)
+                ),
                 "capture_img": np.zeros((1, 1, 3), dtype=np.uint8),
                 "head_thresh_s": 0,
                 "code_thresh_x": 1,
                 "bg_thresh_rgb": (0, 0, 0),
             },
             {
-                "tessline": sw_luadocs.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
+                "tessline": sw_luadocs.recognize.TesseractLine(
+                    txt="", box=(0, 0, 1, 1)
+                ),
                 "capture_img": np.zeros((1, 1, 3), dtype=np.uint8),
                 "head_thresh_s": 0,
                 "code_thresh_x": 0,
                 "bg_thresh_rgb": (-1, 0, 0),
             },
             {
-                "tessline": sw_luadocs.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
+                "tessline": sw_luadocs.recognize.TesseractLine(
+                    txt="", box=(0, 0, 1, 1)
+                ),
                 "capture_img": np.zeros((1, 1, 3), dtype=np.uint8),
                 "head_thresh_s": 0,
                 "code_thresh_x": 0,
                 "bg_thresh_rgb": (256, 0, 0),
             },
             {
-                "tessline": sw_luadocs.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
+                "tessline": sw_luadocs.recognize.TesseractLine(
+                    txt="", box=(0, 0, 1, 1)
+                ),
                 "capture_img": np.zeros((1, 1, 3), dtype=np.uint8),
                 "head_thresh_s": 0,
                 "code_thresh_x": 0,
                 "bg_thresh_rgb": (0, -1, 0),
             },
             {
-                "tessline": sw_luadocs.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
+                "tessline": sw_luadocs.recognize.TesseractLine(
+                    txt="", box=(0, 0, 1, 1)
+                ),
                 "capture_img": np.zeros((1, 1, 3), dtype=np.uint8),
                 "head_thresh_s": 0,
                 "code_thresh_x": 0,
                 "bg_thresh_rgb": (0, 256, 0),
             },
             {
-                "tessline": sw_luadocs.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
+                "tessline": sw_luadocs.recognize.TesseractLine(
+                    txt="", box=(0, 0, 1, 1)
+                ),
                 "capture_img": np.zeros((1, 1, 3), dtype=np.uint8),
                 "head_thresh_s": 0,
                 "code_thresh_x": 0,
                 "bg_thresh_rgb": (0, 0, -1),
             },
             {
-                "tessline": sw_luadocs.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
+                "tessline": sw_luadocs.recognize.TesseractLine(
+                    txt="", box=(0, 0, 1, 1)
+                ),
                 "capture_img": np.zeros((1, 1, 3), dtype=np.uint8),
                 "head_thresh_s": 0,
                 "code_thresh_x": 0,
@@ -365,11 +399,11 @@ class TestCategorizeLine(unittest.TestCase):
         ]:
             with self.subTest(kwargs=kwargs):
                 with self.assertRaises(ValueError):
-                    sw_luadocs.ocr.categorize_line(**kwargs)
+                    sw_luadocs.recognize.categorize_line(**kwargs)
 
     def test_code(self):
-        kind = sw_luadocs.ocr.categorize_line(
-            tessline=sw_luadocs.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
+        kind = sw_luadocs.recognize.categorize_line(
+            tessline=sw_luadocs.recognize.TesseractLine(txt="", box=(0, 0, 1, 1)),
             capture_img=np.zeros((1, 1, 3), dtype=np.uint8),
             head_thresh_s=0,
             code_thresh_x=0,
@@ -380,8 +414,8 @@ class TestCategorizeLine(unittest.TestCase):
     def test_crop_1(self):
         capture_img = np.zeros((10, 10), dtype=np.uint8)
         capture_img[3, 2] = 1
-        kind = sw_luadocs.ocr.categorize_line(
-            tessline=sw_luadocs.ocr.TesseractLine(txt="", box=(2, 3, 1, 1)),
+        kind = sw_luadocs.recognize.categorize_line(
+            tessline=sw_luadocs.recognize.TesseractLine(txt="", box=(2, 3, 1, 1)),
             capture_img=capture_img,
             head_thresh_s=0,
             code_thresh_x=3,
@@ -392,8 +426,8 @@ class TestCategorizeLine(unittest.TestCase):
     def test_crop_2(self):
         capture_img = np.zeros((10, 10), dtype=np.uint8)
         capture_img[0, 1] = 1
-        kind = sw_luadocs.ocr.categorize_line(
-            tessline=sw_luadocs.ocr.TesseractLine(txt="", box=(0, 0, 2, 1)),
+        kind = sw_luadocs.recognize.categorize_line(
+            tessline=sw_luadocs.recognize.TesseractLine(txt="", box=(0, 0, 2, 1)),
             capture_img=capture_img,
             head_thresh_s=0,
             code_thresh_x=1,
@@ -404,8 +438,8 @@ class TestCategorizeLine(unittest.TestCase):
     def test_crop_3(self):
         capture_img = np.zeros((10, 10), dtype=np.uint8)
         capture_img[2, 0] = 1
-        kind = sw_luadocs.ocr.categorize_line(
-            tessline=sw_luadocs.ocr.TesseractLine(txt="", box=(0, 0, 1, 3)),
+        kind = sw_luadocs.recognize.categorize_line(
+            tessline=sw_luadocs.recognize.TesseractLine(txt="", box=(0, 0, 1, 3)),
             capture_img=capture_img,
             head_thresh_s=0,
             code_thresh_x=1,
@@ -414,8 +448,8 @@ class TestCategorizeLine(unittest.TestCase):
         self.assertEqual(kind, "head")
 
     def test_thresh_none(self):
-        kind = sw_luadocs.ocr.categorize_line(
-            tessline=sw_luadocs.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
+        kind = sw_luadocs.recognize.categorize_line(
+            tessline=sw_luadocs.recognize.TesseractLine(txt="", box=(0, 0, 1, 1)),
             capture_img=np.full((2, 2, 3), 255, dtype=np.uint8),
             head_thresh_s=0,
             code_thresh_x=1,
@@ -426,8 +460,8 @@ class TestCategorizeLine(unittest.TestCase):
     def test_thresh_r(self):
         capture_img = np.zeros((2, 2, 3), dtype=np.uint8)
         capture_img[:, :, 0] = 3
-        kind = sw_luadocs.ocr.categorize_line(
-            tessline=sw_luadocs.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
+        kind = sw_luadocs.recognize.categorize_line(
+            tessline=sw_luadocs.recognize.TesseractLine(txt="", box=(0, 0, 1, 1)),
             capture_img=capture_img,
             head_thresh_s=0,
             code_thresh_x=1,
@@ -438,8 +472,8 @@ class TestCategorizeLine(unittest.TestCase):
     def test_thresh_g(self):
         capture_img = np.zeros((2, 2, 3), dtype=np.uint8)
         capture_img[:, :, 1] = 3
-        kind = sw_luadocs.ocr.categorize_line(
-            tessline=sw_luadocs.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
+        kind = sw_luadocs.recognize.categorize_line(
+            tessline=sw_luadocs.recognize.TesseractLine(txt="", box=(0, 0, 1, 1)),
             capture_img=capture_img,
             head_thresh_s=0,
             code_thresh_x=1,
@@ -450,8 +484,8 @@ class TestCategorizeLine(unittest.TestCase):
     def test_thresh_b(self):
         capture_img = np.zeros((2, 2, 3), dtype=np.uint8)
         capture_img[:, :, 2] = 3
-        kind = sw_luadocs.ocr.categorize_line(
-            tessline=sw_luadocs.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
+        kind = sw_luadocs.recognize.categorize_line(
+            tessline=sw_luadocs.recognize.TesseractLine(txt="", box=(0, 0, 1, 1)),
             capture_img=capture_img,
             head_thresh_s=0,
             code_thresh_x=1,
@@ -460,8 +494,8 @@ class TestCategorizeLine(unittest.TestCase):
         self.assertEqual(kind, "head")
 
     def test_mask_all(self):
-        kind = sw_luadocs.ocr.categorize_line(
-            tessline=sw_luadocs.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
+        kind = sw_luadocs.recognize.categorize_line(
+            tessline=sw_luadocs.recognize.TesseractLine(txt="", box=(0, 0, 1, 1)),
             capture_img=np.zeros((2, 2, 3), dtype=np.uint8),
             head_thresh_s=0,
             code_thresh_x=1,
@@ -477,8 +511,8 @@ class TestCategorizeLine(unittest.TestCase):
         capture_img[0, 1, 0] = 0
         capture_img[0, 1, 1] = 255
         capture_img[0, 1, 2] = 255
-        kind = sw_luadocs.ocr.categorize_line(
-            tessline=sw_luadocs.ocr.TesseractLine(txt="", box=(0, 0, 2, 1)),
+        kind = sw_luadocs.recognize.categorize_line(
+            tessline=sw_luadocs.recognize.TesseractLine(txt="", box=(0, 0, 2, 1)),
             capture_img=capture_img,
             head_thresh_s=1,
             code_thresh_x=1,
@@ -487,8 +521,8 @@ class TestCategorizeLine(unittest.TestCase):
         self.assertEqual(kind, "body")
 
     def test_saturation_zero(self):
-        kind = sw_luadocs.ocr.categorize_line(
-            tessline=sw_luadocs.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
+        kind = sw_luadocs.recognize.categorize_line(
+            tessline=sw_luadocs.recognize.TesseractLine(txt="", box=(0, 0, 1, 1)),
             capture_img=np.full((2, 2, 3), 1, dtype=np.uint8),
             head_thresh_s=1,
             code_thresh_x=1,
@@ -499,8 +533,8 @@ class TestCategorizeLine(unittest.TestCase):
     def test_saturation_r(self):
         capture_img = np.zeros((2, 2, 3), dtype=np.uint8)
         capture_img[:, :, 0] = 1
-        kind = sw_luadocs.ocr.categorize_line(
-            tessline=sw_luadocs.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
+        kind = sw_luadocs.recognize.categorize_line(
+            tessline=sw_luadocs.recognize.TesseractLine(txt="", box=(0, 0, 1, 1)),
             capture_img=capture_img,
             head_thresh_s=255,
             code_thresh_x=1,
@@ -511,8 +545,8 @@ class TestCategorizeLine(unittest.TestCase):
     def test_saturation_g(self):
         capture_img = np.zeros((2, 2, 3), dtype=np.uint8)
         capture_img[:, :, 1] = 1
-        kind = sw_luadocs.ocr.categorize_line(
-            tessline=sw_luadocs.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
+        kind = sw_luadocs.recognize.categorize_line(
+            tessline=sw_luadocs.recognize.TesseractLine(txt="", box=(0, 0, 1, 1)),
             capture_img=capture_img,
             head_thresh_s=255,
             code_thresh_x=1,
@@ -523,8 +557,8 @@ class TestCategorizeLine(unittest.TestCase):
     def test_saturation_b(self):
         capture_img = np.zeros((2, 2, 3), dtype=np.uint8)
         capture_img[:, :, 2] = 1
-        kind = sw_luadocs.ocr.categorize_line(
-            tessline=sw_luadocs.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
+        kind = sw_luadocs.recognize.categorize_line(
+            tessline=sw_luadocs.recognize.TesseractLine(txt="", box=(0, 0, 1, 1)),
             capture_img=capture_img,
             head_thresh_s=255,
             code_thresh_x=1,
@@ -538,8 +572,8 @@ class TestCategorizeLine(unittest.TestCase):
         capture_img[:, :, 1] = 59
         capture_img[:, :, 2] = 63
 
-        kind = sw_luadocs.ocr.categorize_line(
-            tessline=sw_luadocs.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
+        kind = sw_luadocs.recognize.categorize_line(
+            tessline=sw_luadocs.recognize.TesseractLine(txt="", box=(0, 0, 1, 1)),
             capture_img=capture_img,
             head_thresh_s=43,
             code_thresh_x=1,
@@ -547,8 +581,8 @@ class TestCategorizeLine(unittest.TestCase):
         )
         self.assertEqual(kind, "head")
 
-        kind = sw_luadocs.ocr.categorize_line(
-            tessline=sw_luadocs.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
+        kind = sw_luadocs.recognize.categorize_line(
+            tessline=sw_luadocs.recognize.TesseractLine(txt="", box=(0, 0, 1, 1)),
             capture_img=capture_img,
             head_thresh_s=44,
             code_thresh_x=1,
@@ -559,13 +593,13 @@ class TestCategorizeLine(unittest.TestCase):
 
 class TestCalcCharCount(unittest.TestCase):
     def test_type(self):
-        cnt = sw_luadocs.ocr.calc_char_count(
+        cnt = sw_luadocs.recognize.calc_char_count(
             pos1="12", pos2="34", size="0.5", vmin="0"
         )
         self.assertEqual(cnt, 44)
 
     def test_validate_pass(self):
-        cnt = sw_luadocs.ocr.calc_char_count(pos1=0, pos2=0, size=0.1, vmin=0)
+        cnt = sw_luadocs.recognize.calc_char_count(pos1=0, pos2=0, size=0.1, vmin=0)
         self.assertEqual(cnt, 0)
 
     def test_validate_error(self):
@@ -577,60 +611,60 @@ class TestCalcCharCount(unittest.TestCase):
         ]:
             with self.subTest(kwargs=kwargs):
                 with self.assertRaises(ValueError):
-                    sw_luadocs.ocr.calc_char_count(**kwargs)
+                    sw_luadocs.recognize.calc_char_count(**kwargs)
 
     def test_normal(self):
-        cnt = sw_luadocs.ocr.calc_char_count(pos1=12, pos2=34, size=0.5, vmin=0)
+        cnt = sw_luadocs.recognize.calc_char_count(pos1=12, pos2=34, size=0.5, vmin=0)
         self.assertEqual(cnt, 44)
 
     def test_round(self):
-        cnt = sw_luadocs.ocr.calc_char_count(pos1=12, pos2=34, size=3, vmin=0)
+        cnt = sw_luadocs.recognize.calc_char_count(pos1=12, pos2=34, size=3, vmin=0)
         self.assertEqual(cnt, 7)
 
     def test_vmin(self):
-        cnt = sw_luadocs.ocr.calc_char_count(pos1=12, pos2=34, size=0.5, vmin=45)
+        cnt = sw_luadocs.recognize.calc_char_count(pos1=12, pos2=34, size=0.5, vmin=45)
         self.assertEqual(cnt, 45)
 
 
 class TestGroupOCRLine(unittest.TestCase):
     def test_type(self):
         def ocrline_gen():
-            yield sw_luadocs.ocr.OCRLine(txt="", kind="head", box=(0, 0, 1, 1))
-            yield sw_luadocs.ocr.OCRLine(txt="", kind="body", box=(0, 0, 1, 1))
-            yield sw_luadocs.ocr.OCRLine(txt="", kind="code", box=(0, 0, 1, 1))
+            yield sw_luadocs.recognize.OCRLine(txt="", kind="head", box=(0, 0, 1, 1))
+            yield sw_luadocs.recognize.OCRLine(txt="", kind="body", box=(0, 0, 1, 1))
+            yield sw_luadocs.recognize.OCRLine(txt="", kind="code", box=(0, 0, 1, 1))
 
-        sl_list = sw_luadocs.ocr.group_ocrline(ocrline_gen())
+        sl_list = sw_luadocs.recognize.group_ocrline(ocrline_gen())
         self.assertEqual(sl_list, [slice(0, 1), slice(1, 2), slice(2, 3)])
 
     def test_empty(self):
-        sl_list = sw_luadocs.ocr.group_ocrline([])
+        sl_list = sw_luadocs.recognize.group_ocrline([])
         self.assertEqual(sl_list, [])
 
     def test_single(self):
-        sl_list = sw_luadocs.ocr.group_ocrline(
-            [sw_luadocs.ocr.OCRLine(txt="", kind="head", box=(0, 0, 1, 1))]
+        sl_list = sw_luadocs.recognize.group_ocrline(
+            [sw_luadocs.recognize.OCRLine(txt="", kind="head", box=(0, 0, 1, 1))]
         )
         self.assertEqual(sl_list, [slice(0, 1)])
 
     def test_diffkind(self):
-        sl_list = sw_luadocs.ocr.group_ocrline(
+        sl_list = sw_luadocs.recognize.group_ocrline(
             [
-                sw_luadocs.ocr.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
-                sw_luadocs.ocr.OCRLine(txt="", kind="body", box=(0, 0, 1, 1)),
-                sw_luadocs.ocr.OCRLine(txt="", kind="code", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="", kind="body", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="", kind="code", box=(0, 0, 1, 1)),
             ]
         )
         self.assertEqual(sl_list, [slice(0, 1), slice(1, 2), slice(2, 3)])
 
     def test_samekind(self):
-        sl_list = sw_luadocs.ocr.group_ocrline(
+        sl_list = sw_luadocs.recognize.group_ocrline(
             [
-                sw_luadocs.ocr.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
-                sw_luadocs.ocr.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
-                sw_luadocs.ocr.OCRLine(txt="", kind="body", box=(0, 0, 1, 1)),
-                sw_luadocs.ocr.OCRLine(txt="", kind="body", box=(0, 0, 1, 1)),
-                sw_luadocs.ocr.OCRLine(txt="", kind="code", box=(0, 0, 1, 1)),
-                sw_luadocs.ocr.OCRLine(txt="", kind="code", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="", kind="body", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="", kind="body", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="", kind="code", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="", kind="code", box=(0, 0, 1, 1)),
             ]
         )
         self.assertEqual(sl_list, [slice(0, 2), slice(2, 4), slice(4, 6)])
@@ -639,7 +673,7 @@ class TestGroupOCRLine(unittest.TestCase):
 class TestConvertTessTSVToTessline(unittest.TestCase):
     def test_type(self):
         with self.assertRaises(ValueError):
-            sw_luadocs.ocr.convert_tesstsv_to_tessline(
+            sw_luadocs.recognize.convert_tesstsv_to_tessline(
                 {
                     "level": [0, 1],
                     "page_num": [10, 11],
@@ -707,7 +741,7 @@ class TestConvertTessTSVToTessline(unittest.TestCase):
                     "conf": [0],
                     "text": ["text"],
                 },
-                [sw_luadocs.ocr.TesseractLine(txt="", box=(10, 11, 12, 13))],
+                [sw_luadocs.recognize.TesseractLine(txt="", box=(10, 11, 12, 13))],
             ),
             (
                 {
@@ -725,8 +759,8 @@ class TestConvertTessTSVToTessline(unittest.TestCase):
                     "text": ["1", "2", "3", "4", "5", "6"],
                 },
                 [
-                    sw_luadocs.ocr.TesseractLine(txt="", box=(4, 4, 4, 4)),
-                    sw_luadocs.ocr.TesseractLine(txt="", box=(6, 6, 6, 6)),
+                    sw_luadocs.recognize.TesseractLine(txt="", box=(4, 4, 4, 4)),
+                    sw_luadocs.recognize.TesseractLine(txt="", box=(6, 6, 6, 6)),
                 ],
             ),
             (
@@ -744,7 +778,7 @@ class TestConvertTessTSVToTessline(unittest.TestCase):
                     "conf": [0, 0],
                     "text": ["4", "5"],
                 },
-                [sw_luadocs.ocr.TesseractLine(txt="5", box=(4, 4, 4, 4))],
+                [sw_luadocs.recognize.TesseractLine(txt="5", box=(4, 4, 4, 4))],
             ),
             (
                 {
@@ -761,7 +795,7 @@ class TestConvertTessTSVToTessline(unittest.TestCase):
                     "conf": [0, 0, 0],
                     "text": ["4", "5", "6"],
                 },
-                [sw_luadocs.ocr.TesseractLine(txt="5 6", box=(4, 4, 4, 4))],
+                [sw_luadocs.recognize.TesseractLine(txt="5 6", box=(4, 4, 4, 4))],
             ),
             (
                 {
@@ -778,7 +812,7 @@ class TestConvertTessTSVToTessline(unittest.TestCase):
                     "conf": [0, 0, 0, 0],
                     "text": ["1", "2", "3", "4"],
                 },
-                [sw_luadocs.ocr.TesseractLine(txt="2 4", box=(1, 1, 1, 1))],
+                [sw_luadocs.recognize.TesseractLine(txt="2 4", box=(1, 1, 1, 1))],
             ),
             (
                 {
@@ -796,8 +830,8 @@ class TestConvertTessTSVToTessline(unittest.TestCase):
                     "text": ["1", "2", "3", "4", "5"],
                 },
                 [
-                    sw_luadocs.ocr.TesseractLine(txt="2", box=(1, 1, 1, 1)),
-                    sw_luadocs.ocr.TesseractLine(txt="5", box=(4, 4, 4, 4)),
+                    sw_luadocs.recognize.TesseractLine(txt="2", box=(1, 1, 1, 1)),
+                    sw_luadocs.recognize.TesseractLine(txt="5", box=(4, 4, 4, 4)),
                 ],
             ),
             (
@@ -1104,19 +1138,19 @@ class TestConvertTessTSVToTessline(unittest.TestCase):
                     ],
                 },
                 [
-                    sw_luadocs.ocr.TesseractLine(
+                    sw_luadocs.recognize.TesseractLine(
                         txt="Multiply two matrices together.",
                         box=(2, 10, 273, 19),
                     ),
-                    sw_luadocs.ocr.TesseractLine(
+                    sw_luadocs.recognize.TesseractLine(
                         txt="out_matrix = matrix.multiply(matrixl, matrix2)",
                         box=(14, 34, 432, 16),
                     ),
-                    sw_luadocs.ocr.TesseractLine(
+                    sw_luadocs.recognize.TesseractLine(
                         txt="Invert a matrix.",
                         box=(1, 70, 133, 14),
                     ),
-                    sw_luadocs.ocr.TesseractLine(
+                    sw_luadocs.recognize.TesseractLine(
                         txt="out_matrix = matrix.invert(matrix1)",
                         box=(14, 93, 328, 16),
                     ),
@@ -1124,7 +1158,7 @@ class TestConvertTessTSVToTessline(unittest.TestCase):
             ),
         ]:
             with self.subTest(input_tesstsv=input_tesstsv):
-                output_tessline_list = sw_luadocs.ocr.convert_tesstsv_to_tessline(
+                output_tessline_list = sw_luadocs.recognize.convert_tesstsv_to_tessline(
                     input_tesstsv
                 )
                 self.assertEqual(output_tessline_list, expected_tessline_list)
@@ -1133,7 +1167,7 @@ class TestConvertTessTSVToTessline(unittest.TestCase):
 class TestConvertTesslineToOCRLine(unittest.TestCase):
     def test_type_error(self):
         with self.assertRaises(TypeError):
-            sw_luadocs.ocr.convert_tessline_to_ocrline(
+            sw_luadocs.recognize.convert_tessline_to_ocrline(
                 tessline=None,
                 capture_img=np.zeros((1, 1, 3), dtype=np.uint8),
                 head_thresh_s=0,
@@ -1143,8 +1177,8 @@ class TestConvertTesslineToOCRLine(unittest.TestCase):
             )
 
     def test_type_normalize(self):
-        ocrline = sw_luadocs.ocr.convert_tessline_to_ocrline(
-            tessline=sw_luadocs.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
+        ocrline = sw_luadocs.recognize.convert_tessline_to_ocrline(
+            tessline=sw_luadocs.recognize.TesseractLine(txt="", box=(0, 0, 1, 1)),
             capture_img=np.zeros((1, 1), dtype=np.uint8),
             head_thresh_s=0,
             code_base_x="0",
@@ -1152,13 +1186,15 @@ class TestConvertTesslineToOCRLine(unittest.TestCase):
             bg_thresh_rgb=(0, 0, 0),
         )
         self.assertEqual(
-            ocrline, sw_luadocs.ocr.OCRLine(txt="", kind="code", box=(0, 0, 1, 1))
+            ocrline, sw_luadocs.recognize.OCRLine(txt="", kind="code", box=(0, 0, 1, 1))
         )
 
     def test_validate_pass(self):
         for kwargs in [
             {
-                "tessline": sw_luadocs.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
+                "tessline": sw_luadocs.recognize.TesseractLine(
+                    txt="", box=(0, 0, 1, 1)
+                ),
                 "capture_img": np.zeros((1, 1, 3), dtype=np.uint8),
                 "head_thresh_s": 0,
                 "code_base_x": 0,
@@ -1166,7 +1202,9 @@ class TestConvertTesslineToOCRLine(unittest.TestCase):
                 "bg_thresh_rgb": (0, 0, 0),
             },
             {
-                "tessline": sw_luadocs.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
+                "tessline": sw_luadocs.recognize.TesseractLine(
+                    txt="", box=(0, 0, 1, 1)
+                ),
                 "capture_img": np.zeros((1, 2, 3), dtype=np.uint8),
                 "head_thresh_s": 0,
                 "code_base_x": 1,
@@ -1175,12 +1213,14 @@ class TestConvertTesslineToOCRLine(unittest.TestCase):
             },
         ]:
             with self.subTest(kwargs=kwargs):
-                sw_luadocs.ocr.convert_tessline_to_ocrline(**kwargs)
+                sw_luadocs.recognize.convert_tessline_to_ocrline(**kwargs)
 
     def test_validate_error(self):
         for kwargs in [
             {
-                "tessline": sw_luadocs.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
+                "tessline": sw_luadocs.recognize.TesseractLine(
+                    txt="", box=(0, 0, 1, 1)
+                ),
                 "capture_img": np.zeros((0, 1, 3), dtype=np.uint8),
                 "head_thresh_s": 0,
                 "code_base_x": 0,
@@ -1188,7 +1228,9 @@ class TestConvertTesslineToOCRLine(unittest.TestCase):
                 "bg_thresh_rgb": (0, 0, 0),
             },
             {
-                "tessline": sw_luadocs.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
+                "tessline": sw_luadocs.recognize.TesseractLine(
+                    txt="", box=(0, 0, 1, 1)
+                ),
                 "capture_img": np.zeros((1, 0, 3), dtype=np.uint8),
                 "head_thresh_s": 0,
                 "code_base_x": 0,
@@ -1196,7 +1238,9 @@ class TestConvertTesslineToOCRLine(unittest.TestCase):
                 "bg_thresh_rgb": (0, 0, 0),
             },
             {
-                "tessline": sw_luadocs.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
+                "tessline": sw_luadocs.recognize.TesseractLine(
+                    txt="", box=(0, 0, 1, 1)
+                ),
                 "capture_img": np.zeros((1, 1, 3), dtype=np.uint8),
                 "head_thresh_s": 0,
                 "code_base_x": -1,
@@ -1204,7 +1248,9 @@ class TestConvertTesslineToOCRLine(unittest.TestCase):
                 "bg_thresh_rgb": (0, 0, 0),
             },
             {
-                "tessline": sw_luadocs.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
+                "tessline": sw_luadocs.recognize.TesseractLine(
+                    txt="", box=(0, 0, 1, 1)
+                ),
                 "capture_img": np.zeros((1, 1, 3), dtype=np.uint8),
                 "head_thresh_s": 0,
                 "code_base_x": 1,
@@ -1212,7 +1258,9 @@ class TestConvertTesslineToOCRLine(unittest.TestCase):
                 "bg_thresh_rgb": (0, 0, 0),
             },
             {
-                "tessline": sw_luadocs.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
+                "tessline": sw_luadocs.recognize.TesseractLine(
+                    txt="", box=(0, 0, 1, 1)
+                ),
                 "capture_img": np.zeros((1, 1, 3), dtype=np.uint8),
                 "head_thresh_s": 0,
                 "code_base_x": 0,
@@ -1220,7 +1268,9 @@ class TestConvertTesslineToOCRLine(unittest.TestCase):
                 "bg_thresh_rgb": (0, 0, 0),
             },
             {
-                "tessline": sw_luadocs.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
+                "tessline": sw_luadocs.recognize.TesseractLine(
+                    txt="", box=(0, 0, 1, 1)
+                ),
                 "capture_img": np.zeros((1, 1, 3), dtype=np.uint8),
                 "head_thresh_s": 0,
                 "code_base_x": 0,
@@ -1230,11 +1280,11 @@ class TestConvertTesslineToOCRLine(unittest.TestCase):
         ]:
             with self.subTest(kwargs=kwargs):
                 with self.assertRaises(ValueError):
-                    sw_luadocs.ocr.convert_tessline_to_ocrline(**kwargs)
+                    sw_luadocs.recognize.convert_tessline_to_ocrline(**kwargs)
 
     def test_codethresh_min(self):
-        ocrline = sw_luadocs.ocr.convert_tessline_to_ocrline(
-            tessline=sw_luadocs.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
+        ocrline = sw_luadocs.recognize.convert_tessline_to_ocrline(
+            tessline=sw_luadocs.recognize.TesseractLine(txt="", box=(0, 0, 1, 1)),
             capture_img=np.zeros((1, 1, 3), dtype=np.uint8),
             head_thresh_s=0,
             code_base_x=0,
@@ -1242,12 +1292,12 @@ class TestConvertTesslineToOCRLine(unittest.TestCase):
             bg_thresh_rgb=(0, 0, 0),
         )
         self.assertEqual(
-            ocrline, sw_luadocs.ocr.OCRLine(txt="", kind="code", box=(0, 0, 1, 1))
+            ocrline, sw_luadocs.recognize.OCRLine(txt="", kind="code", box=(0, 0, 1, 1))
         )
 
     def test_codethresh_max(self):
-        ocrline = sw_luadocs.ocr.convert_tessline_to_ocrline(
-            tessline=sw_luadocs.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
+        ocrline = sw_luadocs.recognize.convert_tessline_to_ocrline(
+            tessline=sw_luadocs.recognize.TesseractLine(txt="", box=(0, 0, 1, 1)),
             capture_img=np.zeros((1, 10, 3), dtype=np.uint8),
             head_thresh_s=0,
             code_base_x=9,
@@ -1255,32 +1305,34 @@ class TestConvertTesslineToOCRLine(unittest.TestCase):
             bg_thresh_rgb=(0, 0, 0),
         )
         self.assertEqual(
-            ocrline, sw_luadocs.ocr.OCRLine(txt="", kind="body", box=(0, 0, 1, 1))
+            ocrline, sw_luadocs.recognize.OCRLine(txt="", kind="body", box=(0, 0, 1, 1))
         )
 
     def test_codethresh_normal(self):
         kwargs = {
-            "tessline": sw_luadocs.ocr.TesseractLine(txt="", box=(2, 0, 1, 1)),
+            "tessline": sw_luadocs.recognize.TesseractLine(txt="", box=(2, 0, 1, 1)),
             "capture_img": np.zeros((1, 10, 3), dtype=np.uint8),
             "head_thresh_s": 0,
             "code_base_x": 6,
             "code_space_w": 4.1,
             "bg_thresh_rgb": (0, 0, 0),
         }
-        ocrline = sw_luadocs.ocr.convert_tessline_to_ocrline(**kwargs)
+        ocrline = sw_luadocs.recognize.convert_tessline_to_ocrline(**kwargs)
         self.assertEqual(
-            ocrline, sw_luadocs.ocr.OCRLine(txt="", kind="body", box=(2, 0, 1, 1))
+            ocrline, sw_luadocs.recognize.OCRLine(txt="", kind="body", box=(2, 0, 1, 1))
         )
 
-        kwargs["tessline"] = sw_luadocs.ocr.TesseractLine(txt="", box=(3, 0, 1, 1))
-        ocrline = sw_luadocs.ocr.convert_tessline_to_ocrline(**kwargs)
+        kwargs["tessline"] = sw_luadocs.recognize.TesseractLine(
+            txt="", box=(3, 0, 1, 1)
+        )
+        ocrline = sw_luadocs.recognize.convert_tessline_to_ocrline(**kwargs)
         self.assertEqual(
-            ocrline, sw_luadocs.ocr.OCRLine(txt="", kind="code", box=(3, 0, 1, 1))
+            ocrline, sw_luadocs.recognize.OCRLine(txt="", kind="code", box=(3, 0, 1, 1))
         )
 
     def test_indent_head(self):
-        ocrline = sw_luadocs.ocr.convert_tessline_to_ocrline(
-            tessline=sw_luadocs.ocr.TesseractLine(txt="", box=(1, 0, 1, 1)),
+        ocrline = sw_luadocs.recognize.convert_tessline_to_ocrline(
+            tessline=sw_luadocs.recognize.TesseractLine(txt="", box=(1, 0, 1, 1)),
             capture_img=np.full((1, 4, 3), 255, dtype=np.uint8),
             head_thresh_s=0,
             code_base_x=3,
@@ -1288,12 +1340,12 @@ class TestConvertTesslineToOCRLine(unittest.TestCase):
             bg_thresh_rgb=(0, 0, 0),
         )
         self.assertEqual(
-            ocrline, sw_luadocs.ocr.OCRLine(txt="", kind="head", box=(1, 0, 1, 1))
+            ocrline, sw_luadocs.recognize.OCRLine(txt="", kind="head", box=(1, 0, 1, 1))
         )
 
     def test_indent_body(self):
-        ocrline = sw_luadocs.ocr.convert_tessline_to_ocrline(
-            tessline=sw_luadocs.ocr.TesseractLine(txt="", box=(1, 0, 1, 1)),
+        ocrline = sw_luadocs.recognize.convert_tessline_to_ocrline(
+            tessline=sw_luadocs.recognize.TesseractLine(txt="", box=(1, 0, 1, 1)),
             capture_img=np.zeros((1, 4, 3), dtype=np.uint8),
             head_thresh_s=0,
             code_base_x=3,
@@ -1301,12 +1353,12 @@ class TestConvertTesslineToOCRLine(unittest.TestCase):
             bg_thresh_rgb=(0, 0, 0),
         )
         self.assertEqual(
-            ocrline, sw_luadocs.ocr.OCRLine(txt="", kind="body", box=(1, 0, 1, 1))
+            ocrline, sw_luadocs.recognize.OCRLine(txt="", kind="body", box=(1, 0, 1, 1))
         )
 
     def test_indent_code(self):
-        ocrline = sw_luadocs.ocr.convert_tessline_to_ocrline(
-            tessline=sw_luadocs.ocr.TesseractLine(txt="", box=(1, 0, 1, 1)),
+        ocrline = sw_luadocs.recognize.convert_tessline_to_ocrline(
+            tessline=sw_luadocs.recognize.TesseractLine(txt="", box=(1, 0, 1, 1)),
             capture_img=np.zeros((1, 2, 3), dtype=np.uint8),
             head_thresh_s=0,
             code_base_x=0,
@@ -1315,12 +1367,12 @@ class TestConvertTesslineToOCRLine(unittest.TestCase):
         )
         self.assertEqual(
             ocrline,
-            sw_luadocs.ocr.OCRLine(txt=" " * 10, kind="code", box=(1, 0, 1, 1)),
+            sw_luadocs.recognize.OCRLine(txt=" " * 10, kind="code", box=(1, 0, 1, 1)),
         )
 
     def test_kind_head(self):
-        ocrline = sw_luadocs.ocr.convert_tessline_to_ocrline(
-            tessline=sw_luadocs.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
+        ocrline = sw_luadocs.recognize.convert_tessline_to_ocrline(
+            tessline=sw_luadocs.recognize.TesseractLine(txt="", box=(0, 0, 1, 1)),
             capture_img=np.full((1, 3, 3), 255, dtype=np.uint8),
             head_thresh_s=0,
             code_base_x=2,
@@ -1328,12 +1380,12 @@ class TestConvertTesslineToOCRLine(unittest.TestCase):
             bg_thresh_rgb=(0, 0, 0),
         )
         self.assertEqual(
-            ocrline, sw_luadocs.ocr.OCRLine(txt="", kind="head", box=(0, 0, 1, 1))
+            ocrline, sw_luadocs.recognize.OCRLine(txt="", kind="head", box=(0, 0, 1, 1))
         )
 
     def test_kind_body(self):
-        ocrline = sw_luadocs.ocr.convert_tessline_to_ocrline(
-            tessline=sw_luadocs.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
+        ocrline = sw_luadocs.recognize.convert_tessline_to_ocrline(
+            tessline=sw_luadocs.recognize.TesseractLine(txt="", box=(0, 0, 1, 1)),
             capture_img=np.zeros((1, 3, 3), dtype=np.uint8),
             head_thresh_s=0,
             code_base_x=2,
@@ -1341,12 +1393,12 @@ class TestConvertTesslineToOCRLine(unittest.TestCase):
             bg_thresh_rgb=(0, 0, 0),
         )
         self.assertEqual(
-            ocrline, sw_luadocs.ocr.OCRLine(txt="", kind="body", box=(0, 0, 1, 1))
+            ocrline, sw_luadocs.recognize.OCRLine(txt="", kind="body", box=(0, 0, 1, 1))
         )
 
     def test_kind_code(self):
-        ocrline = sw_luadocs.ocr.convert_tessline_to_ocrline(
-            tessline=sw_luadocs.ocr.TesseractLine(txt="", box=(0, 0, 1, 1)),
+        ocrline = sw_luadocs.recognize.convert_tessline_to_ocrline(
+            tessline=sw_luadocs.recognize.TesseractLine(txt="", box=(0, 0, 1, 1)),
             capture_img=np.zeros((1, 1, 3), dtype=np.uint8),
             head_thresh_s=0,
             code_base_x=0,
@@ -1354,12 +1406,12 @@ class TestConvertTesslineToOCRLine(unittest.TestCase):
             bg_thresh_rgb=(0, 0, 0),
         )
         self.assertEqual(
-            ocrline, sw_luadocs.ocr.OCRLine(txt="", kind="code", box=(0, 0, 1, 1))
+            ocrline, sw_luadocs.recognize.OCRLine(txt="", kind="code", box=(0, 0, 1, 1))
         )
 
     def test_txt(self):
-        ocrline = sw_luadocs.ocr.convert_tessline_to_ocrline(
-            tessline=sw_luadocs.ocr.TesseractLine(txt="abc", box=(0, 0, 1, 1)),
+        ocrline = sw_luadocs.recognize.convert_tessline_to_ocrline(
+            tessline=sw_luadocs.recognize.TesseractLine(txt="abc", box=(0, 0, 1, 1)),
             capture_img=np.zeros((1, 1, 3), dtype=np.uint8),
             head_thresh_s=0,
             code_base_x=0,
@@ -1368,12 +1420,12 @@ class TestConvertTesslineToOCRLine(unittest.TestCase):
         )
         self.assertEqual(
             ocrline,
-            sw_luadocs.ocr.OCRLine(txt="abc", kind="code", box=(0, 0, 1, 1)),
+            sw_luadocs.recognize.OCRLine(txt="abc", kind="code", box=(0, 0, 1, 1)),
         )
 
     def test_box(self):
-        ocrline = sw_luadocs.ocr.convert_tessline_to_ocrline(
-            tessline=sw_luadocs.ocr.TesseractLine(txt="", box=(10, 11, 12, 13)),
+        ocrline = sw_luadocs.recognize.convert_tessline_to_ocrline(
+            tessline=sw_luadocs.recognize.TesseractLine(txt="", box=(10, 11, 12, 13)),
             capture_img=np.zeros((100, 100, 3), dtype=np.uint8),
             head_thresh_s=0,
             code_base_x=0,
@@ -1382,70 +1434,72 @@ class TestConvertTesslineToOCRLine(unittest.TestCase):
         )
         self.assertEqual(
             ocrline,
-            sw_luadocs.ocr.OCRLine(txt="", kind="code", box=(10, 11, 12, 13)),
+            sw_luadocs.recognize.OCRLine(txt="", kind="code", box=(10, 11, 12, 13)),
         )
 
 
 class TestConvertOCRLineToOCRParaHeadOnly(unittest.TestCase):
     def test_type(self):
         with self.assertRaises(TypeError):
-            sw_luadocs.ocr.convert_ocrline_to_ocrpara_headonly([None])
+            sw_luadocs.recognize.convert_ocrline_to_ocrpara_headonly([None])
 
     def test_empty(self):
-        ocrpara_list = sw_luadocs.ocr.convert_ocrline_to_ocrpara_headonly([])
+        ocrpara_list = sw_luadocs.recognize.convert_ocrline_to_ocrpara_headonly([])
         self.assertEqual(ocrpara_list, [])
 
     def test_kind_error(self):
         for ocrline_list in [
             [
-                sw_luadocs.ocr.OCRLine(txt="", kind="body", box=(0, 0, 1, 1)),
-                sw_luadocs.ocr.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
-                sw_luadocs.ocr.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="", kind="body", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
             ],
             [
-                sw_luadocs.ocr.OCRLine(txt="", kind="code", box=(0, 0, 1, 1)),
-                sw_luadocs.ocr.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
-                sw_luadocs.ocr.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="", kind="code", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
             ],
             [
-                sw_luadocs.ocr.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
-                sw_luadocs.ocr.OCRLine(txt="", kind="body", box=(0, 0, 1, 1)),
-                sw_luadocs.ocr.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="", kind="body", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
             ],
             [
-                sw_luadocs.ocr.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
-                sw_luadocs.ocr.OCRLine(txt="", kind="code", box=(0, 0, 1, 1)),
-                sw_luadocs.ocr.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="", kind="code", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
             ],
             [
-                sw_luadocs.ocr.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
-                sw_luadocs.ocr.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
-                sw_luadocs.ocr.OCRLine(txt="", kind="body", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="", kind="body", box=(0, 0, 1, 1)),
             ],
             [
-                sw_luadocs.ocr.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
-                sw_luadocs.ocr.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
-                sw_luadocs.ocr.OCRLine(txt="", kind="code", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="", kind="code", box=(0, 0, 1, 1)),
             ],
         ]:
             with self.subTest(ocrline_list=ocrline_list):
                 with self.assertRaises(ValueError):
-                    sw_luadocs.ocr.convert_ocrline_to_ocrpara_headonly(ocrline_list)
+                    sw_luadocs.recognize.convert_ocrline_to_ocrpara_headonly(
+                        ocrline_list
+                    )
 
     def test_convert(self):
-        ocrpara_list = sw_luadocs.ocr.convert_ocrline_to_ocrpara_headonly(
+        ocrpara_list = sw_luadocs.recognize.convert_ocrline_to_ocrpara_headonly(
             [
-                sw_luadocs.ocr.OCRLine(txt="a", kind="head", box=(0, 0, 1, 1)),
-                sw_luadocs.ocr.OCRLine(txt="b", kind="head", box=(0, 0, 1, 1)),
-                sw_luadocs.ocr.OCRLine(txt="c", kind="head", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="a", kind="head", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="b", kind="head", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="c", kind="head", box=(0, 0, 1, 1)),
             ]
         )
         self.assertEqual(
             ocrpara_list,
             [
-                sw_luadocs.ocr.OCRParagraph(txt="a", kind="head"),
-                sw_luadocs.ocr.OCRParagraph(txt="b", kind="head"),
-                sw_luadocs.ocr.OCRParagraph(txt="c", kind="head"),
+                sw_luadocs.recognize.OCRParagraph(txt="a", kind="head"),
+                sw_luadocs.recognize.OCRParagraph(txt="b", kind="head"),
+                sw_luadocs.recognize.OCRParagraph(txt="c", kind="head"),
             ],
         )
 
@@ -1453,46 +1507,46 @@ class TestConvertOCRLineToOCRParaHeadOnly(unittest.TestCase):
 class TestConvertOCRLineToOCRParaBodyOnly(unittest.TestCase):
     def test_type(self):
         with self.assertRaises(TypeError):
-            sw_luadocs.ocr.convert_ocrline_to_ocrpara_bodyonly(
+            sw_luadocs.recognize.convert_ocrline_to_ocrpara_bodyonly(
                 [None], body_line_h=0.1
             )
 
     def test_kind_error(self):
         for ocrline_list in [
             [
-                sw_luadocs.ocr.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
-                sw_luadocs.ocr.OCRLine(txt="", kind="body", box=(0, 0, 1, 1)),
-                sw_luadocs.ocr.OCRLine(txt="", kind="body", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="", kind="body", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="", kind="body", box=(0, 0, 1, 1)),
             ],
             [
-                sw_luadocs.ocr.OCRLine(txt="", kind="code", box=(0, 0, 1, 1)),
-                sw_luadocs.ocr.OCRLine(txt="", kind="body", box=(0, 0, 1, 1)),
-                sw_luadocs.ocr.OCRLine(txt="", kind="body", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="", kind="code", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="", kind="body", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="", kind="body", box=(0, 0, 1, 1)),
             ],
             [
-                sw_luadocs.ocr.OCRLine(txt="", kind="body", box=(0, 0, 1, 1)),
-                sw_luadocs.ocr.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
-                sw_luadocs.ocr.OCRLine(txt="", kind="body", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="", kind="body", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="", kind="body", box=(0, 0, 1, 1)),
             ],
             [
-                sw_luadocs.ocr.OCRLine(txt="", kind="body", box=(0, 0, 1, 1)),
-                sw_luadocs.ocr.OCRLine(txt="", kind="code", box=(0, 0, 1, 1)),
-                sw_luadocs.ocr.OCRLine(txt="", kind="body", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="", kind="body", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="", kind="code", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="", kind="body", box=(0, 0, 1, 1)),
             ],
             [
-                sw_luadocs.ocr.OCRLine(txt="", kind="body", box=(0, 0, 1, 1)),
-                sw_luadocs.ocr.OCRLine(txt="", kind="body", box=(0, 0, 1, 1)),
-                sw_luadocs.ocr.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="", kind="body", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="", kind="body", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
             ],
             [
-                sw_luadocs.ocr.OCRLine(txt="", kind="body", box=(0, 0, 1, 1)),
-                sw_luadocs.ocr.OCRLine(txt="", kind="body", box=(0, 0, 1, 1)),
-                sw_luadocs.ocr.OCRLine(txt="", kind="code", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="", kind="body", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="", kind="body", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="", kind="code", box=(0, 0, 1, 1)),
             ],
         ]:
             with self.subTest(ocrline_list=ocrline_list):
                 with self.assertRaises(ValueError):
-                    sw_luadocs.ocr.convert_ocrline_to_ocrpara_bodyonly(
+                    sw_luadocs.recognize.convert_ocrline_to_ocrpara_bodyonly(
                         ocrline_list, body_line_h=0.1
                     )
 
@@ -1503,89 +1557,125 @@ class TestConvertOCRLineToOCRParaBodyOnly(unittest.TestCase):
                 [],
             ),
             (
-                [sw_luadocs.ocr.OCRLine(txt="a", kind="body", box=(0, 0, 1, 1))],
-                [sw_luadocs.ocr.OCRParagraph(txt="a", kind="body")],
+                [sw_luadocs.recognize.OCRLine(txt="a", kind="body", box=(0, 0, 1, 1))],
+                [sw_luadocs.recognize.OCRParagraph(txt="a", kind="body")],
             ),
             (
                 [
-                    sw_luadocs.ocr.OCRLine(txt="a", kind="body", box=(0, 0, 1, 1)),
-                    sw_luadocs.ocr.OCRLine(txt="b", kind="body", box=(0, 0, 1, 1)),
-                    sw_luadocs.ocr.OCRLine(txt="c", kind="body", box=(0, 0, 1, 1)),
+                    sw_luadocs.recognize.OCRLine(
+                        txt="a", kind="body", box=(0, 0, 1, 1)
+                    ),
+                    sw_luadocs.recognize.OCRLine(
+                        txt="b", kind="body", box=(0, 0, 1, 1)
+                    ),
+                    sw_luadocs.recognize.OCRLine(
+                        txt="c", kind="body", box=(0, 0, 1, 1)
+                    ),
                 ],
-                [sw_luadocs.ocr.OCRParagraph(txt="a b c", kind="body")],
+                [sw_luadocs.recognize.OCRParagraph(txt="a b c", kind="body")],
             ),
             (
                 [
-                    sw_luadocs.ocr.OCRLine(txt="a", kind="body", box=(0, 0, 1, 1)),
-                    sw_luadocs.ocr.OCRLine(txt="b", kind="body", box=(0, 1, 1, 1)),
-                    sw_luadocs.ocr.OCRLine(txt="c", kind="body", box=(0, 2, 1, 1)),
+                    sw_luadocs.recognize.OCRLine(
+                        txt="a", kind="body", box=(0, 0, 1, 1)
+                    ),
+                    sw_luadocs.recognize.OCRLine(
+                        txt="b", kind="body", box=(0, 1, 1, 1)
+                    ),
+                    sw_luadocs.recognize.OCRLine(
+                        txt="c", kind="body", box=(0, 2, 1, 1)
+                    ),
                 ],
                 [
-                    sw_luadocs.ocr.OCRParagraph(txt="a", kind="body"),
-                    sw_luadocs.ocr.OCRParagraph(txt="b", kind="body"),
-                    sw_luadocs.ocr.OCRParagraph(txt="c", kind="body"),
+                    sw_luadocs.recognize.OCRParagraph(txt="a", kind="body"),
+                    sw_luadocs.recognize.OCRParagraph(txt="b", kind="body"),
+                    sw_luadocs.recognize.OCRParagraph(txt="c", kind="body"),
                 ],
             ),
             (
                 [
-                    sw_luadocs.ocr.OCRLine(txt="a", kind="body", box=(0, 0, 1, 1)),
-                    sw_luadocs.ocr.OCRLine(txt="b", kind="body", box=(0, 0, 1, 1)),
-                    sw_luadocs.ocr.OCRLine(txt="c", kind="body", box=(0, 0, 1, 1)),
-                    sw_luadocs.ocr.OCRLine(txt="d", kind="body", box=(0, 1, 1, 1)),
-                    sw_luadocs.ocr.OCRLine(txt="e", kind="body", box=(0, 2, 1, 1)),
-                    sw_luadocs.ocr.OCRLine(txt="f", kind="body", box=(0, 3, 1, 1)),
-                    sw_luadocs.ocr.OCRLine(txt="g", kind="body", box=(0, 4, 1, 1)),
-                    sw_luadocs.ocr.OCRLine(txt="h", kind="body", box=(0, 4, 1, 1)),
-                    sw_luadocs.ocr.OCRLine(txt="i", kind="body", box=(0, 4, 1, 1)),
-                    sw_luadocs.ocr.OCRLine(txt="j", kind="body", box=(0, 5, 1, 1)),
-                    sw_luadocs.ocr.OCRLine(txt="k", kind="body", box=(0, 6, 1, 1)),
-                    sw_luadocs.ocr.OCRLine(txt="l", kind="body", box=(0, 7, 1, 1)),
+                    sw_luadocs.recognize.OCRLine(
+                        txt="a", kind="body", box=(0, 0, 1, 1)
+                    ),
+                    sw_luadocs.recognize.OCRLine(
+                        txt="b", kind="body", box=(0, 0, 1, 1)
+                    ),
+                    sw_luadocs.recognize.OCRLine(
+                        txt="c", kind="body", box=(0, 0, 1, 1)
+                    ),
+                    sw_luadocs.recognize.OCRLine(
+                        txt="d", kind="body", box=(0, 1, 1, 1)
+                    ),
+                    sw_luadocs.recognize.OCRLine(
+                        txt="e", kind="body", box=(0, 2, 1, 1)
+                    ),
+                    sw_luadocs.recognize.OCRLine(
+                        txt="f", kind="body", box=(0, 3, 1, 1)
+                    ),
+                    sw_luadocs.recognize.OCRLine(
+                        txt="g", kind="body", box=(0, 4, 1, 1)
+                    ),
+                    sw_luadocs.recognize.OCRLine(
+                        txt="h", kind="body", box=(0, 4, 1, 1)
+                    ),
+                    sw_luadocs.recognize.OCRLine(
+                        txt="i", kind="body", box=(0, 4, 1, 1)
+                    ),
+                    sw_luadocs.recognize.OCRLine(
+                        txt="j", kind="body", box=(0, 5, 1, 1)
+                    ),
+                    sw_luadocs.recognize.OCRLine(
+                        txt="k", kind="body", box=(0, 6, 1, 1)
+                    ),
+                    sw_luadocs.recognize.OCRLine(
+                        txt="l", kind="body", box=(0, 7, 1, 1)
+                    ),
                 ],
                 [
-                    sw_luadocs.ocr.OCRParagraph(txt="a b c", kind="body"),
-                    sw_luadocs.ocr.OCRParagraph(txt="d", kind="body"),
-                    sw_luadocs.ocr.OCRParagraph(txt="e", kind="body"),
-                    sw_luadocs.ocr.OCRParagraph(txt="f", kind="body"),
-                    sw_luadocs.ocr.OCRParagraph(txt="g h i", kind="body"),
-                    sw_luadocs.ocr.OCRParagraph(txt="j", kind="body"),
-                    sw_luadocs.ocr.OCRParagraph(txt="k", kind="body"),
-                    sw_luadocs.ocr.OCRParagraph(txt="l", kind="body"),
+                    sw_luadocs.recognize.OCRParagraph(txt="a b c", kind="body"),
+                    sw_luadocs.recognize.OCRParagraph(txt="d", kind="body"),
+                    sw_luadocs.recognize.OCRParagraph(txt="e", kind="body"),
+                    sw_luadocs.recognize.OCRParagraph(txt="f", kind="body"),
+                    sw_luadocs.recognize.OCRParagraph(txt="g h i", kind="body"),
+                    sw_luadocs.recognize.OCRParagraph(txt="j", kind="body"),
+                    sw_luadocs.recognize.OCRParagraph(txt="k", kind="body"),
+                    sw_luadocs.recognize.OCRParagraph(txt="l", kind="body"),
                 ],
             ),
         ]:
             with self.subTest(ocrline_list=input_ocrline_list):
                 actual_ocrpara_list = (
-                    sw_luadocs.ocr.convert_ocrline_to_ocrpara_bodyonly(
+                    sw_luadocs.recognize.convert_ocrline_to_ocrpara_bodyonly(
                         input_ocrline_list, body_line_h=0.1
                     )
                 )
                 self.assertEqual(actual_ocrpara_list, expected_ocrpara_list)
 
     def test_numlf_geq(self):
-        ocrpara_list = sw_luadocs.ocr.convert_ocrline_to_ocrpara_bodyonly(
+        ocrpara_list = sw_luadocs.recognize.convert_ocrline_to_ocrpara_bodyonly(
             [
-                sw_luadocs.ocr.OCRLine(txt="a", kind="body", box=(0, 0, 1, 1)),
-                sw_luadocs.ocr.OCRLine(txt="b", kind="body", box=(0, 1, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="a", kind="body", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="b", kind="body", box=(0, 1, 1, 1)),
             ],
             body_line_h=0.5,
         )
         self.assertEqual(
             ocrpara_list,
             [
-                sw_luadocs.ocr.OCRParagraph(txt="a", kind="body"),
-                sw_luadocs.ocr.OCRParagraph(txt="b", kind="body"),
+                sw_luadocs.recognize.OCRParagraph(txt="a", kind="body"),
+                sw_luadocs.recognize.OCRParagraph(txt="b", kind="body"),
             ],
         )
 
     def test_numlf_lss(self):
         for pos1, pos2, size in [(1, 1, 0.5), (0, 0, 0.5), (0, 1, 10)]:
             with self.subTest(pos1=pos1, pos2=pos2, size=size):
-                ocrpara_list = sw_luadocs.ocr.convert_ocrline_to_ocrpara_bodyonly(
+                ocrpara_list = sw_luadocs.recognize.convert_ocrline_to_ocrpara_bodyonly(
                     [
-                        sw_luadocs.ocr.OCRLine(
+                        sw_luadocs.recognize.OCRLine(
                             txt="a", kind="body", box=(0, pos1, 1, 1)
                         ),
-                        sw_luadocs.ocr.OCRLine(
+                        sw_luadocs.recognize.OCRLine(
                             txt="b", kind="body", box=(0, pos2, 1, 1)
                         ),
                     ],
@@ -1593,53 +1683,53 @@ class TestConvertOCRLineToOCRParaBodyOnly(unittest.TestCase):
                 )
                 self.assertEqual(
                     ocrpara_list,
-                    [sw_luadocs.ocr.OCRParagraph(txt="a b", kind="body")],
+                    [sw_luadocs.recognize.OCRParagraph(txt="a b", kind="body")],
                 )
 
 
 class TestConvertOCRLineToOCRParaCodeOnly(unittest.TestCase):
     def test_type(self):
         with self.assertRaises(TypeError):
-            sw_luadocs.ocr.convert_ocrline_to_ocrpara_codeonly(
+            sw_luadocs.recognize.convert_ocrline_to_ocrpara_codeonly(
                 [None], code_line_h=0.1
             )
 
     def test_kind_error(self):
         for ocrline_list in [
             [
-                sw_luadocs.ocr.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
-                sw_luadocs.ocr.OCRLine(txt="", kind="code", box=(0, 0, 1, 1)),
-                sw_luadocs.ocr.OCRLine(txt="", kind="code", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="", kind="code", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="", kind="code", box=(0, 0, 1, 1)),
             ],
             [
-                sw_luadocs.ocr.OCRLine(txt="", kind="body", box=(0, 0, 1, 1)),
-                sw_luadocs.ocr.OCRLine(txt="", kind="code", box=(0, 0, 1, 1)),
-                sw_luadocs.ocr.OCRLine(txt="", kind="code", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="", kind="body", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="", kind="code", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="", kind="code", box=(0, 0, 1, 1)),
             ],
             [
-                sw_luadocs.ocr.OCRLine(txt="", kind="code", box=(0, 0, 1, 1)),
-                sw_luadocs.ocr.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
-                sw_luadocs.ocr.OCRLine(txt="", kind="code", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="", kind="code", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="", kind="code", box=(0, 0, 1, 1)),
             ],
             [
-                sw_luadocs.ocr.OCRLine(txt="", kind="code", box=(0, 0, 1, 1)),
-                sw_luadocs.ocr.OCRLine(txt="", kind="body", box=(0, 0, 1, 1)),
-                sw_luadocs.ocr.OCRLine(txt="", kind="code", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="", kind="code", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="", kind="body", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="", kind="code", box=(0, 0, 1, 1)),
             ],
             [
-                sw_luadocs.ocr.OCRLine(txt="", kind="code", box=(0, 0, 1, 1)),
-                sw_luadocs.ocr.OCRLine(txt="", kind="code", box=(0, 0, 1, 1)),
-                sw_luadocs.ocr.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="", kind="code", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="", kind="code", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
             ],
             [
-                sw_luadocs.ocr.OCRLine(txt="", kind="code", box=(0, 0, 1, 1)),
-                sw_luadocs.ocr.OCRLine(txt="", kind="code", box=(0, 0, 1, 1)),
-                sw_luadocs.ocr.OCRLine(txt="", kind="body", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="", kind="code", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="", kind="code", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="", kind="body", box=(0, 0, 1, 1)),
             ],
         ]:
             with self.subTest(ocrline_list=ocrline_list):
                 with self.assertRaises(ValueError):
-                    sw_luadocs.ocr.convert_ocrline_to_ocrpara_codeonly(
+                    sw_luadocs.recognize.convert_ocrline_to_ocrpara_codeonly(
                         ocrline_list=ocrline_list, code_line_h=0.1
                     )
 
@@ -1650,37 +1740,49 @@ class TestConvertOCRLineToOCRParaCodeOnly(unittest.TestCase):
                 [],
             ),
             (
-                [sw_luadocs.ocr.OCRLine(txt="a", kind="code", box=(0, 0, 1, 1))],
-                [sw_luadocs.ocr.OCRParagraph(txt="a", kind="code")],
+                [sw_luadocs.recognize.OCRLine(txt="a", kind="code", box=(0, 0, 1, 1))],
+                [sw_luadocs.recognize.OCRParagraph(txt="a", kind="code")],
             ),
             (
                 [
-                    sw_luadocs.ocr.OCRLine(txt="a", kind="code", box=(0, 0, 1, 1)),
-                    sw_luadocs.ocr.OCRLine(txt="b", kind="code", box=(0, 1, 1, 1)),
-                    sw_luadocs.ocr.OCRLine(txt="c", kind="code", box=(0, 3, 1, 1)),
-                    sw_luadocs.ocr.OCRLine(txt="d", kind="code", box=(0, 6, 1, 1)),
+                    sw_luadocs.recognize.OCRLine(
+                        txt="a", kind="code", box=(0, 0, 1, 1)
+                    ),
+                    sw_luadocs.recognize.OCRLine(
+                        txt="b", kind="code", box=(0, 1, 1, 1)
+                    ),
+                    sw_luadocs.recognize.OCRLine(
+                        txt="c", kind="code", box=(0, 3, 1, 1)
+                    ),
+                    sw_luadocs.recognize.OCRLine(
+                        txt="d", kind="code", box=(0, 6, 1, 1)
+                    ),
                 ],
-                [sw_luadocs.ocr.OCRParagraph(txt="a\nb\n\nc\n\n\nd", kind="code")],
+                [
+                    sw_luadocs.recognize.OCRParagraph(
+                        txt="a\nb\n\nc\n\n\nd", kind="code"
+                    )
+                ],
             ),
         ]:
             with self.subTest(ocrline_list=input_ocrline_list):
                 actual_ocrpara_list = (
-                    sw_luadocs.ocr.convert_ocrline_to_ocrpara_codeonly(
+                    sw_luadocs.recognize.convert_ocrline_to_ocrpara_codeonly(
                         ocrline_list=input_ocrline_list, code_line_h=1
                     )
                 )
                 self.assertEqual(actual_ocrpara_list, expected_ocrpara_list)
 
     def test_numlf_min(self):
-        ocrpara_list = sw_luadocs.ocr.convert_ocrline_to_ocrpara_codeonly(
+        ocrpara_list = sw_luadocs.recognize.convert_ocrline_to_ocrpara_codeonly(
             [
-                sw_luadocs.ocr.OCRLine(txt="a", kind="code", box=(0, 0, 1, 1)),
-                sw_luadocs.ocr.OCRLine(txt="b", kind="code", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="a", kind="code", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="b", kind="code", box=(0, 0, 1, 1)),
             ],
             code_line_h=0.1,
         )
         self.assertEqual(
-            ocrpara_list, [sw_luadocs.ocr.OCRParagraph(txt="a\nb", kind="code")]
+            ocrpara_list, [sw_luadocs.recognize.OCRParagraph(txt="a\nb", kind="code")]
         )
 
     def test_numlf_calc(self):
@@ -1692,21 +1794,21 @@ class TestConvertOCRLineToOCRParaCodeOnly(unittest.TestCase):
         ]:
             with self.subTest(pos1=input_pos1, pos2=input_pos2, size=input_size):
                 input_ocrline_list = [
-                    sw_luadocs.ocr.OCRLine(
+                    sw_luadocs.recognize.OCRLine(
                         txt="a", kind="code", box=(0, input_pos1, 1, 1)
                     ),
-                    sw_luadocs.ocr.OCRLine(
+                    sw_luadocs.recognize.OCRLine(
                         txt="b", kind="code", box=(0, input_pos2, 1, 1)
                     ),
                 ]
                 expected_ocrpara_list = [
-                    sw_luadocs.ocr.OCRParagraph(
+                    sw_luadocs.recognize.OCRParagraph(
                         txt="a" + "\n" * expected_numlf + "b", kind="code"
                     )
                 ]
 
                 actual_ocrpara_list = (
-                    sw_luadocs.ocr.convert_ocrline_to_ocrpara_codeonly(
+                    sw_luadocs.recognize.convert_ocrline_to_ocrpara_codeonly(
                         input_ocrline_list, code_line_h=input_size
                     )
                 )
@@ -1716,75 +1818,75 @@ class TestConvertOCRLineToOCRParaCodeOnly(unittest.TestCase):
 class TestConvertOCRLineToOCRParaMonoKind(unittest.TestCase):
     def test_type(self):
         with self.assertRaises(TypeError):
-            sw_luadocs.ocr.convert_ocrline_to_ocrpara_monokind(
+            sw_luadocs.recognize.convert_ocrline_to_ocrpara_monokind(
                 [None], body_line_h=0.1, code_line_h=0.1
             )
 
     def test_empty(self):
-        ocrpara_list = sw_luadocs.ocr.convert_ocrline_to_ocrpara_monokind(
+        ocrpara_list = sw_luadocs.recognize.convert_ocrline_to_ocrpara_monokind(
             [], body_line_h=0.1, code_line_h=0.1
         )
         self.assertEqual(ocrpara_list, [])
 
     def test_head(self):
-        ocrpara_list = sw_luadocs.ocr.convert_ocrline_to_ocrpara_monokind(
-            [sw_luadocs.ocr.OCRLine(txt="a", kind="head", box=(0, 0, 1, 1))],
+        ocrpara_list = sw_luadocs.recognize.convert_ocrline_to_ocrpara_monokind(
+            [sw_luadocs.recognize.OCRLine(txt="a", kind="head", box=(0, 0, 1, 1))],
             body_line_h=0.1,
             code_line_h=0.1,
         )
         self.assertEqual(
-            ocrpara_list, [sw_luadocs.ocr.OCRParagraph(txt="a", kind="head")]
+            ocrpara_list, [sw_luadocs.recognize.OCRParagraph(txt="a", kind="head")]
         )
 
     def test_body(self):
-        ocrpara_list = sw_luadocs.ocr.convert_ocrline_to_ocrpara_monokind(
+        ocrpara_list = sw_luadocs.recognize.convert_ocrline_to_ocrpara_monokind(
             [
-                sw_luadocs.ocr.OCRLine(txt="a", kind="body", box=(0, 0, 1, 1)),
-                sw_luadocs.ocr.OCRLine(txt="b", kind="body", box=(0, 1, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="a", kind="body", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="b", kind="body", box=(0, 1, 1, 1)),
             ],
             body_line_h=10,
             code_line_h=0.1,
         )
         self.assertEqual(
-            ocrpara_list, [sw_luadocs.ocr.OCRParagraph(txt="a b", kind="body")]
+            ocrpara_list, [sw_luadocs.recognize.OCRParagraph(txt="a b", kind="body")]
         )
 
     def test_code(self):
-        ocrpara_list = sw_luadocs.ocr.convert_ocrline_to_ocrpara_monokind(
+        ocrpara_list = sw_luadocs.recognize.convert_ocrline_to_ocrpara_monokind(
             [
-                sw_luadocs.ocr.OCRLine(txt="a", kind="code", box=(0, 0, 1, 1)),
-                sw_luadocs.ocr.OCRLine(txt="b", kind="code", box=(0, 1, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="a", kind="code", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="b", kind="code", box=(0, 1, 1, 1)),
             ],
             body_line_h=10,
             code_line_h=0.1,
         )
         self.assertEqual(
             ocrpara_list,
-            [sw_luadocs.ocr.OCRParagraph(txt="a" + "\n" * 10 + "b", kind="code")],
+            [sw_luadocs.recognize.OCRParagraph(txt="a" + "\n" * 10 + "b", kind="code")],
         )
 
 
 class TestConvertOCRLineToOCRPara(unittest.TestCase):
     def test_type(self):
         with self.assertRaises(TypeError):
-            sw_luadocs.ocr.convert_ocrline_to_ocrpara(
+            sw_luadocs.recognize.convert_ocrline_to_ocrpara(
                 [None], body_line_h=0.1, code_line_h=0.1
             )
 
     def test_empty(self):
-        ocrpara_list = sw_luadocs.ocr.convert_ocrline_to_ocrpara(
+        ocrpara_list = sw_luadocs.recognize.convert_ocrline_to_ocrpara(
             [], body_line_h=0.1, code_line_h=0.1
         )
         self.assertEqual(ocrpara_list, [])
 
     def test_normal(self):
-        ocrpara_list = sw_luadocs.ocr.convert_ocrline_to_ocrpara(
+        ocrpara_list = sw_luadocs.recognize.convert_ocrline_to_ocrpara(
             [
-                sw_luadocs.ocr.OCRLine(txt="a", kind="head", box=(0, 0, 1, 1)),
-                sw_luadocs.ocr.OCRLine(txt="b", kind="body", box=(0, 1, 1, 1)),
-                sw_luadocs.ocr.OCRLine(txt="c", kind="body", box=(0, 2, 1, 1)),
-                sw_luadocs.ocr.OCRLine(txt="d", kind="code", box=(0, 3, 1, 1)),
-                sw_luadocs.ocr.OCRLine(txt="e", kind="code", box=(0, 4, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="a", kind="head", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="b", kind="body", box=(0, 1, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="c", kind="body", box=(0, 2, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="d", kind="code", box=(0, 3, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="e", kind="code", box=(0, 4, 1, 1)),
             ],
             body_line_h=0.1,
             code_line_h=10,
@@ -1792,9 +1894,9 @@ class TestConvertOCRLineToOCRPara(unittest.TestCase):
         self.assertEqual(
             ocrpara_list,
             [
-                sw_luadocs.ocr.OCRParagraph(txt="a", kind="head"),
-                sw_luadocs.ocr.OCRParagraph(txt="b", kind="body"),
-                sw_luadocs.ocr.OCRParagraph(txt="c", kind="body"),
-                sw_luadocs.ocr.OCRParagraph(txt="d\ne", kind="code"),
+                sw_luadocs.recognize.OCRParagraph(txt="a", kind="head"),
+                sw_luadocs.recognize.OCRParagraph(txt="b", kind="body"),
+                sw_luadocs.recognize.OCRParagraph(txt="c", kind="body"),
+                sw_luadocs.recognize.OCRParagraph(txt="d\ne", kind="code"),
             ],
         )
