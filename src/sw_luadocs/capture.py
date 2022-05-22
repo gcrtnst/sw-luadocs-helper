@@ -3,8 +3,11 @@ import ctypes
 import ctypes.wintypes
 import cv2
 import d3dshot
+import math
 import numpy as np
 import time
+
+from . import image as dot_image
 
 
 def get_client_rect(hwnd):
@@ -165,26 +168,25 @@ class StormworksController:
 
 
 def calc_scroll_amount(old_img, new_img, *, template_ratio=0.25):
-    old_img = np.asarray(old_img, dtype=np.float32)
-    new_img = np.asarray(new_img, dtype=np.float32)
+    old_img = dot_image.convert_image(old_img, dst_mode="RGB")
+    new_img = dot_image.convert_image(new_img, dst_mode="RGB")
     template_ratio = float(template_ratio)
 
-    if old_img.shape != new_img.shape:
-        raise ValueError("Image shape does not match")
-    if old_img.ndim < 2 or 3 < old_img.ndim:
-        raise ValueError("The given data is not an image")
-    if old_img.size <= 0:
-        raise ValueError("The image is empty")
-    if template_ratio < 0 or 1 < template_ratio:
-        raise ValueError("template_ratio is not within the range 0~1")
+    if (
+        old_img.size <= 0
+        or old_img.shape != new_img.shape
+        or not math.isfinite(template_ratio)
+        or template_ratio < 0
+        or 1 < template_ratio
+    ):
+        raise ValueError
 
-    template_height = int(old_img.shape[0] * template_ratio)
-    if template_height <= 0:
-        template_height = 1
-    template_old_y = (old_img.shape[0] - template_height) // 2
-    template = old_img[template_old_y : template_old_y + template_height]
-    cor = cv2.matchTemplate(new_img, template, cv2.TM_CCOEFF)
-    template_new_y = np.reshape(np.argmax(cor, axis=0), 1)[0]
+    img_h, img_w, _ = old_img.shape
+    template_h = max(1, int(img_h * template_ratio))
+    template_old_y = (img_h - template_h) // 2
+    template = old_img[template_old_y : template_old_y + template_h]
+    ccoeff = cv2.matchTemplate(new_img, template, cv2.TM_CCOEFF)
+    template_new_y = np.reshape(np.argmax(ccoeff, axis=0), 1)[0]
     return template_new_y - template_old_y
 
 

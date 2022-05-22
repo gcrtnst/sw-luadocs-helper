@@ -3,383 +3,126 @@ import sw_luadocs.capture
 import unittest
 
 
+class TestCalcScrollAmount(unittest.TestCase):
+    def test_validate_convert(self):
+        scroll_amount = sw_luadocs.capture.calc_scroll_amount(
+            np.zeros(1, dtype=int), np.zeros(1, dtype=int), template_ratio="0.25"
+        )
+        self.assertEqual(scroll_amount, 0)
+
+    def test_validate_value_pass(self):
+        for kwargs in [
+            {
+                "old_img": np.zeros((3, 3, 3), dtype=np.uint8),
+                "new_img": np.zeros((3, 3, 3), dtype=np.uint8),
+                "template_ratio": 0.25,
+            },
+            {
+                "old_img": np.zeros((1, 1, 3), dtype=np.uint8),
+                "new_img": np.zeros((1, 1, 3), dtype=np.uint8),
+                "template_ratio": 0.25,
+            },
+            {
+                "old_img": np.zeros((3, 3, 3), dtype=np.uint8),
+                "new_img": np.zeros((3, 3, 3), dtype=np.uint8),
+                "template_ratio": 0,
+            },
+            {
+                "old_img": np.zeros((3, 3, 3), dtype=np.uint8),
+                "new_img": np.zeros((3, 3, 3), dtype=np.uint8),
+                "template_ratio": 1,
+            },
+        ]:
+            with self.subTest(kwargs=kwargs):
+                sw_luadocs.capture.calc_scroll_amount(**kwargs)
+
+    def test_validate_value_error(self):
+        for kwargs in [
+            {
+                "old_img": np.zeros((0, 0, 3), dtype=np.uint8),
+                "new_img": np.zeros((0, 0, 3), dtype=np.uint8),
+                "template_ratio": 0.25,
+            },
+            {
+                "old_img": np.zeros((3, 3, 3), dtype=np.uint8),
+                "new_img": np.zeros((4, 4, 3), dtype=np.uint8),
+                "template_ratio": 0.25,
+            },
+            {
+                "old_img": np.zeros((3, 3, 3), dtype=np.uint8),
+                "new_img": np.zeros((3, 3, 3), dtype=np.uint8),
+                "template_ratio": float("nan"),
+            },
+            {
+                "old_img": np.zeros((3, 3, 3), dtype=np.uint8),
+                "new_img": np.zeros((3, 3, 3), dtype=np.uint8),
+                "template_ratio": -0.1,
+            },
+            {
+                "old_img": np.zeros((3, 3, 3), dtype=np.uint8),
+                "new_img": np.zeros((3, 3, 3), dtype=np.uint8),
+                "template_ratio": 1.1,
+            },
+        ]:
+            with self.subTest(kwargs=kwargs):
+                with self.assertRaises(ValueError):
+                    sw_luadocs.capture.calc_scroll_amount(**kwargs)
+
+    def test_calc(self):
+        for input_kwargs, expected_scroll_amount in [
+            (
+                {
+                    "old_img": np.zeros((1, 1, 3), dtype=np.uint8),
+                    "new_img": np.zeros((1, 1, 3), dtype=np.uint8),
+                    "template_ratio": 0,
+                },
+                0,
+            ),
+            (
+                {
+                    "old_img": np.array([[0], [1], [0]], dtype=np.uint8),
+                    "new_img": np.array([[1], [0], [1]], dtype=np.uint8),
+                    "template_ratio": 0.75,
+                },
+                1,
+            ),
+            (
+                {
+                    "old_img": np.array([[0], [1], [0]], dtype=np.uint8),
+                    "new_img": np.array([[1], [0], [1]], dtype=np.uint8),
+                    "template_ratio": 1,
+                },
+                0,
+            ),
+            (
+                {
+                    "old_img": np.array([[0], [1], [0]], dtype=np.uint8),
+                    "new_img": np.array([[1], [0], [0]], dtype=np.uint8),
+                    "template_ratio": 0,
+                },
+                -1,
+            ),
+            (
+                {
+                    "old_img": np.array(
+                        [[0, 0, 1], [0, 1, 0], [0, 1, 1]], dtype=np.uint8
+                    ),
+                    "new_img": np.array(
+                        [[0, 1, 0], [0, 1, 1], [1, 0, 0]], dtype=np.uint8
+                    ),
+                    "template_ratio": 0,
+                },
+                -1,
+            ),
+        ]:
+            with self.subTest(kwargs=input_kwargs):
+                actual_scroll_amount = sw_luadocs.capture.calc_scroll_amount(
+                    **input_kwargs
+                )
+                self.assertEqual(actual_scroll_amount, expected_scroll_amount)
+
+
 class TestImageProcessing(unittest.TestCase):
-    def test_calc_scroll_amount(self):
-        # type conversion
-        old_img = [[0]]
-        new_img = [[0]]
-        template_ratio = "0"
-        scroll_amount = sw_luadocs.capture.calc_scroll_amount(
-            old_img, new_img, template_ratio=template_ratio
-        )
-        self.assertEqual(scroll_amount, 0)
-
-        # shape mismatch
-        old_img = np.zeros((1, 1))
-        new_img = np.zeros((1, 2))
-        template_ratio = 0
-        with self.assertRaisesRegex(ValueError, r"^Image shape does not match$"):
-            sw_luadocs.capture.calc_scroll_amount(
-                old_img, new_img, template_ratio=template_ratio
-            )
-
-        # ndim too small
-        old_img = np.zeros(1)
-        new_img = np.zeros(1)
-        template_ratio = 0
-        with self.assertRaisesRegex(ValueError, r"^The given data is not an image$"):
-            sw_luadocs.capture.calc_scroll_amount(
-                old_img, new_img, template_ratio=template_ratio
-            )
-
-        # ndim too large
-        old_img = np.zeros((1, 1, 1, 1))
-        new_img = np.zeros((1, 1, 1, 1))
-        template_ratio = 0
-        with self.assertRaisesRegex(ValueError, r"^The given data is not an image$"):
-            sw_luadocs.capture.calc_scroll_amount(
-                old_img, new_img, template_ratio=template_ratio
-            )
-
-        # empty image
-        old_img = np.zeros((0, 0))
-        new_img = np.zeros((0, 0))
-        template_ratio = 0
-        with self.assertRaisesRegex(ValueError, r"^The image is empty$"):
-            sw_luadocs.capture.calc_scroll_amount(
-                old_img, new_img, template_ratio=template_ratio
-            )
-
-        # template_ratio too small
-        old_img = np.zeros((1, 1))
-        new_img = np.zeros((1, 1))
-        template_ratio = -1
-        with self.assertRaisesRegex(
-            ValueError, r"^template_ratio is not within the range 0~1$"
-        ):
-            sw_luadocs.capture.calc_scroll_amount(
-                old_img, new_img, template_ratio=template_ratio
-            )
-
-        # template_ratio too large
-        old_img = np.zeros((1, 1))
-        new_img = np.zeros((1, 1))
-        template_ratio = 2
-        with self.assertRaisesRegex(
-            ValueError, r"^template_ratio is not within the range 0~1$"
-        ):
-            sw_luadocs.capture.calc_scroll_amount(
-                old_img, new_img, template_ratio=template_ratio
-            )
-
-        # 2D smallest image, smallest template_ratio
-        old_img = np.zeros((1, 1))
-        new_img = np.zeros((1, 1))
-        template_ratio = 0
-        scroll_amount = sw_luadocs.capture.calc_scroll_amount(
-            old_img, new_img, template_ratio=template_ratio
-        )
-        self.assertEqual(scroll_amount, 0)
-
-        # 2D smallest image, largest template_ratio
-        old_img = np.zeros((1, 1))
-        new_img = np.zeros((1, 1))
-        template_ratio = 1
-        scroll_amount = sw_luadocs.capture.calc_scroll_amount(
-            old_img, new_img, template_ratio=template_ratio
-        )
-        self.assertEqual(scroll_amount, 0)
-
-        # 3D smallest image, smallest template_ratio
-        old_img = np.zeros((1, 1, 3))
-        new_img = np.zeros((1, 1, 3))
-        template_ratio = 0
-        scroll_amount = sw_luadocs.capture.calc_scroll_amount(
-            old_img, new_img, template_ratio=template_ratio
-        )
-        self.assertEqual(scroll_amount, 0)
-
-        # 3D smallest image, largest template_ratio
-        old_img = np.zeros((1, 1, 3))
-        new_img = np.zeros((1, 1, 3))
-        template_ratio = 1
-        scroll_amount = sw_luadocs.capture.calc_scroll_amount(
-            old_img, new_img, template_ratio=template_ratio
-        )
-        self.assertEqual(scroll_amount, 0)
-
-        # 2D 3x3 image, smallest template_ratio, scroll down
-        old_img = np.zeros((3, 3))
-        old_img[1, 1] = 1
-        new_img = np.zeros((3, 3))
-        new_img[2, 1] = 1
-        template_ratio = 0
-        scroll_amount = sw_luadocs.capture.calc_scroll_amount(
-            old_img, new_img, template_ratio=template_ratio
-        )
-        self.assertEqual(scroll_amount, 1)
-
-        # 2D 3x3 image, smallest template_ratio, scroll up
-        old_img = np.zeros((3, 3))
-        old_img[1, 1] = 1
-        new_img = np.zeros((3, 3))
-        new_img[0, 1] = 1
-        template_ratio = 0
-        scroll_amount = sw_luadocs.capture.calc_scroll_amount(
-            old_img, new_img, template_ratio=template_ratio
-        )
-        self.assertEqual(scroll_amount, -1)
-
-        # 3D 3x3 image, smallest template_ratio, scroll down
-        old_img = np.zeros((3, 3, 3))
-        old_img[1, 1, 1] = 1
-        new_img = np.zeros((3, 3, 3))
-        new_img[2, 1, 1] = 1
-        template_ratio = 0
-        scroll_amount = sw_luadocs.capture.calc_scroll_amount(
-            old_img, new_img, template_ratio=template_ratio
-        )
-        self.assertEqual(scroll_amount, 1)
-
-        # 3D 3x3 image, smallest template_ratio, scroll up
-        old_img = np.zeros((3, 3, 3))
-        old_img[1, 1, 1] = 1
-        new_img = np.zeros((3, 3, 3))
-        new_img[0, 1, 1] = 1
-        template_ratio = 0
-        scroll_amount = sw_luadocs.capture.calc_scroll_amount(
-            old_img, new_img, template_ratio=template_ratio
-        )
-        self.assertEqual(scroll_amount, -1)
-
-        # 3D 3x3 image, largest template_ratio, scroll down
-        old_img = np.zeros((3, 3, 3))
-        old_img[1, 1, 1] = 1
-        new_img = np.zeros((3, 3, 3))
-        new_img[2, 1, 1] = 1
-        template_ratio = 1
-        scroll_amount = sw_luadocs.capture.calc_scroll_amount(
-            old_img, new_img, template_ratio=template_ratio
-        )
-        self.assertEqual(scroll_amount, 0)
-
-        # 3D 3x3 image, largest template_ratio, scroll up
-        old_img = np.zeros((3, 3, 3))
-        old_img[1, 1, 1] = 1
-        new_img = np.zeros((3, 3, 3))
-        new_img[0, 1, 1] = 1
-        template_ratio = 1
-        scroll_amount = sw_luadocs.capture.calc_scroll_amount(
-            old_img, new_img, template_ratio=template_ratio
-        )
-        self.assertEqual(scroll_amount, 0)
-
-        # 2D 9x9 image, medium template_ratio, scroll down
-        old_img = np.zeros((9, 9))
-        old_img[0, 3] = 1
-        old_img[1, 4] = 1
-        old_img[2, 5] = 1
-        old_img[3, 5] = 1
-        old_img[4, 4] = 1
-        old_img[5, 3] = 1
-        old_img[6, 3] = 1
-        old_img[7, 4] = 1
-        old_img[8, 5] = 1
-        new_img = np.zeros((9, 9))
-        new_img[0, 3] = 1
-        new_img[1, 4] = 1
-        new_img[2, 5] = 1
-        new_img[3, 3] = 1
-        new_img[4, 4] = 1
-        new_img[5, 5] = 1
-        new_img[6, 5] = 1
-        new_img[7, 4] = 1
-        new_img[8, 3] = 1
-        template_ratio = 1 / 3
-        scroll_amount = sw_luadocs.capture.calc_scroll_amount(
-            old_img, new_img, template_ratio=template_ratio
-        )
-        self.assertEqual(scroll_amount, 3)
-
-        # 2D 9x9 image, smallest template_ratio, scroll up
-        old_img = np.zeros((9, 9))
-        old_img[4, 4] = 1
-        new_img = np.zeros((9, 9))
-        new_img[8, 4] = 1
-        template_ratio = 0
-        scroll_amount = sw_luadocs.capture.calc_scroll_amount(
-            old_img, new_img, template_ratio=template_ratio
-        )
-        self.assertEqual(scroll_amount, 4)
-
-        # 2D 9x9 image, smallest template_ratio, scroll down
-        old_img = np.zeros((9, 9))
-        old_img[4, 4] = 1
-        new_img = np.zeros((9, 9))
-        new_img[0, 4] = 1
-        template_ratio = 0
-        scroll_amount = sw_luadocs.capture.calc_scroll_amount(
-            old_img, new_img, template_ratio=template_ratio
-        )
-        self.assertEqual(scroll_amount, -4)
-
-        # 3D 9x9 image, smallest template_ratio, scroll up
-        old_img = np.zeros((9, 9, 3))
-        old_img[4, 4, 1] = 1
-        new_img = np.zeros((9, 9, 3))
-        new_img[8, 4, 1] = 1
-        template_ratio = 0
-        scroll_amount = sw_luadocs.capture.calc_scroll_amount(
-            old_img, new_img, template_ratio=template_ratio
-        )
-        self.assertEqual(scroll_amount, 4)
-
-        # 3D 9x9 image, smallest template_ratio, scroll down
-        old_img = np.zeros((9, 9, 3))
-        old_img[4, 4, 1] = 1
-        new_img = np.zeros((9, 9, 3))
-        new_img[0, 4, 1] = 1
-        template_ratio = 0
-        scroll_amount = sw_luadocs.capture.calc_scroll_amount(
-            old_img, new_img, template_ratio=template_ratio
-        )
-        self.assertEqual(scroll_amount, -4)
-
-        # 2D 9x9 image, medium template_ratio, scroll up
-        old_img = np.zeros((9, 9))
-        old_img[0, 3] = 1
-        old_img[1, 4] = 1
-        old_img[2, 5] = 1
-        old_img[3, 5] = 1
-        old_img[4, 4] = 1
-        old_img[5, 3] = 1
-        old_img[6, 3] = 1
-        old_img[7, 4] = 1
-        old_img[8, 5] = 1
-        new_img = np.zeros((9, 9))
-        new_img[0, 5] = 1
-        new_img[1, 4] = 1
-        new_img[2, 3] = 1
-        new_img[3, 3] = 1
-        new_img[4, 4] = 1
-        new_img[5, 5] = 1
-        new_img[6, 3] = 1
-        new_img[7, 4] = 1
-        new_img[8, 5] = 1
-        template_ratio = 1 / 3
-        scroll_amount = sw_luadocs.capture.calc_scroll_amount(
-            old_img, new_img, template_ratio=template_ratio
-        )
-        self.assertEqual(scroll_amount, -3)
-
-        # 3D 9x9 image, medium template_ratio, scroll down
-        old_img = np.zeros((9, 9, 3))
-        old_img[0, 3, 1] = 1
-        old_img[1, 4, 1] = 1
-        old_img[2, 5, 1] = 1
-        old_img[3, 5, 1] = 1
-        old_img[4, 4, 1] = 1
-        old_img[5, 3, 1] = 1
-        old_img[6, 3, 1] = 1
-        old_img[7, 4, 1] = 1
-        old_img[8, 5, 1] = 1
-        new_img = np.zeros((9, 9, 3))
-        new_img[0, 3, 1] = 1
-        new_img[1, 4, 1] = 1
-        new_img[2, 5, 1] = 1
-        new_img[3, 3, 1] = 1
-        new_img[4, 4, 1] = 1
-        new_img[5, 5, 1] = 1
-        new_img[6, 5, 1] = 1
-        new_img[7, 4, 1] = 1
-        new_img[8, 3, 1] = 1
-        template_ratio = 1 / 3
-        scroll_amount = sw_luadocs.capture.calc_scroll_amount(
-            old_img, new_img, template_ratio=template_ratio
-        )
-        self.assertEqual(scroll_amount, 3)
-
-        # 3D 9x9 image, medium template_ratio, scroll up
-        old_img = np.zeros((9, 9, 3))
-        old_img[0, 3, 1] = 1
-        old_img[1, 4, 1] = 1
-        old_img[2, 5, 1] = 1
-        old_img[3, 5, 1] = 1
-        old_img[4, 4, 1] = 1
-        old_img[5, 3, 1] = 1
-        old_img[6, 3, 1] = 1
-        old_img[7, 4, 1] = 1
-        old_img[8, 5, 1] = 1
-        new_img = np.zeros((9, 9, 3))
-        new_img[0, 5, 1] = 1
-        new_img[1, 4, 1] = 1
-        new_img[2, 3, 1] = 1
-        new_img[3, 3, 1] = 1
-        new_img[4, 4, 1] = 1
-        new_img[5, 5, 1] = 1
-        new_img[6, 3, 1] = 1
-        new_img[7, 4, 1] = 1
-        new_img[8, 5, 1] = 1
-        template_ratio = 1 / 3
-        scroll_amount = sw_luadocs.capture.calc_scroll_amount(
-            old_img, new_img, template_ratio=template_ratio
-        )
-        self.assertEqual(scroll_amount, -3)
-
-        # 3D 9x9 image, largest template_ratio, scroll down
-        old_img = np.zeros((9, 9, 3))
-        old_img[0, 3, 1] = 1
-        old_img[1, 4, 1] = 1
-        old_img[2, 5, 1] = 1
-        old_img[3, 5, 1] = 1
-        old_img[4, 4, 1] = 1
-        old_img[5, 3, 1] = 1
-        old_img[6, 3, 1] = 1
-        old_img[7, 4, 1] = 1
-        old_img[8, 5, 1] = 1
-        new_img = np.zeros((9, 9, 3))
-        new_img[0, 3, 1] = 1
-        new_img[1, 4, 1] = 1
-        new_img[2, 5, 1] = 1
-        new_img[3, 3, 1] = 1
-        new_img[4, 4, 1] = 1
-        new_img[5, 5, 1] = 1
-        new_img[6, 5, 1] = 1
-        new_img[7, 4, 1] = 1
-        new_img[8, 3, 1] = 1
-        template_ratio = 1
-        scroll_amount = sw_luadocs.capture.calc_scroll_amount(
-            old_img, new_img, template_ratio=template_ratio
-        )
-        self.assertEqual(scroll_amount, 0)
-
-        # 3D 9x9 image, largest template_ratio, scroll up
-        old_img = np.zeros((9, 9, 3))
-        old_img[0, 3, 1] = 1
-        old_img[1, 4, 1] = 1
-        old_img[2, 5, 1] = 1
-        old_img[3, 5, 1] = 1
-        old_img[4, 4, 1] = 1
-        old_img[5, 3, 1] = 1
-        old_img[6, 3, 1] = 1
-        old_img[7, 4, 1] = 1
-        old_img[8, 5, 1] = 1
-        new_img = np.zeros((9, 9, 3))
-        new_img[0, 5, 1] = 1
-        new_img[1, 4, 1] = 1
-        new_img[2, 3, 1] = 1
-        new_img[3, 3, 1] = 1
-        new_img[4, 4, 1] = 1
-        new_img[5, 5, 1] = 1
-        new_img[6, 3, 1] = 1
-        new_img[7, 4, 1] = 1
-        new_img[8, 5, 1] = 1
-        template_ratio = 1
-        scroll_amount = sw_luadocs.capture.calc_scroll_amount(
-            old_img, new_img, template_ratio=template_ratio
-        )
-        self.assertEqual(scroll_amount, 0)
-
     def test_stitch_screenshot(self):
         # scroll_threshold type conversion
         iterable = []
