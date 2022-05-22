@@ -168,27 +168,35 @@ class StormworksController:
         if sleep:
             time.sleep(self.scroll_sleep_secs)
 
-    def screenshot(self, *, capture_output="pil", capture_area=None):
+    def screenshot(self, *, capture_area=None):
         self.check_fullscreen()
 
         region = None
+        capture_area_x = None
+        capture_area_y = None
+        capture_area_w = None
+        capture_area_h = None
         if capture_area is not None:
             capture_area_x, capture_area_y, capture_area_w, capture_area_h = map(
                 int, capture_area
             )
 
-            scr_w, scr_h = get_screen_size()
             if (
                 capture_area_x < 0
-                or scr_w <= capture_area_x
                 or capture_area_y < 0
-                or scr_h <= capture_area_y
-                or capture_area_w < 0
-                or scr_w <= capture_area_x + capture_area_w - 1
-                or capture_area_h < 0
-                or scr_h <= capture_area_y + capture_area_h - 1
+                or capture_area_w < 1
+                or capture_area_h < 1
             ):
                 raise ValueError
+
+            scr_w, scr_h = get_screen_size()
+            if (
+                scr_w <= capture_area_x
+                or scr_h <= capture_area_y
+                or scr_w <= capture_area_x + capture_area_w - 1
+                or scr_h <= capture_area_y + capture_area_h - 1
+            ):
+                raise RuntimeError
 
             region = (
                 capture_area_x,
@@ -197,7 +205,13 @@ class StormworksController:
                 capture_area_y + capture_area_h,
             )
 
-        return screenshot(capture_output=capture_output, region=region)
+        capture_img = screenshot(capture_output="numpy", region=region)
+        if capture_area_w is not None and capture_area_h is not None:
+            capture_img = dot_image.convert_image(capture_img, dst_mode="RGB")
+            capture_img_h, capture_img_w, _ = capture_img.shape
+            if capture_img_w != capture_area_w or capture_img_h != capture_area_h:
+                raise RuntimeError
+        return capture_img
 
     def scroll_and_screenshot(
         self,
@@ -206,13 +220,10 @@ class StormworksController:
         scroll_x=None,
         scroll_y=None,
         scroll_n=None,
-        capture_output="pil",
         capture_area=None,
     ):
         while True:
-            yield self.screenshot(
-                capture_output=capture_output, capture_area=capture_area
-            )
+            yield self.screenshot(capture_area=capture_area)
             self.mouse_wheel(scroll_direction, x=scroll_x, y=scroll_y, n=scroll_n)
 
 
@@ -334,7 +345,6 @@ def capture(
                 scroll_x=scroll_x,
                 scroll_y=scroll_y,
                 scroll_n=scroll_once_n,
-                capture_output="numpy",
                 capture_area=capture_area,
             ),
             template_ratio=capture_template_ratio,
