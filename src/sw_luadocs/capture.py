@@ -149,9 +149,12 @@ class StormworksController:
         sleep = bool(sleep)
 
         self.check_fullscreen()
-        scr_w, scr_h = get_screen_size()
-        if x < 0 or scr_w <= x or y < 0 or scr_h <= y:
-            raise ValueError
+        if x is not None or y is not None:
+            scr_w, scr_h = get_screen_size()
+            if (x is not None and (x < 0 or scr_w <= x)) or (
+                y is not None and (y < 0 or scr_h <= y)
+            ):
+                raise ValueError
 
         self._ahk.mouse_wheel(
             direction,
