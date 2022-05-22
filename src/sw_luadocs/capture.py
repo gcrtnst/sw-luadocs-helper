@@ -8,6 +8,9 @@ import time
 
 
 def get_client_rect(hwnd):
+    if not isinstance(hwnd, int):
+        raise TypeError
+
     def errcheck(result, func, args):
         if result == 0:
             raise ctypes.WinError()
@@ -23,6 +26,9 @@ def get_client_rect(hwnd):
 
 
 def client_to_screen(hwnd):
+    if not isinstance(hwnd, int):
+        raise TypeError
+
     def errcheck(result, func, args):
         if result == 0:
             raise RuntimeError
