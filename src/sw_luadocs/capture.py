@@ -10,8 +10,8 @@ import time
 
 def ahkid_to_hwnd(ahk_id):
     ahk_id = str(ahk_id)
-    if re.match(r"(?i)^0[xX][0-9A-Fa-f]+$", ahk_id) is None:
-        raise ValueError("Not an ahk_id")
+    if re.match(r"^0x[0-9a-f]+$", ahk_id, flags=re.ASCII | re.IGNORECASE) is None:
+        raise ValueError
     return int(ahk_id, base=16)
 
 

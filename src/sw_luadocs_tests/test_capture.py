@@ -3,6 +3,28 @@ import sw_luadocs.capture
 import unittest
 
 
+class TestAHKIDToHWND(unittest.TestCase):
+    def test_validate_convert(self):
+        with self.assertRaises(ValueError):
+            sw_luadocs.capture.ahkid_to_hwnd(0)
+
+    def test_validate_re_pass(self):
+        for ahk_id in ["0x3e0448", "0X3E0448"]:
+            with self.subTest(ahk_id=ahk_id):
+                hwnd = sw_luadocs.capture.ahkid_to_hwnd(ahk_id)
+                self.assertEqual(hwnd, 4064328)
+
+    def test_validate_re_error(self):
+        for ahk_id in ["-0x3e0448", "3e0448", "0x3g0448", "0x3e0448 "]:
+            with self.subTest(ahk_id=ahk_id):
+                with self.assertRaises(ValueError):
+                    sw_luadocs.capture.ahkid_to_hwnd(ahk_id)
+
+    def test_convert(self):
+        hwnd = sw_luadocs.capture.ahkid_to_hwnd("0x3e0448")
+        self.assertEqual(hwnd, 4064328)
+
+
 class TestImageProcessing(unittest.TestCase):
     def test_calc_scroll_amount(self):
         # type conversion
