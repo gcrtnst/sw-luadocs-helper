@@ -168,8 +168,35 @@ class StormworksController:
         if sleep:
             time.sleep(self.scroll_sleep_secs)
 
-    def screenshot(self, *, capture_output="pil", region=None):
+    def screenshot(self, *, capture_output="pil", capture_area=None):
         self.check_fullscreen()
+
+        region = None
+        if capture_area is not None:
+            capture_area_x, capture_area_y, capture_area_w, capture_area_h = map(
+                int, capture_area
+            )
+
+            scr_w, scr_h = get_screen_size()
+            if (
+                capture_area_x < 0
+                or scr_w <= capture_area_x
+                or capture_area_y < 0
+                or scr_h <= capture_area_y
+                or capture_area_w < 0
+                or scr_w <= capture_area_x + capture_area_w - 1
+                or capture_area_h < 0
+                or scr_h <= capture_area_y + capture_area_h - 1
+            ):
+                raise ValueError
+
+            region = (
+                capture_area_x,
+                capture_area_y,
+                capture_area_x + capture_area_w,
+                capture_area_y + capture_area_h,
+            )
+
         return screenshot(capture_output=capture_output, region=region)
 
     def scroll_and_screenshot(
@@ -180,10 +207,12 @@ class StormworksController:
         scroll_y=None,
         scroll_n=None,
         capture_output="pil",
-        capture_region=None,
+        capture_area=None,
     ):
         while True:
-            yield self.screenshot(capture_output=capture_output, region=capture_region)
+            yield self.screenshot(
+                capture_output=capture_output, capture_area=capture_area
+            )
             self.mouse_wheel(scroll_direction, x=scroll_x, y=scroll_y, n=scroll_n)
 
 
