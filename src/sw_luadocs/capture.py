@@ -126,6 +126,8 @@ class StormworksController:
             raise RuntimeError
 
     def activate(self, *, sleep=True):
+        sleep = bool(sleep)
+
         self.check_exists()
         if not self._win.is_active():
             self._win.activate()
@@ -133,6 +135,8 @@ class StormworksController:
                 time.sleep(self.activate_sleep_secs)
 
     def minimize(self, *, sleep=True):
+        sleep = bool(sleep)
+
         self.check_exists()
         if not self._win.is_minimized():
             self._win.minimize()
@@ -140,7 +144,15 @@ class StormworksController:
                 time.sleep(self.minimize_sleep_secs)
 
     def mouse_wheel(self, direction, *, x=None, y=None, n=None, sleep=True):
+        x = int(x) if x is not None else None
+        y = int(y) if y is not None else None
+        sleep = bool(sleep)
+
         self.check_fullscreen()
+        scr_w, scr_h = get_screen_size()
+        if x < 0 or scr_w <= x or y < 0 or scr_h <= y:
+            raise ValueError
+
         self._ahk.mouse_wheel(
             direction,
             x=x,
