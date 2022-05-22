@@ -1,3 +1,3 @@
-from . import main as mdl_main
+from . import main
 
-mdl_main.main()
+main.main()
