@@ -55,6 +55,12 @@ def get_system_metrics(idx):
     return GetSystemMetrics(idx)
 
 
+def get_screen_size():
+    scr_w = get_system_metrics(0)
+    scr_h = get_system_metrics(1)
+    return scr_w, scr_h
+
+
 def screenshot(capture_output="pil", region=None):
     # Do not run this function concurrently with itself or
     # with any other function that uses the Desktop Duplication API.
@@ -107,8 +113,7 @@ class StormworksController:
     def is_fullscreen(self):
         if not self._win.exists() or not self._win.always_on_top:
             return False
-        scr_w = get_system_metrics(0)
-        scr_h = get_system_metrics(1)
+        scr_w, scr_h = get_screen_size()
         win_x, win_y, win_w, win_h = self.client_pos()
         return win_x == 0 and win_y == 0 and win_w == scr_w and win_h == scr_h
 
@@ -278,8 +283,7 @@ def capture(
     ctrl.activate(sleep=True)
     try:
         ctrl.check_fullscreen()
-        scr_w = get_system_metrics(0)
-        scr_h = get_system_metrics(1)
+        scr_w, scr_h = get_screen_size()
         if scr_w != screen_width or scr_h != screen_height:
             raise ValueError(f"Screen size is not {screen_width}x{screen_height}")
 
