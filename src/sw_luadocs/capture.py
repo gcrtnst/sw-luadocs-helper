@@ -104,7 +104,7 @@ class StormworksController:
     def hwnd(self):
         return int(self._win.id, base=16)
 
-    def client_pos(self):
+    def client_area(self):
         hwnd = self.hwnd()
         _, _, width, height = get_client_rect(hwnd)
         x, y = client_to_screen(hwnd)
@@ -114,7 +114,7 @@ class StormworksController:
         if not self._win.exists() or not self._win.always_on_top:
             return False
         scr_w, scr_h = get_screen_size()
-        win_x, win_y, win_w, win_h = self.client_pos()
+        win_x, win_y, win_w, win_h = self.client_area()
         return win_x == 0 and win_y == 0 and win_w == scr_w and win_h == scr_h
 
     def check_exists(self):
