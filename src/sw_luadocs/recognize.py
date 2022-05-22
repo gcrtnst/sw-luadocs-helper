@@ -2,25 +2,9 @@ import colorsys
 import dataclasses
 import math
 import numpy as np
-import PIL.Image
 import typing
 
-
-def convert_image(
-    img,
-    *,
-    src_mode=None,
-    dst_mode=None,
-    matrix=None,
-    dither=None,
-    palette=PIL.Image.Palette.WEB,
-    colors=256,
-):
-    pil = PIL.Image.fromarray(img, mode=src_mode)
-    pil = pil.convert(
-        mode=dst_mode, matrix=matrix, dither=dither, palette=palette, colors=colors
-    )
-    return np.asarray(pil)
+from . import image as dot_image
 
 
 def as_tesstsv(v):
@@ -114,14 +98,14 @@ def as_ocrline_list(v):
 
 
 def preprocess_image(capture_img):
-    capture_img = convert_image(capture_img, dst_mode="RGB")
+    capture_img = dot_image.convert_image(capture_img, dst_mode="RGB")
     return 255 - np.amax(capture_img, axis=2)
 
 
 def categorize_line(
     *, tessline, capture_img, head_thresh_s, code_thresh_x, bg_thresh_rgb
 ):
-    capture_img = convert_image(capture_img, dst_mode="RGB")
+    capture_img = dot_image.convert_image(capture_img, dst_mode="RGB")
     head_thresh_s = int(head_thresh_s)
     code_thresh_x = int(code_thresh_x)
     bg_thresh_r, bg_thresh_g, bg_thresh_b = map(int, bg_thresh_rgb)
@@ -236,7 +220,7 @@ def convert_tesstsv_to_tessline(tesstsv):
 def convert_tessline_to_ocrline(
     tessline, *, capture_img, head_thresh_s, code_base_x, code_space_w, bg_thresh_rgb
 ):
-    capture_img = convert_image(capture_img, dst_mode="RGB")
+    capture_img = dot_image.convert_image(capture_img, dst_mode="RGB")
     code_base_x = int(code_base_x)
     code_space_w = float(code_space_w)
 
