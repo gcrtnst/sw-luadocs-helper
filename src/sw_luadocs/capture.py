@@ -193,12 +193,12 @@ def calc_scroll_amount(old_img, new_img, *, template_ratio=0.25):
 def stitch_screenshot(iterable, *, template_ratio=0.25, scroll_threshold=0):
     scroll_threshold = int(scroll_threshold)
     if scroll_threshold < 0:
-        raise ValueError("scroll_threshold is less than 0")
+        raise ValueError
 
     old_img = None
     gen_img = None
     for new_img in iterable:
-        new_img = np.asarray(new_img)
+        new_img = dot_image.convert_image(new_img, dst_mode="RGB")
         if old_img is None:
             old_img = new_img
             gen_img = new_img
@@ -211,11 +211,10 @@ def stitch_screenshot(iterable, *, template_ratio=0.25, scroll_threshold=0):
         if scroll_pixels <= scroll_threshold:
             break
 
-        tmp_shape = list(gen_img.shape)
-        tmp_shape[0] += scroll_pixels
-        tmp_shape = tuple(tmp_shape)
-        tmp_order = "F" if gen_img.flags.f_contiguous else "C"
-        tmp_img = np.zeros(tmp_shape, dtype=gen_img.dtype, order=tmp_order)
+        tmp_img = np.zeros(
+            (gen_img.shape[0] + scroll_pixels, gen_img.shape[1], gen_img.shape[2]),
+            dtype=gen_img.dtype,
+        )
         tmp_img[:-scroll_pixels] = gen_img
         tmp_img[-scroll_pixels:] = new_img[-scroll_pixels:]
 
