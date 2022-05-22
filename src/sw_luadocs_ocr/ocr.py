@@ -234,7 +234,7 @@ def convert_tesstsv_to_tessline(tesstsv):
 
 
 def convert_tessline_to_ocrline(
-    *, tessline, capture_img, head_thresh_s, code_base_x, code_space_w, bg_thresh_rgb
+    tessline, *, capture_img, head_thresh_s, code_base_x, code_space_w, bg_thresh_rgb
 ):
     capture_img = convert_image(capture_img, dst_mode="RGB")
     code_base_x = int(code_base_x)
