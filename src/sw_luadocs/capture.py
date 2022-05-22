@@ -86,7 +86,7 @@ class StormworksController:
             exclude_text=exclude_text,
         )
         if self._win.id == "":
-            raise RuntimeError("Stormworks window is missing")
+            raise RuntimeError
 
         self.activate_sleep_secs = 5
         self.scroll_sleep_secs = 5
@@ -102,7 +102,7 @@ class StormworksController:
         return x, y, width, height
 
     def is_fullscreen(self):
-        if not self._win.exists or not self._win.always_on_top:
+        if not self._win.exists() or not self._win.always_on_top:
             return False
         scr_w = get_system_metrics(0)
         scr_h = get_system_metrics(1)
@@ -110,23 +110,23 @@ class StormworksController:
         return win_x == 0 and win_y == 0 and win_w == scr_w and win_h == scr_h
 
     def check_exists(self):
-        if not self._win.exists:
-            raise RuntimeError("Stormworks window is missing")
+        if not self._win.exists():
+            raise RuntimeError
 
     def check_fullscreen(self):
         if not self.is_fullscreen():
-            raise RuntimeError("Stormworks is not full screen")
+            raise RuntimeError
 
-    def activate(self, sleep=True):
+    def activate(self, *, sleep=True):
         self.check_exists()
-        if not self._win.active:
+        if not self._win.is_active():
             self._win.activate()
             if sleep:
                 time.sleep(self.activate_sleep_secs)
 
-    def minimize(self, sleep=True):
+    def minimize(self, *, sleep=True):
         self.check_exists()
-        if not self._win.minimized:
+        if not self._win.is_minimized():
             self._win.minimize()
             if sleep:
                 time.sleep(self.minimize_sleep_secs)
