@@ -81,18 +81,18 @@ class StormworksController:
     def __init__(
         self,
         *,
-        ahk_executable_path="",
-        title="Stormworks",
-        text="",
-        exclude_title="",
-        exclude_text="",
+        ahk_exe="",
+        win_title="Stormworks",
+        win_text="",
+        win_exclude_title="",
+        win_exclude_text="",
     ):
-        self._ahk = ahk.AHK(executable_path=ahk_executable_path)
+        self._ahk = ahk.AHK(executable_path=str(ahk_exe) if ahk_exe is not None else "")
         self._win = self._ahk.win_get(
-            title=title,
-            text=text,
-            exclude_title=exclude_title,
-            exclude_text=exclude_text,
+            title=win_title,
+            text=win_text,
+            exclude_title=win_exclude_title,
+            exclude_text=win_exclude_text,
         )
         if self._win.id == "":
             raise RuntimeError
