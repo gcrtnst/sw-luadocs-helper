@@ -111,7 +111,7 @@ class StormworksController:
         return x, y, width, height
 
     def is_fullscreen(self):
-        if not self._win.exists() or not self._win.always_on_top:
+        if not self._win.exists() or not self._win.is_always_on_top():
             return False
         scr_w, scr_h = get_screen_size()
         win_x, win_y, win_w, win_h = self.client_area()
