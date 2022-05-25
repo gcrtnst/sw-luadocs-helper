@@ -3,6 +3,36 @@ import sw_luadocs.capture
 import unittest
 
 
+class TestGetClientRect(unittest.TestCase):
+    def test_validate_type_error(self):
+        with self.assertRaises(TypeError):
+            sw_luadocs.capture.get_client_rect("")
+
+    def test_call_error(self):
+        with self.assertRaises(OSError):
+            sw_luadocs.capture.get_client_rect(0)
+
+
+class TestClientToScreen(unittest.TestCase):
+    def test_validate_type_error(self):
+        with self.assertRaises(TypeError):
+            sw_luadocs.capture.client_to_screen("")
+
+    def test_call_error(self):
+        with self.assertRaises(RuntimeError):
+            sw_luadocs.capture.client_to_screen(0)
+
+
+class TestGetSystemMetrics(unittest.TestCase):
+    def test_call_zero(self):
+        metrics = sw_luadocs.capture.get_system_metrics(-1)
+        self.assertEqual(metrics, 0)
+
+    def test_call_nonzero(self):
+        metrics = sw_luadocs.capture.get_system_metrics(13)
+        self.assertNotEqual(metrics, 0)
+
+
 class TestCalcScrollAmount(unittest.TestCase):
     def test_validate_convert(self):
         scroll_amount = sw_luadocs.capture.calc_scroll_amount(
