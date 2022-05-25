@@ -144,17 +144,21 @@ class StormworksController:
                 time.sleep(self.minimize_sleep_secs)
 
     def mouse_wheel(self, direction, *, x=None, y=None, n=None, sleep=True):
-        x = int(x) if x is not None else None
-        y = int(y) if y is not None else None
+        self.check_fullscreen()
+        scr_w, scr_h = get_screen_size()
+        if x is None:
+            x = scr_w // 2
+        if y is None:
+            y = scr_h // 2
+
+        x = int(x)
+        y = int(y)
         sleep = bool(sleep)
 
-        self.check_fullscreen()
-        if x is not None or y is not None:
-            scr_w, scr_h = get_screen_size()
-            if (x is not None and (x < 0 or scr_w <= x)) or (
-                y is not None and (y < 0 or scr_h <= y)
-            ):
-                raise ValueError
+        if x < 0 or y < 0:
+            raise ValueError
+        if scr_w <= x or scr_h <= y:
+            raise RuntimeError
 
         self._ahk.mouse_wheel(
             direction,
