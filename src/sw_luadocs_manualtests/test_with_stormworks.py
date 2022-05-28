@@ -4,6 +4,7 @@ import ahk
 import argparse
 import pathlib
 import sw_luadocs.capture
+import time
 import traceback
 
 
@@ -221,6 +222,7 @@ def test(*, ahk_exe, win_title, win_text, win_exclude_title, win_exclude_text):
 
     print("----- closed -----")
     win.close()
+    time.sleep(5)
     for fn in [
         test_isfullscreen_closed,
         test_checkexists_closed,
