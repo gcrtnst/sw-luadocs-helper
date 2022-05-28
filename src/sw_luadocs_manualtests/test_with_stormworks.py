@@ -142,7 +142,6 @@ def test(*, ahk_exe, win_title, win_text, win_exclude_title, win_exclude_text):
         win_exclude_title=win_exclude_title,
         win_exclude_text=win_exclude_text,
     )
-    ctrl.scroll_sleep_secs = 5
 
     print("----- 640x480 windowed mode -----")
     input("please set stormworks to 640x480 windowed mode manually ... ")

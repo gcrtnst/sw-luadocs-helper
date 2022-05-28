@@ -97,8 +97,6 @@ class StormworksController:
         if self._win.id == "":
             raise RuntimeError
 
-        self.scroll_sleep_secs = 5
-
     def hwnd(self):
         return int(self._win.id, base=16)
 
@@ -131,7 +129,7 @@ class StormworksController:
         self.check_exists()
         self._win.minimize()
 
-    def mouse_wheel(self, direction, *, x=None, y=None, n=None, sleep=True):
+    def mouse_wheel(self, direction, *, x=None, y=None, n=None):
         self.check_fullscreen()
         scr_w, scr_h = get_screen_size()
         if x is None:
@@ -141,7 +139,6 @@ class StormworksController:
 
         x = int(x)
         y = int(y)
-        sleep = bool(sleep)
 
         if x < 0 or y < 0:
             raise ValueError
@@ -157,8 +154,6 @@ class StormworksController:
             blocking=True,
             mode="Screen",
         )
-        if sleep:
-            time.sleep(self.scroll_sleep_secs)
 
     def screenshot(self, *, capture_area=None):
         self.check_fullscreen()
@@ -212,11 +207,13 @@ class StormworksController:
         scroll_x=None,
         scroll_y=None,
         scroll_n=None,
+        scroll_sleep_secs=0,
         capture_area=None,
     ):
         while True:
             yield self.screenshot(capture_area=capture_area)
             self.mouse_wheel(scroll_direction, x=scroll_x, y=scroll_y, n=scroll_n)
+            time.sleep(scroll_sleep_secs)
 
 
 def calc_scroll_amount(old_img, new_img, *, template_ratio=0.25):
@@ -314,7 +311,6 @@ def capture(
         win_exclude_title=win_exclude_title,
         win_exclude_text=win_exclude_text,
     )
-    ctrl.scroll_sleep_secs = scroll_sleep_secs
 
     ctrl.activate()
     time.sleep(activate_sleep_secs)
@@ -337,6 +333,7 @@ def capture(
                 scroll_x=scroll_x,
                 scroll_y=scroll_y,
                 scroll_n=scroll_once_n,
+                scroll_sleep_secs=scroll_sleep_secs,
                 capture_area=capture_area,
             ),
             template_ratio=capture_template_ratio,
