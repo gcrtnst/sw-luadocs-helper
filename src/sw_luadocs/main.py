@@ -1,11 +1,9 @@
 import argparse
-import numpy as np
 import pathlib
 import PIL.Image
 import toml
 
 from . import capture as dot_capture
-from . import recognize as dot_recognize
 
 
 def capture_main(ns, cfg):
