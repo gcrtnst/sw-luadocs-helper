@@ -30,8 +30,22 @@ def test_clientarea_fullscreen(*, win, ctrl):
         raise RuntimeError
 
 
+def test_isfullscreen_windowed(*, win, ctrl):
+    if ctrl.is_fullscreen():
+        raise RuntimeError
+
+
+def test_isfullscreen_fullscreen(*, win, ctrl):
+    if not ctrl.is_fullscreen():
+        raise RuntimeError
+
+
+def test_isfullscreen_closed(*, win, ctrl):
+    if ctrl.is_fullscreen():
+        raise RuntimeError
+
+
 def test(*, ahk_exe, win_title, win_text, win_exclude_title, win_exclude_text):
-    input("launch stormworks --> ")
     win = ahk.AHK().win_get(
         title=win_title,
         text=win_text,
@@ -49,24 +63,32 @@ def test(*, ahk_exe, win_title, win_text, win_exclude_title, win_exclude_text):
     ctrl.scroll_sleep_secs = 5
     ctrl.minimize_sleep_secs = 5
 
-    input("set to 640x480 windowed mode --> ")
-    for fn in [test_clientarea_windowed]:
+    print("----- 640x480 windowed mode -----")
+    input("please set stormworks to 640x480 windowed mode manually ... ")
+    for fn in [test_clientarea_windowed, test_isfullscreen_windowed]:
         win.activate()
+
+        print(fn)
         try:
             fn(win=win, ctrl=ctrl)
         except Exception:
             traceback.print_exc()
 
-    input("set to 1920x1080 fullscreen mode --> ")
-    for fn in [test_clientarea_fullscreen]:
+    print("----- 1920x1080 fullscreen mode -----")
+    input("please set stormworks to 1920x1080 fullscreen mode manually ... ")
+    for fn in [test_clientarea_fullscreen, test_isfullscreen_fullscreen]:
         win.activate()
+
+        print(fn)
         try:
             fn(win=win, ctrl=ctrl)
         except Exception:
             traceback.print_exc()
 
+    print("----- closed -----")
     win.close()
-    for fn in []:
+    for fn in [test_isfullscreen_closed]:
+        print(fn)
         try:
             fn(win=win, ctrl=ctrl)
         except Exception:
