@@ -81,7 +81,7 @@ class StormworksController:
     def __init__(
         self,
         *,
-        ahk_exe="",
+        ahk_exe=None,
         win_title="Stormworks",
         win_text="",
         win_exclude_title="",
