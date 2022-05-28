@@ -128,6 +128,43 @@ def test_minimize_closed(*, win, ctrl):
         raise RuntimeError
 
 
+def test_mousewheel_windowed(*, win, ctrl):
+    try:
+        ctrl.mouse_wheel("up")
+    except RuntimeError:
+        pass
+    else:
+        raise RuntimeError
+
+
+def test_mousewheel_fullscreen(*, win, ctrl):
+    ctrl.mouse_wheel("up")
+    ctrl.mouse_wheel("up", x=0, y=0)
+    ctrl.mouse_wheel("up", x=1919, y=1079)
+
+    for x, y, exc in [
+        (-1, 0, ValueError),
+        (0, -1, ValueError),
+        (1920, 0, RuntimeError),
+        (0, 1080, RuntimeError),
+    ]:
+        try:
+            ctrl.mouse_wheel("up", x=x, y=y)
+        except exc:
+            pass
+        else:
+            raise RuntimeError
+
+
+def test_mousewheel_closed(*, win, ctrl):
+    try:
+        ctrl.mouse_wheel("up")
+    except RuntimeError:
+        pass
+    else:
+        raise RuntimeError
+
+
 def test(*, ahk_exe, win_title, win_text, win_exclude_title, win_exclude_text):
     win = ahk.AHK().win_get(
         title=win_title,
@@ -152,6 +189,7 @@ def test(*, ahk_exe, win_title, win_text, win_exclude_title, win_exclude_text):
         test_checkfullscreen_windowed,
         test_activate_windowed,
         test_minimize_windowed,
+        test_mousewheel_windowed,
     ]:
         win.activate()
 
@@ -170,6 +208,7 @@ def test(*, ahk_exe, win_title, win_text, win_exclude_title, win_exclude_text):
         test_checkfullscreen_fullscreen,
         test_activate_fullscreen,
         test_minimize_fullscreen,
+        test_mousewheel_fullscreen,
     ]:
         win.activate()
 
@@ -187,6 +226,7 @@ def test(*, ahk_exe, win_title, win_text, win_exclude_title, win_exclude_text):
         test_checkfullscreen_closed,
         test_activate_closed,
         test_minimize_closed,
+        test_mousewheel_closed,
     ]:
         print(fn)
         try:
