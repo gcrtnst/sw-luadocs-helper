@@ -1,2 +1,2 @@
 [flake8]
-select = F
+select = E999,F
