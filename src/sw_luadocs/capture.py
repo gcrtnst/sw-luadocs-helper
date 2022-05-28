@@ -98,7 +98,6 @@ class StormworksController:
             raise RuntimeError
 
         self.scroll_sleep_secs = 5
-        self.minimize_sleep_secs = 5
 
     def hwnd(self):
         return int(self._win.id, base=16)
@@ -128,14 +127,9 @@ class StormworksController:
         self.check_exists()
         self._win.activate()
 
-    def minimize(self, *, sleep=True):
-        sleep = bool(sleep)
-
+    def minimize(self):
         self.check_exists()
-        if not self._win.is_minimized():
-            self._win.minimize()
-            if sleep:
-                time.sleep(self.minimize_sleep_secs)
+        self._win.minimize()
 
     def mouse_wheel(self, direction, *, x=None, y=None, n=None, sleep=True):
         self.check_fullscreen()
@@ -349,5 +343,5 @@ def capture(
             scroll_threshold=scroll_threshold,
         )
     finally:
-        ctrl.minimize(sleep=False)
+        ctrl.minimize()
     return img
