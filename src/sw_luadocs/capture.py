@@ -126,8 +126,7 @@ class StormworksController:
 
     def activate(self):
         self.check_exists()
-        if not self._win.is_active():
-            self._win.activate()
+        self._win.activate()
 
     def minimize(self, *, sleep=True):
         sleep = bool(sleep)
