@@ -84,6 +84,29 @@ def test_checkfullscreen_closed(*, win, ctrl):
         raise RuntimeError
 
 
+def test_activate_windowed(*, win, ctrl):
+    win.minimize()
+    ctrl.activate()
+    if not win.is_active():
+        raise RuntimeError
+
+
+def test_activate_fullscreen(*, win, ctrl):
+    win.minimize()
+    ctrl.activate()
+    if not win.is_active():
+        raise RuntimeError
+
+
+def test_activate_closed(*, win, ctrl):
+    try:
+        ctrl.activate()
+    except RuntimeError:
+        pass
+    else:
+        raise RuntimeError
+
+
 def test(*, ahk_exe, win_title, win_text, win_exclude_title, win_exclude_text):
     win = ahk.AHK().win_get(
         title=win_title,
@@ -109,6 +132,7 @@ def test(*, ahk_exe, win_title, win_text, win_exclude_title, win_exclude_text):
         test_isfullscreen_windowed,
         test_checkexists_windowed,
         test_checkfullscreen_windowed,
+        test_activate_windowed,
     ]:
         win.activate()
 
@@ -125,6 +149,7 @@ def test(*, ahk_exe, win_title, win_text, win_exclude_title, win_exclude_text):
         test_isfullscreen_fullscreen,
         test_checkexists_fullscreen,
         test_checkfullscreen_fullscreen,
+        test_activate_fullscreen,
     ]:
         win.activate()
 
@@ -140,6 +165,7 @@ def test(*, ahk_exe, win_title, win_text, win_exclude_title, win_exclude_text):
         test_isfullscreen_closed,
         test_checkexists_closed,
         test_checkfullscreen_closed,
+        test_activate_closed,
     ]:
         print(fn)
         try:
