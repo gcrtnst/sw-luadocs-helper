@@ -97,7 +97,6 @@ class StormworksController:
         if self._win.id == "":
             raise RuntimeError
 
-        self.activate_sleep_secs = 5
         self.scroll_sleep_secs = 5
         self.minimize_sleep_secs = 5
 
@@ -125,14 +124,10 @@ class StormworksController:
         if not self.is_fullscreen():
             raise RuntimeError
 
-    def activate(self, *, sleep=True):
-        sleep = bool(sleep)
-
+    def activate(self):
         self.check_exists()
         if not self._win.is_active():
             self._win.activate()
-            if sleep:
-                time.sleep(self.activate_sleep_secs)
 
     def minimize(self, *, sleep=True):
         sleep = bool(sleep)
@@ -326,10 +321,10 @@ def capture(
         win_exclude_title=win_exclude_title,
         win_exclude_text=win_exclude_text,
     )
-    ctrl.activate_sleep_secs = activate_sleep_secs
     ctrl.scroll_sleep_secs = scroll_sleep_secs
 
-    ctrl.activate(sleep=True)
+    ctrl.activate()
+    time.sleep(activate_sleep_secs)
     try:
         ctrl.check_fullscreen()
         scr_w, scr_h = get_screen_size()
