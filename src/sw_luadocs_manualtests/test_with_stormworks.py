@@ -62,6 +62,28 @@ def test_checkexists_closed(*, win, ctrl):
         raise RuntimeError
 
 
+def test_checkfullscreen_windowed(*, win, ctrl):
+    try:
+        ctrl.check_fullscreen()
+    except RuntimeError:
+        pass
+    else:
+        raise RuntimeError
+
+
+def test_checkfullscreen_fullscreen(*, win, ctrl):
+    ctrl.check_fullscreen()
+
+
+def test_checkfullscreen_closed(*, win, ctrl):
+    try:
+        ctrl.check_fullscreen()
+    except RuntimeError:
+        pass
+    else:
+        raise RuntimeError
+
+
 def test(*, ahk_exe, win_title, win_text, win_exclude_title, win_exclude_text):
     win = ahk.AHK().win_get(
         title=win_title,
@@ -86,6 +108,7 @@ def test(*, ahk_exe, win_title, win_text, win_exclude_title, win_exclude_text):
         test_clientarea_windowed,
         test_isfullscreen_windowed,
         test_checkexists_windowed,
+        test_checkfullscreen_windowed,
     ]:
         win.activate()
 
@@ -101,6 +124,7 @@ def test(*, ahk_exe, win_title, win_text, win_exclude_title, win_exclude_text):
         test_clientarea_fullscreen,
         test_isfullscreen_fullscreen,
         test_checkexists_fullscreen,
+        test_checkfullscreen_fullscreen,
     ]:
         win.activate()
 
@@ -112,7 +136,11 @@ def test(*, ahk_exe, win_title, win_text, win_exclude_title, win_exclude_text):
 
     print("----- closed -----")
     win.close()
-    for fn in [test_isfullscreen_closed, test_checkexists_closed]:
+    for fn in [
+        test_isfullscreen_closed,
+        test_checkexists_closed,
+        test_checkfullscreen_closed,
+    ]:
         print(fn)
         try:
             fn(win=win, ctrl=ctrl)
