@@ -167,6 +167,55 @@ def test_mousewheel_closed(*, win, ctrl):
         raise RuntimeError
 
 
+def test_screenshot_windowed(*, win, ctrl):
+    try:
+        ctrl.screenshot()
+    except RuntimeError:
+        pass
+    else:
+        raise RuntimeError
+
+
+def test_screenshot_fullscreen(*, win, ctrl):
+    for input_capture_area, expected_w, expected_h in [
+        (None, 1920, 1080),
+        (("0", "0", "1920", "1080"), 1920, 1080),
+        ((0, 0, 1920, 1080), 1920, 1080),
+        ((0, 0, 1, 1), 1, 1),
+        ((1919, 1079, 1, 1), 1, 1),
+    ]:
+        img = ctrl.screenshot(capture_area=input_capture_area)
+        actual_h, actual_w, _ = img.shape
+        if not (actual_w == expected_w and actual_h == expected_h):
+            raise RuntimeError
+
+    for capture_area, exc in [
+        ((-1, 0, 1, 1), ValueError),
+        ((0, -1, 1, 1), ValueError),
+        ((0, 0, 0, 1), ValueError),
+        ((0, 0, 1, 0), ValueError),
+        ((1920, 1079, 1, 1), RuntimeError),
+        ((1919, 1080, 1, 1), RuntimeError),
+        ((1919, 1079, 2, 1), RuntimeError),
+        ((1919, 1079, 1, 2), RuntimeError),
+    ]:
+        try:
+            ctrl.screenshot(capture_area=capture_area)
+        except exc:
+            pass
+        else:
+            raise RuntimeError
+
+
+def test_screenshot_closed(*, win, ctrl):
+    try:
+        ctrl.screenshot()
+    except RuntimeError:
+        pass
+    else:
+        raise RuntimeError
+
+
 def test(*, ahk_exe, win_title, win_text, win_exclude_title, win_exclude_text):
     win = ahk.AHK().win_get(
         title=win_title,
@@ -192,6 +241,7 @@ def test(*, ahk_exe, win_title, win_text, win_exclude_title, win_exclude_text):
         test_activate_windowed,
         test_minimize_windowed,
         test_mousewheel_windowed,
+        test_screenshot_windowed,
     ]:
         win.activate()
 
@@ -211,6 +261,7 @@ def test(*, ahk_exe, win_title, win_text, win_exclude_title, win_exclude_text):
         test_activate_fullscreen,
         test_minimize_fullscreen,
         test_mousewheel_fullscreen,
+        test_screenshot_fullscreen,
     ]:
         win.activate()
 
@@ -230,6 +281,7 @@ def test(*, ahk_exe, win_title, win_text, win_exclude_title, win_exclude_text):
         test_activate_closed,
         test_minimize_closed,
         test_mousewheel_closed,
+        test_screenshot_closed,
     ]:
         print(fn)
         try:
