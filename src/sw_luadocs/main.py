@@ -4,13 +4,13 @@ import pathlib
 import PIL.Image
 import toml
 
-from . import capture as capture_module
-from . import recognize as recognize_module
+from . import capture as dot_capture
+from . import recognize as dot_recognize
 
 
 def capture_main(ns, cfg):
     capture_cfg = cfg["capture"]
-    img = capture_module.capture(
+    img = dot_capture.capture(
         ahk_exe=ns.ahk_exe,
         win_title=capture_cfg["win_title"],
         win_text=capture_cfg["win_text"],
@@ -38,7 +38,7 @@ def capture_main(ns, cfg):
 
 def preprocess_main(ns, cfg):
     img = np.array(PIL.Image.open(ns.input_file))
-    img = recognize_module.preprocess_image(img)
+    img = dot_recognize.preprocess_image(img)
     PIL.Image.fromarray(img).save(ns.output_file)
 
 
