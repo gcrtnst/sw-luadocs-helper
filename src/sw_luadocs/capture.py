@@ -193,8 +193,8 @@ class StormworksController:
             )
 
         capture_img = screenshot(capture_output="numpy", region=region)
+        capture_img = dot_image.convert_image(capture_img, dst_mode="RGB")
         if capture_area_w is not None and capture_area_h is not None:
-            capture_img = dot_image.convert_image(capture_img, dst_mode="RGB")
             capture_img_h, capture_img_w, _ = capture_img.shape
             if capture_img_w != capture_area_w or capture_img_h != capture_area_h:
                 raise RuntimeError
