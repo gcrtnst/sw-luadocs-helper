@@ -139,6 +139,7 @@ def test_mousewheel_windowed(*, win, ctrl):
 
 def test_mousewheel_fullscreen(*, win, ctrl):
     ctrl.mouse_wheel("up")
+    ctrl.mouse_wheel("up", x="0", y="0")
     ctrl.mouse_wheel("up", x=0, y=0)
     ctrl.mouse_wheel("up", x=1919, y=1079)
 
