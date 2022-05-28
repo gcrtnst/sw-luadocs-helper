@@ -36,12 +36,6 @@ def capture_main(ns, cfg):
     PIL.Image.fromarray(img).save(ns.capture_file)
 
 
-def preprocess_main(ns, cfg):
-    img = np.array(PIL.Image.open(ns.input_file))
-    img = dot_recognize.preprocess_image(img)
-    PIL.Image.fromarray(img).save(ns.output_file)
-
-
 def main(*, args=None, exit_on_error=True):
     parser = argparse.ArgumentParser(exit_on_error=exit_on_error)
     parser.add_argument(
@@ -60,17 +54,6 @@ def main(*, args=None, exit_on_error=True):
     )
     parser_capture.add_argument(
         "--ahk-exe", type=pathlib.Path, help="AutoHotKey executable file"
-    )
-
-    parser_preprocess = parser_group.add_parser(
-        "preprocess", help="preprocess images for OCR"
-    )
-    parser_preprocess.set_defaults(func=preprocess_main)
-    parser_preprocess.add_argument(
-        "input_file", type=pathlib.Path, help="screenshot of API documentation"
-    )
-    parser_preprocess.add_argument(
-        "output_file", type=pathlib.Path, help="preprocessed image"
     )
 
     ns = parser.parse_args(args=args)
