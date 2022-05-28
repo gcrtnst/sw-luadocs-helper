@@ -216,7 +216,11 @@ def test_screenshot_closed(*, win, ctrl):
         raise RuntimeError
 
 
-def test(*, ahk_exe, win_title, win_text, win_exclude_title, win_exclude_text):
+def test():
+    win_title = "Stormworks"
+    win_text = ""
+    win_exclude_title = ""
+    win_exclude_text = ""
     win = ahk.AHK().win_get(
         title=win_title,
         text=win_text,
@@ -224,7 +228,6 @@ def test(*, ahk_exe, win_title, win_text, win_exclude_title, win_exclude_text):
         exclude_text=win_exclude_text,
     )
     ctrl = sw_luadocs.capture.StormworksController(
-        ahk_exe=ahk_exe,
         win_title=win_title,
         win_text=win_text,
         win_exclude_title=win_exclude_title,
@@ -290,23 +293,5 @@ def test(*, ahk_exe, win_title, win_text, win_exclude_title, win_exclude_text):
             traceback.print_exc()
 
 
-def main():
-    argp = argparse.ArgumentParser()
-    argp.add_argument("--ahk-exe", type=pathlib.Path)
-    argp.add_argument("--win-title", default="Stormworks")
-    argp.add_argument("--win-text", default="")
-    argp.add_argument("--win-exclude-title", default="")
-    argp.add_argument("--win-exclude-text", default="")
-    args = argp.parse_args()
-
-    test(
-        ahk_exe=args.ahk_exe,
-        win_title=args.win_title,
-        win_text=args.win_text,
-        win_exclude_title=args.win_exclude_title,
-        win_exclude_text=args.win_exclude_text,
-    )
-
-
 if __name__ == "__main__":
-    main()
+    test()
