@@ -23,11 +23,11 @@ def capture_main(ns, cfg):
         scroll_page_n=capture_cfg["scroll_page_n"],
         scroll_once_n=capture_cfg["scroll_once_n"],
         scroll_threshold=capture_cfg["scroll_threshold"],
-        capture_region=(
-            capture_cfg["capture_region_x1"],
-            capture_cfg["capture_region_y1"],
-            capture_cfg["capture_region_x2"],
-            capture_cfg["capture_region_y2"],
+        capture_area=(
+            capture_cfg["capture_area_x1"],
+            capture_cfg["capture_area_y1"],
+            capture_cfg["capture_area_x2"],
+            capture_cfg["capture_area_y2"],
         ),
         capture_template_ratio=capture_cfg["capture_template_ratio"],
         activate_sleep_secs=capture_cfg["activate_sleep_secs"],

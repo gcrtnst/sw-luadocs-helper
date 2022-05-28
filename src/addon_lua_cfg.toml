@@ -13,10 +13,10 @@ scroll_page_n = 1024
 scroll_once_n = 3
 scroll_threshold = 0
 
-capture_region_x1 = 312
-capture_region_y1 = 226
-capture_region_x2 = 1597
-capture_region_y2 = 989
+capture_area_x1 = 312
+capture_area_y1 = 226
+capture_area_x2 = 1285
+capture_area_y2 = 763
 capture_template_ratio = 0.25
 
 activate_sleep_secs = 5
