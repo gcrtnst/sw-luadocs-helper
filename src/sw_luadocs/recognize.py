@@ -2,6 +2,8 @@ import colorsys
 import dataclasses
 import math
 import numpy as np
+import pytesseract
+import shlex
 import typing
 
 from . import image as dot_image
@@ -339,3 +341,33 @@ def convert_ocrline_to_document(ocrline_list, *, body_line_h, code_line_h):
             )
         )
     return doc
+
+
+def recognize(capture_img):
+    preprocess_img = preprocess_image(capture_img)
+    tesstsv = pytesseract.image_to_data(
+        preprocess_img,
+        lang="eng",
+        config=shlex.join(
+            [
+                "--psm",
+                "6",
+                "-c",
+                "tessedit_char_whitelist= !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~",
+            ]
+        ),
+        output_type=pytesseract.Output.DICT,
+    )
+    tessline_list = convert_tesstsv_to_tessline(tesstsv)
+    ocrline_list = [
+        convert_tessline_to_ocrline(
+            tessline,
+            capture_img=capture_img,
+            head_thresh_s=9,
+            code_base_x=14,
+            code_space_w=9.5,
+            bg_thresh_rgb=(40, 40, 40),
+        )
+        for tessline in tessline_list
+    ]
+    return convert_ocrline_to_document(ocrline_list, body_line_h=21, code_line_h=16.5)
