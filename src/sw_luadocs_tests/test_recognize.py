@@ -1,5 +1,6 @@
 import copy
 import numpy as np
+import sw_luadocs.mdsub
 import sw_luadocs.recognize
 import unittest
 
@@ -105,18 +106,6 @@ class TestAsBox(unittest.TestCase):
                     sw_luadocs.recognize.as_box(v)
 
 
-class TestAsKind(unittest.TestCase):
-    def test_valid(self):
-        for v in "head", "body", "code":
-            with self.subTest(v=v):
-                kind = sw_luadocs.recognize.as_kind(v)
-                self.assertEqual(kind, v)
-
-    def test_invalid(self):
-        with self.assertRaises(ValueError):
-            sw_luadocs.recognize.as_kind("invliad")
-
-
 class TestTesseractLinePostInit(unittest.TestCase):
     def test_type(self):
         tessline = sw_luadocs.recognize.TesseractLine(
@@ -138,17 +127,6 @@ class TestOCRLinePostInit(unittest.TestCase):
     def test_kind_invalid(self):
         with self.assertRaises(ValueError):
             sw_luadocs.recognize.OCRLine(txt="", kind="invalid", box=(1, 2, 3, 4))
-
-
-class TestOCRParagraphPostInit(unittest.TestCase):
-    def test_type(self):
-        ocrpara = sw_luadocs.recognize.OCRParagraph(txt=0, kind="head")
-        self.assertEqual(ocrpara.txt, "0")
-        self.assertEqual(ocrpara.kind, "head")
-
-    def test_kind_invalid(self):
-        with self.assertRaises(ValueError):
-            sw_luadocs.recognize.OCRParagraph(txt="", kind="invalid")
 
 
 class TestAsOCRLineList(unittest.TestCase):
@@ -1438,14 +1416,14 @@ class TestConvertTesslineToOCRLine(unittest.TestCase):
         )
 
 
-class TestConvertOCRLineToOCRParaHeadOnly(unittest.TestCase):
+class TestConvertOCRLineToDocumentHeadOnly(unittest.TestCase):
     def test_type(self):
         with self.assertRaises(TypeError):
-            sw_luadocs.recognize.convert_ocrline_to_ocrpara_headonly([None])
+            sw_luadocs.recognize.convert_ocrline_to_document_headonly([None])
 
     def test_empty(self):
-        ocrpara_list = sw_luadocs.recognize.convert_ocrline_to_ocrpara_headonly([])
-        self.assertEqual(ocrpara_list, [])
+        doc = sw_luadocs.recognize.convert_ocrline_to_document_headonly([])
+        self.assertEqual(doc, [])
 
     def test_kind_error(self):
         for ocrline_list in [
@@ -1482,12 +1460,12 @@ class TestConvertOCRLineToOCRParaHeadOnly(unittest.TestCase):
         ]:
             with self.subTest(ocrline_list=ocrline_list):
                 with self.assertRaises(ValueError):
-                    sw_luadocs.recognize.convert_ocrline_to_ocrpara_headonly(
+                    sw_luadocs.recognize.convert_ocrline_to_document_headonly(
                         ocrline_list
                     )
 
     def test_convert(self):
-        ocrpara_list = sw_luadocs.recognize.convert_ocrline_to_ocrpara_headonly(
+        doc = sw_luadocs.recognize.convert_ocrline_to_document_headonly(
             [
                 sw_luadocs.recognize.OCRLine(txt="a", kind="head", box=(0, 0, 1, 1)),
                 sw_luadocs.recognize.OCRLine(txt="b", kind="head", box=(0, 0, 1, 1)),
@@ -1495,19 +1473,19 @@ class TestConvertOCRLineToOCRParaHeadOnly(unittest.TestCase):
             ]
         )
         self.assertEqual(
-            ocrpara_list,
+            doc,
             [
-                sw_luadocs.recognize.OCRParagraph(txt="a", kind="head"),
-                sw_luadocs.recognize.OCRParagraph(txt="b", kind="head"),
-                sw_luadocs.recognize.OCRParagraph(txt="c", kind="head"),
+                sw_luadocs.mdsub.DocumentElem(txt="a", kind="head"),
+                sw_luadocs.mdsub.DocumentElem(txt="b", kind="head"),
+                sw_luadocs.mdsub.DocumentElem(txt="c", kind="head"),
             ],
         )
 
 
-class TestConvertOCRLineToOCRParaBodyOnly(unittest.TestCase):
+class TestConvertOCRLineToDocumentBodyOnly(unittest.TestCase):
     def test_type(self):
         with self.assertRaises(TypeError):
-            sw_luadocs.recognize.convert_ocrline_to_ocrpara_bodyonly(
+            sw_luadocs.recognize.convert_ocrline_to_document_bodyonly(
                 [None], body_line_h=0.1
             )
 
@@ -1546,19 +1524,19 @@ class TestConvertOCRLineToOCRParaBodyOnly(unittest.TestCase):
         ]:
             with self.subTest(ocrline_list=ocrline_list):
                 with self.assertRaises(ValueError):
-                    sw_luadocs.recognize.convert_ocrline_to_ocrpara_bodyonly(
+                    sw_luadocs.recognize.convert_ocrline_to_document_bodyonly(
                         ocrline_list, body_line_h=0.1
                     )
 
     def test_flow(self):
-        for input_ocrline_list, expected_ocrpara_list in [
+        for input_ocrline_list, expected_doc in [
             (
                 [],
                 [],
             ),
             (
                 [sw_luadocs.recognize.OCRLine(txt="a", kind="body", box=(0, 0, 1, 1))],
-                [sw_luadocs.recognize.OCRParagraph(txt="a", kind="body")],
+                [sw_luadocs.mdsub.DocumentElem(txt="a", kind="body")],
             ),
             (
                 [
@@ -1572,7 +1550,7 @@ class TestConvertOCRLineToOCRParaBodyOnly(unittest.TestCase):
                         txt="c", kind="body", box=(0, 0, 1, 1)
                     ),
                 ],
-                [sw_luadocs.recognize.OCRParagraph(txt="a b c", kind="body")],
+                [sw_luadocs.mdsub.DocumentElem(txt="a b c", kind="body")],
             ),
             (
                 [
@@ -1587,9 +1565,9 @@ class TestConvertOCRLineToOCRParaBodyOnly(unittest.TestCase):
                     ),
                 ],
                 [
-                    sw_luadocs.recognize.OCRParagraph(txt="a", kind="body"),
-                    sw_luadocs.recognize.OCRParagraph(txt="b", kind="body"),
-                    sw_luadocs.recognize.OCRParagraph(txt="c", kind="body"),
+                    sw_luadocs.mdsub.DocumentElem(txt="a", kind="body"),
+                    sw_luadocs.mdsub.DocumentElem(txt="b", kind="body"),
+                    sw_luadocs.mdsub.DocumentElem(txt="c", kind="body"),
                 ],
             ),
             (
@@ -1632,27 +1610,25 @@ class TestConvertOCRLineToOCRParaBodyOnly(unittest.TestCase):
                     ),
                 ],
                 [
-                    sw_luadocs.recognize.OCRParagraph(txt="a b c", kind="body"),
-                    sw_luadocs.recognize.OCRParagraph(txt="d", kind="body"),
-                    sw_luadocs.recognize.OCRParagraph(txt="e", kind="body"),
-                    sw_luadocs.recognize.OCRParagraph(txt="f", kind="body"),
-                    sw_luadocs.recognize.OCRParagraph(txt="g h i", kind="body"),
-                    sw_luadocs.recognize.OCRParagraph(txt="j", kind="body"),
-                    sw_luadocs.recognize.OCRParagraph(txt="k", kind="body"),
-                    sw_luadocs.recognize.OCRParagraph(txt="l", kind="body"),
+                    sw_luadocs.mdsub.DocumentElem(txt="a b c", kind="body"),
+                    sw_luadocs.mdsub.DocumentElem(txt="d", kind="body"),
+                    sw_luadocs.mdsub.DocumentElem(txt="e", kind="body"),
+                    sw_luadocs.mdsub.DocumentElem(txt="f", kind="body"),
+                    sw_luadocs.mdsub.DocumentElem(txt="g h i", kind="body"),
+                    sw_luadocs.mdsub.DocumentElem(txt="j", kind="body"),
+                    sw_luadocs.mdsub.DocumentElem(txt="k", kind="body"),
+                    sw_luadocs.mdsub.DocumentElem(txt="l", kind="body"),
                 ],
             ),
         ]:
             with self.subTest(ocrline_list=input_ocrline_list):
-                actual_ocrpara_list = (
-                    sw_luadocs.recognize.convert_ocrline_to_ocrpara_bodyonly(
-                        input_ocrline_list, body_line_h=0.1
-                    )
+                actual_doc = sw_luadocs.recognize.convert_ocrline_to_document_bodyonly(
+                    input_ocrline_list, body_line_h=0.1
                 )
-                self.assertEqual(actual_ocrpara_list, expected_ocrpara_list)
+                self.assertEqual(actual_doc, expected_doc)
 
     def test_numlf_geq(self):
-        ocrpara_list = sw_luadocs.recognize.convert_ocrline_to_ocrpara_bodyonly(
+        doc = sw_luadocs.recognize.convert_ocrline_to_document_bodyonly(
             [
                 sw_luadocs.recognize.OCRLine(txt="a", kind="body", box=(0, 0, 1, 1)),
                 sw_luadocs.recognize.OCRLine(txt="b", kind="body", box=(0, 1, 1, 1)),
@@ -1660,17 +1636,17 @@ class TestConvertOCRLineToOCRParaBodyOnly(unittest.TestCase):
             body_line_h=0.5,
         )
         self.assertEqual(
-            ocrpara_list,
+            doc,
             [
-                sw_luadocs.recognize.OCRParagraph(txt="a", kind="body"),
-                sw_luadocs.recognize.OCRParagraph(txt="b", kind="body"),
+                sw_luadocs.mdsub.DocumentElem(txt="a", kind="body"),
+                sw_luadocs.mdsub.DocumentElem(txt="b", kind="body"),
             ],
         )
 
     def test_numlf_lss(self):
         for pos1, pos2, size in [(1, 1, 0.5), (0, 0, 0.5), (0, 1, 10)]:
             with self.subTest(pos1=pos1, pos2=pos2, size=size):
-                ocrpara_list = sw_luadocs.recognize.convert_ocrline_to_ocrpara_bodyonly(
+                doc = sw_luadocs.recognize.convert_ocrline_to_document_bodyonly(
                     [
                         sw_luadocs.recognize.OCRLine(
                             txt="a", kind="body", box=(0, pos1, 1, 1)
@@ -1682,15 +1658,15 @@ class TestConvertOCRLineToOCRParaBodyOnly(unittest.TestCase):
                     body_line_h=size,
                 )
                 self.assertEqual(
-                    ocrpara_list,
-                    [sw_luadocs.recognize.OCRParagraph(txt="a b", kind="body")],
+                    doc,
+                    [sw_luadocs.mdsub.DocumentElem(txt="a b", kind="body")],
                 )
 
 
-class TestConvertOCRLineToOCRParaCodeOnly(unittest.TestCase):
+class TestConvertOCRLineToDocumentCodeOnly(unittest.TestCase):
     def test_type(self):
         with self.assertRaises(TypeError):
-            sw_luadocs.recognize.convert_ocrline_to_ocrpara_codeonly(
+            sw_luadocs.recognize.convert_ocrline_to_document_codeonly(
                 [None], code_line_h=0.1
             )
 
@@ -1729,19 +1705,19 @@ class TestConvertOCRLineToOCRParaCodeOnly(unittest.TestCase):
         ]:
             with self.subTest(ocrline_list=ocrline_list):
                 with self.assertRaises(ValueError):
-                    sw_luadocs.recognize.convert_ocrline_to_ocrpara_codeonly(
+                    sw_luadocs.recognize.convert_ocrline_to_document_codeonly(
                         ocrline_list=ocrline_list, code_line_h=0.1
                     )
 
     def test_flow(self):
-        for input_ocrline_list, expected_ocrpara_list in [
+        for input_ocrline_list, expected_doc in [
             (
                 [],
                 [],
             ),
             (
                 [sw_luadocs.recognize.OCRLine(txt="a", kind="code", box=(0, 0, 1, 1))],
-                [sw_luadocs.recognize.OCRParagraph(txt="a", kind="code")],
+                [sw_luadocs.mdsub.DocumentElem(txt="a", kind="code")],
             ),
             (
                 [
@@ -1758,32 +1734,24 @@ class TestConvertOCRLineToOCRParaCodeOnly(unittest.TestCase):
                         txt="d", kind="code", box=(0, 6, 1, 1)
                     ),
                 ],
-                [
-                    sw_luadocs.recognize.OCRParagraph(
-                        txt="a\nb\n\nc\n\n\nd", kind="code"
-                    )
-                ],
+                [sw_luadocs.mdsub.DocumentElem(txt="a\nb\n\nc\n\n\nd", kind="code")],
             ),
         ]:
             with self.subTest(ocrline_list=input_ocrline_list):
-                actual_ocrpara_list = (
-                    sw_luadocs.recognize.convert_ocrline_to_ocrpara_codeonly(
-                        ocrline_list=input_ocrline_list, code_line_h=1
-                    )
+                actual_doc = sw_luadocs.recognize.convert_ocrline_to_document_codeonly(
+                    ocrline_list=input_ocrline_list, code_line_h=1
                 )
-                self.assertEqual(actual_ocrpara_list, expected_ocrpara_list)
+                self.assertEqual(actual_doc, expected_doc)
 
     def test_numlf_min(self):
-        ocrpara_list = sw_luadocs.recognize.convert_ocrline_to_ocrpara_codeonly(
+        doc = sw_luadocs.recognize.convert_ocrline_to_document_codeonly(
             [
                 sw_luadocs.recognize.OCRLine(txt="a", kind="code", box=(0, 0, 1, 1)),
                 sw_luadocs.recognize.OCRLine(txt="b", kind="code", box=(0, 0, 1, 1)),
             ],
             code_line_h=0.1,
         )
-        self.assertEqual(
-            ocrpara_list, [sw_luadocs.recognize.OCRParagraph(txt="a\nb", kind="code")]
-        )
+        self.assertEqual(doc, [sw_luadocs.mdsub.DocumentElem(txt="a\nb", kind="code")])
 
     def test_numlf_calc(self):
         for input_pos1, input_pos2, input_size, expected_numlf in [
@@ -1801,45 +1769,41 @@ class TestConvertOCRLineToOCRParaCodeOnly(unittest.TestCase):
                         txt="b", kind="code", box=(0, input_pos2, 1, 1)
                     ),
                 ]
-                expected_ocrpara_list = [
-                    sw_luadocs.recognize.OCRParagraph(
+                expected_doc = [
+                    sw_luadocs.mdsub.DocumentElem(
                         txt="a" + "\n" * expected_numlf + "b", kind="code"
                     )
                 ]
 
-                actual_ocrpara_list = (
-                    sw_luadocs.recognize.convert_ocrline_to_ocrpara_codeonly(
-                        input_ocrline_list, code_line_h=input_size
-                    )
+                actual_doc = sw_luadocs.recognize.convert_ocrline_to_document_codeonly(
+                    input_ocrline_list, code_line_h=input_size
                 )
-                self.assertEqual(actual_ocrpara_list, expected_ocrpara_list)
+                self.assertEqual(actual_doc, expected_doc)
 
 
-class TestConvertOCRLineToOCRParaMonoKind(unittest.TestCase):
+class TestConvertOCRLineToDocumentMonoKind(unittest.TestCase):
     def test_type(self):
         with self.assertRaises(TypeError):
-            sw_luadocs.recognize.convert_ocrline_to_ocrpara_monokind(
+            sw_luadocs.recognize.convert_ocrline_to_document_monokind(
                 [None], body_line_h=0.1, code_line_h=0.1
             )
 
     def test_empty(self):
-        ocrpara_list = sw_luadocs.recognize.convert_ocrline_to_ocrpara_monokind(
+        doc = sw_luadocs.recognize.convert_ocrline_to_document_monokind(
             [], body_line_h=0.1, code_line_h=0.1
         )
-        self.assertEqual(ocrpara_list, [])
+        self.assertEqual(doc, [])
 
     def test_head(self):
-        ocrpara_list = sw_luadocs.recognize.convert_ocrline_to_ocrpara_monokind(
+        doc = sw_luadocs.recognize.convert_ocrline_to_document_monokind(
             [sw_luadocs.recognize.OCRLine(txt="a", kind="head", box=(0, 0, 1, 1))],
             body_line_h=0.1,
             code_line_h=0.1,
         )
-        self.assertEqual(
-            ocrpara_list, [sw_luadocs.recognize.OCRParagraph(txt="a", kind="head")]
-        )
+        self.assertEqual(doc, [sw_luadocs.mdsub.DocumentElem(txt="a", kind="head")])
 
     def test_body(self):
-        ocrpara_list = sw_luadocs.recognize.convert_ocrline_to_ocrpara_monokind(
+        doc = sw_luadocs.recognize.convert_ocrline_to_document_monokind(
             [
                 sw_luadocs.recognize.OCRLine(txt="a", kind="body", box=(0, 0, 1, 1)),
                 sw_luadocs.recognize.OCRLine(txt="b", kind="body", box=(0, 1, 1, 1)),
@@ -1847,12 +1811,10 @@ class TestConvertOCRLineToOCRParaMonoKind(unittest.TestCase):
             body_line_h=10,
             code_line_h=0.1,
         )
-        self.assertEqual(
-            ocrpara_list, [sw_luadocs.recognize.OCRParagraph(txt="a b", kind="body")]
-        )
+        self.assertEqual(doc, [sw_luadocs.mdsub.DocumentElem(txt="a b", kind="body")])
 
     def test_code(self):
-        ocrpara_list = sw_luadocs.recognize.convert_ocrline_to_ocrpara_monokind(
+        doc = sw_luadocs.recognize.convert_ocrline_to_document_monokind(
             [
                 sw_luadocs.recognize.OCRLine(txt="a", kind="code", box=(0, 0, 1, 1)),
                 sw_luadocs.recognize.OCRLine(txt="b", kind="code", box=(0, 1, 1, 1)),
@@ -1861,26 +1823,26 @@ class TestConvertOCRLineToOCRParaMonoKind(unittest.TestCase):
             code_line_h=0.1,
         )
         self.assertEqual(
-            ocrpara_list,
-            [sw_luadocs.recognize.OCRParagraph(txt="a" + "\n" * 10 + "b", kind="code")],
+            doc,
+            [sw_luadocs.mdsub.DocumentElem(txt="a" + "\n" * 10 + "b", kind="code")],
         )
 
 
-class TestConvertOCRLineToOCRPara(unittest.TestCase):
+class TestConvertOCRLineToDocument(unittest.TestCase):
     def test_type(self):
         with self.assertRaises(TypeError):
-            sw_luadocs.recognize.convert_ocrline_to_ocrpara(
+            sw_luadocs.recognize.convert_ocrline_to_document(
                 [None], body_line_h=0.1, code_line_h=0.1
             )
 
     def test_empty(self):
-        ocrpara_list = sw_luadocs.recognize.convert_ocrline_to_ocrpara(
+        doc = sw_luadocs.recognize.convert_ocrline_to_document(
             [], body_line_h=0.1, code_line_h=0.1
         )
-        self.assertEqual(ocrpara_list, [])
+        self.assertEqual(doc, [])
 
     def test_normal(self):
-        ocrpara_list = sw_luadocs.recognize.convert_ocrline_to_ocrpara(
+        doc = sw_luadocs.recognize.convert_ocrline_to_document(
             [
                 sw_luadocs.recognize.OCRLine(txt="a", kind="head", box=(0, 0, 1, 1)),
                 sw_luadocs.recognize.OCRLine(txt="b", kind="body", box=(0, 1, 1, 1)),
@@ -1892,11 +1854,11 @@ class TestConvertOCRLineToOCRPara(unittest.TestCase):
             code_line_h=10,
         )
         self.assertEqual(
-            ocrpara_list,
+            doc,
             [
-                sw_luadocs.recognize.OCRParagraph(txt="a", kind="head"),
-                sw_luadocs.recognize.OCRParagraph(txt="b", kind="body"),
-                sw_luadocs.recognize.OCRParagraph(txt="c", kind="body"),
-                sw_luadocs.recognize.OCRParagraph(txt="d\ne", kind="code"),
+                sw_luadocs.mdsub.DocumentElem(txt="a", kind="head"),
+                sw_luadocs.mdsub.DocumentElem(txt="b", kind="body"),
+                sw_luadocs.mdsub.DocumentElem(txt="c", kind="body"),
+                sw_luadocs.mdsub.DocumentElem(txt="d\ne", kind="code"),
             ],
         )

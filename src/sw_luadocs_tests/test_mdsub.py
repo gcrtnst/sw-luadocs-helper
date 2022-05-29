@@ -16,9 +16,9 @@ class TestAsKind(unittest.TestCase):
 
 class TestDocumentElemPostInit(unittest.TestCase):
     def test_validate_convert(self):
-        ocrpara = sw_luadocs.mdsub.DocumentElem(txt=0, kind="head")
-        self.assertEqual(ocrpara.txt, "0")
-        self.assertEqual(ocrpara.kind, "head")
+        docelem = sw_luadocs.mdsub.DocumentElem(txt=0, kind="head")
+        self.assertEqual(docelem.txt, "0")
+        self.assertEqual(docelem.kind, "head")
 
     def test_validate_convert_kind(self):
         with self.assertRaises(ValueError):

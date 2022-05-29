@@ -5,6 +5,7 @@ import numpy as np
 import typing
 
 from . import image as dot_image
+from . import mdsub as dot_mdsub
 
 
 def as_tesstsv(v):
@@ -39,13 +40,6 @@ def as_box(v):
     return box_x, box_y, box_w, box_h
 
 
-def as_kind(v):
-    kind = str(v)
-    if kind not in ("head", "body", "code"):
-        raise ValueError
-    return kind
-
-
 @dataclasses.dataclass(frozen=True, kw_only=True, slots=True)
 class TesseractLine:
     txt: typing.Any
@@ -67,25 +61,12 @@ class OCRLine:
 
     def __post_init__(self):
         txt = str(self.txt)
-        kind = as_kind(self.kind)
+        kind = dot_mdsub.as_kind(self.kind)
         box = as_box(self.box)
 
         object.__setattr__(self, "txt", txt)
         object.__setattr__(self, "kind", kind)
         object.__setattr__(self, "box", box)
-
-
-@dataclasses.dataclass(frozen=True, kw_only=True, slots=True)
-class OCRParagraph:
-    txt: typing.Any
-    kind: typing.Any
-
-    def __post_init__(self):
-        txt = str(self.txt)
-        kind = as_kind(self.kind)
-
-        object.__setattr__(self, "txt", txt)
-        object.__setattr__(self, "kind", kind)
 
 
 def as_ocrline_list(v):
@@ -261,18 +242,18 @@ def convert_tessline_to_ocrline(
     return OCRLine(txt=txt, kind=kind, box=tessline.box)
 
 
-def convert_ocrline_to_ocrpara_headonly(ocrline_list):
+def convert_ocrline_to_document_headonly(ocrline_list):
     ocrline_list = as_ocrline_list(ocrline_list)
 
-    ocrpara_list = []
+    doc = []
     for ocrline in ocrline_list:
         if ocrline.kind != "head":
             raise ValueError
-        ocrpara_list.append(OCRParagraph(txt=ocrline.txt, kind=ocrline.kind))
-    return ocrpara_list
+        doc.append(dot_mdsub.DocumentElem(txt=ocrline.txt, kind=ocrline.kind))
+    return doc
 
 
-def convert_ocrline_to_ocrpara_bodyonly(ocrline_list, *, body_line_h):
+def convert_ocrline_to_document_bodyonly(ocrline_list, *, body_line_h):
     ocrline_list = as_ocrline_list(ocrline_list)
 
     for ocrline in ocrline_list:
@@ -297,17 +278,17 @@ def convert_ocrline_to_ocrpara_bodyonly(ocrline_list, *, body_line_h):
         sl_stop = idx
         sl_list.append(slice(sl_start, sl_stop))
 
-    ocrpara_list = []
+    doc = []
     for sl in sl_list:
-        ocrpara_list.append(
-            OCRParagraph(
+        doc.append(
+            dot_mdsub.DocumentElem(
                 txt=" ".join(ocrline.txt for ocrline in ocrline_list[sl]), kind="body"
             )
         )
-    return ocrpara_list
+    return doc
 
 
-def convert_ocrline_to_ocrpara_codeonly(ocrline_list, *, code_line_h):
+def convert_ocrline_to_document_codeonly(ocrline_list, *, code_line_h):
     ocrline_list = as_ocrline_list(ocrline_list)
 
     for ocrline in ocrline_list:
@@ -326,35 +307,35 @@ def convert_ocrline_to_ocrpara_codeonly(ocrline_list, *, code_line_h):
             vmin=1,
         )
         txt += "\n" * numlf + ocrline_list[idx].txt
-    return [OCRParagraph(txt=txt, kind="code")]
+    return [dot_mdsub.DocumentElem(txt=txt, kind="code")]
 
 
-def convert_ocrline_to_ocrpara_monokind(ocrline_list, *, body_line_h, code_line_h):
+def convert_ocrline_to_document_monokind(ocrline_list, *, body_line_h, code_line_h):
     ocrline_list = as_ocrline_list(ocrline_list)
 
     if len(ocrline_list) <= 0:
         return []
     if ocrline_list[0].kind == "head":
-        return convert_ocrline_to_ocrpara_headonly(ocrline_list)
+        return convert_ocrline_to_document_headonly(ocrline_list)
     if ocrline_list[0].kind == "body":
-        return convert_ocrline_to_ocrpara_bodyonly(
+        return convert_ocrline_to_document_bodyonly(
             ocrline_list, body_line_h=body_line_h
         )
     if ocrline_list[0].kind == "code":
-        return convert_ocrline_to_ocrpara_codeonly(
+        return convert_ocrline_to_document_codeonly(
             ocrline_list, code_line_h=code_line_h
         )
     raise RuntimeError
 
 
-def convert_ocrline_to_ocrpara(ocrline_list, *, body_line_h, code_line_h):
+def convert_ocrline_to_document(ocrline_list, *, body_line_h, code_line_h):
     ocrline_list = as_ocrline_list(ocrline_list)
 
-    ocrpara_list = []
+    doc = []
     for sl in group_ocrline(ocrline_list):
-        ocrpara_list.extend(
-            convert_ocrline_to_ocrpara_monokind(
+        doc.extend(
+            convert_ocrline_to_document_monokind(
                 ocrline_list[sl], body_line_h=body_line_h, code_line_h=code_line_h
             )
         )
-    return ocrpara_list
+    return doc
