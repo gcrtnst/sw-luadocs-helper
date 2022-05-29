@@ -325,8 +325,8 @@ def capture(
             x=scroll_x,
             y=scroll_y,
             n=scroll_page_n,
-            sleep=True,
         )
+        time.sleep(scroll_sleep_secs)
         img = stitch_screenshot(
             ctrl.scroll_and_screenshot(
                 scroll_direction="down",
