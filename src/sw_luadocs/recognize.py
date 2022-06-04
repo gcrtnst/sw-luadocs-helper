@@ -343,19 +343,23 @@ def convert_ocrline_to_flatdoc(ocrline_list, *, body_line_h, code_line_h):
     return flatdoc
 
 
-def recognize(capture_img):
+def recognize(
+    capture_img,
+    *,
+    tesseract_lang,
+    tesseract_config,
+    head_thresh_s,
+    body_line_h,
+    code_base_x,
+    code_space_w,
+    code_line_h,
+    bg_thresh_rgb
+):
     preprocess_img = preprocess_image(capture_img)
     tesstsv = pytesseract.image_to_data(
         preprocess_img,
-        lang="eng",
-        config=shlex.join(
-            [
-                "--psm",
-                "6",
-                "-c",
-                "tessedit_char_whitelist= !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~",
-            ]
-        ),
+        lang=tesseract_lang,
+        config=tesseract_config,
         output_type=pytesseract.Output.DICT,
     )
     tessline_list = convert_tesstsv_to_tessline(tesstsv)
@@ -363,11 +367,13 @@ def recognize(capture_img):
         convert_tessline_to_ocrline(
             tessline,
             capture_img=capture_img,
-            head_thresh_s=9,
-            code_base_x=14,
-            code_space_w=9.5,
-            bg_thresh_rgb=(40, 40, 40),
+            head_thresh_s=head_thresh_s,
+            code_base_x=code_base_x,
+            code_space_w=code_space_w,
+            bg_thresh_rgb=bg_thresh_rgb,
         )
         for tessline in tessline_list
     ]
-    return convert_ocrline_to_flatdoc(ocrline_list, body_line_h=21, code_line_h=16.5)
+    return convert_ocrline_to_flatdoc(
+        ocrline_list, body_line_h=body_line_h, code_line_h=code_line_h
+    )
