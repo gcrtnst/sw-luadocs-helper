@@ -40,7 +40,7 @@ def main(*, args=None, exit_on_error=True):
     parser_group = parser.add_subparsers(required=True, metavar="COMMAND")
 
     parser_capture = parser_group.add_parser(
-        "capture", help="capture Stormworks in-game Lua API documentation"
+        "capture", help="take screenshots of Stormworks in-game Lua API documentation"
     )
     parser_capture.set_defaults(func=capture_main)
     parser_capture.add_argument(
