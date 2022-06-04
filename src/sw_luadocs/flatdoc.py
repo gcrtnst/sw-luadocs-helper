@@ -1,4 +1,5 @@
 import dataclasses
+import itertools
 import typing
 
 
@@ -48,3 +49,23 @@ def dumps_elem(flatelem):
     if loads_elem(s) != flatelem:
         raise ValueError
     return s
+
+
+def loads(s):
+    s = str(s)
+    line_list = s.split(sep="\n")
+
+    idx_list = []
+    for idx, line in enumerate(line_list):
+        if line.startswith("[") and line.endswith("]"):
+            idx_list.append(idx)
+    idx_list.append(len(line_list))
+    for line in line_list[: idx_list[0]]:
+        if line != "":
+            raise ValueError
+
+    flatdoc = []
+    for start, stop in itertools.pairwise(idx_list):
+        flatelem = loads_elem("\n".join(line_list[start:stop]))
+        flatdoc.append(flatelem)
+    return flatdoc

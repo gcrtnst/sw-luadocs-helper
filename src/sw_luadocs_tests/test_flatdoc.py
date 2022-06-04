@@ -81,3 +81,40 @@ class TestDumpsElem(unittest.TestCase):
             with self.subTest(flatelem=input_flatelem):
                 actual_s = sw_luadocs.flatdoc.dumps_elem(input_flatelem)
                 self.assertEqual(actual_s, expected_s)
+
+
+class TestLoads(unittest.TestCase):
+    def test_validate_value_error(self):
+        for s in ["[", "]", "[head]txt", "txt\n[head]", "\ntxt\n\n[head]"]:
+            with self.subTest(s=s):
+                with self.assertRaises(ValueError):
+                    sw_luadocs.flatdoc.loads(s)
+
+    def test_loads(self):
+        for input_s, expected_flatdoc in [
+            ("", []),
+            ("\n\n", []),
+            ("[head]", [sw_luadocs.flatdoc.FlatElem(txt="", kind="head")]),
+            ("[body]", [sw_luadocs.flatdoc.FlatElem(txt="", kind="body")]),
+            ("[code]", [sw_luadocs.flatdoc.FlatElem(txt="", kind="code")]),
+            ("\n\n[head]", [sw_luadocs.flatdoc.FlatElem(txt="", kind="head")]),
+            (
+                "[head]\n[body]\n[code]",
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="", kind="code"),
+                ],
+            ),
+            (
+                "\n\n[head]\na\n[body]\nb\n[code]\nc\n",
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="a", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c", kind="code"),
+                ],
+            ),
+        ]:
+            with self.subTest(s=input_s):
+                actual_flatdoc = sw_luadocs.flatdoc.loads(input_s)
+                self.assertEqual(actual_flatdoc, expected_flatdoc)
