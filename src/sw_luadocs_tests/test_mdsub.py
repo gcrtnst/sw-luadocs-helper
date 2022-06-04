@@ -16,10 +16,10 @@ class TestAsKind(unittest.TestCase):
 
 class TestDocumentElemPostInit(unittest.TestCase):
     def test_validate_convert(self):
-        docelem = sw_luadocs.flatdoc.DocumentElem(txt=0, kind="head")
-        self.assertEqual(docelem.txt, "0")
-        self.assertEqual(docelem.kind, "head")
+        flatelem = sw_luadocs.flatdoc.FlatElem(txt=0, kind="head")
+        self.assertEqual(flatelem.txt, "0")
+        self.assertEqual(flatelem.kind, "head")
 
     def test_validate_convert_kind(self):
         with self.assertRaises(ValueError):
-            sw_luadocs.flatdoc.DocumentElem(txt="", kind="invalid")
+            sw_luadocs.flatdoc.FlatElem(txt="", kind="invalid")

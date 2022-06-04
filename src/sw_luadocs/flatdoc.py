@@ -10,7 +10,7 @@ def as_kind(v):
 
 
 @dataclasses.dataclass(frozen=True, kw_only=True, slots=True)
-class DocumentElem:
+class FlatElem:
     txt: typing.Any
     kind: typing.Any
 

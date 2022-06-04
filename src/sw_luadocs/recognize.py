@@ -244,18 +244,18 @@ def convert_tessline_to_ocrline(
     return OCRLine(txt=txt, kind=kind, box=tessline.box)
 
 
-def convert_ocrline_to_document_headonly(ocrline_list):
+def convert_ocrline_to_flatdoc_headonly(ocrline_list):
     ocrline_list = as_ocrline_list(ocrline_list)
 
-    doc = []
+    flatdoc = []
     for ocrline in ocrline_list:
         if ocrline.kind != "head":
             raise ValueError
-        doc.append(dot_flatdoc.DocumentElem(txt=ocrline.txt, kind=ocrline.kind))
-    return doc
+        flatdoc.append(dot_flatdoc.FlatElem(txt=ocrline.txt, kind=ocrline.kind))
+    return flatdoc
 
 
-def convert_ocrline_to_document_bodyonly(ocrline_list, *, body_line_h):
+def convert_ocrline_to_flatdoc_bodyonly(ocrline_list, *, body_line_h):
     ocrline_list = as_ocrline_list(ocrline_list)
 
     for ocrline in ocrline_list:
@@ -280,17 +280,17 @@ def convert_ocrline_to_document_bodyonly(ocrline_list, *, body_line_h):
         sl_stop = idx
         sl_list.append(slice(sl_start, sl_stop))
 
-    doc = []
+    flatdoc = []
     for sl in sl_list:
-        doc.append(
-            dot_flatdoc.DocumentElem(
+        flatdoc.append(
+            dot_flatdoc.FlatElem(
                 txt=" ".join(ocrline.txt for ocrline in ocrline_list[sl]), kind="body"
             )
         )
-    return doc
+    return flatdoc
 
 
-def convert_ocrline_to_document_codeonly(ocrline_list, *, code_line_h):
+def convert_ocrline_to_flatdoc_codeonly(ocrline_list, *, code_line_h):
     ocrline_list = as_ocrline_list(ocrline_list)
 
     for ocrline in ocrline_list:
@@ -309,38 +309,38 @@ def convert_ocrline_to_document_codeonly(ocrline_list, *, code_line_h):
             vmin=1,
         )
         txt += "\n" * numlf + ocrline_list[idx].txt
-    return [dot_flatdoc.DocumentElem(txt=txt, kind="code")]
+    return [dot_flatdoc.FlatElem(txt=txt, kind="code")]
 
 
-def convert_ocrline_to_document_monokind(ocrline_list, *, body_line_h, code_line_h):
+def convert_ocrline_to_flatdoc_monokind(ocrline_list, *, body_line_h, code_line_h):
     ocrline_list = as_ocrline_list(ocrline_list)
 
     if len(ocrline_list) <= 0:
         return []
     if ocrline_list[0].kind == "head":
-        return convert_ocrline_to_document_headonly(ocrline_list)
+        return convert_ocrline_to_flatdoc_headonly(ocrline_list)
     if ocrline_list[0].kind == "body":
-        return convert_ocrline_to_document_bodyonly(
+        return convert_ocrline_to_flatdoc_bodyonly(
             ocrline_list, body_line_h=body_line_h
         )
     if ocrline_list[0].kind == "code":
-        return convert_ocrline_to_document_codeonly(
+        return convert_ocrline_to_flatdoc_codeonly(
             ocrline_list, code_line_h=code_line_h
         )
     raise RuntimeError
 
 
-def convert_ocrline_to_document(ocrline_list, *, body_line_h, code_line_h):
+def convert_ocrline_to_flatdoc(ocrline_list, *, body_line_h, code_line_h):
     ocrline_list = as_ocrline_list(ocrline_list)
 
-    doc = []
+    flatdoc = []
     for sl in group_ocrline(ocrline_list):
-        doc.extend(
-            convert_ocrline_to_document_monokind(
+        flatdoc.extend(
+            convert_ocrline_to_flatdoc_monokind(
                 ocrline_list[sl], body_line_h=body_line_h, code_line_h=code_line_h
             )
         )
-    return doc
+    return flatdoc
 
 
 def recognize(capture_img):
@@ -370,4 +370,4 @@ def recognize(capture_img):
         )
         for tessline in tessline_list
     ]
-    return convert_ocrline_to_document(ocrline_list, body_line_h=21, code_line_h=16.5)
+    return convert_ocrline_to_flatdoc(ocrline_list, body_line_h=21, code_line_h=16.5)
