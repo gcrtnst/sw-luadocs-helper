@@ -17,3 +17,12 @@ def convert_image(
         mode=dst_mode, matrix=matrix, dither=dither, palette=palette, colors=colors
     )
     return np.asarray(pil)
+
+
+def imread(fname):
+    pil = PIL.Image.open(fname)
+    return np.asarray(pil)
+
+
+def imsave(fname, img):
+    PIL.Image.fromarray(img).save(fname)

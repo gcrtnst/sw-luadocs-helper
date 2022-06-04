@@ -1,14 +1,19 @@
 import argparse
 import pathlib
-import PIL.Image
+import pytesseract
+import shlex
 import toml
 
 from . import capture as dot_capture
+from . import flatdoc as dot_flatdoc
+from . import image as dot_image
+from . import recognize as dot_recognize
 
 
 def capture_main(ns):
     cfg = toml.load(ns.config)
     capture_cfg = cfg["capture"]
+
     img = dot_capture.capture(
         ahk_exe=ns.ahk_exe,
         win_title=capture_cfg["win_title"],
@@ -32,7 +37,35 @@ def capture_main(ns):
         activate_sleep_secs=capture_cfg["activate_sleep_secs"],
         scroll_sleep_secs=capture_cfg["scroll_sleep_secs"],
     )
-    PIL.Image.fromarray(img).save(ns.capture_file)
+    dot_image.imsave(ns.capture_file, img)
+
+
+def recognize_main(ns):
+    cfg = toml.load(ns.config)
+    recognize_cfg = cfg["recognize"]
+
+    if ns.tesseract_exe is not None:
+        pytesseract.pytesseract.tesseract_cmd = str(ns.tesseract_exe)
+
+    capture_img = dot_image.imread(ns.capture_file)
+    flatdoc = dot_recognize.recognize(
+        capture_img,
+        tesseract_lang=recognize_cfg["tesseract_lang"],
+        tesseract_config=shlex.join(recognize_cfg["tesseract_config"]),
+        head_thresh_s=recognize_cfg["head_thresh_s"],
+        body_line_h=recognize_cfg["body_line_h"],
+        code_base_x=recognize_cfg["code_base_x"],
+        code_space_w=recognize_cfg["code_space_w"],
+        code_line_h=recognize_cfg["code_line_h"],
+        bg_thresh_rgb=(
+            recognize_cfg["bg_thresh_r"],
+            recognize_cfg["bg_thresh_g"],
+            recognize_cfg["bg_thresh_b"],
+        ),
+    )
+    txt = dot_flatdoc.dumps(flatdoc)
+    with open(ns.txt_file, mode="w", encoding="utf-8", newline="\n") as fobj:
+        fobj.write(txt)
 
 
 def main(*, args=None, exit_on_error=True):
@@ -44,15 +77,32 @@ def main(*, args=None, exit_on_error=True):
     )
     parser_capture.set_defaults(func=capture_main)
     parser_capture.add_argument(
-        "capture_file",
-        type=pathlib.Path,
-        help="file to save screenshots",
+        "capture_file", type=pathlib.Path, help="file to save screenshots"
     )
     parser_capture.add_argument(
         "-c", "--config", type=pathlib.Path, required=True, help="configuration file"
     )
     parser_capture.add_argument(
         "--ahk-exe", type=pathlib.Path, help="AutoHotKey executable file"
+    )
+
+    parser_recognize = parser_group.add_parser(
+        "recognize", help="recognizes text in captured screenshots"
+    )
+    parser_recognize.set_defaults(func=recognize_main)
+    parser_recognize.add_argument(
+        "capture_file",
+        type=pathlib.Path,
+        help="file of screenshots taken with the capture subcommand",
+    )
+    parser_recognize.add_argument(
+        "txt_file", type=pathlib.Path, help="file to save character recognition results"
+    )
+    parser_recognize.add_argument(
+        "-c", "--config", type=pathlib.Path, required=True, help="configuration file"
+    )
+    parser_recognize.add_argument(
+        "--tesseract-exe", type=pathlib.Path, help="Tesseract OCR executable file"
     )
 
     ns = parser.parse_args(args=args)
