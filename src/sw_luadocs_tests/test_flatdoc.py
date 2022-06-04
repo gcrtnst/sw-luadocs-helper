@@ -56,3 +56,28 @@ class TestLoadsElem(unittest.TestCase):
             with self.subTest(s=s):
                 flatelem = sw_luadocs.flatdoc.loads_elem(s)
                 self.assertEqual(flatelem.txt, txt)
+
+
+class TestDumpsElem(unittest.TestCase):
+    def test_validate_type_error(self):
+        with self.assertRaises(TypeError):
+            sw_luadocs.flatdoc.dumps_elem(None)
+
+    def test_validate_value_error(self):
+        with self.assertRaises(ValueError):
+            sw_luadocs.flatdoc.dumps_elem(
+                sw_luadocs.flatdoc.FlatElem(txt="\n", kind="code")
+            )
+
+    def test_newline(self):
+        for input_flatelem, expected_s in [
+            (sw_luadocs.flatdoc.FlatElem(txt="", kind="body"), "[body]\n"),
+            (sw_luadocs.flatdoc.FlatElem(txt="txt", kind="body"), "[body]\ntxt\n"),
+            (
+                sw_luadocs.flatdoc.FlatElem(txt="\na\n\nb\n\nc", kind="body"),
+                "[body]\n\na\n\nb\n\nc\n",
+            ),
+        ]:
+            with self.subTest(flatelem=input_flatelem):
+                actual_s = sw_luadocs.flatdoc.dumps_elem(input_flatelem)
+                self.assertEqual(actual_s, expected_s)

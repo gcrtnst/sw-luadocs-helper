@@ -37,3 +37,14 @@ def loads_elem(s):
         line_list_end -= 1
     txt = "\n".join(line_list[1 : line_list_end + 1])
     return FlatElem(txt=txt, kind=kind)
+
+
+def dumps_elem(flatelem):
+    if not isinstance(flatelem, FlatElem):
+        raise TypeError
+
+    s = "[" + flatelem.kind + "]\n" + flatelem.txt
+    s = s.rstrip("\n") + "\n"
+    if loads_elem(s) != flatelem:
+        raise ValueError
+    return s
