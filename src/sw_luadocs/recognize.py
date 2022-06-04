@@ -7,7 +7,7 @@ import shlex
 import typing
 
 from . import image as dot_image
-from . import mdsub as dot_mdsub
+from . import flatdoc as dot_flatdoc
 
 
 def as_tesstsv(v):
@@ -63,7 +63,7 @@ class OCRLine:
 
     def __post_init__(self):
         txt = str(self.txt)
-        kind = dot_mdsub.as_kind(self.kind)
+        kind = dot_flatdoc.as_kind(self.kind)
         box = as_box(self.box)
 
         object.__setattr__(self, "txt", txt)
@@ -251,7 +251,7 @@ def convert_ocrline_to_document_headonly(ocrline_list):
     for ocrline in ocrline_list:
         if ocrline.kind != "head":
             raise ValueError
-        doc.append(dot_mdsub.DocumentElem(txt=ocrline.txt, kind=ocrline.kind))
+        doc.append(dot_flatdoc.DocumentElem(txt=ocrline.txt, kind=ocrline.kind))
     return doc
 
 
@@ -283,7 +283,7 @@ def convert_ocrline_to_document_bodyonly(ocrline_list, *, body_line_h):
     doc = []
     for sl in sl_list:
         doc.append(
-            dot_mdsub.DocumentElem(
+            dot_flatdoc.DocumentElem(
                 txt=" ".join(ocrline.txt for ocrline in ocrline_list[sl]), kind="body"
             )
         )
@@ -309,7 +309,7 @@ def convert_ocrline_to_document_codeonly(ocrline_list, *, code_line_h):
             vmin=1,
         )
         txt += "\n" * numlf + ocrline_list[idx].txt
-    return [dot_mdsub.DocumentElem(txt=txt, kind="code")]
+    return [dot_flatdoc.DocumentElem(txt=txt, kind="code")]
 
 
 def convert_ocrline_to_document_monokind(ocrline_list, *, body_line_h, code_line_h):
