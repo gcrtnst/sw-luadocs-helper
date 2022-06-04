@@ -28,8 +28,9 @@ class TestDocumentElemPostInit(unittest.TestCase):
 class TestLoadsElem(unittest.TestCase):
     def test_validate_value_error(self):
         for s in ["", "[", "]", "\n[head]", "[head]txt"]:
-            with self.assertRaises(ValueError):
-                sw_luadocs.flatdoc.loads_elem(s)
+            with self.subTest(s=s):
+                with self.assertRaises(ValueError):
+                    sw_luadocs.flatdoc.loads_elem(s)
 
     def test_kind(self):
         for s, kind in [
@@ -38,8 +39,9 @@ class TestLoadsElem(unittest.TestCase):
             ("[code]", "code"),
             ("[head]\n[body]", "head"),
         ]:
-            flatelem = sw_luadocs.flatdoc.loads_elem(s)
-            self.assertEqual(flatelem.kind, kind)
+            with self.subTest(s=s):
+                flatelem = sw_luadocs.flatdoc.loads_elem(s)
+                self.assertEqual(flatelem.kind, kind)
 
     def test_txt(self):
         for s, txt in [
@@ -51,5 +53,6 @@ class TestLoadsElem(unittest.TestCase):
             ("[body]\n\ntxt\n", "\ntxt"),
             ("[body]\n\na\n\nb\n\nc\n", "\na\n\nb\n\nc"),
         ]:
-            flatelem = sw_luadocs.flatdoc.loads_elem(s)
-            self.assertEqual(flatelem.txt, txt)
+            with self.subTest(s=s):
+                flatelem = sw_luadocs.flatdoc.loads_elem(s)
+                self.assertEqual(flatelem.txt, txt)
