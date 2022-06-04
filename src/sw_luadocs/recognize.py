@@ -3,7 +3,6 @@ import dataclasses
 import math
 import numpy as np
 import pytesseract
-import shlex
 import typing
 
 from . import image as dot_image
