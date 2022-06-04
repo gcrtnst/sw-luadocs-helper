@@ -20,4 +20,4 @@ capture_area_y2 = 763
 capture_template_ratio = 0.25
 
 activate_sleep_secs = 5
-scroll_sleep_secs = 2
+scroll_sleep_secs = 3
