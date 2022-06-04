@@ -6,7 +6,8 @@ import toml
 from . import capture as dot_capture
 
 
-def capture_main(ns, cfg):
+def capture_main(ns):
+    cfg = toml.load(ns.config)
     capture_cfg = cfg["capture"]
     img = dot_capture.capture(
         ahk_exe=ns.ahk_exe,
@@ -36,9 +37,6 @@ def capture_main(ns, cfg):
 
 def main(*, args=None, exit_on_error=True):
     parser = argparse.ArgumentParser(exit_on_error=exit_on_error)
-    parser.add_argument(
-        "-c", "--config", type=pathlib.Path, required=True, help="configuration file"
-    )
     parser_group = parser.add_subparsers(required=True, metavar="COMMAND")
 
     parser_capture = parser_group.add_parser(
@@ -51,9 +49,11 @@ def main(*, args=None, exit_on_error=True):
         help="file to save screenshots",
     )
     parser_capture.add_argument(
+        "-c", "--config", type=pathlib.Path, required=True, help="configuration file"
+    )
+    parser_capture.add_argument(
         "--ahk-exe", type=pathlib.Path, help="AutoHotKey executable file"
     )
 
     ns = parser.parse_args(args=args)
-    cfg = toml.load(ns.config)
-    ns.func(ns, cfg)
+    ns.func(ns)
