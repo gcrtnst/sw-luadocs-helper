@@ -118,3 +118,27 @@ class TestLoads(unittest.TestCase):
             with self.subTest(s=input_s):
                 actual_flatdoc = sw_luadocs.flatdoc.loads(input_s)
                 self.assertEqual(actual_flatdoc, expected_flatdoc)
+
+
+class TestDumps(unittest.TestCase):
+    def test_validate_value_error(self):
+        with self.assertRaises(ValueError):
+            sw_luadocs.flatdoc.dumps(
+                [sw_luadocs.flatdoc.FlatElem(txt="[body]", kind="body")]
+            )
+
+    def test_dumps(self):
+        for input_flatdoc, expected_s in [
+            ([], ""),
+            (
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="a", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c", kind="code"),
+                ],
+                "[head]\na\n\n[body]\nb\n\n[code]\nc\n",
+            ),
+        ]:
+            with self.subTest(flatdoc=input_flatdoc):
+                actual_s = sw_luadocs.flatdoc.dumps(input_flatdoc)
+                self.assertEqual(actual_s, expected_s)

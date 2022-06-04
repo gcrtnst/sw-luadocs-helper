@@ -69,3 +69,10 @@ def loads(s):
         flatelem = loads_elem("\n".join(line_list[start:stop]))
         flatdoc.append(flatelem)
     return flatdoc
+
+
+def dumps(flatdoc):
+    s = "\n".join(map(dumps_elem, flatdoc))
+    if loads(s) != flatdoc:
+        raise ValueError
+    return s
