@@ -619,7 +619,8 @@ vice versa.\
 import sw_luadocs.flatdoc
 
 # To parse text in mdlike format, use sw_luadocs.flatdoc.parse_mdlike
-flatdoc = sw_luadocs.flatdoc.parse_mdlike("mdlike string")""",
+flatdoc = sw_luadocs.flatdoc.parse_mdlike("mdlike string")\
+""",
                     kind="code",
                 ),
             ],
@@ -686,7 +687,8 @@ vice versa.\
 import sw_luadocs.flatdoc
 
 # To parse text in mdlike format, use sw_luadocs.flatdoc.parse_mdlike
-flatdoc = sw_luadocs.flatdoc.parse_mdlike("mdlike string")""",
+flatdoc = sw_luadocs.flatdoc.parse_mdlike("mdlike string")\
+""",
                         kind="code",
                     ),
                 ],
