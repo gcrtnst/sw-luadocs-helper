@@ -201,3 +201,8 @@ class MdlikeParser:
                     return flatdoc
                 flatelem = self.parse_elem()
                 flatdoc.append(flatelem)
+
+
+def parse_mdlike(s):
+    p = MdlikeParser(s)
+    return p.parse()

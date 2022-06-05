@@ -553,3 +553,47 @@ class TestMdlikeParserParse(unittest.TestCase):
                 actual_flatdoc = p.parse()
                 self.assertEqual(p._line_idx, expected_line_idx)
                 self.assertEqual(actual_flatdoc, expected_flatdoc)
+
+
+class TestParseMdlike(unittest.TestCase):
+    def test_main(self):
+        flatdoc = sw_luadocs.flatdoc.parse_mdlike(
+            """\
+# mdlike
+mdlike is a simple markup language similar to Markdown. Its very simple specification
+makes it easy to generate or parse mdlike format documents programmatically. Since
+mdlike does not support the complex syntax of Markdown, including inline HTML, it is
+not recommended to parse documents in mdlike format with the Markdown parser, and vice
+versa.
+
+```
+import sw_luadocs.flatdoc
+
+# To parse text in mdlike format, use sw_luadocs.flatdoc.parse_mdlike
+flatdoc = sw_luadocs.flatdoc.parse_mdlike("mdlike string")
+```
+"""
+        )
+        self.assertEqual(
+            flatdoc,
+            [
+                sw_luadocs.flatdoc.FlatElem(txt="mdlike", kind="head"),
+                sw_luadocs.flatdoc.FlatElem(
+                    txt="""\
+mdlike is a simple markup language similar to Markdown. Its very simple specification
+makes it easy to generate or parse mdlike format documents programmatically. Since
+mdlike does not support the complex syntax of Markdown, including inline HTML, it is
+not recommended to parse documents in mdlike format with the Markdown parser, and vice
+versa.""",
+                    kind="body",
+                ),
+                sw_luadocs.flatdoc.FlatElem(
+                    txt="""\
+import sw_luadocs.flatdoc
+
+# To parse text in mdlike format, use sw_luadocs.flatdoc.parse_mdlike
+flatdoc = sw_luadocs.flatdoc.parse_mdlike("mdlike string")""",
+                    kind="code",
+                ),
+            ],
+        )
