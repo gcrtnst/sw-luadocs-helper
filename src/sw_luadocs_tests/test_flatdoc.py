@@ -39,9 +39,10 @@ class TestAsFlatDoc(unittest.TestCase):
                 sw_luadocs.flatdoc.FlatElem(txt="a", kind="code"),
             ],
         ]:
-            flatdoc = sw_luadocs.flatdoc.as_flatdoc(v)
-            self.assertIs(type(flatdoc), list)
-            self.assertEqual(flatdoc, v)
+            with self.subTest(v=v):
+                flatdoc = sw_luadocs.flatdoc.as_flatdoc(v)
+                self.assertIs(type(flatdoc), list)
+                self.assertEqual(flatdoc, v)
 
 
 class TestLoadsElem(unittest.TestCase):
