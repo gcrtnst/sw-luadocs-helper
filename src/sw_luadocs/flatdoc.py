@@ -24,6 +24,15 @@ class FlatElem:
         object.__setattr__(self, "kind", kind)
 
 
+def as_flatdoc(v):
+    flatdoc = []
+    for flatelem in v:
+        if not isinstance(flatelem, FlatElem):
+            raise TypeError
+        flatdoc.append(flatelem)
+    return flatdoc
+
+
 def loads_elem(s):
     s = str(s)
     line_list = s.split(sep="\n")
@@ -206,3 +215,25 @@ class MdlikeParser:
 def parse_mdlike(s):
     p = MdlikeParser(s)
     return p.parse()
+
+
+def format_mdlike(flatdoc):
+    flatdoc = as_flatdoc(flatdoc)
+
+    block_list = []
+    for flatelem in flatdoc:
+        if flatelem.kind == "head":
+            block_list.append("# " + flatelem.txt + "\n")
+            continue
+        if flatelem.kind == "body":
+            block_list.append(flatelem.txt + "\n")
+            continue
+        if flatelem.kind == "code":
+            block_list.append("```\n" + flatelem.txt + "\n```\n")
+            continue
+        raise RuntimeError
+    s = "\n".join(block_list)
+
+    if parse_mdlike(s) != flatdoc:
+        raise ValueError
+    return s

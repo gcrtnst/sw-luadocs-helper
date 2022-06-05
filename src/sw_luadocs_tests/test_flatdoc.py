@@ -25,6 +25,25 @@ class TestDocumentElemPostInit(unittest.TestCase):
             sw_luadocs.flatdoc.FlatElem(txt="", kind="invalid")
 
 
+class TestAsFlatDoc(unittest.TestCase):
+    def test_validate_type_error(self):
+        with self.assertRaises(TypeError):
+            sw_luadocs.flatdoc.as_flatdoc([None])
+
+    def test_main(self):
+        for v in [
+            [],
+            [
+                sw_luadocs.flatdoc.FlatElem(txt="a", kind="head"),
+                sw_luadocs.flatdoc.FlatElem(txt="a", kind="body"),
+                sw_luadocs.flatdoc.FlatElem(txt="a", kind="code"),
+            ],
+        ]:
+            flatdoc = sw_luadocs.flatdoc.as_flatdoc(v)
+            self.assertIs(type(flatdoc), list)
+            self.assertEqual(flatdoc, v)
+
+
 class TestLoadsElem(unittest.TestCase):
     def test_validate_value_error(self):
         for s in ["", "[", "]", "\n[head]", "[head]txt"]:
@@ -597,3 +616,91 @@ flatdoc = sw_luadocs.flatdoc.parse_mdlike("mdlike string")""",
                 ),
             ],
         )
+
+
+class TestFormatMdlike(unittest.TestCase):
+    def test_error(self):
+        with self.assertRaises(ValueError):
+            sw_luadocs.flatdoc.format_mdlike(
+                [sw_luadocs.flatdoc.FlatElem(txt="\n", kind="head")]
+            )
+
+    def test_pass(self):
+        for input_flatdoc, expected_s in [
+            ([], ""),
+            ([sw_luadocs.flatdoc.FlatElem(txt="a", kind="head")], "# a\n"),
+            ([sw_luadocs.flatdoc.FlatElem(txt="a", kind="body")], "a\n"),
+            ([sw_luadocs.flatdoc.FlatElem(txt="a", kind="code")], "```\na\n```\n"),
+            (
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="a", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c", kind="head"),
+                ],
+                "# a\n\n# b\n\n# c\n",
+            ),
+            (
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="a", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c", kind="body"),
+                ],
+                "a\n\nb\n\nc\n",
+            ),
+            (
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="a", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c", kind="code"),
+                ],
+                "```\na\n```\n\n```\nb\n```\n\n```\nc\n```\n",
+            ),
+            (
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="mdlike", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(
+                        txt="""\
+mdlike is a simple markup language similar to Markdown. Its very simple specification
+makes it easy to generate or parse mdlike format documents programmatically.\
+""",
+                        kind="body",
+                    ),
+                    sw_luadocs.flatdoc.FlatElem(
+                        txt="""\
+Since mdlike does not support the complex syntax of Markdown, including inline HTML, it
+is not recommended to parse documents in mdlike format with the Markdown parser, and
+vice versa.\
+""",
+                        kind="body",
+                    ),
+                    sw_luadocs.flatdoc.FlatElem(
+                        txt="""\
+import sw_luadocs.flatdoc
+
+# To parse text in mdlike format, use sw_luadocs.flatdoc.parse_mdlike
+flatdoc = sw_luadocs.flatdoc.parse_mdlike("mdlike string")""",
+                        kind="code",
+                    ),
+                ],
+                """\
+# mdlike
+
+mdlike is a simple markup language similar to Markdown. Its very simple specification
+makes it easy to generate or parse mdlike format documents programmatically.
+
+Since mdlike does not support the complex syntax of Markdown, including inline HTML, it
+is not recommended to parse documents in mdlike format with the Markdown parser, and
+vice versa.
+
+```
+import sw_luadocs.flatdoc
+
+# To parse text in mdlike format, use sw_luadocs.flatdoc.parse_mdlike
+flatdoc = sw_luadocs.flatdoc.parse_mdlike("mdlike string")
+```
+""",
+            ),
+        ]:
+            with self.subTest(flatdoc=input_flatdoc):
+                actual_s = sw_luadocs.flatdoc.format_mdlike(input_flatdoc)
+                self.assertEqual(actual_s, expected_s)
