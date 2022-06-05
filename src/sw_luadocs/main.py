@@ -63,7 +63,7 @@ def recognize_main(ns):
             recognize_cfg["bg_thresh_b"],
         ),
     )
-    txt = dot_flatdoc.dumps(flatdoc)
+    txt = dot_flatdoc.format_mdlike(flatdoc)
     with open(ns.txt_file, mode="w", encoding="utf-8", newline="\n") as fobj:
         fobj.write(txt)
 
