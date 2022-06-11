@@ -24,3 +24,34 @@ class TestEncodeSectionName(unittest.TestCase):
                     input_section_name
                 )
                 self.assertEqual(actual_section_name_bin, expected_section_name_bin)
+
+
+class TestExtractStrings(unittest.TestCase):
+    def test_validate_type_error(self):
+        with self.assertRaises(TypeError):
+            sw_luadocs.extract.extract_strings("")
+
+    def test_main(self):
+        for input_section_bin, expected_ext_txt_set in [
+            (b"", set()),
+            (b" ", set()),
+            (b"\x00", set()),
+            (b" \x00", {" "}),
+            (b"~\x00", {"~"}),
+            (b"\t\x00", {"\t"}),
+            (b"\r\x00", {"\r"}),
+            (b"\n\x00", {"\n"}),
+            (b"\x00 \x00", {" "}),
+            (b"a\x00b", {"a"}),
+            (b"a\x00b\x00", {"a", "b"}),
+            (b"a\x00b\x00", {"a", "b"}),
+            (
+                b"\x1F\xF3\xAB\x03abc\x00\x5e\xc2\x5c\x81def\x00\x07\x31\x56\xa8",
+                {"abc", "def"},
+            ),
+        ]:
+            with self.subTest(section_bin=input_section_bin):
+                actual_ext_txt_set = sw_luadocs.extract.extract_strings(
+                    input_section_bin
+                )
+                self.assertEqual(actual_ext_txt_set, expected_ext_txt_set)
