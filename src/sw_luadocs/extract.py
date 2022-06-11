@@ -14,13 +14,16 @@ def encode_section_name(section_name):
     return section_name_bin
 
 
-def extract_rdata(exe_bin, *, start=None, length=None, ignore_padding=False):
+def extract_section(
+    exe_bin, section_name, *, start=None, length=None, ignore_padding=False
+):
     if not isinstance(exe_bin, bytes):
         raise TypeError
+    section_name_bin = encode_section_name(section_name)
 
     with pefile.PE(data=exe_bin, fast_load=False) as pe:
         for section in pe.sections:
-            if section.Name == b".rdata\x00\x00":
+            if section.Name == section_name_bin:
                 return section.get_data(
                     start=start, length=length, ignore_padding=ignore_padding
                 )
