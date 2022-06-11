@@ -49,7 +49,7 @@ def calc_levenshtein_distance(s, t):
     pad_s = " " + s
     pad_t = " " + t
 
-    ld = [[0] * (len(pad_t)) for i in range(len(pad_s))]
+    ld = [[0] * len(pad_t) for i in range(len(pad_s))]
     for i in range(1, len(pad_s)):
         ld[i][0] = i
     for j in range(1, len(pad_t)):
