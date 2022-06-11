@@ -43,21 +43,35 @@ def extract_strings(section_bin):
     return ext_txt_set
 
 
-def calc_levenshtein_distance(s, t):
+def calc_levenshtein_distance(s, t, *, memo=None):
     s = str(s)
     t = str(t)
-    pad_s = " " + s
-    pad_t = " " + t
+    if memo is not None and not isinstance(memo, dict):
+        raise TypeError
 
-    ld = [[0] * len(pad_t) for i in range(len(pad_s))]
-    for i in range(1, len(pad_s)):
-        ld[i][0] = i
-    for j in range(1, len(pad_t)):
-        ld[0][j] = j
-    for i in range(1, len(pad_s)):
-        for j in range(1, len(pad_t)):
-            if pad_s[i] == pad_t[j]:
-                ld[i][j] = ld[i - 1][j - 1]
-                continue
-            ld[i][j] = min(ld[i - 1][j - 1], ld[i - 1][j], ld[i][j - 1]) + 1
-    return ld[-1][-1]
+    if s == "":
+        return len(t)
+    if t == "":
+        return len(s)
+
+    if memo is None:
+        memo = {}
+    else:
+        try:
+            return int(memo[(s, t)])
+        except KeyError:
+            pass
+
+    if s[0] == t[0]:
+        ld = calc_levenshtein_distance(s[1:], t[1:], memo=memo)
+    else:
+        ld = (
+            min(
+                calc_levenshtein_distance(s, t[1:], memo=memo),
+                calc_levenshtein_distance(s[1:], t, memo=memo),
+                calc_levenshtein_distance(s[1:], t[1:], memo=memo),
+            )
+            + 1
+        )
+    memo[(s, t)] = ld
+    return ld

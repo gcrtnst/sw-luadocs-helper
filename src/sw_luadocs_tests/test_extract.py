@@ -62,6 +62,16 @@ class TestCalcLevenshteinDistance(unittest.TestCase):
         ld = sw_luadocs.extract.calc_levenshtein_distance(0, 0)
         self.assertEqual(ld, 0)
 
+    def test_validate_convert_memo(self):
+        ld = sw_luadocs.extract.calc_levenshtein_distance(
+            "a", "a", memo={("a", "a"): "0"}
+        )
+        self.assertEqual(ld, 0)
+
+    def test_validate_type_error(self):
+        with self.assertRaises(TypeError):
+            sw_luadocs.extract.calc_levenshtein_distance("", "", memo=0)
+
     def test_main(self):
         for input_s, input_t, expected_ld in [
             ("", "", 0),
@@ -83,3 +93,37 @@ class TestCalcLevenshteinDistance(unittest.TestCase):
                     input_s, input_t
                 )
                 self.assertEqual(actual_ld, expected_ld)
+
+    def test_memo(self):
+        for input_s, input_t, input_memo, expected_ld, expected_memo in [
+            ("a", "a", {("a", "a"): 10}, 10, {("a", "a"): 10}),
+            ("ab", "ab", {("b", "b"): 10}, 10, {("b", "b"): 10, ("ab", "ab"): 10}),
+            (
+                "ac",
+                "bc",
+                {("ac", "c"): -1},
+                0,
+                {("ac", "c"): -1, ("c", "bc"): 1, ("c", "c"): 0, ("ac", "bc"): 0},
+            ),
+            (
+                "ac",
+                "bc",
+                {("c", "bc"): -1},
+                0,
+                {("ac", "c"): 1, ("c", "bc"): -1, ("c", "c"): 0, ("ac", "bc"): 0},
+            ),
+            (
+                "ac",
+                "bc",
+                {("c", "c"): -1},
+                0,
+                {("ac", "c"): 0, ("c", "bc"): 0, ("c", "c"): -1, ("ac", "bc"): 0},
+            ),
+        ]:
+            with self.subTest(s=input_s, t=input_t, memo=input_memo):
+                actual_memo = input_memo.copy()
+                actual_ld = sw_luadocs.extract.calc_levenshtein_distance(
+                    input_s, input_t, memo=actual_memo
+                )
+                self.assertEqual(actual_ld, expected_ld)
+                self.assertEqual(actual_memo, expected_memo)
