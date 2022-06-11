@@ -22,7 +22,7 @@ def extract_section(
         raise TypeError
     section_name_bin = encode_section_name(section_name)
 
-    with pefile.PE(data=exe_bin, fast_load=False) as pe:
+    with pefile.PE(data=exe_bin, fast_load=True) as pe:
         for section in pe.sections:
             if section.Name == section_name_bin:
                 return section.get_data(
