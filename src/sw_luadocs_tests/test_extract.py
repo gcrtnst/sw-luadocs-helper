@@ -55,3 +55,31 @@ class TestExtractStrings(unittest.TestCase):
                     input_section_bin
                 )
                 self.assertEqual(actual_ext_txt_set, expected_ext_txt_set)
+
+
+class TestCalcLevenshteinDistance(unittest.TestCase):
+    def test_validate_convert(self):
+        ld = sw_luadocs.extract.calc_levenshtein_distance(0, 0)
+        self.assertEqual(ld, 0)
+
+    def test_main(self):
+        for input_s, input_t, expected_ld in [
+            ("", "", 0),
+            ("", "abc", 3),
+            ("abc", "", 3),
+            ("abc", "abc", 0),
+            ("ab", "abc", 1),
+            ("abc", "ab", 1),
+            ("abc", "abd", 1),
+            ("abcde", "abcde", 0),
+            ("abde", "abcde", 1),
+            ("abcde", "abde", 1),
+            ("abcde", "abdde", 1),
+            ("kitten", "sitting", 3),
+            ("Sunday", "Saturday", 3),
+        ]:
+            with self.subTest(s=input_s, t=input_t):
+                actual_ld = sw_luadocs.extract.calc_levenshtein_distance(
+                    input_s, input_t
+                )
+                self.assertEqual(actual_ld, expected_ld)
