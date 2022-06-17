@@ -61,3 +61,21 @@ def calc_levenshtein_distance(s, t):
                 continue
             ld[i][j] = min(ld[i - 1][j - 1], ld[i - 1][j], ld[i][j - 1]) + 1
     return ld[-1][-1]
+
+
+def match_single(ocr_txt, ext_txt_set):
+    ocr_txt = str(ocr_txt)
+    ext_txt_set = set(map(str, ext_txt_set))
+
+    best_ext_txt = None
+    best_ld = None
+    ext_txt_list = sorted(ext_txt_set)
+    for ext_txt in ext_txt_list:
+        ld = calc_levenshtein_distance(ocr_txt, ext_txt)
+        if best_ld is None or ld < best_ld:
+            best_ext_txt = ext_txt
+            best_ld = ld
+
+    if best_ext_txt is None or best_ld is None:
+        raise ValueError
+    return best_ext_txt, best_ld

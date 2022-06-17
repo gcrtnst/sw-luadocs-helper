@@ -83,3 +83,41 @@ class TestCalcLevenshteinDistance(unittest.TestCase):
                     input_s, input_t
                 )
                 self.assertEqual(actual_ld, expected_ld)
+
+
+class TestMatchSingle(unittest.TestCase):
+    def test_validate_convert(self):
+        best_ext_txt, best_ld = sw_luadocs.extract.match_single(1, [1, 2])
+        self.assertEqual(best_ext_txt, "1")
+        self.assertEqual(best_ld, 0)
+
+    def test_empty(self):
+        with self.assertRaises(ValueError):
+            sw_luadocs.extract.match_single("", set())
+
+    def test_main(self):
+        for (
+            input_ocr_txt,
+            input_ext_txt_set,
+            expected_best_ext_txt,
+            expected_best_ld,
+        ) in [
+            ("", {""}, "", 0),
+            ("", {"1"}, "1", 1),
+            ("", {"", "1"}, "", 0),
+            ("", ["1", "2"], "1", 1),
+            ("", ["2", "1"], "1", 1),
+            ("123", {"145", "623"}, "623", 1),
+            (
+                "Sunday",
+                {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"},
+                "Monday",
+                2,
+            ),
+        ]:
+            with self.subTest(ocr_txt=input_ocr_txt, ext_txt_set=input_ext_txt_set):
+                actual_best_ext_txt, actual_best_ld = sw_luadocs.extract.match_single(
+                    input_ocr_txt, input_ext_txt_set
+                )
+                self.assertEqual(actual_best_ext_txt, expected_best_ext_txt)
+                self.assertEqual(actual_best_ld, expected_best_ld)
