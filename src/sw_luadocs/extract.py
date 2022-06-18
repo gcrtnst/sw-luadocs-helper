@@ -97,3 +97,23 @@ def match_multiple(ocr_txt_list, ext_txt_set):
         best_ext_txt_list.append(best_ext_txt)
         best_ld_sum += best_ld
     return best_ext_txt_list, best_ld_sum
+
+
+def match_concat(ocr_txt_list, ext_txt_set, *, sep="\n"):
+    ocr_txt_list = list(map(str, ocr_txt_list))
+    ext_txt_set = set(map(str, ext_txt_set))
+
+    cat_txt_tuple_set = generate_concat_patterns(ocr_txt_list, sep=sep)
+    cat_txt_list_list = sorted(map(list, cat_txt_tuple_set))
+
+    best_ext_txt_list = None
+    best_ld = None
+    for cat_txt_list in cat_txt_list_list:
+        ext_txt_list, ld = match_multiple(cat_txt_list, ext_txt_set)
+        if best_ld is None or ld < best_ld:
+            best_ext_txt_list = ext_txt_list
+            best_ld = ld
+
+    if best_ext_txt_list is None or best_ld is None:
+        raise ValueError
+    return best_ext_txt_list, best_ld

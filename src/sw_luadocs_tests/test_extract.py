@@ -165,3 +165,48 @@ class TestMatchMultiple(unittest.TestCase):
                 )
                 self.assertEqual(actual_best_ext_txt_list, expected_best_ext_txt_list)
                 self.assertEqual(actual_best_ld_sum, expected_best_ld_sum)
+
+
+class TestMatchConcat(unittest.TestCase):
+    def test_validate_convert(self):
+        best_ext_txt_list, best_ld = sw_luadocs.extract.match_concat(
+            {1: None, 2: None}, {12: None, 34: None}, sep=5
+        )
+        self.assertEqual(best_ext_txt_list, ["12"])
+        self.assertEqual(best_ld, 1)
+
+    def test_empty(self):
+        with self.assertRaises(ValueError):
+            sw_luadocs.extract.match_concat([], {"a"})
+
+    def test_main(self):
+        for (
+            input_ocr_txt_list,
+            input_ext_txt_set,
+            input_sep,
+            expected_best_ext_txt_list,
+            expected_best_ld,
+        ) in [
+            (["a"], {"a"}, ",", ["a"], 0),
+            (["a"], {"b"}, ",", ["b"], 1),
+            (["a", "b"], {"a,b"}, ",", ["a,b"], 0),
+            (["a", "b"], {"a:b"}, ",", ["a:b"], 1),
+            (["a", "b"], {"a", "b"}, ",", ["a", "b"], 0),
+            (["a", "b"], {"a"}, ",", ["a", "a"], 1),
+            (["a", "b"], {"a", "b", "a,b"}, ",", ["a", "b"], 0),
+            (["a", "b"], {"a", "a:b"}, ",", ["a", "a"], 1),
+            (["a", "b", "c"], {"a,b", "b,c"}, ",", ["a,b", "b,c"], 2),
+        ]:
+            with self.subTest(
+                ocr_txt_list=input_ocr_txt_list,
+                ext_txt_set=input_ext_txt_set,
+                sep=input_sep,
+            ):
+                (
+                    actual_best_ext_txt_list,
+                    actual_best_ld,
+                ) = sw_luadocs.extract.match_concat(
+                    input_ocr_txt_list, input_ext_txt_set, sep=input_sep
+                )
+                self.assertEqual(actual_best_ext_txt_list, expected_best_ext_txt_list)
+                self.assertEqual(actual_best_ld, expected_best_ld)
