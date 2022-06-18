@@ -93,3 +93,35 @@ class TestMatchSingle(unittest.TestCase):
                 )
                 self.assertEqual(actual_best_ext_txt, expected_best_ext_txt)
                 self.assertEqual(actual_best_ld, expected_best_ld)
+
+
+class TestMatchMultiple(unittest.TestCase):
+    def test_validate_convert(self):
+        best_ext_txt_list, best_ld_sum = sw_luadocs.extract.match_multiple(
+            {1: None, 2: None}, {3: None, 4: None}
+        )
+        self.assertEqual(best_ext_txt_list, ["3", "3"])
+        self.assertEqual(best_ld_sum, 2)
+
+    def test_main(self):
+        for (
+            input_ocr_txt_list,
+            input_ext_txt_set,
+            expected_best_ext_txt_list,
+            expected_best_ld_sum,
+        ) in [
+            ([], {"1"}, [], 0),
+            (["123"], {"145", "623"}, ["623"], 1),
+            (["123", "785"], {"145", "623"}, ["623", "145"], 3),
+        ]:
+            with self.subTest(
+                ocr_txt_list=input_ocr_txt_list, ext_txt_set=input_ext_txt_set
+            ):
+                (
+                    actual_best_ext_txt_list,
+                    actual_best_ld_sum,
+                ) = sw_luadocs.extract.match_multiple(
+                    input_ocr_txt_list, input_ext_txt_set
+                )
+                self.assertEqual(actual_best_ext_txt_list, expected_best_ext_txt_list)
+                self.assertEqual(actual_best_ld_sum, expected_best_ld_sum)

@@ -60,3 +60,16 @@ def match_single(ocr_txt, ext_txt_set):
     if best_ext_txt is None or best_ld is None:
         raise ValueError
     return best_ext_txt, best_ld
+
+
+def match_multiple(ocr_txt_list, ext_txt_set):
+    ocr_txt_list = list(map(str, ocr_txt_list))
+    ext_txt_set = set(map(str, ext_txt_set))
+
+    best_ext_txt_list = []
+    best_ld_sum = 0
+    for ocr_txt in ocr_txt_list:
+        best_ext_txt, best_ld = match_single(ocr_txt, ext_txt_set)
+        best_ext_txt_list.append(best_ext_txt)
+        best_ld_sum += best_ld
+    return best_ext_txt_list, best_ld_sum
