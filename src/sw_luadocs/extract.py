@@ -44,12 +44,6 @@ def extract_strings(section_bin):
     return ext_txt_set
 
 
-def calc_levenshtein_distance(s, t):
-    s = str(s)
-    t = str(t)
-    return Levenshtein.distance(s, t)
-
-
 def match_single(ocr_txt, ext_txt_set):
     ocr_txt = str(ocr_txt)
     ext_txt_set = set(map(str, ext_txt_set))
@@ -58,7 +52,7 @@ def match_single(ocr_txt, ext_txt_set):
     best_ld = None
     ext_txt_list = sorted(ext_txt_set)
     for ext_txt in ext_txt_list:
-        ld = calc_levenshtein_distance(ocr_txt, ext_txt)
+        ld = Levenshtein.distance(ocr_txt, ext_txt)
         if best_ld is None or ld < best_ld:
             best_ext_txt = ext_txt
             best_ld = ld
