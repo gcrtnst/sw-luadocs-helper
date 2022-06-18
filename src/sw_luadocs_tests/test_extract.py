@@ -57,6 +57,46 @@ class TestExtractStrings(unittest.TestCase):
                 self.assertEqual(actual_ext_txt_set, expected_ext_txt_set)
 
 
+class TestGenerateConcatPatterns(unittest.TestCase):
+    def test_validate_convert(self):
+        cat_txt_tuple_set = sw_luadocs.extract.generate_concat_patterns(
+            {1: None, 2: None}, sep=3
+        )
+        self.assertEqual(cat_txt_tuple_set, {("1", "2"), ("132",)})
+
+    def test_main(self):
+        for input_ocr_txt_list, input_sep, expected_cat_txt_tuple_set in [
+            ([], ",", set()),
+            (["a"], ",", {("a",)}),
+            (["a", "b"], ",", {("a", "b"), ("a,b",)}),
+            (["a", "b"], ":", {("a", "b"), ("a:b",)}),
+            (
+                ["a", "b", "c"],
+                ",",
+                {("a", "b", "c"), ("a", "b,c"), ("a,b", "c"), ("a,b,c",)},
+            ),
+            (
+                ["a", "b", "c", "d"],
+                ",",
+                {
+                    ("a", "b", "c", "d"),
+                    ("a", "b", "c,d"),
+                    ("a", "b,c", "d"),
+                    ("a", "b,c,d"),
+                    ("a,b", "c", "d"),
+                    ("a,b", "c,d"),
+                    ("a,b,c", "d"),
+                    ("a,b,c,d",),
+                },
+            ),
+        ]:
+            with self.subTest(ocr_txt_list=input_ocr_txt_list, sep=input_sep):
+                actual_cat_txt_tuple_set = sw_luadocs.extract.generate_concat_patterns(
+                    input_ocr_txt_list, sep=input_sep
+                )
+                self.assertEqual(actual_cat_txt_tuple_set, expected_cat_txt_tuple_set)
+
+
 class TestMatchSingle(unittest.TestCase):
     def test_validate_convert(self):
         best_ext_txt, best_ld = sw_luadocs.extract.match_single(1, [1, 2])

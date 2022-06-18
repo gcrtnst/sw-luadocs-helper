@@ -44,6 +44,30 @@ def extract_strings(section_bin):
     return ext_txt_set
 
 
+def generate_concat_patterns(ocr_txt_list, *, sep="\n"):
+    ocr_txt_list = list(map(str, ocr_txt_list))
+    sep = str(sep)
+
+    if len(ocr_txt_list) <= 0:
+        return set()
+
+    cat_txt_tuple_set = set()
+    for pattern in range(1 << (len(ocr_txt_list) - 1)):
+        cat_txt_list = []
+        start_idx = 0
+        for idx in range(1, len(ocr_txt_list)):
+            if pattern & (1 << (idx - 1)) == 0:
+                cat_txt = sep.join(ocr_txt_list[start_idx:idx])
+                cat_txt_list.append(cat_txt)
+                start_idx = idx
+        cat_txt = sep.join(ocr_txt_list[start_idx:])
+        cat_txt_list.append(cat_txt)
+
+        cat_txt_tuple = tuple(cat_txt_list)
+        cat_txt_tuple_set.add(cat_txt_tuple)
+    return cat_txt_tuple_set
+
+
 def match_single(ocr_txt, ext_txt_set):
     ocr_txt = str(ocr_txt)
     ext_txt_set = set(map(str, ext_txt_set))
