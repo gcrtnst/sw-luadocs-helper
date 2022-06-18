@@ -1,3 +1,4 @@
+import Levenshtein
 import pefile
 import re
 
@@ -46,21 +47,7 @@ def extract_strings(section_bin):
 def calc_levenshtein_distance(s, t):
     s = str(s)
     t = str(t)
-    pad_s = " " + s
-    pad_t = " " + t
-
-    ld = [[0] * len(pad_t) for i in range(len(pad_s))]
-    for i in range(1, len(pad_s)):
-        ld[i][0] = i
-    for j in range(1, len(pad_t)):
-        ld[0][j] = j
-    for i in range(1, len(pad_s)):
-        for j in range(1, len(pad_t)):
-            if pad_s[i] == pad_t[j]:
-                ld[i][j] = ld[i - 1][j - 1]
-                continue
-            ld[i][j] = min(ld[i - 1][j - 1], ld[i - 1][j], ld[i][j - 1]) + 1
-    return ld[-1][-1]
+    return Levenshtein.distance(s, t)
 
 
 def match_single(ocr_txt, ext_txt_set):
