@@ -49,7 +49,7 @@ def generate_concat_patterns(ocr_txt_list, *, sep="\n"):
     sep = str(sep)
 
     if len(ocr_txt_list) <= 0:
-        return set()
+        return []
 
     cat_txt_tuple_set = set()
     for pattern in range(1 << (len(ocr_txt_list) - 1)):
@@ -65,7 +65,9 @@ def generate_concat_patterns(ocr_txt_list, *, sep="\n"):
 
         cat_txt_tuple = tuple(cat_txt_list)
         cat_txt_tuple_set.add(cat_txt_tuple)
-    return cat_txt_tuple_set
+
+    cat_txt_list_list = sorted(map(list, cat_txt_tuple_set))
+    return cat_txt_list_list
 
 
 def match_single(ocr_txt, ext_txt_set):
@@ -103,11 +105,9 @@ def match_concat(ocr_txt_list, ext_txt_set, *, sep="\n"):
     ocr_txt_list = list(map(str, ocr_txt_list))
     ext_txt_set = set(map(str, ext_txt_set))
 
-    cat_txt_tuple_set = generate_concat_patterns(ocr_txt_list, sep=sep)
-    cat_txt_list_list = sorted(map(list, cat_txt_tuple_set))
-
     best_ext_txt_list = None
     best_ld = None
+    cat_txt_list_list = generate_concat_patterns(ocr_txt_list, sep=sep)
     for cat_txt_list in cat_txt_list_list:
         ext_txt_list, ld = match_multiple(cat_txt_list, ext_txt_set)
         if best_ld is None or ld < best_ld:

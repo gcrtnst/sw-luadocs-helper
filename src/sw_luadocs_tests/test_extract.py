@@ -62,32 +62,32 @@ class TestGenerateConcatPatterns(unittest.TestCase):
         cat_txt_tuple_set = sw_luadocs.extract.generate_concat_patterns(
             {1: None, 2: None}, sep=3
         )
-        self.assertEqual(cat_txt_tuple_set, {("1", "2"), ("132",)})
+        self.assertEqual(cat_txt_tuple_set, [["1", "2"], ["132"]])
 
     def test_main(self):
         for input_ocr_txt_list, input_sep, expected_cat_txt_tuple_set in [
-            ([], ",", set()),
-            (["a"], ",", {("a",)}),
-            (["a", "b"], ",", {("a", "b"), ("a,b",)}),
-            (["a", "b"], ":", {("a", "b"), ("a:b",)}),
+            ([], ",", []),
+            (["a"], ",", [["a"]]),
+            (["a", "b"], ",", [["a", "b"], ["a,b"]]),
+            (["a", "b"], ":", [["a", "b"], ["a:b"]]),
             (
                 ["a", "b", "c"],
                 ",",
-                {("a", "b", "c"), ("a", "b,c"), ("a,b", "c"), ("a,b,c",)},
+                [["a", "b", "c"], ["a", "b,c"], ["a,b", "c"], ["a,b,c"]],
             ),
             (
                 ["a", "b", "c", "d"],
                 ",",
-                {
-                    ("a", "b", "c", "d"),
-                    ("a", "b", "c,d"),
-                    ("a", "b,c", "d"),
-                    ("a", "b,c,d"),
-                    ("a,b", "c", "d"),
-                    ("a,b", "c,d"),
-                    ("a,b,c", "d"),
-                    ("a,b,c,d",),
-                },
+                [
+                    ["a", "b", "c", "d"],
+                    ["a", "b", "c,d"],
+                    ["a", "b,c", "d"],
+                    ["a", "b,c,d"],
+                    ["a,b", "c", "d"],
+                    ["a,b", "c,d"],
+                    ["a,b,c", "d"],
+                    ["a,b,c,d"],
+                ],
             ),
         ]:
             with self.subTest(ocr_txt_list=input_ocr_txt_list, sep=input_sep):
