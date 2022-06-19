@@ -1,6 +1,5 @@
 import contextlib
 import dataclasses
-import itertools
 import typing
 
 
