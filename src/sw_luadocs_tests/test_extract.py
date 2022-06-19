@@ -266,3 +266,98 @@ class TestMatchFlatDocEach(unittest.TestCase):
                 )
                 self.assertEqual(actual_ext_flatdoc, expected_ext_flatdoc)
                 self.assertEqual(actual_ld, expected_ld)
+
+
+class TestMatchFlatDocConcat(unittest.TestCase):
+    def test_validate_value_error(self):
+        with self.assertRaises(ValueError):
+            sw_luadocs.extract.match_flatdoc_concat(
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="a", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b", kind="body"),
+                ],
+                {"c"},
+            )
+
+    def test_main(self):
+        for (
+            input_ocr_flatdoc,
+            input_ext_txt_set,
+            input_sep,
+            expected_ext_flatdoc,
+            expected_ld,
+        ) in [
+            ([], {"a"}, ",", [], 0),
+            (
+                [sw_luadocs.flatdoc.FlatElem(txt="a", kind="head")],
+                {"a"},
+                ",",
+                [sw_luadocs.flatdoc.FlatElem(txt="a", kind="head")],
+                0,
+            ),
+            (
+                [sw_luadocs.flatdoc.FlatElem(txt="a", kind="head")],
+                {"b"},
+                ",",
+                [sw_luadocs.flatdoc.FlatElem(txt="b", kind="head")],
+                1,
+            ),
+            (
+                [sw_luadocs.flatdoc.FlatElem(txt="a", kind="body")],
+                {"b"},
+                ",",
+                [sw_luadocs.flatdoc.FlatElem(txt="b", kind="body")],
+                1,
+            ),
+            (
+                [sw_luadocs.flatdoc.FlatElem(txt="a", kind="code")],
+                {"b"},
+                ",",
+                [sw_luadocs.flatdoc.FlatElem(txt="b", kind="code")],
+                1,
+            ),
+            (
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="a", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b", kind="head"),
+                ],
+                {"a,b"},
+                ",",
+                [sw_luadocs.flatdoc.FlatElem(txt="a,b", kind="head")],
+                0,
+            ),
+            (
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="a", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b", kind="head"),
+                ],
+                {"a,b"},
+                ":",
+                [sw_luadocs.flatdoc.FlatElem(txt="a,b", kind="head")],
+                1,
+            ),
+            (
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="a", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c", kind="body"),
+                ],
+                {"a,b", "b,c"},
+                ",",
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="a,b", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b,c", kind="body"),
+                ],
+                2,
+            ),
+        ]:
+            with self.subTest(
+                ocr_flatdoc=input_ocr_flatdoc,
+                ext_txt_set=input_ext_txt_set,
+                sep=input_sep,
+            ):
+                actual_ext_flatdoc, actual_ld = sw_luadocs.extract.match_flatdoc_concat(
+                    input_ocr_flatdoc, input_ext_txt_set, sep=input_sep
+                )
+                self.assertEqual(actual_ext_flatdoc, expected_ext_flatdoc)
+                self.assertEqual(actual_ld, expected_ld)

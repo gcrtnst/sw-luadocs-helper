@@ -143,3 +143,15 @@ def match_flatdoc_each(ocr_flatdoc, ext_txt_set):
         ext_flatdoc.append(ext_flatelem)
         ld_sum += ld
     return ext_flatdoc, ld_sum
+
+
+def match_flatdoc_concat(ocr_flatdoc, ext_txt_set, *, sep="\n"):
+    ocr_flatdoc = dot_flatdoc.as_flatdoc_monokind(ocr_flatdoc)
+
+    kind = ocr_flatdoc[0].kind if len(ocr_flatdoc) > 0 else None
+    ocr_txt_list = [ocr_flatelem.txt for ocr_flatelem in ocr_flatdoc]
+    ext_txt_list, ld = match_txt_concat(ocr_txt_list, ext_txt_set, sep=sep)
+    ext_flatdoc = [
+        dot_flatdoc.FlatElem(txt=ext_txt, kind=kind) for ext_txt in ext_txt_list
+    ]
+    return ext_flatdoc, ld
