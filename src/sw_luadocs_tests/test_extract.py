@@ -446,3 +446,199 @@ class TestMatchFlatDocMonoKind(unittest.TestCase):
                 )
                 self.assertEqual(actual_ext_flatdoc, expected_ext_flatdoc)
                 self.assertEqual(actual_ld, expected_ld)
+
+
+class TestMatchFlatDoc(unittest.TestCase):
+    def test_main(self):
+        for (
+            input_ocr_flatdoc,
+            input_ext_txt_set,
+            input_body_sep,
+            input_code_sep,
+            expected_ext_flatdoc,
+            expected_ld,
+        ) in [
+            ([], {"a"}, ",", ",", [], 0),
+            (
+                [sw_luadocs.flatdoc.FlatElem(txt="a", kind="head")],
+                {"a"},
+                ",",
+                ",",
+                [sw_luadocs.flatdoc.FlatElem(txt="a", kind="head")],
+                0,
+            ),
+            (
+                [sw_luadocs.flatdoc.FlatElem(txt="b", kind="head")],
+                {"a"},
+                ",",
+                ",",
+                [sw_luadocs.flatdoc.FlatElem(txt="a", kind="head")],
+                1,
+            ),
+            (
+                [sw_luadocs.flatdoc.FlatElem(txt="a", kind="body")],
+                {"a"},
+                ",",
+                ",",
+                [sw_luadocs.flatdoc.FlatElem(txt="a", kind="body")],
+                0,
+            ),
+            (
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="a", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b", kind="head"),
+                ],
+                {"a", "b", "a,b"},
+                ",",
+                ",",
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="a", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b", kind="head"),
+                ],
+                0,
+            ),
+            (
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="a", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b", kind="body"),
+                ],
+                {"a,b"},
+                ",",
+                ",",
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="a,b", kind="body"),
+                ],
+                0,
+            ),
+            (
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="a", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b", kind="body"),
+                ],
+                {"a:b"},
+                ":",
+                ",",
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="a:b", kind="body"),
+                ],
+                0,
+            ),
+            (
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="a", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b", kind="code"),
+                ],
+                {"a,b"},
+                ",",
+                ",",
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="a,b", kind="code"),
+                ],
+                0,
+            ),
+            (
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="a", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b", kind="code"),
+                ],
+                {"a:b"},
+                ",",
+                ":",
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="a:b", kind="code"),
+                ],
+                0,
+            ),
+            (
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="a", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c", kind="code"),
+                ],
+                {"a", "b", "c"},
+                ",",
+                ",",
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="a", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c", kind="code"),
+                ],
+                0,
+            ),
+            (
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="a1", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="a2", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b1", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b2", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c1", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c2", kind="code"),
+                ],
+                {"a1", "a2", "b1", "b2", "c1", "c2"},
+                ",",
+                ",",
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="a1", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="a2", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b1", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b2", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c1", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c2", kind="code"),
+                ],
+                0,
+            ),
+            (
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="a1", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="a2", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b1", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b2", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c1", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c2", kind="code"),
+                ],
+                {"a1,a2", "b1,b2", "c1,c2"},
+                ",",
+                ",",
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="a1,a2", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="a1,a2", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b1,b2", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c1,c2", kind="code"),
+                ],
+                6,
+            ),
+            (
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="a1", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="a2", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b1", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b2", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c1", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c2", kind="code"),
+                ],
+                {"a1!", "a2!", "b1,b2!", "c1,c2!"},
+                ",",
+                ",",
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="a1!", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="a2!", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b1,b2!", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c1,c2!", kind="code"),
+                ],
+                4,
+            ),
+        ]:
+            with self.subTest(
+                ocr_flatdoc=input_ocr_flatdoc,
+                ext_txt_set=input_ext_txt_set,
+                body_sep=input_body_sep,
+                code_sep=input_code_sep,
+            ):
+                actual_ext_flatdoc, actual_ld = sw_luadocs.extract.match_flatdoc(
+                    input_ocr_flatdoc,
+                    input_ext_txt_set,
+                    body_sep=input_body_sep,
+                    code_sep=input_code_sep,
+                )
+                self.assertEqual(actual_ext_flatdoc, expected_ext_flatdoc)
+                self.assertEqual(actual_ld, expected_ld)

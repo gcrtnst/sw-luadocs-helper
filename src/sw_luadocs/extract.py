@@ -169,3 +169,19 @@ def match_flatdoc_monokind(ocr_flatdoc, ext_txt_set, *, body_sep="\n", code_sep=
     if ocr_flatdoc[0].kind == "code":
         return match_flatdoc_concat(ocr_flatdoc, ext_txt_set, sep=code_sep)
     raise RuntimeError
+
+
+def match_flatdoc(ocr_flatdoc, ext_txt_set, *, body_sep="\n", code_sep="\n"):
+    ext_txt_set = set(map(str, ext_txt_set))
+    body_sep = str(body_sep)
+    code_sep = str(code_sep)
+
+    ext_flatdoc = []
+    ld_sum = 0
+    for ocr_flatdoc_monokind in dot_flatdoc.split_flatdoc_by_kind(ocr_flatdoc):
+        ext_flatdoc_monokind, ld = match_flatdoc_monokind(
+            ocr_flatdoc_monokind, ext_txt_set, body_sep=body_sep, code_sep=code_sep
+        )
+        ext_flatdoc.extend(ext_flatdoc_monokind)
+        ld_sum += ld
+    return ext_flatdoc, ld_sum
