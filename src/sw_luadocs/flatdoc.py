@@ -32,6 +32,18 @@ def as_flatdoc(v):
     return flatdoc
 
 
+def as_flatdoc_monokind(v, *, kind=None):
+    flatdoc = as_flatdoc(v)
+    kind = as_kind(kind) if kind is not None else None
+
+    if kind is None and len(flatdoc) > 0:
+        kind = flatdoc[0].kind
+    for flatelem in flatdoc:
+        if flatelem.kind != kind:
+            raise ValueError
+    return flatdoc
+
+
 class MdlikeParser:
     _linesep = "\n"
     _headseq = "# "
