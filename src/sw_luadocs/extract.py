@@ -118,7 +118,7 @@ def match_txt_concat(ocr_txt_list, ext_txt_set, *, sep="\n"):
             best_ld = ld
 
     if best_ext_txt_list is None or best_ld is None:
-        raise ValueError
+        return [], 0
     return best_ext_txt_list, best_ld
 
 

@@ -179,10 +179,6 @@ class TestMatchTxtConcat(unittest.TestCase):
         self.assertEqual(best_ext_txt_list, ["12"])
         self.assertEqual(best_ld, 1)
 
-    def test_empty(self):
-        with self.assertRaises(ValueError):
-            sw_luadocs.extract.match_txt_concat([], {"a"})
-
     def test_main(self):
         for (
             input_ocr_txt_list,
@@ -191,6 +187,7 @@ class TestMatchTxtConcat(unittest.TestCase):
             expected_best_ext_txt_list,
             expected_best_ld,
         ) in [
+            ([], {"a"}, ",", [], 0),
             (["a"], {"a"}, ",", ["a"], 0),
             (["a"], {"b"}, ",", ["b"], 1),
             (["a", "b"], {"a,b"}, ",", ["a,b"], 0),
