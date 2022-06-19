@@ -1,6 +1,9 @@
+import dataclasses
 import Levenshtein
 import pefile
 import re
+
+from . import flatdoc as dot_flatdoc
 
 
 def encode_section_name(section_name):
@@ -117,3 +120,13 @@ def match_txt_concat(ocr_txt_list, ext_txt_set, *, sep="\n"):
     if best_ext_txt_list is None or best_ld is None:
         raise ValueError
     return best_ext_txt_list, best_ld
+
+
+def match_flatelem(ocr_flatelem, ext_txt_set):
+    if not isinstance(ocr_flatelem, dot_flatdoc.FlatElem):
+        raise TypeError
+
+    ocr_txt = ocr_flatelem.txt
+    ext_txt, ld = match_txt_single(ocr_txt, ext_txt_set)
+    ext_flatelem = dataclasses.replace(ocr_flatelem, txt=ext_txt)
+    return ext_flatelem, ld

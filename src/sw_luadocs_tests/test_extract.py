@@ -1,4 +1,5 @@
 import sw_luadocs.extract
+import sw_luadocs.flatdoc
 import unittest
 
 
@@ -213,3 +214,16 @@ class TestMatchTxtConcat(unittest.TestCase):
                 )
                 self.assertEqual(actual_best_ext_txt_list, expected_best_ext_txt_list)
                 self.assertEqual(actual_best_ld, expected_best_ld)
+
+
+class TestMatchFlatElem(unittest.TestCase):
+    def test_validate_type_error(self):
+        with self.assertRaises(TypeError):
+            sw_luadocs.extract.match_flatelem("a", {"a"})
+
+    def test_main(self):
+        flatelem, ld = sw_luadocs.extract.match_flatelem(
+            sw_luadocs.flatdoc.FlatElem(txt="", kind="code"), {"1"}
+        )
+        self.assertEqual(flatelem, sw_luadocs.flatdoc.FlatElem(txt="1", kind="code"))
+        self.assertEqual(ld, 1)
