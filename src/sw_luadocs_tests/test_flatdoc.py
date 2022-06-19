@@ -11,7 +11,7 @@ class TestAsKind(unittest.TestCase):
 
     def test_validate_value_pass(self):
         with self.assertRaises(ValueError):
-            sw_luadocs.flatdoc.as_kind("invliad")
+            sw_luadocs.flatdoc.as_kind("invalid")
 
 
 class TestDocumentElemPostInit(unittest.TestCase):
