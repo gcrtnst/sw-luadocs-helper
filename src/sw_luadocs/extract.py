@@ -155,3 +155,17 @@ def match_flatdoc_concat(ocr_flatdoc, ext_txt_set, *, sep="\n"):
         dot_flatdoc.FlatElem(txt=ext_txt, kind=kind) for ext_txt in ext_txt_list
     ]
     return ext_flatdoc, ld
+
+
+def match_flatdoc_monokind(ocr_flatdoc, ext_txt_set, *, body_sep="\n", code_sep="\n"):
+    ocr_flatdoc = dot_flatdoc.as_flatdoc_monokind(ocr_flatdoc)
+
+    if len(ocr_flatdoc) <= 0:
+        return [], 0
+    if ocr_flatdoc[0].kind == "head":
+        return match_flatdoc_each(ocr_flatdoc, ext_txt_set)
+    if ocr_flatdoc[0].kind == "body":
+        return match_flatdoc_concat(ocr_flatdoc, ext_txt_set, sep=body_sep)
+    if ocr_flatdoc[0].kind == "code":
+        return match_flatdoc_concat(ocr_flatdoc, ext_txt_set, sep=code_sep)
+    raise RuntimeError
