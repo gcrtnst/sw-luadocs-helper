@@ -152,6 +152,70 @@ class TestAsFlatDocMonoKind(unittest.TestCase):
                 self.assertEqual(flatdoc, v)
 
 
+class TestSplitFlatDocByKind(unittest.TestCase):
+    def test_validate_type_error(self):
+        with self.assertRaises(TypeError):
+            sw_luadocs.flatdoc.split_flatdoc_by_kind([None])
+
+    def test_main(self):
+        for input_flatdoc, expected_flatdoc_monokind_list in [
+            ([], []),
+            (
+                [sw_luadocs.flatdoc.FlatElem(txt="a", kind="head")],
+                [[sw_luadocs.flatdoc.FlatElem(txt="a", kind="head")]],
+            ),
+            (
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="a", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c", kind="code"),
+                ],
+                [
+                    [sw_luadocs.flatdoc.FlatElem(txt="a", kind="head")],
+                    [sw_luadocs.flatdoc.FlatElem(txt="b", kind="body")],
+                    [sw_luadocs.flatdoc.FlatElem(txt="c", kind="code")],
+                ],
+            ),
+            (
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="1", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="2", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="3", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="4", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="5", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="6", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="7", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="8", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="9", kind="code"),
+                ],
+                [
+                    [
+                        sw_luadocs.flatdoc.FlatElem(txt="1", kind="head"),
+                        sw_luadocs.flatdoc.FlatElem(txt="2", kind="head"),
+                    ],
+                    [
+                        sw_luadocs.flatdoc.FlatElem(txt="3", kind="body"),
+                        sw_luadocs.flatdoc.FlatElem(txt="4", kind="body"),
+                        sw_luadocs.flatdoc.FlatElem(txt="5", kind="body"),
+                    ],
+                    [
+                        sw_luadocs.flatdoc.FlatElem(txt="6", kind="code"),
+                        sw_luadocs.flatdoc.FlatElem(txt="7", kind="code"),
+                        sw_luadocs.flatdoc.FlatElem(txt="8", kind="code"),
+                        sw_luadocs.flatdoc.FlatElem(txt="9", kind="code"),
+                    ],
+                ],
+            ),
+        ]:
+            with self.subTest(flatdoc=input_flatdoc):
+                actual_flatdoc_monokind_list = sw_luadocs.flatdoc.split_flatdoc_by_kind(
+                    input_flatdoc
+                )
+                self.assertEqual(
+                    actual_flatdoc_monokind_list, expected_flatdoc_monokind_list
+                )
+
+
 class TestMdlikeParserInit(unittest.TestCase):
     def test_main(self):
         p = sw_luadocs.flatdoc.MdlikeParser(0)
