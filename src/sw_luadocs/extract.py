@@ -70,7 +70,7 @@ def generate_concat_patterns(ocr_txt_list, *, sep="\n"):
     return cat_txt_list_list
 
 
-def match_single(ocr_txt, ext_txt_set):
+def match_txt_single(ocr_txt, ext_txt_set):
     ocr_txt = str(ocr_txt)
     ext_txt_set = set(map(str, ext_txt_set))
 
@@ -88,20 +88,20 @@ def match_single(ocr_txt, ext_txt_set):
     return best_ext_txt, best_ld
 
 
-def match_multiple(ocr_txt_list, ext_txt_set):
+def match_txt_multiple(ocr_txt_list, ext_txt_set):
     ocr_txt_list = list(map(str, ocr_txt_list))
     ext_txt_set = set(map(str, ext_txt_set))
 
     best_ext_txt_list = []
     best_ld_sum = 0
     for ocr_txt in ocr_txt_list:
-        best_ext_txt, best_ld = match_single(ocr_txt, ext_txt_set)
+        best_ext_txt, best_ld = match_txt_single(ocr_txt, ext_txt_set)
         best_ext_txt_list.append(best_ext_txt)
         best_ld_sum += best_ld
     return best_ext_txt_list, best_ld_sum
 
 
-def match_concat(ocr_txt_list, ext_txt_set, *, sep="\n"):
+def match_txt_concat(ocr_txt_list, ext_txt_set, *, sep="\n"):
     ocr_txt_list = list(map(str, ocr_txt_list))
     ext_txt_set = set(map(str, ext_txt_set))
 
@@ -109,7 +109,7 @@ def match_concat(ocr_txt_list, ext_txt_set, *, sep="\n"):
     best_ld = None
     cat_txt_list_list = generate_concat_patterns(ocr_txt_list, sep=sep)
     for cat_txt_list in cat_txt_list_list:
-        ext_txt_list, ld = match_multiple(cat_txt_list, ext_txt_set)
+        ext_txt_list, ld = match_txt_multiple(cat_txt_list, ext_txt_set)
         if best_ld is None or ld < best_ld:
             best_ext_txt_list = ext_txt_list
             best_ld = ld
