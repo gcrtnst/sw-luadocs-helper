@@ -227,3 +227,45 @@ class TestMatchFlatElem(unittest.TestCase):
         )
         self.assertEqual(flatelem, sw_luadocs.flatdoc.FlatElem(txt="1", kind="code"))
         self.assertEqual(ld, 1)
+
+
+class TestMatchFlatDocEach(unittest.TestCase):
+    def test_validate_type_error(self):
+        with self.assertRaises(TypeError):
+            sw_luadocs.extract.match_flatdoc_each("a", {"a"})
+
+    def test_main(self):
+        for (
+            input_ocr_flatdoc,
+            input_ext_txt_set,
+            expected_ext_flatdoc,
+            expected_ld,
+        ) in [
+            ([], {"1"}, [], 0),
+            (
+                [sw_luadocs.flatdoc.FlatElem(txt="123", kind="head")],
+                {"145", "623"},
+                [sw_luadocs.flatdoc.FlatElem(txt="623", kind="head")],
+                1,
+            ),
+            (
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="123", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="785", kind="code"),
+                ],
+                {"145", "623"},
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="623", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="145", kind="code"),
+                ],
+                3,
+            ),
+        ]:
+            with self.subTest(
+                ocr_flatdoc=input_ocr_flatdoc, ext_txt_set=input_ext_txt_set
+            ):
+                actual_ext_flatdoc, actual_ld = sw_luadocs.extract.match_flatdoc_each(
+                    input_ocr_flatdoc, input_ext_txt_set
+                )
+                self.assertEqual(actual_ext_flatdoc, expected_ext_flatdoc)
+                self.assertEqual(actual_ld, expected_ld)

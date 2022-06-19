@@ -130,3 +130,16 @@ def match_flatelem(ocr_flatelem, ext_txt_set):
     ext_txt, ld = match_txt_single(ocr_txt, ext_txt_set)
     ext_flatelem = dataclasses.replace(ocr_flatelem, txt=ext_txt)
     return ext_flatelem, ld
+
+
+def match_flatdoc_each(ocr_flatdoc, ext_txt_set):
+    ocr_flatdoc = dot_flatdoc.as_flatdoc(ocr_flatdoc)
+    ext_txt_set = set(map(str, ext_txt_set))
+
+    ext_flatdoc = []
+    ld_sum = 0
+    for ocr_flatelem in ocr_flatdoc:
+        ext_flatelem, ld = match_flatelem(ocr_flatelem, ext_txt_set)
+        ext_flatdoc.append(ext_flatelem)
+        ld_sum += ld
+    return ext_flatdoc, ld_sum
