@@ -32,3 +32,6 @@ code_line_h = 16.5
 bg_thresh_r = 40
 bg_thresh_g = 40
 bg_thresh_b = 40
+
+[extract]
+section_name = ".rdata"
