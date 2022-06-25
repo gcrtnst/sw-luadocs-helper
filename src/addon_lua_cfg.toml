@@ -23,8 +23,6 @@ activate_sleep_secs = 5
 scroll_sleep_secs = 3
 
 [recognize]
-tesseract_lang = "eng"
-tesseract_config = ["--psm", "6", "-c", "tessedit_char_whitelist= !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~"]
 head_thresh_s = 9
 body_line_h = 21
 code_thresh_x = 9

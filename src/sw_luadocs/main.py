@@ -50,8 +50,15 @@ def recognize_main(ns):
     capture_img = dot_image.imread(ns.capture_file)
     flatdoc = dot_recognize.recognize(
         capture_img,
-        tesseract_lang=recognize_cfg["tesseract_lang"],
-        tesseract_config=shlex.join(recognize_cfg["tesseract_config"]),
+        tesseract_lang="eng",
+        tesseract_config=shlex.join(
+            [
+                "--psm",
+                "6",
+                "-c",
+                "tessedit_char_whitelist= !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~",
+            ]
+        ),
         head_thresh_s=recognize_cfg["head_thresh_s"],
         body_line_h=recognize_cfg["body_line_h"],
         code_thresh_x=recognize_cfg["code_thresh_x"],
