@@ -203,7 +203,7 @@ def format_mdlike(flatdoc):
             block_list.append("# " + flatelem.txt + "\n")
             continue
         if flatelem.kind == "body":
-            block_list.append(flatelem.txt.replace("\n", "\\\n") + "\n")
+            block_list.append(flatelem.txt.replace("\n", "\\\n") + "\\\n")
             continue
         if flatelem.kind == "code":
             block_list.append("```\n" + flatelem.txt + "\n```\n")
