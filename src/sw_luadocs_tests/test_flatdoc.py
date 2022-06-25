@@ -474,10 +474,22 @@ class TestMdlikeParserParseBody(unittest.TestCase):
                 sw_luadocs.flatdoc.FlatElem(txt="a\nb\nc", kind="body"),
             ),
             (
+                ["a\\", "b\\", "c\\"],
+                0,
+                3,
+                sw_luadocs.flatdoc.FlatElem(txt="a\nb\nc", kind="body"),
+            ),
+            (
                 ["a", "b", "c", "", "d", "e", "f"],
                 0,
                 3,
                 sw_luadocs.flatdoc.FlatElem(txt="a\nb\nc", kind="body"),
+            ),
+            (
+                ["a\\", "b\\", "c\\", "\\", "d\\", "e\\", "f"],
+                0,
+                7,
+                sw_luadocs.flatdoc.FlatElem(txt="a\nb\nc\n\nd\ne\nf", kind="body"),
             ),
             (
                 ["a", "b", "c", "# d", "e", "f"],
@@ -692,6 +704,7 @@ class TestFormatMdlike(unittest.TestCase):
             ([sw_luadocs.flatdoc.FlatElem(txt="a", kind="head")], "# a\n"),
             ([sw_luadocs.flatdoc.FlatElem(txt="a", kind="body")], "a\n"),
             ([sw_luadocs.flatdoc.FlatElem(txt="a", kind="code")], "```\na\n```\n"),
+            ([sw_luadocs.flatdoc.FlatElem(txt="a\nb", kind="body")], "a\\\nb\n"),
             (
                 [
                     sw_luadocs.flatdoc.FlatElem(txt="a", kind="head"),
@@ -715,6 +728,14 @@ class TestFormatMdlike(unittest.TestCase):
                     sw_luadocs.flatdoc.FlatElem(txt="c", kind="code"),
                 ],
                 "```\na\n```\n\n```\nb\n```\n\n```\nc\n```\n",
+            ),
+            (
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="a\nb", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c\nd", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="e\nf", kind="body"),
+                ],
+                "a\\\nb\n\nc\\\nd\n\ne\\\nf\n",
             ),
             (
                 [
@@ -747,11 +768,11 @@ flatdoc = sw_luadocs.flatdoc.parse_mdlike("mdlike string")\
                 """\
 # mdlike
 
-mdlike is a simple markup language similar to Markdown. Its very simple specification
+mdlike is a simple markup language similar to Markdown. Its very simple specification\\
 makes it easy to generate or parse mdlike format documents programmatically.
 
-Since mdlike does not support the complex syntax of Markdown, including inline HTML, it
-is not recommended to parse documents in mdlike format with the Markdown parser, and
+Since mdlike does not support the complex syntax of Markdown, including inline HTML, it\\
+is not recommended to parse documents in mdlike format with the Markdown parser, and\\
 vice versa.
 
 ```

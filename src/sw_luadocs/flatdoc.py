@@ -145,6 +145,10 @@ class MdlikeParser:
                 line = self.pop()
                 line_list.append(line)
 
+            for i in range(len(line_list)):
+                if line_list[i][-1] == "\\":
+                    line_list[i] = line_list[i][:-1]
+
             txt = self._linesep.join(line_list)
             return FlatElem(txt=txt, kind="body")
 
@@ -199,7 +203,7 @@ def format_mdlike(flatdoc):
             block_list.append("# " + flatelem.txt + "\n")
             continue
         if flatelem.kind == "body":
-            block_list.append(flatelem.txt + "\n")
+            block_list.append(flatelem.txt.replace("\n", "\\\n") + "\n")
             continue
         if flatelem.kind == "code":
             block_list.append("```\n" + flatelem.txt + "\n```\n")
