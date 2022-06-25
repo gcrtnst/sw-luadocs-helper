@@ -27,6 +27,7 @@ tesseract_lang = "eng"
 tesseract_config = ["--psm", "6", "-c", "tessedit_char_whitelist= !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~"]
 head_thresh_s = 9
 body_line_h = 21
+code_thresh_x = 9
 code_base_x = 14
 code_indent_w = 38
 code_line_h = 16.5

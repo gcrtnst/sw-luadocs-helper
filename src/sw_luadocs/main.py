@@ -54,6 +54,7 @@ def recognize_main(ns):
         tesseract_config=shlex.join(recognize_cfg["tesseract_config"]),
         head_thresh_s=recognize_cfg["head_thresh_s"],
         body_line_h=recognize_cfg["body_line_h"],
+        code_thresh_x=recognize_cfg["code_thresh_x"],
         code_base_x=recognize_cfg["code_base_x"],
         code_indent_w=recognize_cfg["code_indent_w"],
         code_line_h=recognize_cfg["code_line_h"],

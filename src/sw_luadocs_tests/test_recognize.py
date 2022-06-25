@@ -1339,6 +1339,7 @@ class TestConvertTesslineToOCRLine(unittest.TestCase):
                 tessline=None,
                 capture_img=np.zeros((1, 1, 3), dtype=np.uint8),
                 head_thresh_s=0,
+                code_thresh_x=0,
                 code_base_x=0,
                 code_indent_w=1,
                 bg_thresh_rgb=(0, 0, 0),
@@ -1349,6 +1350,7 @@ class TestConvertTesslineToOCRLine(unittest.TestCase):
             tessline=sw_luadocs.recognize.TesseractLine(txt="", box=(0, 0, 1, 1)),
             capture_img=np.zeros((1, 1), dtype=np.uint8),
             head_thresh_s=0,
+            code_thresh_x="0",
             code_base_x="0",
             code_indent_w="0.1",
             bg_thresh_rgb=(0, 0, 0),
@@ -1365,6 +1367,7 @@ class TestConvertTesslineToOCRLine(unittest.TestCase):
                 ),
                 "capture_img": np.zeros((1, 1, 3), dtype=np.uint8),
                 "head_thresh_s": 0,
+                "code_thresh_x": 0,
                 "code_base_x": 0,
                 "code_indent_w": 0.1,
                 "bg_thresh_rgb": (0, 0, 0),
@@ -1375,6 +1378,7 @@ class TestConvertTesslineToOCRLine(unittest.TestCase):
                 ),
                 "capture_img": np.zeros((1, 2, 3), dtype=np.uint8),
                 "head_thresh_s": 0,
+                "code_thresh_x": 1,
                 "code_base_x": 1,
                 "code_indent_w": 0.1,
                 "bg_thresh_rgb": (0, 0, 0),
@@ -1391,6 +1395,7 @@ class TestConvertTesslineToOCRLine(unittest.TestCase):
                 ),
                 "capture_img": np.zeros((0, 1, 3), dtype=np.uint8),
                 "head_thresh_s": 0,
+                "code_thresh_x": 0,
                 "code_base_x": 0,
                 "code_indent_w": 1,
                 "bg_thresh_rgb": (0, 0, 0),
@@ -1401,6 +1406,7 @@ class TestConvertTesslineToOCRLine(unittest.TestCase):
                 ),
                 "capture_img": np.zeros((1, 0, 3), dtype=np.uint8),
                 "head_thresh_s": 0,
+                "code_thresh_x": 0,
                 "code_base_x": 0,
                 "code_indent_w": 1,
                 "bg_thresh_rgb": (0, 0, 0),
@@ -1411,6 +1417,29 @@ class TestConvertTesslineToOCRLine(unittest.TestCase):
                 ),
                 "capture_img": np.zeros((1, 1, 3), dtype=np.uint8),
                 "head_thresh_s": 0,
+                "code_thresh_x": -1,
+                "code_base_x": 0,
+                "code_indent_w": 1,
+                "bg_thresh_rgb": (0, 0, 0),
+            },
+            {
+                "tessline": sw_luadocs.recognize.TesseractLine(
+                    txt="", box=(0, 0, 1, 1)
+                ),
+                "capture_img": np.zeros((1, 1, 3), dtype=np.uint8),
+                "head_thresh_s": 0,
+                "code_thresh_x": 1,
+                "code_base_x": 0,
+                "code_indent_w": 1,
+                "bg_thresh_rgb": (0, 0, 0),
+            },
+            {
+                "tessline": sw_luadocs.recognize.TesseractLine(
+                    txt="", box=(0, 0, 1, 1)
+                ),
+                "capture_img": np.zeros((1, 1, 3), dtype=np.uint8),
+                "head_thresh_s": 0,
+                "code_thresh_x": 0,
                 "code_base_x": -1,
                 "code_indent_w": 1,
                 "bg_thresh_rgb": (0, 0, 0),
@@ -1421,6 +1450,7 @@ class TestConvertTesslineToOCRLine(unittest.TestCase):
                 ),
                 "capture_img": np.zeros((1, 1, 3), dtype=np.uint8),
                 "head_thresh_s": 0,
+                "code_thresh_x": 0,
                 "code_base_x": 1,
                 "code_indent_w": 1,
                 "bg_thresh_rgb": (0, 0, 0),
@@ -1431,6 +1461,7 @@ class TestConvertTesslineToOCRLine(unittest.TestCase):
                 ),
                 "capture_img": np.zeros((1, 1, 3), dtype=np.uint8),
                 "head_thresh_s": 0,
+                "code_thresh_x": 0,
                 "code_base_x": 0,
                 "code_indent_w": float("nan"),
                 "bg_thresh_rgb": (0, 0, 0),
@@ -1441,6 +1472,7 @@ class TestConvertTesslineToOCRLine(unittest.TestCase):
                 ),
                 "capture_img": np.zeros((1, 1, 3), dtype=np.uint8),
                 "head_thresh_s": 0,
+                "code_thresh_x": 0,
                 "code_base_x": 0,
                 "code_indent_w": 0,
                 "bg_thresh_rgb": (0, 0, 0),
@@ -1450,59 +1482,12 @@ class TestConvertTesslineToOCRLine(unittest.TestCase):
                 with self.assertRaises(ValueError):
                     sw_luadocs.recognize.convert_tessline_to_ocrline(**kwargs)
 
-    def test_codethresh_min(self):
-        ocrline = sw_luadocs.recognize.convert_tessline_to_ocrline(
-            tessline=sw_luadocs.recognize.TesseractLine(txt="", box=(0, 0, 1, 1)),
-            capture_img=np.zeros((1, 1, 3), dtype=np.uint8),
-            head_thresh_s=0,
-            code_base_x=0,
-            code_indent_w=100,
-            bg_thresh_rgb=(0, 0, 0),
-        )
-        self.assertEqual(
-            ocrline, sw_luadocs.recognize.OCRLine(txt="", kind="code", box=(0, 0, 1, 1))
-        )
-
-    def test_codethresh_max(self):
-        ocrline = sw_luadocs.recognize.convert_tessline_to_ocrline(
-            tessline=sw_luadocs.recognize.TesseractLine(txt="", box=(0, 0, 1, 1)),
-            capture_img=np.zeros((1, 10, 3), dtype=np.uint8),
-            head_thresh_s=0,
-            code_base_x=9,
-            code_indent_w=0.1,
-            bg_thresh_rgb=(0, 0, 0),
-        )
-        self.assertEqual(
-            ocrline, sw_luadocs.recognize.OCRLine(txt="", kind="body", box=(0, 0, 1, 1))
-        )
-
-    def test_codethresh_normal(self):
-        kwargs = {
-            "tessline": sw_luadocs.recognize.TesseractLine(txt="", box=(2, 0, 1, 1)),
-            "capture_img": np.zeros((1, 10, 3), dtype=np.uint8),
-            "head_thresh_s": 0,
-            "code_base_x": 6,
-            "code_indent_w": 4.1,
-            "bg_thresh_rgb": (0, 0, 0),
-        }
-        ocrline = sw_luadocs.recognize.convert_tessline_to_ocrline(**kwargs)
-        self.assertEqual(
-            ocrline, sw_luadocs.recognize.OCRLine(txt="", kind="body", box=(2, 0, 1, 1))
-        )
-
-        kwargs["tessline"] = sw_luadocs.recognize.TesseractLine(
-            txt="", box=(3, 0, 1, 1)
-        )
-        ocrline = sw_luadocs.recognize.convert_tessline_to_ocrline(**kwargs)
-        self.assertEqual(
-            ocrline, sw_luadocs.recognize.OCRLine(txt="", kind="code", box=(3, 0, 1, 1))
-        )
-
     def test_indent_head(self):
         ocrline = sw_luadocs.recognize.convert_tessline_to_ocrline(
             tessline=sw_luadocs.recognize.TesseractLine(txt="", box=(1, 0, 1, 1)),
             capture_img=np.full((1, 4, 3), 255, dtype=np.uint8),
             head_thresh_s=0,
+            code_thresh_x=2,
             code_base_x=3,
             code_indent_w=0.1,
             bg_thresh_rgb=(0, 0, 0),
@@ -1516,6 +1501,7 @@ class TestConvertTesslineToOCRLine(unittest.TestCase):
             tessline=sw_luadocs.recognize.TesseractLine(txt="", box=(1, 0, 1, 1)),
             capture_img=np.zeros((1, 4, 3), dtype=np.uint8),
             head_thresh_s=0,
+            code_thresh_x=2,
             code_base_x=3,
             code_indent_w=0.1,
             bg_thresh_rgb=(0, 0, 0),
@@ -1529,6 +1515,7 @@ class TestConvertTesslineToOCRLine(unittest.TestCase):
             tessline=sw_luadocs.recognize.TesseractLine(txt="", box=(1, 0, 1, 1)),
             capture_img=np.zeros((1, 2, 3), dtype=np.uint8),
             head_thresh_s=0,
+            code_thresh_x=0,
             code_base_x=0,
             code_indent_w=0.1,
             bg_thresh_rgb=(0, 0, 0),
@@ -1543,6 +1530,7 @@ class TestConvertTesslineToOCRLine(unittest.TestCase):
             tessline=sw_luadocs.recognize.TesseractLine(txt="", box=(0, 0, 1, 1)),
             capture_img=np.full((1, 3, 3), 255, dtype=np.uint8),
             head_thresh_s=0,
+            code_thresh_x=1,
             code_base_x=2,
             code_indent_w=0.1,
             bg_thresh_rgb=(0, 0, 0),
@@ -1556,6 +1544,7 @@ class TestConvertTesslineToOCRLine(unittest.TestCase):
             tessline=sw_luadocs.recognize.TesseractLine(txt="", box=(0, 0, 1, 1)),
             capture_img=np.zeros((1, 3, 3), dtype=np.uint8),
             head_thresh_s=0,
+            code_thresh_x=1,
             code_base_x=2,
             code_indent_w=0.1,
             bg_thresh_rgb=(0, 0, 0),
@@ -1569,6 +1558,7 @@ class TestConvertTesslineToOCRLine(unittest.TestCase):
             tessline=sw_luadocs.recognize.TesseractLine(txt="", box=(0, 0, 1, 1)),
             capture_img=np.zeros((1, 1, 3), dtype=np.uint8),
             head_thresh_s=0,
+            code_thresh_x=0,
             code_base_x=0,
             code_indent_w=0.1,
             bg_thresh_rgb=(0, 0, 0),
@@ -1582,6 +1572,7 @@ class TestConvertTesslineToOCRLine(unittest.TestCase):
             tessline=sw_luadocs.recognize.TesseractLine(txt="abc", box=(0, 0, 1, 1)),
             capture_img=np.zeros((1, 1, 3), dtype=np.uint8),
             head_thresh_s=0,
+            code_thresh_x=0,
             code_base_x=0,
             code_indent_w=0.1,
             bg_thresh_rgb=(0, 0, 0),
@@ -1596,6 +1587,7 @@ class TestConvertTesslineToOCRLine(unittest.TestCase):
             tessline=sw_luadocs.recognize.TesseractLine(txt="", box=(10, 11, 12, 13)),
             capture_img=np.zeros((100, 100, 3), dtype=np.uint8),
             head_thresh_s=0,
+            code_thresh_x=0,
             code_base_x=0,
             code_indent_w=100,
             bg_thresh_rgb=(0, 0, 0),
