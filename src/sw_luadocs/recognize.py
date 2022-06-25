@@ -264,6 +264,37 @@ def convert_ocrline_to_flatdoc_each(ocrline_list):
     ]
 
 
+def convert_ocrline_to_flatdoc_concat(ocrline_list, *, kind, line_h, sep):
+    ocrline_list = as_ocrline_list_monokind(ocrline_list, kind=kind)
+    sep = str(sep)
+
+    idx = 0
+    sl_list = []
+    while idx < len(ocrline_list):
+        sl_start = idx
+        idx += 1
+        while idx < len(ocrline_list):
+            numlf = calc_char_count(
+                pos1=ocrline_list[idx - 1].box[1],
+                pos2=ocrline_list[idx].box[1],
+                size=line_h,
+                vmin=1,
+            )
+            if numlf > 1:
+                break
+            idx += 1
+        sl_stop = idx
+        sl_list.append(slice(sl_start, sl_stop))
+
+    flatdoc = []
+    for sl in sl_list:
+        sl_txt = sep.join(ocrline.txt for ocrline in ocrline_list[sl])
+        sl_kind = ocrline_list[sl][0].kind
+        flatelem = dot_flatdoc.FlatElem(txt=sl_txt, kind=sl_kind)
+        flatdoc.append(flatelem)
+    return flatdoc
+
+
 def convert_ocrline_to_flatdoc_headonly(ocrline_list):
     ocrline_list = as_ocrline_list(ocrline_list)
 
