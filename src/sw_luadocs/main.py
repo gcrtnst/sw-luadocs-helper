@@ -9,6 +9,7 @@ from . import extract as dot_extract
 from . import flatdoc as dot_flatdoc
 from . import image as dot_image
 from . import recognize as dot_recognize
+from . import which as dot_which
 
 
 def capture_main(ns):
@@ -108,21 +109,25 @@ def main(*, args=None, exit_on_error=True):
     parser_capture.set_defaults(func=capture_main)
     parser_capture.add_argument("capture_file", type=pathlib.Path)
     parser_capture.add_argument("-c", "--config", type=pathlib.Path, required=True)
-    parser_capture.add_argument("--ahk-exe", type=pathlib.Path)
+    parser_capture.add_argument("--ahk-exe", type=pathlib.Path, default=dot_which.ahk())
 
     parser_recognize = parser_group.add_parser("recognize")
     parser_recognize.set_defaults(func=recognize_main)
     parser_recognize.add_argument("capture_file", type=pathlib.Path)
     parser_recognize.add_argument("recognize_file", type=pathlib.Path)
     parser_recognize.add_argument("-c", "--config", type=pathlib.Path, required=True)
-    parser_recognize.add_argument("--tesseract-exe", type=pathlib.Path)
+    parser_recognize.add_argument(
+        "--tesseract-exe", type=pathlib.Path, default=dot_which.tesseract()
+    )
 
     parser_extract = parser_group.add_parser("extract")
     parser_extract.set_defaults(func=extract_main)
     parser_extract.add_argument("recognize_file", type=pathlib.Path)
     parser_extract.add_argument("extract_file", type=pathlib.Path)
     parser_extract.add_argument("-c", "--config", type=pathlib.Path, required=True)
-    parser_extract.add_argument("--stormworks-exe", type=pathlib.Path, required=True)
+    parser_extract.add_argument(
+        "--stormworks-exe", type=pathlib.Path, default=dot_which.stormworks()
+    )
 
     ns = parser.parse_args(args=args)
     ns.func(ns)
