@@ -187,3 +187,12 @@ def match_flatdoc(ocr_flatdoc, ext_txt_set, *, body_sep="\n\n", code_sep="\n\n")
         ext_flatdoc.extend(ext_flatdoc_monokind)
         ld_sum += ld
     return ext_flatdoc, ld_sum
+
+
+def extract(ocr_flatdoc, exe_bin, *, section_name, body_sep, code_sep):
+    section_bin = extract_section(exe_bin, section_name, ignore_padding=True)
+    ext_txt_set = extract_strings(section_bin)
+    ext_flatdoc, _ = match_flatdoc(
+        ocr_flatdoc, ext_txt_set, body_sep=body_sep, code_sep=code_sep
+    )
+    return ext_flatdoc
