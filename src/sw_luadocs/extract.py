@@ -47,7 +47,7 @@ def extract_strings(section_bin):
     return ext_txt_set
 
 
-def generate_concat_patterns(ocr_txt_list, *, sep="\n"):
+def generate_concat_patterns(ocr_txt_list, *, sep="\n\n"):
     ocr_txt_list = list(map(str, ocr_txt_list))
     sep = str(sep)
 
@@ -104,7 +104,7 @@ def match_txt_multiple(ocr_txt_list, ext_txt_set):
     return best_ext_txt_list, best_ld_sum
 
 
-def match_txt_concat(ocr_txt_list, ext_txt_set, *, sep="\n"):
+def match_txt_concat(ocr_txt_list, ext_txt_set, *, sep="\n\n"):
     ocr_txt_list = list(map(str, ocr_txt_list))
     ext_txt_set = set(map(str, ext_txt_set))
 
@@ -145,7 +145,7 @@ def match_flatdoc_each(ocr_flatdoc, ext_txt_set):
     return ext_flatdoc, ld_sum
 
 
-def match_flatdoc_concat(ocr_flatdoc, ext_txt_set, *, sep="\n"):
+def match_flatdoc_concat(ocr_flatdoc, ext_txt_set, *, sep="\n\n"):
     ocr_flatdoc = dot_flatdoc.as_flatdoc_monokind(ocr_flatdoc)
 
     kind = ocr_flatdoc[0].kind if len(ocr_flatdoc) > 0 else None
@@ -157,7 +157,9 @@ def match_flatdoc_concat(ocr_flatdoc, ext_txt_set, *, sep="\n"):
     return ext_flatdoc, ld
 
 
-def match_flatdoc_monokind(ocr_flatdoc, ext_txt_set, *, body_sep="\n", code_sep="\n"):
+def match_flatdoc_monokind(
+    ocr_flatdoc, ext_txt_set, *, body_sep="\n\n", code_sep="\n\n"
+):
     ocr_flatdoc = dot_flatdoc.as_flatdoc_monokind(ocr_flatdoc)
 
     if len(ocr_flatdoc) <= 0:
@@ -171,7 +173,7 @@ def match_flatdoc_monokind(ocr_flatdoc, ext_txt_set, *, body_sep="\n", code_sep=
     raise RuntimeError
 
 
-def match_flatdoc(ocr_flatdoc, ext_txt_set, *, body_sep="\n", code_sep="\n"):
+def match_flatdoc(ocr_flatdoc, ext_txt_set, *, body_sep="\n\n", code_sep="\n\n"):
     ext_txt_set = set(map(str, ext_txt_set))
     body_sep = str(body_sep)
     code_sep = str(code_sep)
