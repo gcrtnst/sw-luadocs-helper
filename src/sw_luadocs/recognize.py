@@ -295,17 +295,6 @@ def convert_ocrline_to_flatdoc_concat(ocrline_list, *, kind, line_h, sep):
     return flatdoc
 
 
-def convert_ocrline_to_flatdoc_headonly(ocrline_list):
-    ocrline_list = as_ocrline_list_monokind(ocrline_list, kind="head")
-    return convert_ocrline_to_flatdoc_each(ocrline_list)
-
-
-def convert_ocrline_to_flatdoc_bodyonly(ocrline_list, *, body_line_h):
-    return convert_ocrline_to_flatdoc_concat(
-        ocrline_list, kind="body", line_h=body_line_h, sep=" "
-    )
-
-
 def convert_ocrline_to_flatdoc_codeonly(ocrline_list, *, code_line_h):
     ocrline_list = as_ocrline_list(ocrline_list)
 
@@ -329,15 +318,15 @@ def convert_ocrline_to_flatdoc_codeonly(ocrline_list, *, code_line_h):
 
 
 def convert_ocrline_to_flatdoc_monokind(ocrline_list, *, body_line_h, code_line_h):
-    ocrline_list = as_ocrline_list(ocrline_list)
+    ocrline_list = as_ocrline_list_monokind(ocrline_list)
 
     if len(ocrline_list) <= 0:
         return []
     if ocrline_list[0].kind == "head":
-        return convert_ocrline_to_flatdoc_headonly(ocrline_list)
+        return convert_ocrline_to_flatdoc_each(ocrline_list)
     if ocrline_list[0].kind == "body":
-        return convert_ocrline_to_flatdoc_bodyonly(
-            ocrline_list, body_line_h=body_line_h
+        return convert_ocrline_to_flatdoc_concat(
+            ocrline_list, kind="body", line_h=body_line_h, sep=" "
         )
     if ocrline_list[0].kind == "code":
         return convert_ocrline_to_flatdoc_codeonly(
