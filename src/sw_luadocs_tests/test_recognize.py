@@ -1150,7 +1150,7 @@ class TestConvertTesslineToOCRLine(unittest.TestCase):
                 capture_img=np.zeros((1, 1, 3), dtype=np.uint8),
                 head_thresh_s=0,
                 code_base_x=0,
-                code_space_w=1,
+                code_indent_w=1,
                 bg_thresh_rgb=(0, 0, 0),
             )
 
@@ -1160,7 +1160,7 @@ class TestConvertTesslineToOCRLine(unittest.TestCase):
             capture_img=np.zeros((1, 1), dtype=np.uint8),
             head_thresh_s=0,
             code_base_x="0",
-            code_space_w="0.1",
+            code_indent_w="0.1",
             bg_thresh_rgb=(0, 0, 0),
         )
         self.assertEqual(
@@ -1176,7 +1176,7 @@ class TestConvertTesslineToOCRLine(unittest.TestCase):
                 "capture_img": np.zeros((1, 1, 3), dtype=np.uint8),
                 "head_thresh_s": 0,
                 "code_base_x": 0,
-                "code_space_w": 0.1,
+                "code_indent_w": 0.1,
                 "bg_thresh_rgb": (0, 0, 0),
             },
             {
@@ -1186,7 +1186,7 @@ class TestConvertTesslineToOCRLine(unittest.TestCase):
                 "capture_img": np.zeros((1, 2, 3), dtype=np.uint8),
                 "head_thresh_s": 0,
                 "code_base_x": 1,
-                "code_space_w": 0.1,
+                "code_indent_w": 0.1,
                 "bg_thresh_rgb": (0, 0, 0),
             },
         ]:
@@ -1202,7 +1202,7 @@ class TestConvertTesslineToOCRLine(unittest.TestCase):
                 "capture_img": np.zeros((0, 1, 3), dtype=np.uint8),
                 "head_thresh_s": 0,
                 "code_base_x": 0,
-                "code_space_w": 1,
+                "code_indent_w": 1,
                 "bg_thresh_rgb": (0, 0, 0),
             },
             {
@@ -1212,7 +1212,7 @@ class TestConvertTesslineToOCRLine(unittest.TestCase):
                 "capture_img": np.zeros((1, 0, 3), dtype=np.uint8),
                 "head_thresh_s": 0,
                 "code_base_x": 0,
-                "code_space_w": 1,
+                "code_indent_w": 1,
                 "bg_thresh_rgb": (0, 0, 0),
             },
             {
@@ -1222,7 +1222,7 @@ class TestConvertTesslineToOCRLine(unittest.TestCase):
                 "capture_img": np.zeros((1, 1, 3), dtype=np.uint8),
                 "head_thresh_s": 0,
                 "code_base_x": -1,
-                "code_space_w": 1,
+                "code_indent_w": 1,
                 "bg_thresh_rgb": (0, 0, 0),
             },
             {
@@ -1232,7 +1232,7 @@ class TestConvertTesslineToOCRLine(unittest.TestCase):
                 "capture_img": np.zeros((1, 1, 3), dtype=np.uint8),
                 "head_thresh_s": 0,
                 "code_base_x": 1,
-                "code_space_w": 1,
+                "code_indent_w": 1,
                 "bg_thresh_rgb": (0, 0, 0),
             },
             {
@@ -1242,7 +1242,7 @@ class TestConvertTesslineToOCRLine(unittest.TestCase):
                 "capture_img": np.zeros((1, 1, 3), dtype=np.uint8),
                 "head_thresh_s": 0,
                 "code_base_x": 0,
-                "code_space_w": float("nan"),
+                "code_indent_w": float("nan"),
                 "bg_thresh_rgb": (0, 0, 0),
             },
             {
@@ -1252,7 +1252,7 @@ class TestConvertTesslineToOCRLine(unittest.TestCase):
                 "capture_img": np.zeros((1, 1, 3), dtype=np.uint8),
                 "head_thresh_s": 0,
                 "code_base_x": 0,
-                "code_space_w": 0,
+                "code_indent_w": 0,
                 "bg_thresh_rgb": (0, 0, 0),
             },
         ]:
@@ -1266,7 +1266,7 @@ class TestConvertTesslineToOCRLine(unittest.TestCase):
             capture_img=np.zeros((1, 1, 3), dtype=np.uint8),
             head_thresh_s=0,
             code_base_x=0,
-            code_space_w=100,
+            code_indent_w=100,
             bg_thresh_rgb=(0, 0, 0),
         )
         self.assertEqual(
@@ -1279,7 +1279,7 @@ class TestConvertTesslineToOCRLine(unittest.TestCase):
             capture_img=np.zeros((1, 10, 3), dtype=np.uint8),
             head_thresh_s=0,
             code_base_x=9,
-            code_space_w=0.1,
+            code_indent_w=0.1,
             bg_thresh_rgb=(0, 0, 0),
         )
         self.assertEqual(
@@ -1292,7 +1292,7 @@ class TestConvertTesslineToOCRLine(unittest.TestCase):
             "capture_img": np.zeros((1, 10, 3), dtype=np.uint8),
             "head_thresh_s": 0,
             "code_base_x": 6,
-            "code_space_w": 4.1,
+            "code_indent_w": 4.1,
             "bg_thresh_rgb": (0, 0, 0),
         }
         ocrline = sw_luadocs.recognize.convert_tessline_to_ocrline(**kwargs)
@@ -1314,7 +1314,7 @@ class TestConvertTesslineToOCRLine(unittest.TestCase):
             capture_img=np.full((1, 4, 3), 255, dtype=np.uint8),
             head_thresh_s=0,
             code_base_x=3,
-            code_space_w=0.1,
+            code_indent_w=0.1,
             bg_thresh_rgb=(0, 0, 0),
         )
         self.assertEqual(
@@ -1327,7 +1327,7 @@ class TestConvertTesslineToOCRLine(unittest.TestCase):
             capture_img=np.zeros((1, 4, 3), dtype=np.uint8),
             head_thresh_s=0,
             code_base_x=3,
-            code_space_w=0.1,
+            code_indent_w=0.1,
             bg_thresh_rgb=(0, 0, 0),
         )
         self.assertEqual(
@@ -1340,12 +1340,12 @@ class TestConvertTesslineToOCRLine(unittest.TestCase):
             capture_img=np.zeros((1, 2, 3), dtype=np.uint8),
             head_thresh_s=0,
             code_base_x=0,
-            code_space_w=0.1,
+            code_indent_w=0.1,
             bg_thresh_rgb=(0, 0, 0),
         )
         self.assertEqual(
             ocrline,
-            sw_luadocs.recognize.OCRLine(txt=" " * 10, kind="code", box=(1, 0, 1, 1)),
+            sw_luadocs.recognize.OCRLine(txt="\t" * 10, kind="code", box=(1, 0, 1, 1)),
         )
 
     def test_kind_head(self):
@@ -1354,7 +1354,7 @@ class TestConvertTesslineToOCRLine(unittest.TestCase):
             capture_img=np.full((1, 3, 3), 255, dtype=np.uint8),
             head_thresh_s=0,
             code_base_x=2,
-            code_space_w=0.1,
+            code_indent_w=0.1,
             bg_thresh_rgb=(0, 0, 0),
         )
         self.assertEqual(
@@ -1367,7 +1367,7 @@ class TestConvertTesslineToOCRLine(unittest.TestCase):
             capture_img=np.zeros((1, 3, 3), dtype=np.uint8),
             head_thresh_s=0,
             code_base_x=2,
-            code_space_w=0.1,
+            code_indent_w=0.1,
             bg_thresh_rgb=(0, 0, 0),
         )
         self.assertEqual(
@@ -1380,7 +1380,7 @@ class TestConvertTesslineToOCRLine(unittest.TestCase):
             capture_img=np.zeros((1, 1, 3), dtype=np.uint8),
             head_thresh_s=0,
             code_base_x=0,
-            code_space_w=0.1,
+            code_indent_w=0.1,
             bg_thresh_rgb=(0, 0, 0),
         )
         self.assertEqual(
@@ -1393,7 +1393,7 @@ class TestConvertTesslineToOCRLine(unittest.TestCase):
             capture_img=np.zeros((1, 1, 3), dtype=np.uint8),
             head_thresh_s=0,
             code_base_x=0,
-            code_space_w=0.1,
+            code_indent_w=0.1,
             bg_thresh_rgb=(0, 0, 0),
         )
         self.assertEqual(
@@ -1407,7 +1407,7 @@ class TestConvertTesslineToOCRLine(unittest.TestCase):
             capture_img=np.zeros((100, 100, 3), dtype=np.uint8),
             head_thresh_s=0,
             code_base_x=0,
-            code_space_w=100,
+            code_indent_w=100,
             bg_thresh_rgb=(0, 0, 0),
         )
         self.assertEqual(

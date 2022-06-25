@@ -55,7 +55,7 @@ def recognize_main(ns):
         head_thresh_s=recognize_cfg["head_thresh_s"],
         body_line_h=recognize_cfg["body_line_h"],
         code_base_x=recognize_cfg["code_base_x"],
-        code_space_w=recognize_cfg["code_space_w"],
+        code_indent_w=recognize_cfg["code_indent_w"],
         code_line_h=recognize_cfg["code_line_h"],
         bg_thresh_rgb=(
             recognize_cfg["bg_thresh_r"],
