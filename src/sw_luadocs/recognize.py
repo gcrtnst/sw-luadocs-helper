@@ -255,6 +255,15 @@ def convert_tessline_to_ocrline(
     return OCRLine(txt=txt, kind=kind, box=tessline.box)
 
 
+def convert_ocrline_to_flatdoc_each(ocrline_list):
+    ocrline_list = as_ocrline_list(ocrline_list)
+
+    return [
+        dot_flatdoc.FlatElem(txt=ocrline.txt, kind=ocrline.kind)
+        for ocrline in ocrline_list
+    ]
+
+
 def convert_ocrline_to_flatdoc_headonly(ocrline_list):
     ocrline_list = as_ocrline_list(ocrline_list)
 

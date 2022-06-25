@@ -1606,6 +1606,40 @@ class TestConvertTesslineToOCRLine(unittest.TestCase):
         )
 
 
+class TestConvertOCRLineToFlatDocMonoKindEach(unittest.TestCase):
+    def test_validate_type_error(self):
+        with self.assertRaises(TypeError):
+            sw_luadocs.recognize.convert_ocrline_to_flatdoc_each([None])
+
+    def test_main(self):
+        for input_ocrline_list, expected_flatdoc in [
+            ([], []),
+            (
+                [
+                    sw_luadocs.recognize.OCRLine(
+                        txt="a", kind="head", box=(0, 0, 1, 1)
+                    ),
+                    sw_luadocs.recognize.OCRLine(
+                        txt="b", kind="body", box=(0, 0, 1, 1)
+                    ),
+                    sw_luadocs.recognize.OCRLine(
+                        txt="c", kind="code", box=(0, 0, 1, 1)
+                    ),
+                ],
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="a", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c", kind="code"),
+                ],
+            ),
+        ]:
+            with self.subTest(ocrline_list=input_ocrline_list):
+                actual_flatdoc = sw_luadocs.recognize.convert_ocrline_to_flatdoc_each(
+                    input_ocrline_list
+                )
+                self.assertEqual(actual_flatdoc, expected_flatdoc)
+
+
 class TestConvertOCRLineToFlatDocHeadOnly(unittest.TestCase):
     def test_type(self):
         with self.assertRaises(TypeError):
