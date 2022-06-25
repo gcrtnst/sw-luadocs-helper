@@ -79,6 +79,18 @@ def as_ocrline_list(v):
     return ocrline_list
 
 
+def as_ocrline_list_monokind(v, *, kind=None):
+    ocrline_list = as_ocrline_list(v)
+    kind = dot_flatdoc.as_kind(kind) if kind is not None else None
+
+    if kind is None and len(ocrline_list) > 0:
+        kind = ocrline_list[0].kind
+    for ocrline in ocrline_list:
+        if ocrline.kind != kind:
+            raise ValueError
+    return ocrline_list
+
+
 def preprocess_image(capture_img):
     capture_img = dot_image.convert_image(capture_img, dst_mode="RGB")
     return 255 - np.amax(capture_img, axis=2)

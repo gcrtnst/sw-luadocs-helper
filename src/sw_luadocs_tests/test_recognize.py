@@ -177,6 +177,196 @@ class TestAsOCRLineList(unittest.TestCase):
                     sw_luadocs.recognize.as_ocrline_list(v)
 
 
+class TestAsOCRLineListMonoKind(unittest.TestCase):
+    def test_validate_type_error(self):
+        with self.assertRaises(TypeError):
+            sw_luadocs.recognize.as_ocrline_list_monokind([None])
+
+    def test_validate_value_error(self):
+        for v, kind in [
+            ([], "invalid"),
+            (
+                [
+                    sw_luadocs.recognize.OCRLine(
+                        txt="a", kind="head", box=(0, 0, 1, 1)
+                    ),
+                    sw_luadocs.recognize.OCRLine(
+                        txt="b", kind="head", box=(0, 0, 1, 1)
+                    ),
+                    sw_luadocs.recognize.OCRLine(
+                        txt="c", kind="body", box=(0, 0, 1, 1)
+                    ),
+                ],
+                None,
+            ),
+            (
+                [
+                    sw_luadocs.recognize.OCRLine(
+                        txt="a", kind="body", box=(0, 0, 1, 1)
+                    ),
+                    sw_luadocs.recognize.OCRLine(
+                        txt="b", kind="body", box=(0, 0, 1, 1)
+                    ),
+                    sw_luadocs.recognize.OCRLine(
+                        txt="c", kind="code", box=(0, 0, 1, 1)
+                    ),
+                ],
+                None,
+            ),
+            (
+                [
+                    sw_luadocs.recognize.OCRLine(
+                        txt="a", kind="code", box=(0, 0, 1, 1)
+                    ),
+                    sw_luadocs.recognize.OCRLine(
+                        txt="b", kind="code", box=(0, 0, 1, 1)
+                    ),
+                    sw_luadocs.recognize.OCRLine(
+                        txt="c", kind="head", box=(0, 0, 1, 1)
+                    ),
+                ],
+                None,
+            ),
+            (
+                [sw_luadocs.recognize.OCRLine(txt="a", kind="head", box=(0, 0, 1, 1))],
+                "body",
+            ),
+            (
+                [sw_luadocs.recognize.OCRLine(txt="a", kind="body", box=(0, 0, 1, 1))],
+                "code",
+            ),
+            (
+                [sw_luadocs.recognize.OCRLine(txt="a", kind="code", box=(0, 0, 1, 1))],
+                "head",
+            ),
+        ]:
+            with self.subTest(v=v, kind=kind):
+                with self.assertRaises(ValueError):
+                    sw_luadocs.recognize.as_ocrline_list_monokind(v, kind=kind)
+
+    def test_main(self):
+        for v, kind in [
+            ([], None),
+            ([], "head"),
+            ([], "body"),
+            ([], "code"),
+            (
+                [sw_luadocs.recognize.OCRLine(txt="a", kind="head", box=(0, 0, 1, 1))],
+                None,
+            ),
+            (
+                [sw_luadocs.recognize.OCRLine(txt="a", kind="body", box=(0, 0, 1, 1))],
+                None,
+            ),
+            (
+                [sw_luadocs.recognize.OCRLine(txt="a", kind="code", box=(0, 0, 1, 1))],
+                None,
+            ),
+            (
+                [sw_luadocs.recognize.OCRLine(txt="a", kind="head", box=(0, 0, 1, 1))],
+                "head",
+            ),
+            (
+                [sw_luadocs.recognize.OCRLine(txt="a", kind="body", box=(0, 0, 1, 1))],
+                "body",
+            ),
+            (
+                [sw_luadocs.recognize.OCRLine(txt="a", kind="code", box=(0, 0, 1, 1))],
+                "code",
+            ),
+            (
+                [
+                    sw_luadocs.recognize.OCRLine(
+                        txt="a", kind="head", box=(0, 0, 1, 1)
+                    ),
+                    sw_luadocs.recognize.OCRLine(
+                        txt="b", kind="head", box=(0, 0, 1, 1)
+                    ),
+                    sw_luadocs.recognize.OCRLine(
+                        txt="c", kind="head", box=(0, 0, 1, 1)
+                    ),
+                ],
+                None,
+            ),
+            (
+                [
+                    sw_luadocs.recognize.OCRLine(
+                        txt="a", kind="body", box=(0, 0, 1, 1)
+                    ),
+                    sw_luadocs.recognize.OCRLine(
+                        txt="b", kind="body", box=(0, 0, 1, 1)
+                    ),
+                    sw_luadocs.recognize.OCRLine(
+                        txt="c", kind="body", box=(0, 0, 1, 1)
+                    ),
+                ],
+                None,
+            ),
+            (
+                [
+                    sw_luadocs.recognize.OCRLine(
+                        txt="a", kind="code", box=(0, 0, 1, 1)
+                    ),
+                    sw_luadocs.recognize.OCRLine(
+                        txt="b", kind="code", box=(0, 0, 1, 1)
+                    ),
+                    sw_luadocs.recognize.OCRLine(
+                        txt="c", kind="code", box=(0, 0, 1, 1)
+                    ),
+                ],
+                None,
+            ),
+            (
+                [
+                    sw_luadocs.recognize.OCRLine(
+                        txt="a", kind="head", box=(0, 0, 1, 1)
+                    ),
+                    sw_luadocs.recognize.OCRLine(
+                        txt="b", kind="head", box=(0, 0, 1, 1)
+                    ),
+                    sw_luadocs.recognize.OCRLine(
+                        txt="c", kind="head", box=(0, 0, 1, 1)
+                    ),
+                ],
+                "head",
+            ),
+            (
+                [
+                    sw_luadocs.recognize.OCRLine(
+                        txt="a", kind="body", box=(0, 0, 1, 1)
+                    ),
+                    sw_luadocs.recognize.OCRLine(
+                        txt="b", kind="body", box=(0, 0, 1, 1)
+                    ),
+                    sw_luadocs.recognize.OCRLine(
+                        txt="c", kind="body", box=(0, 0, 1, 1)
+                    ),
+                ],
+                "body",
+            ),
+            (
+                [
+                    sw_luadocs.recognize.OCRLine(
+                        txt="a", kind="code", box=(0, 0, 1, 1)
+                    ),
+                    sw_luadocs.recognize.OCRLine(
+                        txt="b", kind="code", box=(0, 0, 1, 1)
+                    ),
+                    sw_luadocs.recognize.OCRLine(
+                        txt="c", kind="code", box=(0, 0, 1, 1)
+                    ),
+                ],
+                "code",
+            ),
+        ]:
+            with self.subTest(v=v, kind=kind):
+                ocrline_list = sw_luadocs.recognize.as_ocrline_list_monokind(
+                    v, kind=kind
+                )
+                self.assertIs(type(ocrline_list), list)
+                self.assertEqual(ocrline_list, v)
+
+
 class TestPreprocessImage(unittest.TestCase):
     def test_axis(self):
         input_img = np.array([[51, 102], [153, 204]], dtype=np.uint8)
