@@ -1598,7 +1598,7 @@ class TestConvertTesslineToOCRLine(unittest.TestCase):
         )
 
 
-class TestConvertOCRLineToFlatDocMonoKindEach(unittest.TestCase):
+class TestConvertOCRLineToFlatDocEach(unittest.TestCase):
     def test_validate_type_error(self):
         with self.assertRaises(TypeError):
             sw_luadocs.recognize.convert_ocrline_to_flatdoc_each([None])
