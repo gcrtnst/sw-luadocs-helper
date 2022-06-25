@@ -295,28 +295,6 @@ def convert_ocrline_to_flatdoc_concat(ocrline_list, *, kind, line_h, sep):
     return flatdoc
 
 
-def convert_ocrline_to_flatdoc_codeonly(ocrline_list, *, code_line_h):
-    ocrline_list = as_ocrline_list(ocrline_list)
-
-    for ocrline in ocrline_list:
-        if ocrline.kind != "code":
-            raise ValueError
-
-    if len(ocrline_list) <= 0:
-        return []
-
-    txt = ocrline_list[0].txt
-    for idx in range(1, len(ocrline_list)):
-        numlf = calc_char_count(
-            pos1=ocrline_list[idx - 1].box[1],
-            pos2=ocrline_list[idx].box[1],
-            size=code_line_h,
-            vmin=1,
-        )
-        txt += "\n" * numlf + ocrline_list[idx].txt
-    return [dot_flatdoc.FlatElem(txt=txt, kind="code")]
-
-
 def convert_ocrline_to_flatdoc_monokind(ocrline_list, *, body_line_h, code_line_h):
     ocrline_list = as_ocrline_list_monokind(ocrline_list)
 
@@ -329,8 +307,8 @@ def convert_ocrline_to_flatdoc_monokind(ocrline_list, *, body_line_h, code_line_
             ocrline_list, kind="body", line_h=body_line_h, sep=" "
         )
     if ocrline_list[0].kind == "code":
-        return convert_ocrline_to_flatdoc_codeonly(
-            ocrline_list, code_line_h=code_line_h
+        return convert_ocrline_to_flatdoc_concat(
+            ocrline_list, kind="code", line_h=code_line_h, sep="\n"
         )
     raise RuntimeError
 
