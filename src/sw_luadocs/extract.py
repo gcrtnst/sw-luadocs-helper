@@ -73,6 +73,23 @@ def generate_repack_elem_patterns(ocr_txt_list, *, sep="\n\n"):
     return pak_txt_list_list
 
 
+def generate_repack_line_patterns(ocr_txt_full):
+    ocr_txt_full = str(ocr_txt_full)
+    sep = "\n"
+
+    ocr_txt_list = ocr_txt_full.split(sep=sep)
+    old_txt_list_list = generate_repack_elem_patterns(ocr_txt_list, sep=sep)
+    new_txt_list_list = list(
+        filter(
+            lambda old_txt_list: all(
+                map(lambda old_txt: old_txt.replace("\n", "") != "", old_txt_list)
+            ),
+            old_txt_list_list,
+        )
+    )
+    return new_txt_list_list
+
+
 def match_txt_single(ocr_txt, ext_txt_set):
     ocr_txt = str(ocr_txt)
     ext_txt_set = set(map(str, ext_txt_set))

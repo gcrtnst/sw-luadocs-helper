@@ -60,13 +60,13 @@ class TestExtractStrings(unittest.TestCase):
 
 class TestGenerateRepackElemPatterns(unittest.TestCase):
     def test_validate_convert(self):
-        pak_txt_tuple_set = sw_luadocs.extract.generate_repack_elem_patterns(
+        pak_txt_list_list = sw_luadocs.extract.generate_repack_elem_patterns(
             {1: None, 2: None}, sep=3
         )
-        self.assertEqual(pak_txt_tuple_set, [["1", "2"], ["132"]])
+        self.assertEqual(pak_txt_list_list, [["1", "2"], ["132"]])
 
     def test_main(self):
-        for input_ocr_txt_list, input_sep, expected_pak_txt_tuple_set in [
+        for input_ocr_txt_list, input_sep, expected_pak_txt_list_list in [
             ([], ",", []),
             (["a"], ",", [["a"]]),
             (["a", "b"], ",", [["a", "b"], ["a,b"]]),
@@ -92,12 +92,65 @@ class TestGenerateRepackElemPatterns(unittest.TestCase):
             ),
         ]:
             with self.subTest(ocr_txt_list=input_ocr_txt_list, sep=input_sep):
-                actual_pak_txt_tuple_set = (
+                actual_pak_txt_list_list = (
                     sw_luadocs.extract.generate_repack_elem_patterns(
                         input_ocr_txt_list, sep=input_sep
                     )
                 )
-                self.assertEqual(actual_pak_txt_tuple_set, expected_pak_txt_tuple_set)
+                self.assertEqual(actual_pak_txt_list_list, expected_pak_txt_list_list)
+
+
+class TestGenerateRepackLinePatterns(unittest.TestCase):
+    def test_validate_convert(self):
+        pak_txt_list_list = sw_luadocs.extract.generate_repack_line_patterns(0)
+        self.assertEqual(pak_txt_list_list, [["0"]])
+
+    def test_main(self):
+        for input_ocr_txt_full, expected_pak_txt_list_list in [
+            ("", []),
+            ("\n", []),
+            ("\n\n", []),
+            ("a", [["a"]]),
+            ("a\n", [["a\n"]]),
+            ("\na", [["\na"]]),
+            ("\na\n", [["\na\n"]]),
+            ("a\nb", [["a", "b"], ["a\nb"]]),
+            ("\na\nb", [["\na", "b"], ["\na\nb"]]),
+            ("a\n\nb", [["a", "\nb"], ["a\n", "b"], ["a\n\nb"]]),
+            ("a\nb\n", [["a", "b\n"], ["a\nb\n"]]),
+            ("\n\na\nb", [["\n\na", "b"], ["\n\na\nb"]]),
+            (
+                "a\n\n\nb",
+                [["a", "\n\nb"], ["a\n", "\nb"], ["a\n\n", "b"], ["a\n\n\nb"]],
+            ),
+            ("a\nb\n\n", [["a", "b\n\n"], ["a\nb\n\n"]]),
+            (
+                "\n\na\n\n\nb\n\n\nc\n\n",
+                [
+                    ["\n\na", "\n\nb", "\n\nc\n\n"],
+                    ["\n\na", "\n\nb\n", "\nc\n\n"],
+                    ["\n\na", "\n\nb\n\n", "c\n\n"],
+                    ["\n\na", "\n\nb\n\n\nc\n\n"],
+                    ["\n\na\n", "\nb", "\n\nc\n\n"],
+                    ["\n\na\n", "\nb\n", "\nc\n\n"],
+                    ["\n\na\n", "\nb\n\n", "c\n\n"],
+                    ["\n\na\n", "\nb\n\n\nc\n\n"],
+                    ["\n\na\n\n", "b", "\n\nc\n\n"],
+                    ["\n\na\n\n", "b\n", "\nc\n\n"],
+                    ["\n\na\n\n", "b\n\n", "c\n\n"],
+                    ["\n\na\n\n", "b\n\n\nc\n\n"],
+                    ["\n\na\n\n\nb", "\n\nc\n\n"],
+                    ["\n\na\n\n\nb\n", "\nc\n\n"],
+                    ["\n\na\n\n\nb\n\n", "c\n\n"],
+                    ["\n\na\n\n\nb\n\n\nc\n\n"],
+                ],
+            ),
+        ]:
+            with self.subTest(ocr_txt_full=input_ocr_txt_full):
+                actual_pak_txt_list_list = (
+                    sw_luadocs.extract.generate_repack_line_patterns(input_ocr_txt_full)
+                )
+                self.assertEqual(actual_pak_txt_list_list, expected_pak_txt_list_list)
 
 
 class TestMatchTxtSingle(unittest.TestCase):
