@@ -121,6 +121,25 @@ def match_txt_multiple(ocr_txt_list, ext_txt_set):
     return best_ext_txt_list, best_ld_sum
 
 
+def match_txt_repack(pak_txt_list_list, ext_txt_set):
+    pak_txt_list_list = list(
+        map(lambda pak_txt_list: list(map(str, pak_txt_list)), pak_txt_list_list)
+    )
+    ext_txt_set = set(map(str, ext_txt_set))
+
+    best_ext_txt_list = None
+    best_ld = None
+    for pak_txt_list in pak_txt_list_list:
+        ext_txt_list, ld = match_txt_multiple(pak_txt_list, ext_txt_set)
+        if best_ld is None or ld < best_ld:
+            best_ext_txt_list = ext_txt_list
+            best_ld = ld
+
+    if best_ext_txt_list is None or best_ld is None:
+        return [], 0
+    return best_ext_txt_list, best_ld
+
+
 def match_txt_repack_elem(ocr_txt_list, ext_txt_set, *, sep="\n\n"):
     ocr_txt_list = list(map(str, ocr_txt_list))
     ext_txt_set = set(map(str, ext_txt_set))

@@ -226,6 +226,49 @@ class TestMatchTxtMultiple(unittest.TestCase):
                 self.assertEqual(actual_best_ld_sum, expected_best_ld_sum)
 
 
+class TestMatchTxtRepack(unittest.TestCase):
+    def test_validate_convert(self):
+        ext_txt_list, ld = sw_luadocs.extract.match_txt_repack(
+            [{1: None, 3: None}, {123: None}], {12: None, 34: None}
+        )
+        self.assertEqual(ext_txt_list, ["12"])
+        self.assertEqual(ld, 1)
+
+    def test_main(self):
+        for (
+            input_pak_txt_list_list,
+            input_ext_txt_set,
+            expected_ext_txt_list,
+            expected_ld,
+        ) in [
+            ([], {"a"}, [], 0),
+            ([["a"]], {"a"}, ["a"], 0),
+            ([["a"]], {"b"}, ["b"], 1),
+            ([["a", "b"], ["a,b"]], {"a,b"}, ["a,b"], 0),
+            ([["a", "b"], ["a,b"]], {"a:b"}, ["a:b"], 1),
+            ([["a", "b"], ["a,b"]], {"a", "b"}, ["a", "b"], 0),
+            ([["a", "b"], ["a,b"]], {"a"}, ["a", "a"], 1),
+            ([["a", "b"], ["a,b"]], {"a", "b", "a,b"}, ["a", "b"], 0),
+            ([["a,b"], ["a", "b"]], {"a", "b", "a,b"}, ["a,b"], 0),
+            ([["a", "b"], ["a,b"]], {"a", "a:b"}, ["a", "a"], 1),
+            ([["a,b"], ["a", "b"]], {"a", "a:b"}, ["a:b"], 1),
+            (
+                [["a", "b", "c"], ["a", "b,c"], ["a,b", "c"], ["a,b,c"]],
+                {"a,b", "b,c"},
+                ["a,b", "b,c"],
+                2,
+            ),
+        ]:
+            with self.subTest(
+                pak_txt_list_list=input_pak_txt_list_list, ext_txt_set=input_ext_txt_set
+            ):
+                actual_ext_txt_list, actual_ld = sw_luadocs.extract.match_txt_repack(
+                    input_pak_txt_list_list, input_ext_txt_set
+                )
+                self.assertEqual(actual_ext_txt_list, expected_ext_txt_list)
+                self.assertEqual(actual_ld, expected_ld)
+
+
 class TestMatchTxtRepackElem(unittest.TestCase):
     def test_validate_convert(self):
         best_ext_txt_list, best_ld = sw_luadocs.extract.match_txt_repack_elem(
