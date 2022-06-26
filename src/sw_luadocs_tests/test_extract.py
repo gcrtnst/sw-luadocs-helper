@@ -58,15 +58,15 @@ class TestExtractStrings(unittest.TestCase):
                 self.assertEqual(actual_ext_txt_set, expected_ext_txt_set)
 
 
-class TestGenerateConcatPatterns(unittest.TestCase):
+class TestGenerateRepackElemPatterns(unittest.TestCase):
     def test_validate_convert(self):
-        cat_txt_tuple_set = sw_luadocs.extract.generate_concat_patterns(
+        pak_txt_tuple_set = sw_luadocs.extract.generate_repack_elem_patterns(
             {1: None, 2: None}, sep=3
         )
-        self.assertEqual(cat_txt_tuple_set, [["1", "2"], ["132"]])
+        self.assertEqual(pak_txt_tuple_set, [["1", "2"], ["132"]])
 
     def test_main(self):
-        for input_ocr_txt_list, input_sep, expected_cat_txt_tuple_set in [
+        for input_ocr_txt_list, input_sep, expected_pak_txt_tuple_set in [
             ([], ",", []),
             (["a"], ",", [["a"]]),
             (["a", "b"], ",", [["a", "b"], ["a,b"]]),
@@ -92,10 +92,12 @@ class TestGenerateConcatPatterns(unittest.TestCase):
             ),
         ]:
             with self.subTest(ocr_txt_list=input_ocr_txt_list, sep=input_sep):
-                actual_cat_txt_tuple_set = sw_luadocs.extract.generate_concat_patterns(
-                    input_ocr_txt_list, sep=input_sep
+                actual_pak_txt_tuple_set = (
+                    sw_luadocs.extract.generate_repack_elem_patterns(
+                        input_ocr_txt_list, sep=input_sep
+                    )
                 )
-                self.assertEqual(actual_cat_txt_tuple_set, expected_cat_txt_tuple_set)
+                self.assertEqual(actual_pak_txt_tuple_set, expected_pak_txt_tuple_set)
 
 
 class TestMatchTxtSingle(unittest.TestCase):
@@ -171,9 +173,9 @@ class TestMatchTxtMultiple(unittest.TestCase):
                 self.assertEqual(actual_best_ld_sum, expected_best_ld_sum)
 
 
-class TestMatchTxtConcat(unittest.TestCase):
+class TestMatchTxtRepack(unittest.TestCase):
     def test_validate_convert(self):
-        best_ext_txt_list, best_ld = sw_luadocs.extract.match_txt_concat(
+        best_ext_txt_list, best_ld = sw_luadocs.extract.match_txt_repack(
             {1: None, 2: None}, {12: None, 34: None}, sep=5
         )
         self.assertEqual(best_ext_txt_list, ["12"])
@@ -206,7 +208,7 @@ class TestMatchTxtConcat(unittest.TestCase):
                 (
                     actual_best_ext_txt_list,
                     actual_best_ld,
-                ) = sw_luadocs.extract.match_txt_concat(
+                ) = sw_luadocs.extract.match_txt_repack(
                     input_ocr_txt_list, input_ext_txt_set, sep=input_sep
                 )
                 self.assertEqual(actual_best_ext_txt_list, expected_best_ext_txt_list)
@@ -268,10 +270,10 @@ class TestMatchFlatDocEach(unittest.TestCase):
                 self.assertEqual(actual_ld, expected_ld)
 
 
-class TestMatchFlatDocRepackFlatElem(unittest.TestCase):
+class TestMatchFlatDocRepackElem(unittest.TestCase):
     def test_validate_value_error(self):
         with self.assertRaises(ValueError):
-            sw_luadocs.extract.match_flatdoc_repack_flatelem(
+            sw_luadocs.extract.match_flatdoc_repack_elem(
                 [
                     sw_luadocs.flatdoc.FlatElem(txt="a", kind="head"),
                     sw_luadocs.flatdoc.FlatElem(txt="b", kind="body"),
@@ -359,7 +361,7 @@ class TestMatchFlatDocRepackFlatElem(unittest.TestCase):
                 (
                     actual_ext_flatdoc,
                     actual_ld,
-                ) = sw_luadocs.extract.match_flatdoc_repack_flatelem(
+                ) = sw_luadocs.extract.match_flatdoc_repack_elem(
                     input_ocr_flatdoc, input_ext_txt_set, sep=input_sep
                 )
                 self.assertEqual(actual_ext_flatdoc, expected_ext_flatdoc)

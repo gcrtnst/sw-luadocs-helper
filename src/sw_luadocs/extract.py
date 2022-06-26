@@ -47,30 +47,30 @@ def extract_strings(section_bin):
     return ext_txt_set
 
 
-def generate_concat_patterns(ocr_txt_list, *, sep="\n\n"):
+def generate_repack_elem_patterns(ocr_txt_list, *, sep="\n\n"):
     ocr_txt_list = list(map(str, ocr_txt_list))
     sep = str(sep)
 
     if len(ocr_txt_list) <= 0:
         return []
 
-    cat_txt_tuple_set = set()
+    pak_txt_tuple_set = set()
     for pattern in range(1 << (len(ocr_txt_list) - 1)):
-        cat_txt_list = []
+        pak_txt_list = []
         start_idx = 0
         for idx in range(1, len(ocr_txt_list)):
             if pattern & (1 << (idx - 1)) == 0:
-                cat_txt = sep.join(ocr_txt_list[start_idx:idx])
-                cat_txt_list.append(cat_txt)
+                pak_txt = sep.join(ocr_txt_list[start_idx:idx])
+                pak_txt_list.append(pak_txt)
                 start_idx = idx
-        cat_txt = sep.join(ocr_txt_list[start_idx:])
-        cat_txt_list.append(cat_txt)
+        pak_txt = sep.join(ocr_txt_list[start_idx:])
+        pak_txt_list.append(pak_txt)
 
-        cat_txt_tuple = tuple(cat_txt_list)
-        cat_txt_tuple_set.add(cat_txt_tuple)
+        pak_txt_tuple = tuple(pak_txt_list)
+        pak_txt_tuple_set.add(pak_txt_tuple)
 
-    cat_txt_list_list = sorted(map(list, cat_txt_tuple_set))
-    return cat_txt_list_list
+    pak_txt_list_list = sorted(map(list, pak_txt_tuple_set))
+    return pak_txt_list_list
 
 
 def match_txt_single(ocr_txt, ext_txt_set):
@@ -104,15 +104,15 @@ def match_txt_multiple(ocr_txt_list, ext_txt_set):
     return best_ext_txt_list, best_ld_sum
 
 
-def match_txt_concat(ocr_txt_list, ext_txt_set, *, sep="\n\n"):
+def match_txt_repack(ocr_txt_list, ext_txt_set, *, sep="\n\n"):
     ocr_txt_list = list(map(str, ocr_txt_list))
     ext_txt_set = set(map(str, ext_txt_set))
 
     best_ext_txt_list = None
     best_ld = None
-    cat_txt_list_list = generate_concat_patterns(ocr_txt_list, sep=sep)
-    for cat_txt_list in cat_txt_list_list:
-        ext_txt_list, ld = match_txt_multiple(cat_txt_list, ext_txt_set)
+    pak_txt_list_list = generate_repack_elem_patterns(ocr_txt_list, sep=sep)
+    for pak_txt_list in pak_txt_list_list:
+        ext_txt_list, ld = match_txt_multiple(pak_txt_list, ext_txt_set)
         if best_ld is None or ld < best_ld:
             best_ext_txt_list = ext_txt_list
             best_ld = ld
@@ -145,12 +145,12 @@ def match_flatdoc_each(ocr_flatdoc, ext_txt_set):
     return ext_flatdoc, ld_sum
 
 
-def match_flatdoc_repack_flatelem(ocr_flatdoc, ext_txt_set, *, sep="\n\n"):
+def match_flatdoc_repack_elem(ocr_flatdoc, ext_txt_set, *, sep="\n\n"):
     ocr_flatdoc = dot_flatdoc.as_flatdoc_monokind(ocr_flatdoc)
 
     kind = ocr_flatdoc[0].kind if len(ocr_flatdoc) > 0 else None
     ocr_txt_list = [ocr_flatelem.txt for ocr_flatelem in ocr_flatdoc]
-    ext_txt_list, ld = match_txt_concat(ocr_txt_list, ext_txt_set, sep=sep)
+    ext_txt_list, ld = match_txt_repack(ocr_txt_list, ext_txt_set, sep=sep)
     ext_flatdoc = [
         dot_flatdoc.FlatElem(txt=ext_txt, kind=kind) for ext_txt in ext_txt_list
     ]
@@ -167,9 +167,9 @@ def match_flatdoc_monokind(
     if ocr_flatdoc[0].kind == "head":
         return match_flatdoc_each(ocr_flatdoc, ext_txt_set)
     if ocr_flatdoc[0].kind == "body":
-        return match_flatdoc_repack_flatelem(ocr_flatdoc, ext_txt_set, sep=body_sep)
+        return match_flatdoc_repack_elem(ocr_flatdoc, ext_txt_set, sep=body_sep)
     if ocr_flatdoc[0].kind == "code":
-        return match_flatdoc_repack_flatelem(ocr_flatdoc, ext_txt_set, sep=code_sep)
+        return match_flatdoc_repack_elem(ocr_flatdoc, ext_txt_set, sep=code_sep)
     raise RuntimeError
 
 
