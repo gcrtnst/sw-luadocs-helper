@@ -202,7 +202,7 @@ def match_flatdoc_monokind(
     if ocr_flatdoc[0].kind == "body":
         return match_flatdoc_repack_elem(ocr_flatdoc, ext_txt_set, sep=body_sep)
     if ocr_flatdoc[0].kind == "code":
-        return match_flatdoc_repack_elem(ocr_flatdoc, ext_txt_set, sep=code_sep)
+        return match_flatdoc_repack_line(ocr_flatdoc, ext_txt_set, sep=code_sep)
     raise RuntimeError
 
 
