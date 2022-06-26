@@ -1,3 +1,4 @@
+import numpy as np
 import sw_luadocs.extract
 import sw_luadocs.flatdoc
 import unittest
@@ -56,6 +57,130 @@ class TestExtractStrings(unittest.TestCase):
                     input_section_bin
                 )
                 self.assertEqual(actual_ext_txt_set, expected_ext_txt_set)
+
+
+class TestCalcLevenshteinDP(unittest.TestCase):
+    def test_validate_convert(self):
+        lddp = sw_luadocs.extract.calc_levenshtein_dp(1, 2)
+        self.assertTrue(
+            np.array_equal(
+                lddp,
+                np.array(
+                    [
+                        [0, 1],
+                        [1, 1],
+                    ],
+                    dtype=int,
+                ),
+            )
+        )
+
+    def test_main(self):
+        for input_s, input_t, expected_lddp in [
+            (
+                "",
+                "",
+                np.array(
+                    [
+                        [0],
+                    ],
+                    dtype=int,
+                ),
+            ),
+            (
+                "",
+                "abc",
+                np.array(
+                    [
+                        [0, 1, 2, 3],
+                    ],
+                    dtype=int,
+                ),
+            ),
+            (
+                "abc",
+                "",
+                np.array(
+                    [
+                        [0],
+                        [1],
+                        [2],
+                        [3],
+                    ],
+                    dtype=int,
+                ),
+            ),
+            (
+                "abc",
+                "abc",
+                np.array(
+                    [
+                        [0, 1, 2, 3],
+                        [1, 0, 1, 2],
+                        [2, 1, 0, 1],
+                        [3, 2, 1, 0],
+                    ],
+                    dtype=int,
+                ),
+            ),
+            (
+                "ac",
+                "abc",
+                np.array(
+                    [
+                        [0, 1, 2, 3],
+                        [1, 0, 1, 2],
+                        [2, 1, 1, 1],
+                    ],
+                    dtype=int,
+                ),
+            ),
+            (
+                "abc",
+                "ac",
+                np.array(
+                    [
+                        [0, 1, 2],
+                        [1, 0, 1],
+                        [2, 1, 1],
+                        [3, 2, 1],
+                    ],
+                    dtype=int,
+                ),
+            ),
+            (
+                "abc",
+                "adc",
+                np.array(
+                    [
+                        [0, 1, 2, 3],
+                        [1, 0, 1, 2],
+                        [2, 1, 1, 2],
+                        [3, 2, 2, 1],
+                    ],
+                    dtype=int,
+                ),
+            ),
+            (
+                "kitten",
+                "sitting",
+                np.array(
+                    [
+                        [0, 1, 2, 3, 4, 5, 6, 7],
+                        [1, 1, 2, 3, 4, 5, 6, 7],
+                        [2, 2, 1, 2, 3, 4, 5, 6],
+                        [3, 3, 2, 1, 2, 3, 4, 5],
+                        [4, 4, 3, 2, 1, 2, 3, 4],
+                        [5, 5, 4, 3, 2, 2, 3, 4],
+                        [6, 6, 5, 4, 3, 3, 2, 3],
+                    ],
+                    dtype=int,
+                ),
+            ),
+        ]:
+            with self.subTest(s=input_s, t=input_t):
+                actual_lddp = sw_luadocs.extract.calc_levenshtein_dp(input_s, input_t)
+                self.assertTrue(np.array_equal(actual_lddp, expected_lddp))
 
 
 class TestGenerateRepackElemPatterns(unittest.TestCase):

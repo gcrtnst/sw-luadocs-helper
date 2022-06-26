@@ -1,5 +1,6 @@
 import dataclasses
 import Levenshtein
+import numpy as np
 import pefile
 import re
 
@@ -45,6 +46,26 @@ def extract_strings(section_bin):
         ext_txt = ext_txt_bin[:-1].decode(encoding="ascii", errors="strict")
         ext_txt_set.add(ext_txt)
     return ext_txt_set
+
+
+def calc_levenshtein_dp(s, t):
+    s = str(s)
+    t = str(t)
+    pad_s = " " + s
+    pad_t = " " + t
+
+    lddp = np.empty((len(pad_s), len(pad_t)), dtype=int)
+    lddp[0, 0] = 0
+    lddp[1:, :1] = np.reshape(np.arange(1, len(pad_s)), lddp[1:, :1].shape)
+    lddp[:1, 1:] = np.reshape(np.arange(1, len(pad_t)), lddp[:1, 1:].shape)
+    for i in range(1, len(pad_s)):
+        for j in range(1, len(pad_t)):
+            lddp[i, j] = min(
+                lddp[i - 1, j - 1] + (0 if pad_s[i] == pad_t[j] else 1),
+                lddp[i - 1, j] + 1,
+                lddp[i, j - 1] + 1,
+            )
+    return lddp
 
 
 def generate_repack_elem_patterns(ocr_txt_list, *, sep="\n\n"):
