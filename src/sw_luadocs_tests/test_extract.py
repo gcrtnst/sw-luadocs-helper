@@ -226,9 +226,9 @@ class TestMatchTxtMultiple(unittest.TestCase):
                 self.assertEqual(actual_best_ld_sum, expected_best_ld_sum)
 
 
-class TestMatchTxtRepack(unittest.TestCase):
+class TestMatchTxtRepackElem(unittest.TestCase):
     def test_validate_convert(self):
-        best_ext_txt_list, best_ld = sw_luadocs.extract.match_txt_repack(
+        best_ext_txt_list, best_ld = sw_luadocs.extract.match_txt_repack_elem(
             {1: None, 2: None}, {12: None, 34: None}, sep=5
         )
         self.assertEqual(best_ext_txt_list, ["12"])
@@ -261,7 +261,7 @@ class TestMatchTxtRepack(unittest.TestCase):
                 (
                     actual_best_ext_txt_list,
                     actual_best_ld,
-                ) = sw_luadocs.extract.match_txt_repack(
+                ) = sw_luadocs.extract.match_txt_repack_elem(
                     input_ocr_txt_list, input_ext_txt_set, sep=input_sep
                 )
                 self.assertEqual(actual_best_ext_txt_list, expected_best_ext_txt_list)

@@ -121,7 +121,7 @@ def match_txt_multiple(ocr_txt_list, ext_txt_set):
     return best_ext_txt_list, best_ld_sum
 
 
-def match_txt_repack(ocr_txt_list, ext_txt_set, *, sep="\n\n"):
+def match_txt_repack_elem(ocr_txt_list, ext_txt_set, *, sep="\n\n"):
     ocr_txt_list = list(map(str, ocr_txt_list))
     ext_txt_set = set(map(str, ext_txt_set))
 
@@ -167,7 +167,7 @@ def match_flatdoc_repack_elem(ocr_flatdoc, ext_txt_set, *, sep="\n\n"):
 
     kind = ocr_flatdoc[0].kind if len(ocr_flatdoc) > 0 else None
     ocr_txt_list = [ocr_flatelem.txt for ocr_flatelem in ocr_flatdoc]
-    ext_txt_list, ld = match_txt_repack(ocr_txt_list, ext_txt_set, sep=sep)
+    ext_txt_list, ld = match_txt_repack_elem(ocr_txt_list, ext_txt_set, sep=sep)
     ext_flatdoc = [
         dot_flatdoc.FlatElem(txt=ext_txt, kind=kind) for ext_txt in ext_txt_list
     ]
