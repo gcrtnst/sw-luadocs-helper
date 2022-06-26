@@ -263,22 +263,15 @@ def convert_tessline_to_ocrline(
 
 
 def convert_ocrline_to_flatdoc_headonly(ocrline_list):
-    ocrline_list = as_ocrline_list(ocrline_list)
-
-    flatdoc = []
-    for ocrline in ocrline_list:
-        if ocrline.kind != "head":
-            raise ValueError
-        flatdoc.append(dot_flatdoc.FlatElem(txt=ocrline.txt, kind=ocrline.kind))
-    return flatdoc
+    ocrline_list = as_ocrline_list_monokind(ocrline_list, kind="head")
+    return [
+        dot_flatdoc.FlatElem(txt=ocrline.txt, kind=ocrline.kind)
+        for ocrline in ocrline_list
+    ]
 
 
 def convert_ocrline_to_flatdoc_bodyonly(ocrline_list, *, body_line_h):
-    ocrline_list = as_ocrline_list(ocrline_list)
-
-    for ocrline in ocrline_list:
-        if ocrline.kind != "body":
-            raise ValueError
+    ocrline_list = as_ocrline_list_monokind(ocrline_list, kind="body")
 
     idx = 0
     sl_list = []
@@ -309,11 +302,7 @@ def convert_ocrline_to_flatdoc_bodyonly(ocrline_list, *, body_line_h):
 
 
 def convert_ocrline_to_flatdoc_codeonly(ocrline_list, *, code_line_h):
-    ocrline_list = as_ocrline_list(ocrline_list)
-
-    for ocrline in ocrline_list:
-        if ocrline.kind != "code":
-            raise ValueError
+    ocrline_list = as_ocrline_list_monokind(ocrline_list, kind="code")
 
     if len(ocrline_list) <= 0:
         return []
@@ -331,7 +320,7 @@ def convert_ocrline_to_flatdoc_codeonly(ocrline_list, *, code_line_h):
 
 
 def convert_ocrline_to_flatdoc_monokind(ocrline_list, *, body_line_h, code_line_h):
-    ocrline_list = as_ocrline_list(ocrline_list)
+    ocrline_list = as_ocrline_list_monokind(ocrline_list)
 
     if len(ocrline_list) <= 0:
         return []
