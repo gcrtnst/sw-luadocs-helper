@@ -422,6 +422,111 @@ class TestMatchFlatDocRepackElem(unittest.TestCase):
                 self.assertEqual(actual_ld, expected_ld)
 
 
+class TestMatchFlatDocRepackLine(unittest.TestCase):
+    def test_validate_value_error(self):
+        with self.assertRaises(ValueError):
+            sw_luadocs.extract.match_flatdoc_repack_line(
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="a", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b", kind="body"),
+                ],
+                {"c"},
+            )
+
+    def test_validate_convert(self):
+        ext_flatdoc, ld = sw_luadocs.extract.match_flatdoc_repack_line([], {"a"}, sep=0)
+        self.assertEqual(ext_flatdoc, [])
+        self.assertEqual(ld, 0)
+
+    def test_main(self):
+        for (
+            input_ocr_flatdoc,
+            input_ext_txt_set,
+            input_sep,
+            expected_ext_flatdoc,
+            expected_ld,
+        ) in [
+            ([], {"a"}, "\n\n", [], 0),
+            (
+                [sw_luadocs.flatdoc.FlatElem(txt="a", kind="code")],
+                {"a"},
+                "\n\n",
+                [sw_luadocs.flatdoc.FlatElem(txt="a", kind="code")],
+                0,
+            ),
+            (
+                [sw_luadocs.flatdoc.FlatElem(txt="a", kind="code")],
+                {"b"},
+                "\n\n",
+                [sw_luadocs.flatdoc.FlatElem(txt="b", kind="code")],
+                1,
+            ),
+            (
+                [sw_luadocs.flatdoc.FlatElem(txt="a", kind="body")],
+                {"a"},
+                "\n\n",
+                [sw_luadocs.flatdoc.FlatElem(txt="a", kind="body")],
+                0,
+            ),
+            (
+                [sw_luadocs.flatdoc.FlatElem(txt="a\nb", kind="code")],
+                {"a", "b"},
+                "\n\n",
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="a", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b", kind="code"),
+                ],
+                0,
+            ),
+            (
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="a", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b", kind="code"),
+                ],
+                {"a\n\nb"},
+                "\n\n",
+                [sw_luadocs.flatdoc.FlatElem(txt="a\n\nb", kind="code")],
+                0,
+            ),
+            (
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="a", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b", kind="code"),
+                ],
+                {"a", "\nb"},
+                "\n\n",
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="a", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="\nb", kind="code"),
+                ],
+                0,
+            ),
+            (
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="a", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b", kind="code"),
+                ],
+                {"a,b"},
+                ",",
+                [sw_luadocs.flatdoc.FlatElem(txt="a,b", kind="code")],
+                0,
+            ),
+        ]:
+            with self.subTest(
+                ocr_flatdoc=input_ocr_flatdoc,
+                ext_txt_set=input_ext_txt_set,
+                sep=input_sep,
+            ):
+                (
+                    actual_ext_flatdoc,
+                    actual_ld,
+                ) = sw_luadocs.extract.match_flatdoc_repack_line(
+                    input_ocr_flatdoc, input_ext_txt_set, sep=input_sep
+                )
+                self.assertEqual(actual_ext_flatdoc, expected_ext_flatdoc)
+                self.assertEqual(actual_ld, expected_ld)
+
+
 class TestMatchFlatDocMonoKind(unittest.TestCase):
     def test_validate_value_error(self):
         with self.assertRaises(ValueError):

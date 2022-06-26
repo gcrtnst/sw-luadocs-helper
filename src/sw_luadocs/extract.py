@@ -176,6 +176,20 @@ def match_flatdoc_repack_elem(ocr_flatdoc, ext_txt_set, *, sep="\n\n"):
     return ext_flatdoc, ld
 
 
+def match_flatdoc_repack_line(ocr_flatdoc, ext_txt_set, *, sep="\n\n"):
+    ocr_flatdoc = dot_flatdoc.as_flatdoc_monokind(ocr_flatdoc)
+    sep = str(sep)
+
+    kind = ocr_flatdoc[0].kind if len(ocr_flatdoc) > 0 else None
+    ocr_txt_full = sep.join(ocr_flatelem.txt for ocr_flatelem in ocr_flatdoc)
+    pak_txt_list_list = generate_repack_line_patterns(ocr_txt_full)
+    ext_txt_list, ld = match_txt_repack(pak_txt_list_list, ext_txt_set)
+    ext_flatdoc = [
+        dot_flatdoc.FlatElem(txt=ext_txt, kind=kind) for ext_txt in ext_txt_list
+    ]
+    return ext_flatdoc, ld
+
+
 def match_flatdoc_monokind(
     ocr_flatdoc, ext_txt_set, *, body_sep="\n\n", code_sep="\n\n"
 ):
