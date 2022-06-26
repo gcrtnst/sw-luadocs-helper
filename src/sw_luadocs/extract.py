@@ -145,7 +145,7 @@ def match_flatdoc_each(ocr_flatdoc, ext_txt_set):
     return ext_flatdoc, ld_sum
 
 
-def match_flatdoc_concat(ocr_flatdoc, ext_txt_set, *, sep="\n\n"):
+def match_flatdoc_repack_flatelem(ocr_flatdoc, ext_txt_set, *, sep="\n\n"):
     ocr_flatdoc = dot_flatdoc.as_flatdoc_monokind(ocr_flatdoc)
 
     kind = ocr_flatdoc[0].kind if len(ocr_flatdoc) > 0 else None
@@ -167,9 +167,9 @@ def match_flatdoc_monokind(
     if ocr_flatdoc[0].kind == "head":
         return match_flatdoc_each(ocr_flatdoc, ext_txt_set)
     if ocr_flatdoc[0].kind == "body":
-        return match_flatdoc_concat(ocr_flatdoc, ext_txt_set, sep=body_sep)
+        return match_flatdoc_repack_flatelem(ocr_flatdoc, ext_txt_set, sep=body_sep)
     if ocr_flatdoc[0].kind == "code":
-        return match_flatdoc_concat(ocr_flatdoc, ext_txt_set, sep=code_sep)
+        return match_flatdoc_repack_flatelem(ocr_flatdoc, ext_txt_set, sep=code_sep)
     raise RuntimeError
 
 

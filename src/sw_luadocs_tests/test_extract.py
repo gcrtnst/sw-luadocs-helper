@@ -268,10 +268,10 @@ class TestMatchFlatDocEach(unittest.TestCase):
                 self.assertEqual(actual_ld, expected_ld)
 
 
-class TestMatchFlatDocConcat(unittest.TestCase):
+class TestMatchFlatDocRepackFlatElem(unittest.TestCase):
     def test_validate_value_error(self):
         with self.assertRaises(ValueError):
-            sw_luadocs.extract.match_flatdoc_concat(
+            sw_luadocs.extract.match_flatdoc_repack_flatelem(
                 [
                     sw_luadocs.flatdoc.FlatElem(txt="a", kind="head"),
                     sw_luadocs.flatdoc.FlatElem(txt="b", kind="body"),
@@ -356,7 +356,10 @@ class TestMatchFlatDocConcat(unittest.TestCase):
                 ext_txt_set=input_ext_txt_set,
                 sep=input_sep,
             ):
-                actual_ext_flatdoc, actual_ld = sw_luadocs.extract.match_flatdoc_concat(
+                (
+                    actual_ext_flatdoc,
+                    actual_ld,
+                ) = sw_luadocs.extract.match_flatdoc_repack_flatelem(
                     input_ocr_flatdoc, input_ext_txt_set, sep=input_sep
                 )
                 self.assertEqual(actual_ext_flatdoc, expected_ext_flatdoc)
