@@ -1,6 +1,5 @@
 import dataclasses
 import Levenshtein
-import numpy as np
 import pefile
 import re
 
@@ -54,16 +53,17 @@ def calc_levenshtein_dp(s, t):
     pad_s = " " + s
     pad_t = " " + t
 
-    lddp = np.empty((len(pad_s), len(pad_t)), dtype=int)
-    lddp[0, 0] = 0
-    lddp[1:, :1] = np.reshape(np.arange(1, len(pad_s)), lddp[1:, :1].shape)
-    lddp[:1, 1:] = np.reshape(np.arange(1, len(pad_t)), lddp[:1, 1:].shape)
+    lddp = [[0] * len(pad_t) for i in range(len(pad_s))]
+    for i in range(1, len(pad_s)):
+        lddp[i][0] = i
+    for j in range(1, len(pad_t)):
+        lddp[0][j] = j
     for i in range(1, len(pad_s)):
         for j in range(1, len(pad_t)):
-            lddp[i, j] = min(
-                lddp[i - 1, j - 1] + (0 if pad_s[i] == pad_t[j] else 1),
-                lddp[i - 1, j] + 1,
-                lddp[i, j - 1] + 1,
+            lddp[i][j] = min(
+                lddp[i - 1][j - 1] + (0 if pad_s[i] == pad_t[j] else 1),
+                lddp[i - 1][j] + 1,
+                lddp[i][j - 1] + 1,
             )
     return lddp
 
