@@ -47,7 +47,7 @@ def extract_strings(section_bin):
     return ext_txt_set
 
 
-def match_txt_single(ocr_txt, ext_txt_set):
+def match_txt(ocr_txt, ext_txt_set):
     ocr_txt = str(ocr_txt)
     ext_txt_set = set(map(str, ext_txt_set))
 
@@ -70,12 +70,12 @@ def match_flatelem(ocr_flatelem, ext_txt_set):
         raise TypeError
 
     ocr_txt = ocr_flatelem.txt
-    ext_txt, ld = match_txt_single(ocr_txt, ext_txt_set)
+    ext_txt, ld = match_txt(ocr_txt, ext_txt_set)
     ext_flatelem = dataclasses.replace(ocr_flatelem, txt=ext_txt)
     return ext_flatelem, ld
 
 
-def match_flatdoc_each(ocr_flatdoc, ext_txt_set):
+def match_flatdoc(ocr_flatdoc, ext_txt_set):
     ocr_flatdoc = dot_flatdoc.as_flatdoc(ocr_flatdoc)
     ext_txt_set = set(map(str, ext_txt_set))
 
@@ -91,5 +91,5 @@ def match_flatdoc_each(ocr_flatdoc, ext_txt_set):
 def extract(ocr_flatdoc, exe_bin, *, section_name):
     section_bin = extract_section(exe_bin, section_name, ignore_padding=True)
     ext_txt_set = extract_strings(section_bin)
-    ext_flatdoc, _ = match_flatdoc_each(ocr_flatdoc, ext_txt_set)
+    ext_flatdoc, _ = match_flatdoc(ocr_flatdoc, ext_txt_set)
     return ext_flatdoc
