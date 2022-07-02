@@ -372,6 +372,54 @@ class TestMatchTxtRepackAdv(unittest.TestCase):
                 self.assertEqual(actual_ld, expected_ld)
 
 
+class TestMatchTxtRepackLeft(unittest.TestCase):
+    def test_validate_convert(self):
+        ext_txt, adv, ld = sw_luadocs.extract.match_txt_repack_left(
+            {1: None, 2: None}, [152, 12], sep=5
+        )
+        self.assertEqual(ext_txt, "152")
+        self.assertEqual(adv, 2)
+        self.assertEqual(ld, 0)
+
+    def test_empty(self):
+        with self.assertRaises(ValueError):
+            sw_luadocs.extract.match_txt_repack_left(["a"], set())
+
+    def test_main(self):
+        for (
+            input_ocr_txt_list,
+            input_ext_txt_set,
+            input_sep,
+            expected_ext_txt,
+            expected_adv,
+            expected_ld,
+        ) in [
+            ([], {""}, "", "", 0, 0),
+            (["abc"], {"def"}, "", "def", 1, 3),
+            (["abc", "def"], {"abc###def"}, "###", "abc###def", 2, 0),
+            (["abc", "def"], {"abc", "def"}, "", "abc", 1, 0),
+            (["def", "abc"], {"abc", "def"}, "", "def", 1, 0),
+            (["abc"], {"abd", "bbc"}, "", "abd", 1, 1),
+            (["abc", "def"], {"abc", "abc###def"}, "###", "abc###def", 2, 0),
+            (["abc", "def"], {"abc", "abc###"}, "###", "abc###", 1, 0),
+        ]:
+            with self.subTest(
+                ocr_txt_list=input_ocr_txt_list,
+                ext_txt_set=input_ext_txt_set,
+                sep=input_sep,
+            ):
+                (
+                    actual_ext_txt,
+                    actual_adv,
+                    actual_ld,
+                ) = sw_luadocs.extract.match_txt_repack_left(
+                    input_ocr_txt_list, input_ext_txt_set, sep=input_sep
+                )
+                self.assertEqual(actual_ext_txt, expected_ext_txt)
+                self.assertEqual(actual_adv, expected_adv)
+                self.assertEqual(actual_ld, expected_ld)
+
+
 class TestMatchTxtRepack(unittest.TestCase):
     def test_validate_convert(self):
         ext_txt_list, ld = sw_luadocs.extract.match_txt_repack(
