@@ -319,25 +319,14 @@ def convert_ocrline_to_flatdoc_codeonly(ocrline_list, *, code_line_h):
     return [dot_flatdoc.FlatElem(txt=txt, kind="code")]
 
 
-def convert_ocrline_to_flatdoc_monokind(
-    ocrline_list, *, head_line_h, body_line_h, code_line_h
-):
+def convert_ocrline_to_flatdoc_monokind(ocrline_list, *, line_h):
     ocrline_list = as_ocrline_list_monokind(ocrline_list)
 
     if len(ocrline_list) <= 0:
         return []
 
-    kind = ocrline_list[0].kind
-    if kind == "head":
-        line_h = head_line_h
-    elif kind == "body":
-        line_h = body_line_h
-    elif kind == "code":
-        line_h = code_line_h
-    else:
-        raise RuntimeError
-
     txt = ocrline_list[0].txt
+    kind = ocrline_list[0].kind
     for idx in range(1, len(ocrline_list)):
         numlf = calc_char_count(
             pos1=ocrline_list[idx - 1].box[1],

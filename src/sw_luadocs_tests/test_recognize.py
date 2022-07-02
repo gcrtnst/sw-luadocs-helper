@@ -1974,37 +1974,23 @@ class TestConvertOCRLineToFlatDocCodeOnly(unittest.TestCase):
 class TestConvertOCRLineToFlatDocMonoKind(unittest.TestCase):
     def test_validate_type_error(self):
         with self.assertRaises(TypeError):
-            sw_luadocs.recognize.convert_ocrline_to_flatdoc_monokind(
-                [None], head_line_h=0.1, body_line_h=0.1, code_line_h=0.1
-            )
+            sw_luadocs.recognize.convert_ocrline_to_flatdoc_monokind([None], line_h=0.1)
 
     def test_main(self):
-        for (
-            input_ocrline_list,
-            input_head_line_h,
-            input_body_line_h,
-            input_code_line_h,
-            expected_flatdoc,
-        ) in [
-            ([], 0.1, 0.1, 0.1, []),
+        for (input_ocrline_list, input_line_h, expected_flatdoc) in [
+            ([], 0.1, []),
             (
                 [sw_luadocs.recognize.OCRLine(txt="a", kind="head", box=(0, 0, 1, 1))],
-                0.1,
-                0.1,
                 0.1,
                 [sw_luadocs.flatdoc.FlatElem(txt="a", kind="head")],
             ),
             (
                 [sw_luadocs.recognize.OCRLine(txt="b", kind="body", box=(0, 0, 1, 1))],
                 0.1,
-                0.1,
-                0.1,
                 [sw_luadocs.flatdoc.FlatElem(txt="b", kind="body")],
             ),
             (
                 [sw_luadocs.recognize.OCRLine(txt="c", kind="code", box=(0, 0, 1, 1))],
-                0.1,
-                0.1,
                 0.1,
                 [sw_luadocs.flatdoc.FlatElem(txt="c", kind="code")],
             ),
@@ -2018,8 +2004,6 @@ class TestConvertOCRLineToFlatDocMonoKind(unittest.TestCase):
                     ),
                 ],
                 1,
-                0.1,
-                0.1,
                 [sw_luadocs.flatdoc.FlatElem(txt="a\nb", kind="head")],
             ),
             (
@@ -2031,9 +2015,7 @@ class TestConvertOCRLineToFlatDocMonoKind(unittest.TestCase):
                         txt="b", kind="body", box=(0, 1, 1, 1)
                     ),
                 ],
-                0.1,
                 1,
-                0.1,
                 [sw_luadocs.flatdoc.FlatElem(txt="a\nb", kind="body")],
             ),
             (
@@ -2045,8 +2027,6 @@ class TestConvertOCRLineToFlatDocMonoKind(unittest.TestCase):
                         txt="b", kind="code", box=(0, 1, 1, 1)
                     ),
                 ],
-                0.1,
-                0.1,
                 1,
                 [sw_luadocs.flatdoc.FlatElem(txt="a\nb", kind="code")],
             ),
@@ -2059,8 +2039,6 @@ class TestConvertOCRLineToFlatDocMonoKind(unittest.TestCase):
                         txt="b", kind="code", box=(0, 3, 1, 1)
                     ),
                 ],
-                0.1,
-                0.1,
                 0.5,
                 [sw_luadocs.flatdoc.FlatElem(txt="a\n\n\n\nb", kind="code")],
             ),
@@ -2080,23 +2058,13 @@ class TestConvertOCRLineToFlatDocMonoKind(unittest.TestCase):
                     ),
                 ],
                 1,
-                1,
-                1,
                 [sw_luadocs.flatdoc.FlatElem(txt="a\nb\n\nc\n\n\nd", kind="code")],
             ),
         ]:
-            with self.subTest(
-                ocrline_list=input_ocrline_list,
-                head_line_h=input_head_line_h,
-                body_line_h=input_body_line_h,
-                code_line_h=input_code_line_h,
-            ):
+            with self.subTest(ocrline_list=input_ocrline_list, line_h=input_line_h):
                 actual_flatdoc = (
                     sw_luadocs.recognize.convert_ocrline_to_flatdoc_monokind(
-                        input_ocrline_list,
-                        head_line_h=input_head_line_h,
-                        body_line_h=input_body_line_h,
-                        code_line_h=input_code_line_h,
+                        input_ocrline_list, line_h=input_line_h
                     )
                 )
                 self.assertEqual(actual_flatdoc, expected_flatdoc)
