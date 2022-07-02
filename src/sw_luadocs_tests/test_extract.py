@@ -420,9 +420,9 @@ class TestMatchTxtRepackLeft(unittest.TestCase):
                 self.assertEqual(actual_ld, expected_ld)
 
 
-class TestMatchTxtRepack(unittest.TestCase):
+class TestMatchTxtRepackOld(unittest.TestCase):
     def test_validate_convert(self):
-        ext_txt_list, ld = sw_luadocs.extract.match_txt_repack(
+        ext_txt_list, ld = sw_luadocs.extract.match_txt_repack_old(
             [{1: None, 3: None}, {123: None}], {12: None, 34: None}
         )
         self.assertEqual(ext_txt_list, ["12"])
@@ -456,7 +456,10 @@ class TestMatchTxtRepack(unittest.TestCase):
             with self.subTest(
                 pak_txt_list_list=input_pak_txt_list_list, ext_txt_set=input_ext_txt_set
             ):
-                actual_ext_txt_list, actual_ld = sw_luadocs.extract.match_txt_repack(
+                (
+                    actual_ext_txt_list,
+                    actual_ld,
+                ) = sw_luadocs.extract.match_txt_repack_old(
                     input_pak_txt_list_list, input_ext_txt_set
                 )
                 self.assertEqual(actual_ext_txt_list, expected_ext_txt_list)
