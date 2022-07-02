@@ -300,26 +300,23 @@ def match_flatdoc_monokind(
     raise RuntimeError
 
 
-def match_flatdoc(ocr_flatdoc, ext_txt_set, *, body_sep="\n\n", code_sep="\n\n"):
+def match_flatdoc(ocr_flatdoc, ext_txt_set, *, sep="\n\n"):
     ext_txt_set = set(map(str, ext_txt_set))
-    body_sep = str(body_sep)
-    code_sep = str(code_sep)
+    sep = str(sep)
 
     ext_flatdoc = []
     ld_sum = 0
     for ocr_flatdoc_monokind in dot_flatdoc.split_flatdoc_by_kind(ocr_flatdoc):
         ext_flatdoc_monokind, ld = match_flatdoc_monokind(
-            ocr_flatdoc_monokind, ext_txt_set, body_sep=body_sep, code_sep=code_sep
+            ocr_flatdoc_monokind, ext_txt_set, body_sep=sep, code_sep=sep
         )
         ext_flatdoc.extend(ext_flatdoc_monokind)
         ld_sum += ld
     return ext_flatdoc, ld_sum
 
 
-def extract(ocr_flatdoc, exe_bin, *, section_name, body_sep, code_sep):
+def extract(ocr_flatdoc, exe_bin, *, section_name, sep):
     section_bin = extract_section(exe_bin, section_name, ignore_padding=True)
     ext_txt_set = extract_strings(section_bin)
-    ext_flatdoc, _ = match_flatdoc(
-        ocr_flatdoc, ext_txt_set, body_sep=body_sep, code_sep=code_sep
-    )
+    ext_flatdoc, _ = match_flatdoc(ocr_flatdoc, ext_txt_set, sep=sep)
     return ext_flatdoc

@@ -861,16 +861,14 @@ class TestMatchFlatDoc(unittest.TestCase):
         for (
             input_ocr_flatdoc,
             input_ext_txt_set,
-            input_body_sep,
-            input_code_sep,
+            input_sep,
             expected_ext_flatdoc,
             expected_ld,
         ) in [
-            ([], {"a"}, ",", ",", [], 0),
+            ([], {"a"}, ",", [], 0),
             (
                 [sw_luadocs.flatdoc.FlatElem(txt="a", kind="head")],
                 {"a"},
-                "\n\n",
                 "\n\n",
                 [sw_luadocs.flatdoc.FlatElem(txt="a", kind="head")],
                 0,
@@ -879,14 +877,12 @@ class TestMatchFlatDoc(unittest.TestCase):
                 [sw_luadocs.flatdoc.FlatElem(txt="b", kind="head")],
                 {"a"},
                 "\n\n",
-                "\n\n",
                 [sw_luadocs.flatdoc.FlatElem(txt="a", kind="head")],
                 1,
             ),
             (
                 [sw_luadocs.flatdoc.FlatElem(txt="a", kind="body")],
                 {"a"},
-                "\n\n",
                 "\n\n",
                 [sw_luadocs.flatdoc.FlatElem(txt="a", kind="body")],
                 0,
@@ -897,7 +893,6 @@ class TestMatchFlatDoc(unittest.TestCase):
                     sw_luadocs.flatdoc.FlatElem(txt="b", kind="head"),
                 ],
                 {"a", "b", "a\n\nb"},
-                "\n\n",
                 "\n\n",
                 [
                     sw_luadocs.flatdoc.FlatElem(txt="a", kind="head"),
@@ -911,7 +906,6 @@ class TestMatchFlatDoc(unittest.TestCase):
                     sw_luadocs.flatdoc.FlatElem(txt="b", kind="body"),
                 ],
                 {"a\n\nb"},
-                "\n\n",
                 "\n\n",
                 [
                     sw_luadocs.flatdoc.FlatElem(txt="a\n\nb", kind="body"),
@@ -925,7 +919,6 @@ class TestMatchFlatDoc(unittest.TestCase):
                 ],
                 {"a:b"},
                 ":",
-                "\n\n",
                 [
                     sw_luadocs.flatdoc.FlatElem(txt="a:b", kind="body"),
                 ],
@@ -938,7 +931,6 @@ class TestMatchFlatDoc(unittest.TestCase):
                 ],
                 {"a\n\nb"},
                 "\n\n",
-                "\n\n",
                 [
                     sw_luadocs.flatdoc.FlatElem(txt="a\n\nb", kind="code"),
                 ],
@@ -950,7 +942,6 @@ class TestMatchFlatDoc(unittest.TestCase):
                     sw_luadocs.flatdoc.FlatElem(txt="b", kind="code"),
                 ],
                 {"a:b"},
-                "\n\n",
                 ":",
                 [
                     sw_luadocs.flatdoc.FlatElem(txt="a:b", kind="code"),
@@ -964,7 +955,6 @@ class TestMatchFlatDoc(unittest.TestCase):
                     sw_luadocs.flatdoc.FlatElem(txt="c", kind="code"),
                 ],
                 {"a", "b", "c"},
-                "\n\n",
                 "\n\n",
                 [
                     sw_luadocs.flatdoc.FlatElem(txt="a", kind="head"),
@@ -983,7 +973,6 @@ class TestMatchFlatDoc(unittest.TestCase):
                     sw_luadocs.flatdoc.FlatElem(txt="c2", kind="code"),
                 ],
                 {"a1", "a2", "b1", "b2", "c1", "c2"},
-                "\n",
                 "\n",
                 [
                     sw_luadocs.flatdoc.FlatElem(txt="a1", kind="head"),
@@ -1006,7 +995,6 @@ class TestMatchFlatDoc(unittest.TestCase):
                 ],
                 {"a1\n\na2", "b1\n\nb2", "c1\n\nc2"},
                 "\n\n",
-                "\n\n",
                 [
                     sw_luadocs.flatdoc.FlatElem(txt="a1\n\na2", kind="head"),
                     sw_luadocs.flatdoc.FlatElem(txt="a1\n\na2", kind="head"),
@@ -1026,7 +1014,6 @@ class TestMatchFlatDoc(unittest.TestCase):
                 ],
                 {"a1!", "a2!", "b1\n\nb2!", "c1\n\nc2!"},
                 "\n\n",
-                "\n\n",
                 [
                     sw_luadocs.flatdoc.FlatElem(txt="a1!", kind="head"),
                     sw_luadocs.flatdoc.FlatElem(txt="a2!", kind="head"),
@@ -1039,14 +1026,10 @@ class TestMatchFlatDoc(unittest.TestCase):
             with self.subTest(
                 ocr_flatdoc=input_ocr_flatdoc,
                 ext_txt_set=input_ext_txt_set,
-                body_sep=input_body_sep,
-                code_sep=input_code_sep,
+                sep=input_sep,
             ):
                 actual_ext_flatdoc, actual_ld = sw_luadocs.extract.match_flatdoc(
-                    input_ocr_flatdoc,
-                    input_ext_txt_set,
-                    body_sep=input_body_sep,
-                    code_sep=input_code_sep,
+                    input_ocr_flatdoc, input_ext_txt_set, sep=input_sep
                 )
                 self.assertEqual(actual_ext_flatdoc, expected_ext_flatdoc)
                 self.assertEqual(actual_ld, expected_ld)

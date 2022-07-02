@@ -89,11 +89,7 @@ def extract_main(ns):
 
     ocr_flatdoc = dot_flatdoc.parse_mdlike(ocr_txt)
     ext_flatdoc = dot_extract.extract(
-        ocr_flatdoc,
-        exe_bin,
-        section_name=extract_cfg["section_name"],
-        body_sep="\n\n",
-        code_sep="\n\n",
+        ocr_flatdoc, exe_bin, section_name=extract_cfg["section_name"], sep="\n\n"
     )
     ext_txt = dot_flatdoc.format_mdlike(ext_flatdoc)
 
