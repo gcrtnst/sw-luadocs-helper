@@ -1598,17 +1598,17 @@ class TestConvertTesslineToOCRLine(unittest.TestCase):
         )
 
 
-class TestConvertOCRLineToFlatDocHeadOnly(unittest.TestCase):
+class TestConvertOCRLineToFlatDocIndividual(unittest.TestCase):
     def test_type(self):
         with self.assertRaises(TypeError):
-            sw_luadocs.recognize.convert_ocrline_to_flatdoc_headonly([None])
+            sw_luadocs.recognize.convert_ocrline_to_flatdoc_individual([None])
 
     def test_empty(self):
-        flatdoc = sw_luadocs.recognize.convert_ocrline_to_flatdoc_headonly([])
+        flatdoc = sw_luadocs.recognize.convert_ocrline_to_flatdoc_individual([])
         self.assertEqual(flatdoc, [])
 
     def test_convert(self):
-        flatdoc = sw_luadocs.recognize.convert_ocrline_to_flatdoc_headonly(
+        flatdoc = sw_luadocs.recognize.convert_ocrline_to_flatdoc_individual(
             [
                 sw_luadocs.recognize.OCRLine(txt="a", kind="head", box=(0, 0, 1, 1)),
                 sw_luadocs.recognize.OCRLine(txt="b", kind="body", box=(0, 0, 1, 1)),
@@ -1625,10 +1625,10 @@ class TestConvertOCRLineToFlatDocHeadOnly(unittest.TestCase):
         )
 
 
-class TestConvertOCRLineToFlatDocMonoKind(unittest.TestCase):
+class TestConvertOCRLineToFlatDocPack(unittest.TestCase):
     def test_validate_type_error(self):
         with self.assertRaises(TypeError):
-            sw_luadocs.recognize.convert_ocrline_to_flatdoc_monokind([None], line_h=0.1)
+            sw_luadocs.recognize.convert_ocrline_to_flatdoc_pack([None], line_h=0.1)
 
     def test_main(self):
         for (input_ocrline_list, input_line_h, expected_flatdoc) in [
@@ -1716,29 +1716,27 @@ class TestConvertOCRLineToFlatDocMonoKind(unittest.TestCase):
             ),
         ]:
             with self.subTest(ocrline_list=input_ocrline_list, line_h=input_line_h):
-                actual_flatdoc = (
-                    sw_luadocs.recognize.convert_ocrline_to_flatdoc_monokind(
-                        input_ocrline_list, line_h=input_line_h
-                    )
+                actual_flatdoc = sw_luadocs.recognize.convert_ocrline_to_flatdoc_pack(
+                    input_ocrline_list, line_h=input_line_h
                 )
                 self.assertEqual(actual_flatdoc, expected_flatdoc)
 
 
-class TestConvertOCRLineToFlatDocMonoKindOld(unittest.TestCase):
+class TestConvertOCRLineToFlatDocMonoKind(unittest.TestCase):
     def test_type(self):
         with self.assertRaises(TypeError):
-            sw_luadocs.recognize.convert_ocrline_to_flatdoc_monokind_old(
+            sw_luadocs.recognize.convert_ocrline_to_flatdoc_monokind(
                 [None], body_line_h=0.1, code_line_h=0.1
             )
 
     def test_empty(self):
-        flatdoc = sw_luadocs.recognize.convert_ocrline_to_flatdoc_monokind_old(
+        flatdoc = sw_luadocs.recognize.convert_ocrline_to_flatdoc_monokind(
             [], body_line_h=0.1, code_line_h=0.1
         )
         self.assertEqual(flatdoc, [])
 
     def test_head(self):
-        flatdoc = sw_luadocs.recognize.convert_ocrline_to_flatdoc_monokind_old(
+        flatdoc = sw_luadocs.recognize.convert_ocrline_to_flatdoc_monokind(
             [sw_luadocs.recognize.OCRLine(txt="a", kind="head", box=(0, 0, 1, 1))],
             body_line_h=0.1,
             code_line_h=0.1,
@@ -1746,7 +1744,7 @@ class TestConvertOCRLineToFlatDocMonoKindOld(unittest.TestCase):
         self.assertEqual(flatdoc, [sw_luadocs.flatdoc.FlatElem(txt="a", kind="head")])
 
     def test_body(self):
-        flatdoc = sw_luadocs.recognize.convert_ocrline_to_flatdoc_monokind_old(
+        flatdoc = sw_luadocs.recognize.convert_ocrline_to_flatdoc_monokind(
             [
                 sw_luadocs.recognize.OCRLine(txt="a", kind="body", box=(0, 0, 1, 1)),
                 sw_luadocs.recognize.OCRLine(txt="b", kind="body", box=(0, 1, 1, 1)),
@@ -1759,7 +1757,7 @@ class TestConvertOCRLineToFlatDocMonoKindOld(unittest.TestCase):
         )
 
     def test_code(self):
-        flatdoc = sw_luadocs.recognize.convert_ocrline_to_flatdoc_monokind_old(
+        flatdoc = sw_luadocs.recognize.convert_ocrline_to_flatdoc_monokind(
             [
                 sw_luadocs.recognize.OCRLine(txt="a", kind="code", box=(0, 0, 1, 1)),
                 sw_luadocs.recognize.OCRLine(txt="b", kind="code", box=(0, 1, 1, 1)),

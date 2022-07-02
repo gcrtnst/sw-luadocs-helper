@@ -262,7 +262,7 @@ def convert_tessline_to_ocrline(
     return OCRLine(txt=txt, kind=kind, box=tessline.box)
 
 
-def convert_ocrline_to_flatdoc_headonly(ocrline_list):
+def convert_ocrline_to_flatdoc_individual(ocrline_list):
     ocrline_list = as_ocrline_list(ocrline_list)
     return [
         dot_flatdoc.FlatElem(txt=ocrline.txt, kind=ocrline.kind)
@@ -270,7 +270,7 @@ def convert_ocrline_to_flatdoc_headonly(ocrline_list):
     ]
 
 
-def convert_ocrline_to_flatdoc_monokind(ocrline_list, *, line_h):
+def convert_ocrline_to_flatdoc_pack(ocrline_list, *, line_h):
     ocrline_list = as_ocrline_list_monokind(ocrline_list)
 
     if len(ocrline_list) <= 0:
@@ -289,17 +289,17 @@ def convert_ocrline_to_flatdoc_monokind(ocrline_list, *, line_h):
     return [dot_flatdoc.FlatElem(txt=txt, kind=kind)]
 
 
-def convert_ocrline_to_flatdoc_monokind_old(ocrline_list, *, body_line_h, code_line_h):
+def convert_ocrline_to_flatdoc_monokind(ocrline_list, *, body_line_h, code_line_h):
     ocrline_list = as_ocrline_list_monokind(ocrline_list)
 
     if len(ocrline_list) <= 0:
         return []
     if ocrline_list[0].kind == "head":
-        return convert_ocrline_to_flatdoc_headonly(ocrline_list)
+        return convert_ocrline_to_flatdoc_individual(ocrline_list)
     if ocrline_list[0].kind == "body":
-        return convert_ocrline_to_flatdoc_monokind(ocrline_list, line_h=body_line_h)
+        return convert_ocrline_to_flatdoc_pack(ocrline_list, line_h=body_line_h)
     if ocrline_list[0].kind == "code":
-        return convert_ocrline_to_flatdoc_monokind(ocrline_list, line_h=code_line_h)
+        return convert_ocrline_to_flatdoc_pack(ocrline_list, line_h=code_line_h)
     raise RuntimeError
 
 
@@ -309,7 +309,7 @@ def convert_ocrline_to_flatdoc(ocrline_list, *, body_line_h, code_line_h):
     flatdoc = []
     for sl in group_ocrline(ocrline_list):
         flatdoc.extend(
-            convert_ocrline_to_flatdoc_monokind_old(
+            convert_ocrline_to_flatdoc_monokind(
                 ocrline_list[sl], body_line_h=body_line_h, code_line_h=code_line_h
             )
         )
