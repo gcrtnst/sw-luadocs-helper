@@ -142,6 +142,35 @@ def match_txt_multiple(ocr_txt_list, ext_txt_set):
     return best_ext_txt_list, best_ld_sum
 
 
+def match_txt_repack_adv(ocr_txt_list, ext_txt, *, sep="\n"):
+    ocr_txt_list = list(map(str, ocr_txt_list))
+    ext_txt = str(ext_txt)
+    sep = str(sep)
+
+    ocr_txt_full = sep.join(ocr_txt_list)
+    lddp = calc_levenshtein_dp(ocr_txt_full, ext_txt)
+
+    adv_list = [None] * (len(ocr_txt_full) + 1)
+    i = 0
+    for adv, ocr_txt in enumerate(ocr_txt_list[:-1], start=1):
+        i += len(ocr_txt)
+        adv_list[i] = adv
+        for j in range(len(sep)):
+            i += 1
+            adv_list[i] = adv
+    adv_list[-1] = len(ocr_txt_list)
+
+    best_adv = None
+    best_ld = None
+    for i in range(len(lddp)):
+        adv = adv_list[i]
+        ld = lddp[i][-1]
+        if adv is not None and (best_ld is None or ld <= best_ld):
+            best_adv = adv
+            best_ld = ld
+    return best_adv, best_ld
+
+
 def match_txt_repack(pak_txt_list_list, ext_txt_set):
     pak_txt_list_list = list(
         map(lambda pak_txt_list: list(map(str, pak_txt_list)), pak_txt_list_list)

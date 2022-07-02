@@ -324,6 +324,55 @@ class TestMatchTxtMultiple(unittest.TestCase):
                 self.assertEqual(actual_best_ld_sum, expected_best_ld_sum)
 
 
+class TestMatchTxtRepackAdv(unittest.TestCase):
+    def test_validate_convert(self):
+        adv, ld = sw_luadocs.extract.match_txt_repack_adv(
+            {1: None, 2: None}, 132, sep=3
+        )
+        self.assertEqual(adv, 2)
+        self.assertEqual(ld, 0)
+
+    def test_main(self):
+        for (
+            input_ocr_txt_list,
+            input_ext_txt,
+            input_sep,
+            expected_adv,
+            expected_ld,
+        ) in [
+            ([], "", "", 0, 0),
+            ([], "abc", "", 0, 3),
+            ([], "", "###", 0, 0),
+            (["abc"], "", "", 1, 3),
+            (["abc"], "abc", "", 1, 0),
+            (["abc"], "", "###", 1, 3),
+            (["abc", "def"], "", "", 1, 3),
+            (["abc", "def"], "abc", "", 1, 0),
+            (["abc", "def"], "abcd", "", 1, 1),
+            (["abc", "def"], "abcde", "", 2, 1),
+            (["abc", "def"], "abcdef", "", 2, 0),
+            (["abc", "def"], "", "###", 1, 3),
+            (["abc", "def"], "abc", "###", 1, 0),
+            (["abc", "def"], "abc#", "###", 1, 0),
+            (["abc", "def"], "abc##", "###", 1, 0),
+            (["abc", "def"], "abc###", "###", 1, 0),
+            (["abc", "def"], "abc###d", "###", 1, 1),
+            (["abc", "def"], "abc###de", "###", 2, 1),
+            (["abc", "def"], "abc###de", "###", 2, 1),
+            (["abc", "def"], "abc###def", "###", 2, 0),
+            (["abc", "def"], "abc###def#", "###", 2, 1),
+            (["abc", "def"], "abc%%%", "%%%", 1, 0),
+        ]:
+            with self.subTest(
+                ocr_txt_list=input_ocr_txt_list, ext_txt=input_ext_txt, sep=input_sep
+            ):
+                actual_adv, actual_ld = sw_luadocs.extract.match_txt_repack_adv(
+                    input_ocr_txt_list, input_ext_txt, sep=input_sep
+                )
+                self.assertEqual(actual_adv, expected_adv)
+                self.assertEqual(actual_ld, expected_ld)
+
+
 class TestMatchTxtRepack(unittest.TestCase):
     def test_validate_convert(self):
         ext_txt_list, ld = sw_luadocs.extract.match_txt_repack(
