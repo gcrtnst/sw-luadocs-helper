@@ -319,7 +319,7 @@ def convert_ocrline_to_flatdoc_codeonly(ocrline_list, *, code_line_h):
     return [dot_flatdoc.FlatElem(txt=txt, kind="code")]
 
 
-def convert_ocrline_to_flatdoc_monokind(ocrline_list, *, body_line_h, code_line_h):
+def convert_ocrline_to_flatdoc_monokind_old(ocrline_list, *, body_line_h, code_line_h):
     ocrline_list = as_ocrline_list_monokind(ocrline_list)
 
     if len(ocrline_list) <= 0:
@@ -343,7 +343,7 @@ def convert_ocrline_to_flatdoc(ocrline_list, *, body_line_h, code_line_h):
     flatdoc = []
     for sl in group_ocrline(ocrline_list):
         flatdoc.extend(
-            convert_ocrline_to_flatdoc_monokind(
+            convert_ocrline_to_flatdoc_monokind_old(
                 ocrline_list[sl], body_line_h=body_line_h, code_line_h=code_line_h
             )
         )
