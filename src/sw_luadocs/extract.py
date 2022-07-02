@@ -66,7 +66,7 @@ def calc_levenshtein_dp(s, t):
     return lddp
 
 
-def match_txt_adv(ocr_txt_list, ext_txt, *, sep="\n"):
+def match_txt_repack_adv(ocr_txt_list, ext_txt, *, sep="\n"):
     ocr_txt_list = list(map(str, ocr_txt_list))
     ext_txt = str(ext_txt)
     sep = str(sep)
@@ -95,7 +95,7 @@ def match_txt_adv(ocr_txt_list, ext_txt, *, sep="\n"):
     return best_adv, best_ld
 
 
-def match_txt_left(ocr_txt_list, ext_txt_set, *, sep="\n"):
+def match_txt_repack_left(ocr_txt_list, ext_txt_set, *, sep="\n"):
     ocr_txt_list = list(map(str, ocr_txt_list))
     ext_txt_set = set(map(str, ext_txt_set))
     sep = str(sep)
@@ -106,7 +106,7 @@ def match_txt_left(ocr_txt_list, ext_txt_set, *, sep="\n"):
     best_adv = None
     best_ld = None
     for ext_txt in ext_txt_list:
-        adv, ld = match_txt_adv(ocr_txt_list, ext_txt, sep=sep)
+        adv, ld = match_txt_repack_adv(ocr_txt_list, ext_txt, sep=sep)
         if best_ld is None or (
             (ld, -adv, -len(ext_txt)) < (best_ld, -best_adv, -len(best_ext_txt))
         ):
@@ -118,7 +118,7 @@ def match_txt_left(ocr_txt_list, ext_txt_set, *, sep="\n"):
     return best_ext_txt, best_adv, best_ld
 
 
-def match_txt(ocr_txt_list, ext_txt_set, *, sep="\n"):
+def match_txt_repack(ocr_txt_list, ext_txt_set, *, sep="\n"):
     ocr_txt_list = list(map(str, ocr_txt_list))
     ext_txt_set = set(map(str, ext_txt_set))
     sep = str(sep)
@@ -127,14 +127,16 @@ def match_txt(ocr_txt_list, ext_txt_set, *, sep="\n"):
     ldsum = 0
     idx = 0
     while idx < len(ocr_txt_list):
-        ext_txt, adv, ld = match_txt_left(ocr_txt_list[idx:], ext_txt_set, sep=sep)
+        ext_txt, adv, ld = match_txt_repack_left(
+            ocr_txt_list[idx:], ext_txt_set, sep=sep
+        )
         ext_txt_list.append(ext_txt)
         idx += adv
         ldsum += ld
     return ext_txt_list, ldsum
 
 
-def match_flatdoc_monokind(ocr_flatdoc, ext_txt_set, *, sep="\n\n"):
+def match_flatdoc_repack_line(ocr_flatdoc, ext_txt_set, *, sep="\n\n"):
     ocr_flatdoc = dot_flatdoc.as_flatdoc_monokind(ocr_flatdoc)
     sep = str(sep)
 
@@ -144,7 +146,7 @@ def match_flatdoc_monokind(ocr_flatdoc, ext_txt_set, *, sep="\n\n"):
     kind = ocr_flatdoc[0].kind if len(ocr_flatdoc) > 0 else None
     ocr_txt_full = sep.join(ocr_flatelem.txt for ocr_flatelem in ocr_flatdoc)
     ocr_txt_list = ocr_txt_full.split("\n")
-    ext_txt_list, ld = match_txt(ocr_txt_list, ext_txt_set, sep="\n")
+    ext_txt_list, ld = match_txt_repack(ocr_txt_list, ext_txt_set, sep="\n")
     ext_flatdoc = [
         dot_flatdoc.FlatElem(txt=ext_txt, kind=kind) for ext_txt in ext_txt_list
     ]
@@ -158,7 +160,7 @@ def match_flatdoc(ocr_flatdoc, ext_txt_set, *, sep="\n\n"):
     ext_flatdoc = []
     ld_sum = 0
     for ocr_flatdoc_monokind in dot_flatdoc.split_flatdoc_by_kind(ocr_flatdoc):
-        ext_flatdoc_monokind, ld = match_flatdoc_monokind(
+        ext_flatdoc_monokind, ld = match_flatdoc_repack_line(
             ocr_flatdoc_monokind, ext_txt_set, sep=sep
         )
         ext_flatdoc.extend(ext_flatdoc_monokind)

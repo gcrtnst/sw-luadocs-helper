@@ -156,9 +156,11 @@ class TestCalcLevenshteinDP(unittest.TestCase):
                 self.assertTrue(np.array_equal(actual_lddp, expected_lddp))
 
 
-class TestMatchTxtAdv(unittest.TestCase):
+class TestMatchTxtRepackAdv(unittest.TestCase):
     def test_validate_convert(self):
-        adv, ld = sw_luadocs.extract.match_txt_adv({1: None, 2: None}, 132, sep=3)
+        adv, ld = sw_luadocs.extract.match_txt_repack_adv(
+            {1: None, 2: None}, 132, sep=3
+        )
         self.assertEqual(adv, 2)
         self.assertEqual(ld, 0)
 
@@ -195,16 +197,16 @@ class TestMatchTxtAdv(unittest.TestCase):
             with self.subTest(
                 ocr_txt_list=input_ocr_txt_list, ext_txt=input_ext_txt, sep=input_sep
             ):
-                actual_adv, actual_ld = sw_luadocs.extract.match_txt_adv(
+                actual_adv, actual_ld = sw_luadocs.extract.match_txt_repack_adv(
                     input_ocr_txt_list, input_ext_txt, sep=input_sep
                 )
                 self.assertEqual(actual_adv, expected_adv)
                 self.assertEqual(actual_ld, expected_ld)
 
 
-class TestMatchTxtLeft(unittest.TestCase):
+class TestMatchTxtRepackLeft(unittest.TestCase):
     def test_validate_convert(self):
-        ext_txt, adv, ld = sw_luadocs.extract.match_txt_left(
+        ext_txt, adv, ld = sw_luadocs.extract.match_txt_repack_left(
             {1: None, 2: None}, [152, 12], sep=5
         )
         self.assertEqual(ext_txt, "152")
@@ -213,7 +215,7 @@ class TestMatchTxtLeft(unittest.TestCase):
 
     def test_empty(self):
         with self.assertRaises(ValueError):
-            sw_luadocs.extract.match_txt_left(["a"], set())
+            sw_luadocs.extract.match_txt_repack_left(["a"], set())
 
     def test_main(self):
         for (
@@ -242,7 +244,7 @@ class TestMatchTxtLeft(unittest.TestCase):
                     actual_ext_txt,
                     actual_adv,
                     actual_ld,
-                ) = sw_luadocs.extract.match_txt_left(
+                ) = sw_luadocs.extract.match_txt_repack_left(
                     input_ocr_txt_list, input_ext_txt_set, sep=input_sep
                 )
                 self.assertEqual(actual_ext_txt, expected_ext_txt)
@@ -250,9 +252,9 @@ class TestMatchTxtLeft(unittest.TestCase):
                 self.assertEqual(actual_ld, expected_ld)
 
 
-class TestMatchTxt(unittest.TestCase):
+class TestMatchTxtRepack(unittest.TestCase):
     def test_validate_convert(self):
-        ext_txt_list, ld = sw_luadocs.extract.match_txt(
+        ext_txt_list, ld = sw_luadocs.extract.match_txt_repack(
             {1: None, 2: None}, [13, 2], sep=3
         )
         self.assertEqual(ext_txt_list, ["13", "2"])
@@ -285,17 +287,17 @@ class TestMatchTxt(unittest.TestCase):
                 ext_txt_set=input_ext_txt_set,
                 sep=input_sep,
             ):
-                actual_ext_txt_list, actual_ld = sw_luadocs.extract.match_txt(
+                actual_ext_txt_list, actual_ld = sw_luadocs.extract.match_txt_repack(
                     input_ocr_txt_list, input_ext_txt_set, sep=input_sep
                 )
                 self.assertEqual(actual_ext_txt_list, expected_ext_txt_list)
                 self.assertEqual(actual_ld, expected_ld)
 
 
-class TestMatchFlatDocMonoKind(unittest.TestCase):
+class TestMatchFlatDocRepackLine(unittest.TestCase):
     def test_validate_value_error(self):
         with self.assertRaises(ValueError):
-            sw_luadocs.extract.match_flatdoc_monokind(
+            sw_luadocs.extract.match_flatdoc_repack_line(
                 [
                     sw_luadocs.flatdoc.FlatElem(txt="a", kind="head"),
                     sw_luadocs.flatdoc.FlatElem(txt="b", kind="body"),
@@ -304,7 +306,7 @@ class TestMatchFlatDocMonoKind(unittest.TestCase):
             )
 
     def test_validate_convert(self):
-        ext_flatdoc, ld = sw_luadocs.extract.match_flatdoc_monokind([], {"a"}, sep=0)
+        ext_flatdoc, ld = sw_luadocs.extract.match_flatdoc_repack_line([], {"a"}, sep=0)
         self.assertEqual(ext_flatdoc, [])
         self.assertEqual(ld, 0)
 
@@ -390,7 +392,7 @@ class TestMatchFlatDocMonoKind(unittest.TestCase):
                 (
                     actual_ext_flatdoc,
                     actual_ld,
-                ) = sw_luadocs.extract.match_flatdoc_monokind(
+                ) = sw_luadocs.extract.match_flatdoc_repack_line(
                     input_ocr_flatdoc, input_ext_txt_set, sep=input_sep
                 )
                 self.assertEqual(actual_ext_flatdoc, expected_ext_flatdoc)
