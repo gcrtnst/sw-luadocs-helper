@@ -892,11 +892,10 @@ class TestMatchFlatDoc(unittest.TestCase):
                     sw_luadocs.flatdoc.FlatElem(txt="a", kind="head"),
                     sw_luadocs.flatdoc.FlatElem(txt="b", kind="head"),
                 ],
-                {"a", "b", "a\n\nb"},
+                {"a\n\nb"},
                 "\n\n",
                 [
-                    sw_luadocs.flatdoc.FlatElem(txt="a", kind="head"),
-                    sw_luadocs.flatdoc.FlatElem(txt="b", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="a\n\nb", kind="head"),
                 ],
                 0,
             ),
@@ -909,18 +908,6 @@ class TestMatchFlatDoc(unittest.TestCase):
                 "\n\n",
                 [
                     sw_luadocs.flatdoc.FlatElem(txt="a\n\nb", kind="body"),
-                ],
-                0,
-            ),
-            (
-                [
-                    sw_luadocs.flatdoc.FlatElem(txt="a", kind="body"),
-                    sw_luadocs.flatdoc.FlatElem(txt="b", kind="body"),
-                ],
-                {"a:b"},
-                ":",
-                [
-                    sw_luadocs.flatdoc.FlatElem(txt="a:b", kind="body"),
                 ],
                 0,
             ),
@@ -997,11 +984,10 @@ class TestMatchFlatDoc(unittest.TestCase):
                 "\n\n",
                 [
                     sw_luadocs.flatdoc.FlatElem(txt="a1\n\na2", kind="head"),
-                    sw_luadocs.flatdoc.FlatElem(txt="a1\n\na2", kind="head"),
                     sw_luadocs.flatdoc.FlatElem(txt="b1\n\nb2", kind="body"),
                     sw_luadocs.flatdoc.FlatElem(txt="c1\n\nc2", kind="code"),
                 ],
-                8,
+                0,
             ),
             (
                 [
@@ -1012,15 +998,14 @@ class TestMatchFlatDoc(unittest.TestCase):
                     sw_luadocs.flatdoc.FlatElem(txt="c1", kind="code"),
                     sw_luadocs.flatdoc.FlatElem(txt="c2", kind="code"),
                 ],
-                {"a1!", "a2!", "b1\n\nb2!", "c1\n\nc2!"},
+                {"a1\n\na2!", "b1\n\nb2!", "c1\n\nc2!"},
                 "\n\n",
                 [
-                    sw_luadocs.flatdoc.FlatElem(txt="a1!", kind="head"),
-                    sw_luadocs.flatdoc.FlatElem(txt="a2!", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="a1\n\na2!", kind="head"),
                     sw_luadocs.flatdoc.FlatElem(txt="b1\n\nb2!", kind="body"),
                     sw_luadocs.flatdoc.FlatElem(txt="c1\n\nc2!", kind="code"),
                 ],
-                4,
+                3,
             ),
         ]:
             with self.subTest(

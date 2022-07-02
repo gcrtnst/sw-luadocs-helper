@@ -307,8 +307,8 @@ def match_flatdoc(ocr_flatdoc, ext_txt_set, *, sep="\n\n"):
     ext_flatdoc = []
     ld_sum = 0
     for ocr_flatdoc_monokind in dot_flatdoc.split_flatdoc_by_kind(ocr_flatdoc):
-        ext_flatdoc_monokind, ld = match_flatdoc_monokind(
-            ocr_flatdoc_monokind, ext_txt_set, body_sep=sep, code_sep=sep
+        ext_flatdoc_monokind, ld = match_flatdoc_repack_line(
+            ocr_flatdoc_monokind, ext_txt_set, sep=sep
         )
         ext_flatdoc.extend(ext_flatdoc_monokind)
         ld_sum += ld
