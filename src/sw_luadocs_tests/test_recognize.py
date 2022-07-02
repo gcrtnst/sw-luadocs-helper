@@ -2100,7 +2100,9 @@ class TestConvertOCRLineToFlatDocMonoKindOld(unittest.TestCase):
             body_line_h=10,
             code_line_h=0.1,
         )
-        self.assertEqual(flatdoc, [sw_luadocs.flatdoc.FlatElem(txt="a b", kind="body")])
+        self.assertEqual(
+            flatdoc, [sw_luadocs.flatdoc.FlatElem(txt="a\nb", kind="body")]
+        )
 
     def test_code(self):
         flatdoc = sw_luadocs.recognize.convert_ocrline_to_flatdoc_monokind_old(
@@ -2113,7 +2115,7 @@ class TestConvertOCRLineToFlatDocMonoKindOld(unittest.TestCase):
         )
         self.assertEqual(
             flatdoc,
-            [sw_luadocs.flatdoc.FlatElem(txt="a" + "\n" * 10 + "b", kind="code")],
+            [sw_luadocs.flatdoc.FlatElem(txt="a\n\n\n\n\n\n\n\n\n\nb", kind="code")],
         )
 
 
@@ -2139,15 +2141,14 @@ class TestConvertOCRLineToFlatDoc(unittest.TestCase):
                 sw_luadocs.recognize.OCRLine(txt="d", kind="code", box=(0, 3, 1, 1)),
                 sw_luadocs.recognize.OCRLine(txt="e", kind="code", box=(0, 4, 1, 1)),
             ],
-            body_line_h=0.1,
-            code_line_h=10,
+            body_line_h=0.5,
+            code_line_h=1,
         )
         self.assertEqual(
             flatdoc,
             [
                 sw_luadocs.flatdoc.FlatElem(txt="a", kind="head"),
-                sw_luadocs.flatdoc.FlatElem(txt="b", kind="body"),
-                sw_luadocs.flatdoc.FlatElem(txt="c", kind="body"),
+                sw_luadocs.flatdoc.FlatElem(txt="b\n\nc", kind="body"),
                 sw_luadocs.flatdoc.FlatElem(txt="d\ne", kind="code"),
             ],
         )

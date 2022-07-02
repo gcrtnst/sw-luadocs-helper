@@ -346,13 +346,9 @@ def convert_ocrline_to_flatdoc_monokind_old(ocrline_list, *, body_line_h, code_l
     if ocrline_list[0].kind == "head":
         return convert_ocrline_to_flatdoc_headonly(ocrline_list)
     if ocrline_list[0].kind == "body":
-        return convert_ocrline_to_flatdoc_bodyonly(
-            ocrline_list, body_line_h=body_line_h
-        )
+        return convert_ocrline_to_flatdoc_monokind(ocrline_list, line_h=body_line_h)
     if ocrline_list[0].kind == "code":
-        return convert_ocrline_to_flatdoc_codeonly(
-            ocrline_list, code_line_h=code_line_h
-        )
+        return convert_ocrline_to_flatdoc_monokind(ocrline_list, line_h=code_line_h)
     raise RuntimeError
 
 
