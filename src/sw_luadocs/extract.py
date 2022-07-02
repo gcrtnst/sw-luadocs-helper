@@ -194,6 +194,24 @@ def match_txt_repack_left(ocr_txt_list, ext_txt_set, *, sep="\n"):
     return best_ext_txt, best_adv, best_ld
 
 
+def match_txt_repack(ocr_txt_list, ext_txt_set, *, sep="\n"):
+    ocr_txt_list = list(map(str, ocr_txt_list))
+    ext_txt_set = set(map(str, ext_txt_set))
+    sep = str(sep)
+
+    ext_txt_list = []
+    ldsum = 0
+    idx = 0
+    while idx < len(ocr_txt_list):
+        ext_txt, adv, ld = match_txt_repack_left(
+            ocr_txt_list[idx:], ext_txt_set, sep=sep
+        )
+        ext_txt_list.append(ext_txt)
+        idx += adv
+        ldsum += ld
+    return ext_txt_list, ldsum
+
+
 def match_txt_repack_old(pak_txt_list_list, ext_txt_set):
     pak_txt_list_list = list(
         map(lambda pak_txt_list: list(map(str, pak_txt_list)), pak_txt_list_list)

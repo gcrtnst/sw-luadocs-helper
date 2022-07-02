@@ -420,6 +420,48 @@ class TestMatchTxtRepackLeft(unittest.TestCase):
                 self.assertEqual(actual_ld, expected_ld)
 
 
+class TestMatchTxtRepack(unittest.TestCase):
+    def test_validate_convert(self):
+        ext_txt_list, ld = sw_luadocs.extract.match_txt_repack(
+            {1: None, 2: None}, [13, 2], sep=3
+        )
+        self.assertEqual(ext_txt_list, ["13", "2"])
+        self.assertEqual(ld, 0)
+
+    def test_main(self):
+        for (
+            input_ocr_txt_list,
+            input_ext_txt_set,
+            input_sep,
+            expected_ext_txt_list,
+            expected_ld,
+        ) in [
+            ([], {""}, "", [], 0),
+            (["abc"], {""}, "", [""], 3),
+            (["abc"], {"abc"}, "", ["abc"], 0),
+            (["abc", "def"], {""}, "", ["", ""], 6),
+            (["abc", "def"], {"abc", "def"}, "", ["abc", "def"], 0),
+            (["abc", "def"], {"abc###def"}, "###", ["abc###def"], 0),
+            (
+                ["abc", "def", "ghi"],
+                {"abc", "abc###def"},
+                "###",
+                ["abc###def", "abc"],
+                3,
+            ),
+        ]:
+            with self.subTest(
+                ocr_txt_list=input_ocr_txt_list,
+                ext_txt_set=input_ext_txt_set,
+                sep=input_sep,
+            ):
+                actual_ext_txt_list, actual_ld = sw_luadocs.extract.match_txt_repack(
+                    input_ocr_txt_list, input_ext_txt_set, sep=input_sep
+                )
+                self.assertEqual(actual_ext_txt_list, expected_ext_txt_list)
+                self.assertEqual(actual_ld, expected_ld)
+
+
 class TestMatchTxtRepackOld(unittest.TestCase):
     def test_validate_convert(self):
         ext_txt_list, ld = sw_luadocs.extract.match_txt_repack_old(
