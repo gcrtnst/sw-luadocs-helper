@@ -1607,59 +1607,20 @@ class TestConvertOCRLineToFlatDocHeadOnly(unittest.TestCase):
         flatdoc = sw_luadocs.recognize.convert_ocrline_to_flatdoc_headonly([])
         self.assertEqual(flatdoc, [])
 
-    def test_kind_error(self):
-        for ocrline_list in [
-            [
-                sw_luadocs.recognize.OCRLine(txt="", kind="body", box=(0, 0, 1, 1)),
-                sw_luadocs.recognize.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
-                sw_luadocs.recognize.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
-            ],
-            [
-                sw_luadocs.recognize.OCRLine(txt="", kind="code", box=(0, 0, 1, 1)),
-                sw_luadocs.recognize.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
-                sw_luadocs.recognize.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
-            ],
-            [
-                sw_luadocs.recognize.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
-                sw_luadocs.recognize.OCRLine(txt="", kind="body", box=(0, 0, 1, 1)),
-                sw_luadocs.recognize.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
-            ],
-            [
-                sw_luadocs.recognize.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
-                sw_luadocs.recognize.OCRLine(txt="", kind="code", box=(0, 0, 1, 1)),
-                sw_luadocs.recognize.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
-            ],
-            [
-                sw_luadocs.recognize.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
-                sw_luadocs.recognize.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
-                sw_luadocs.recognize.OCRLine(txt="", kind="body", box=(0, 0, 1, 1)),
-            ],
-            [
-                sw_luadocs.recognize.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
-                sw_luadocs.recognize.OCRLine(txt="", kind="head", box=(0, 0, 1, 1)),
-                sw_luadocs.recognize.OCRLine(txt="", kind="code", box=(0, 0, 1, 1)),
-            ],
-        ]:
-            with self.subTest(ocrline_list=ocrline_list):
-                with self.assertRaises(ValueError):
-                    sw_luadocs.recognize.convert_ocrline_to_flatdoc_headonly(
-                        ocrline_list
-                    )
-
     def test_convert(self):
         flatdoc = sw_luadocs.recognize.convert_ocrline_to_flatdoc_headonly(
             [
                 sw_luadocs.recognize.OCRLine(txt="a", kind="head", box=(0, 0, 1, 1)),
-                sw_luadocs.recognize.OCRLine(txt="b", kind="head", box=(0, 0, 1, 1)),
-                sw_luadocs.recognize.OCRLine(txt="c", kind="head", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="b", kind="body", box=(0, 0, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="c", kind="code", box=(0, 0, 1, 1)),
             ]
         )
         self.assertEqual(
             flatdoc,
             [
                 sw_luadocs.flatdoc.FlatElem(txt="a", kind="head"),
-                sw_luadocs.flatdoc.FlatElem(txt="b", kind="head"),
-                sw_luadocs.flatdoc.FlatElem(txt="c", kind="head"),
+                sw_luadocs.flatdoc.FlatElem(txt="b", kind="body"),
+                sw_luadocs.flatdoc.FlatElem(txt="c", kind="code"),
             ],
         )
 
