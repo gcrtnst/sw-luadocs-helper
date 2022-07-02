@@ -24,6 +24,7 @@ scroll_sleep_secs = 3
 
 [recognize]
 head_thresh_s = 9
+head_line_h = 21
 body_line_h = 21
 code_thresh_x = 9
 code_base_x = 14

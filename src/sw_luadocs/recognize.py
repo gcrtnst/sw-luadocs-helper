@@ -367,14 +367,17 @@ def convert_ocrline_to_flatdoc_monokind_old(ocrline_list, *, body_line_h, code_l
     raise RuntimeError
 
 
-def convert_ocrline_to_flatdoc(ocrline_list, *, body_line_h, code_line_h):
+def convert_ocrline_to_flatdoc(ocrline_list, *, head_line_h, body_line_h, code_line_h):
     ocrline_list = as_ocrline_list(ocrline_list)
 
     flatdoc = []
     for sl in group_ocrline(ocrline_list):
         flatdoc.extend(
-            convert_ocrline_to_flatdoc_monokind_old(
-                ocrline_list[sl], body_line_h=body_line_h, code_line_h=code_line_h
+            convert_ocrline_to_flatdoc_monokind(
+                ocrline_list[sl],
+                head_line_h=head_line_h,
+                body_line_h=body_line_h,
+                code_line_h=code_line_h,
             )
         )
     return flatdoc
@@ -386,6 +389,7 @@ def recognize(
     tesseract_lang,
     tesseract_config,
     head_thresh_s,
+    head_line_h,
     body_line_h,
     code_thresh_x,
     code_base_x,
@@ -414,5 +418,8 @@ def recognize(
         for tessline in tessline_list
     ]
     return convert_ocrline_to_flatdoc(
-        ocrline_list, body_line_h=body_line_h, code_line_h=code_line_h
+        ocrline_list,
+        head_line_h=head_line_h,
+        body_line_h=body_line_h,
+        code_line_h=code_line_h,
     )

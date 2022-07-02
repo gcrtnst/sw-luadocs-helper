@@ -62,6 +62,7 @@ def recognize_main(ns):
             ]
         ),
         head_thresh_s=recognize_cfg["head_thresh_s"],
+        head_line_h=recognize_cfg["head_line_h"],
         body_line_h=recognize_cfg["body_line_h"],
         code_thresh_x=recognize_cfg["code_thresh_x"],
         code_base_x=recognize_cfg["code_base_x"],

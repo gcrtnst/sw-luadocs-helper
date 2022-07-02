@@ -2153,12 +2153,12 @@ class TestConvertOCRLineToFlatDoc(unittest.TestCase):
     def test_type(self):
         with self.assertRaises(TypeError):
             sw_luadocs.recognize.convert_ocrline_to_flatdoc(
-                [None], body_line_h=0.1, code_line_h=0.1
+                [None], head_line_h=0.1, body_line_h=0.1, code_line_h=0.1
             )
 
     def test_empty(self):
         flatdoc = sw_luadocs.recognize.convert_ocrline_to_flatdoc(
-            [], body_line_h=0.1, code_line_h=0.1
+            [], head_line_h=0.1, body_line_h=0.1, code_line_h=0.1
         )
         self.assertEqual(flatdoc, [])
 
@@ -2166,20 +2166,21 @@ class TestConvertOCRLineToFlatDoc(unittest.TestCase):
         flatdoc = sw_luadocs.recognize.convert_ocrline_to_flatdoc(
             [
                 sw_luadocs.recognize.OCRLine(txt="a", kind="head", box=(0, 0, 1, 1)),
-                sw_luadocs.recognize.OCRLine(txt="b", kind="body", box=(0, 1, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="b", kind="head", box=(0, 1, 1, 1)),
                 sw_luadocs.recognize.OCRLine(txt="c", kind="body", box=(0, 2, 1, 1)),
-                sw_luadocs.recognize.OCRLine(txt="d", kind="code", box=(0, 3, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="d", kind="body", box=(0, 3, 1, 1)),
                 sw_luadocs.recognize.OCRLine(txt="e", kind="code", box=(0, 4, 1, 1)),
+                sw_luadocs.recognize.OCRLine(txt="f", kind="code", box=(0, 5, 1, 1)),
             ],
-            body_line_h=0.1,
+            head_line_h=0.2,
+            body_line_h=0.5,
             code_line_h=10,
         )
         self.assertEqual(
             flatdoc,
             [
-                sw_luadocs.flatdoc.FlatElem(txt="a", kind="head"),
-                sw_luadocs.flatdoc.FlatElem(txt="b", kind="body"),
-                sw_luadocs.flatdoc.FlatElem(txt="c", kind="body"),
-                sw_luadocs.flatdoc.FlatElem(txt="d\ne", kind="code"),
+                sw_luadocs.flatdoc.FlatElem(txt="a\n\n\n\n\nb", kind="head"),
+                sw_luadocs.flatdoc.FlatElem(txt="c\n\nd", kind="body"),
+                sw_luadocs.flatdoc.FlatElem(txt="e\nf", kind="code"),
             ],
         )
