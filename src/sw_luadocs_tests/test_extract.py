@@ -358,7 +358,6 @@ class TestMatchTxtRepackAdv(unittest.TestCase):
             (["abc", "def"], "abc###", "###", 1, 0),
             (["abc", "def"], "abc###d", "###", 1, 1),
             (["abc", "def"], "abc###de", "###", 2, 1),
-            (["abc", "def"], "abc###de", "###", 2, 1),
             (["abc", "def"], "abc###def", "###", 2, 0),
             (["abc", "def"], "abc###def#", "###", 2, 1),
             (["abc", "def"], "abc%%%", "%%%", 1, 0),
