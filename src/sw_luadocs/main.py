@@ -73,7 +73,7 @@ def recognize_main(ns):
             recognize_cfg["bg_thresh_b"],
         ),
     )
-    txt = dot_flatdoc.format_mdlike(flatdoc)
+    txt = dot_flatdoc.format(flatdoc)
     with open(ns.recognize_file, mode="w", encoding="utf-8", newline="\n") as fobj:
         fobj.write(txt)
 
@@ -87,11 +87,11 @@ def extract_main(ns):
     with open(ns.stormworks_exe, mode="rb") as fobj:
         exe_bin = fobj.read()
 
-    ocr_flatdoc = dot_flatdoc.parse_mdlike(ocr_txt)
+    ocr_flatdoc = dot_flatdoc.parse(ocr_txt)
     ext_flatdoc = dot_extract.extract(
         ocr_flatdoc, exe_bin, section_name=extract_cfg["section_name"]
     )
-    ext_txt = dot_flatdoc.format_mdlike(ext_flatdoc)
+    ext_txt = dot_flatdoc.format(ext_flatdoc)
 
     with open(ns.extract_file, mode="w", encoding="utf-8", newline="\n") as fobj:
         fobj.write(ext_txt)
