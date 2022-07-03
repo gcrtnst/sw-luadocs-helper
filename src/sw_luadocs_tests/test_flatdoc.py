@@ -854,3 +854,40 @@ class TestParse(unittest.TestCase):
             with self.subTest(s=input_s):
                 actual_flatdoc = sw_luadocs.flatdoc.parse(input_s)
                 self.assertEqual(actual_flatdoc, expected_flatdoc)
+
+
+class TestFormat(unittest.TestCase):
+    def test_validate_type_error(self):
+        with self.assertRaises(TypeError):
+            sw_luadocs.flatdoc.format([None])
+
+    def test_main(self):
+        for input_flatdoc, expected_s in [
+            ([], ""),
+            ([sw_luadocs.flatdoc.FlatElem(txt="", kind="head")], "head \n"),
+            ([sw_luadocs.flatdoc.FlatElem(txt="", kind="body")], "body \n"),
+            ([sw_luadocs.flatdoc.FlatElem(txt="", kind="code")], "code \n"),
+            ([sw_luadocs.flatdoc.FlatElem(txt="abc", kind="head")], "head abc\n"),
+            ([sw_luadocs.flatdoc.FlatElem(txt="\n", kind="head")], "head \n.... \n"),
+            (
+                [sw_luadocs.flatdoc.FlatElem(txt="abc\ndef\nghi", kind="head")],
+                "head abc\n.... def\n.... ghi\n",
+            ),
+            (
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="head", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="head\nhead\n", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="body", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="body\nbody\n", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="code", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="code\ncode\n", kind="code"),
+                ],
+                "head \nhead head\nhead head\n.... head\n.... \nbody \nbody body\nbody body\n.... body\n.... \ncode \ncode code\ncode code\n.... code\n.... \n",
+            ),
+        ]:
+            with self.subTest(flatdoc=input_flatdoc):
+                actual_s = sw_luadocs.flatdoc.format(input_flatdoc)
+                self.assertEqual(actual_s, expected_s)

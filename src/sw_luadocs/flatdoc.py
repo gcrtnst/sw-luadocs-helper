@@ -236,3 +236,21 @@ def parse(s):
             continue
         flatdoc.append(FlatElem(txt=txt, kind=kind))
     return flatdoc
+
+
+def format(flatdoc):
+    flatdoc = as_flatdoc(flatdoc)
+
+    doc_line_list = []
+    for flatelem in flatdoc:
+        elem_line_list = flatelem.txt.split(sep="\n")
+        elem_line_list[0] = flatelem.kind + " " + elem_line_list[0]
+        for i in range(1, len(elem_line_list)):
+            elem_line_list[i] = ".... " + elem_line_list[i]
+        doc_line_list.extend(elem_line_list)
+    doc_line_list.append("")
+    s = "\n".join(doc_line_list)
+
+    if parse(s) != flatdoc:
+        raise ValueError
+    return s
