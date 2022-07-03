@@ -787,3 +787,70 @@ flatdoc = sw_luadocs.flatdoc.parse_mdlike("mdlike string")
             with self.subTest(flatdoc=input_flatdoc):
                 actual_s = sw_luadocs.flatdoc.format_mdlike(input_flatdoc)
                 self.assertEqual(actual_s, expected_s)
+
+
+class TestParse(unittest.TestCase):
+    def test_invalid(self):
+        for s in [
+            "head:",
+            "head \nbody:",
+            ".... ",
+            "\n",
+            "\nhead ",
+            "head \n\nbody ",
+            "head \n\n",
+        ]:
+            with self.subTest(s=s):
+                with self.assertRaises(ValueError):
+                    sw_luadocs.flatdoc.parse(s)
+
+    def test_main(self):
+        for input_s, expected_flatdoc in [
+            ("", []),
+            ("head", [sw_luadocs.flatdoc.FlatElem(txt="", kind="head")]),
+            ("body", [sw_luadocs.flatdoc.FlatElem(txt="", kind="body")]),
+            ("code", [sw_luadocs.flatdoc.FlatElem(txt="", kind="code")]),
+            ("head\n", [sw_luadocs.flatdoc.FlatElem(txt="", kind="head")]),
+            ("head ", [sw_luadocs.flatdoc.FlatElem(txt="", kind="head")]),
+            ("head abc", [sw_luadocs.flatdoc.FlatElem(txt="abc", kind="head")]),
+            (
+                "head\nbody\ncode\nhead \nhead abc\n",
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="abc", kind="head"),
+                ],
+            ),
+            ("head\n....", [sw_luadocs.flatdoc.FlatElem(txt="\n", kind="head")]),
+            ("body\n....", [sw_luadocs.flatdoc.FlatElem(txt="\n", kind="body")]),
+            ("code\n....", [sw_luadocs.flatdoc.FlatElem(txt="\n", kind="code")]),
+            ("head\n....\n", [sw_luadocs.flatdoc.FlatElem(txt="\n", kind="head")]),
+            ("head\n.... ", [sw_luadocs.flatdoc.FlatElem(txt="\n", kind="head")]),
+            (
+                "head abc\n.... def",
+                [sw_luadocs.flatdoc.FlatElem(txt="abc\ndef", kind="head")],
+            ),
+            (
+                "head abc\n....\n.... \n.... def\n.... ghi\n",
+                [sw_luadocs.flatdoc.FlatElem(txt="abc\n\n\ndef\nghi", kind="head")],
+            ),
+            (
+                "head head line 1\n.... head line 2\nbody body line 1\n.... body line 2\ncode code line 1\n.... code line 2",
+                [
+                    sw_luadocs.flatdoc.FlatElem(
+                        txt="head line 1\nhead line 2", kind="head"
+                    ),
+                    sw_luadocs.flatdoc.FlatElem(
+                        txt="body line 1\nbody line 2", kind="body"
+                    ),
+                    sw_luadocs.flatdoc.FlatElem(
+                        txt="code line 1\ncode line 2", kind="code"
+                    ),
+                ],
+            ),
+        ]:
+            with self.subTest(s=input_s):
+                actual_flatdoc = sw_luadocs.flatdoc.parse(input_s)
+                self.assertEqual(actual_flatdoc, expected_flatdoc)

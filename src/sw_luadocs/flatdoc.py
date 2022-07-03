@@ -214,3 +214,25 @@ def format_mdlike(flatdoc):
     if parse_mdlike(s) != flatdoc:
         raise ValueError
     return s
+
+
+def parse(s):
+    s = str(s)
+
+    line_list = s.split(sep="\n")
+    if line_list[-1] == "":
+        line_list = line_list[:-1]
+
+    flatdoc = []
+    for line in line_list:
+        kind = line[:4]
+        txt = line[5:]
+        if line[4:5] not in ("", " "):
+            raise ValueError
+        if kind == "...." and len(flatdoc) > 0:
+            flatdoc[-1] = dataclasses.replace(
+                flatdoc[-1], txt=flatdoc[-1].txt + "\n" + txt
+            )
+            continue
+        flatdoc.append(FlatElem(txt=txt, kind=kind))
+    return flatdoc
