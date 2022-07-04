@@ -151,3 +151,13 @@ def as_hint(v):
     if not isinstance(v, Hint):
         raise TypeError
     return v
+
+
+def apply_hint_list(flatdoc, hint_list):
+    flatdoc = dot_flatdoc.as_flatdoc(flatdoc)
+    hint_list = list(map(as_hint, hint_list))
+
+    flatdoc = flatdoc[:]
+    for hint in hint_list:
+        flatdoc = hint.apply(flatdoc)
+    return flatdoc

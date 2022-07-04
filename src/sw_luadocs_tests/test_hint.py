@@ -1389,3 +1389,105 @@ class TestAsHint(unittest.TestCase):
             with self.subTest(v=input_v):
                 actual_hint = sw_luadocs.hint.as_hint(input_v)
                 self.assertEqual(actual_hint, expected_hint)
+
+
+class TestApplyHintList(unittest.TestCase):
+    def test_invalid_type(self):
+        for flatdoc, hint_list in [([None], []), ([], [None])]:
+            with self.subTest(flatdoc=flatdoc, hint_list=hint_list):
+                with self.assertRaises(TypeError):
+                    sw_luadocs.hint.apply_hint_list(flatdoc, hint_list)
+
+    def test_main(self):
+        for input_flatdoc, input_hint_list, expected_flatdoc in [
+            ([], [], []),
+            (
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="h", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b1", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b2", kind="body"),
+                ],
+                [],
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="h", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b1", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b2", kind="body"),
+                ],
+            ),
+            (
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="h", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b1", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b2", kind="body"),
+                ],
+                [
+                    sw_luadocs.hint.JoinHint(
+                        section_nth=1, elem_start_idx=1, elem_stop_idx=3, sep=", "
+                    )
+                ],
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="h", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b1, b2", kind="body"),
+                ],
+            ),
+            (
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="h", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b1", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b2", kind="body"),
+                ],
+                [sw_luadocs.hint.SplitHint(section_nth=1, elem_idx=1, txt_pos=1)],
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="h", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="1", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b2", kind="body"),
+                ],
+            ),
+            (
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="h", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b1", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b2", kind="body"),
+                ],
+                [
+                    {
+                        "op": "join",
+                        "section_nth": 1,
+                        "elem_start_idx": 1,
+                        "elem_stop_idx": 3,
+                        "sep": ", ",
+                    },
+                ],
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="h", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b1, b2", kind="body"),
+                ],
+            ),
+            (
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="h", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b1b2", kind="body"),
+                ],
+                [
+                    sw_luadocs.hint.SplitHint(section_nth=1, elem_idx=1, txt_pos=2),
+                    sw_luadocs.hint.JoinHint(
+                        section_nth=1, elem_start_idx=1, elem_stop_idx=3, sep="<>"
+                    ),
+                    sw_luadocs.hint.SplitHint(section_nth=1, elem_idx=1, txt_pos=3),
+                ],
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="h", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b1<", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt=">b2", kind="body"),
+                ],
+            ),
+        ]:
+            with self.subTest(flatdoc=input_flatdoc, hint_list=input_hint_list):
+                input_flatdoc_copy = input_flatdoc[:]
+                actual_flatdoc = sw_luadocs.hint.apply_hint_list(
+                    input_flatdoc_copy, input_hint_list
+                )
+                self.assertEqual(actual_flatdoc, expected_flatdoc)
+                self.assertIsNot(actual_flatdoc, input_flatdoc_copy)
+                self.assertEqual(input_flatdoc_copy, input_flatdoc)
