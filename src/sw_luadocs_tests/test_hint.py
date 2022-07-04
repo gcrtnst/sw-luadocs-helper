@@ -282,20 +282,28 @@ class TestJoinHintPostInit(unittest.TestCase):
             input_section_nth,
             input_start_idx,
             input_stop_idx,
+            input_sep,
             expected_section_nth,
             expected_start_idx,
             expected_stop_idx,
-        ) in [("0", "1", "2", 0, 1, 2), (None, None, None, None, None, None)]:
+            expected_sep,
+        ) in [
+            ("0", "1", "2", 3, 0, 1, 2, "3"),
+            (None, None, None, "3", None, None, None, "3"),
+        ]:
             with self.subTest(
                 section_nth=input_section_nth,
                 start_idx=input_start_idx,
                 stop_idx=input_stop_idx,
+                sep=input_sep,
             ):
                 actual_joinhint = sw_luadocs.hint.JoinHint(
                     section_nth=input_section_nth,
                     start_idx=input_start_idx,
                     stop_idx=input_stop_idx,
+                    sep=input_sep,
                 )
                 self.assertEqual(actual_joinhint.section_nth, expected_section_nth)
                 self.assertEqual(actual_joinhint.start_idx, expected_start_idx)
                 self.assertEqual(actual_joinhint.stop_idx, expected_stop_idx)
+                self.assertEqual(actual_joinhint.sep, expected_sep)

@@ -49,12 +49,15 @@ class JoinHint(Hint):
     section_nth: typing.Any
     start_idx: typing.Any
     stop_idx: typing.Any
+    sep: typing.Any
 
     def __post_init__(self):
         section_nth = int(self.section_nth) if self.section_nth is not None else None
         start_idx = int(self.start_idx) if self.start_idx is not None else None
         stop_idx = int(self.stop_idx) if self.stop_idx is not None else None
+        sep = str(self.sep)
 
         object.__setattr__(self, "section_nth", section_nth)
         object.__setattr__(self, "start_idx", start_idx)
         object.__setattr__(self, "stop_idx", stop_idx)
+        object.__setattr__(self, "sep", sep)
