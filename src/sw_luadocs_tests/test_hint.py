@@ -396,25 +396,23 @@ class TestJoinHintPostInit(unittest.TestCase):
                 elem_stop_idx=input_elem_stop_idx,
                 sep=input_sep,
             ):
-                actual_joinhint = sw_luadocs.hint.JoinHint(
+                actual_hint = sw_luadocs.hint.JoinHint(
                     section_nth=input_section_nth,
                     elem_start_idx=input_elem_start_idx,
                     elem_stop_idx=input_elem_stop_idx,
                     sep=input_sep,
                 )
-                self.assertEqual(actual_joinhint.section_nth, expected_section_nth)
-                self.assertEqual(
-                    actual_joinhint.elem_start_idx, expected_elem_start_idx
-                )
-                self.assertEqual(actual_joinhint.elem_stop_idx, expected_elem_stop_idx)
-                self.assertEqual(actual_joinhint.sep, expected_sep)
+                self.assertEqual(actual_hint.section_nth, expected_section_nth)
+                self.assertEqual(actual_hint.elem_start_idx, expected_elem_start_idx)
+                self.assertEqual(actual_hint.elem_stop_idx, expected_elem_stop_idx)
+                self.assertEqual(actual_hint.sep, expected_sep)
 
 
 class TestJoinHintApply(unittest.TestCase):
     def test_invalid_type(self):
-        joinhint = sw_luadocs.hint.JoinHint()
+        hint = sw_luadocs.hint.JoinHint()
         with self.assertRaises(TypeError):
-            joinhint.apply([None])
+            hint.apply([None])
 
     def test_invalid_value(self):
         for section_nth, elem_start_idx, elem_stop_idx, sep, flatdoc in [
@@ -438,7 +436,7 @@ class TestJoinHintApply(unittest.TestCase):
                 sep=sep,
                 flatdoc=flatdoc,
             ):
-                joinhint = sw_luadocs.hint.JoinHint(
+                hint = sw_luadocs.hint.JoinHint(
                     section_nth=section_nth,
                     elem_start_idx=elem_start_idx,
                     elem_stop_idx=elem_stop_idx,
@@ -446,7 +444,7 @@ class TestJoinHintApply(unittest.TestCase):
                 )
                 flatdoc = flatdoc[:]
                 with self.assertRaises(ValueError):
-                    joinhint.apply(flatdoc)
+                    hint.apply(flatdoc)
 
     def test_main(self):
         for (
@@ -850,14 +848,14 @@ class TestJoinHintApply(unittest.TestCase):
                 sep=input_sep,
                 flatdoc=input_flatdoc,
             ):
-                input_joinhint = sw_luadocs.hint.JoinHint(
+                input_hint = sw_luadocs.hint.JoinHint(
                     section_nth=input_section_nth,
                     elem_start_idx=input_elem_start_idx,
                     elem_stop_idx=input_elem_stop_idx,
                     sep=input_sep,
                 )
                 input_flatdoc_copy = input_flatdoc[:]
-                actual_flatdoc = input_joinhint.apply(input_flatdoc_copy)
+                actual_flatdoc = input_hint.apply(input_flatdoc_copy)
                 self.assertEqual(actual_flatdoc, expected_flatdoc)
                 self.assertEqual(input_flatdoc_copy, input_flatdoc)
 
