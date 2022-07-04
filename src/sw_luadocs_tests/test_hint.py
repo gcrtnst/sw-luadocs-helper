@@ -288,6 +288,7 @@ class TestJoinHintPostInit(unittest.TestCase):
             expected_stop_idx,
             expected_sep,
         ) in [
+            (0, 1, 2, "3", 0, 1, 2, "3"),
             ("0", "1", "2", 3, 0, 1, 2, "3"),
             (None, None, None, "3", None, None, None, "3"),
         ]:
