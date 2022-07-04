@@ -36,7 +36,7 @@ class JoinHint(Hint):
     stop_idx: typing.Any
 
     def __post_init__(self):
-        section_nth = int(self.section_nth)
+        section_nth = int(self.section_nth) if self.section_nth is not None else None
         start_idx = int(self.start_idx) if self.start_idx is not None else None
         stop_idx = int(self.stop_idx) if self.stop_idx is not None else None
 

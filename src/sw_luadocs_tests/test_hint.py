@@ -267,7 +267,7 @@ class TestJoinHintPostInit(unittest.TestCase):
             expected_section_nth,
             expected_start_idx,
             expected_stop_idx,
-        ) in [("0", "1", "2", 0, 1, 2), ("0", None, None, 0, None, None)]:
+        ) in [("0", "1", "2", 0, 1, 2), (None, None, None, None, None, None)]:
             with self.subTest(
                 section_nth=input_section_nth,
                 start_idx=input_start_idx,
