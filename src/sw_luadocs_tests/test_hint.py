@@ -32,21 +32,18 @@ class TestGetSection(unittest.TestCase):
                     sw_luadocs.hint.get_section(flatdoc, section_nth=section_nth)
 
     def test_main(self):
-        for input_flatdoc, input_section_nth, expected_flatsect in [
-            ([], 0, []),
-            ([], -1, []),
-            ([], "0", []),
-            ([], None, []),
+        for input_flatdoc, input_section_nth, expected_section in [
+            ([], None, slice(None, None)),
+            ([], 0, slice(0, 0)),
+            ([], -1, slice(0, 0)),
+            ([], "0", slice(0, 0)),
             (
                 [
                     sw_luadocs.flatdoc.FlatElem(txt="sect 0", kind="body"),
                     sw_luadocs.flatdoc.FlatElem(txt="sect 0", kind="code"),
                 ],
                 0,
-                [
-                    sw_luadocs.flatdoc.FlatElem(txt="sect 0", kind="body"),
-                    sw_luadocs.flatdoc.FlatElem(txt="sect 0", kind="code"),
-                ],
+                slice(0, 2),
             ),
             (
                 [
@@ -54,21 +51,7 @@ class TestGetSection(unittest.TestCase):
                     sw_luadocs.flatdoc.FlatElem(txt="sect 0", kind="code"),
                 ],
                 -1,
-                [
-                    sw_luadocs.flatdoc.FlatElem(txt="sect 0", kind="body"),
-                    sw_luadocs.flatdoc.FlatElem(txt="sect 0", kind="code"),
-                ],
-            ),
-            (
-                [
-                    sw_luadocs.flatdoc.FlatElem(txt="sect 0", kind="body"),
-                    sw_luadocs.flatdoc.FlatElem(txt="sect 0", kind="code"),
-                ],
-                None,
-                [
-                    sw_luadocs.flatdoc.FlatElem(txt="sect 0", kind="body"),
-                    sw_luadocs.flatdoc.FlatElem(txt="sect 0", kind="code"),
-                ],
+                slice(0, 2),
             ),
             (
                 [
@@ -77,7 +60,7 @@ class TestGetSection(unittest.TestCase):
                     sw_luadocs.flatdoc.FlatElem(txt="sect 1", kind="code"),
                 ],
                 0,
-                [],
+                slice(0, 0),
             ),
             (
                 [
@@ -86,7 +69,7 @@ class TestGetSection(unittest.TestCase):
                     sw_luadocs.flatdoc.FlatElem(txt="sect 1", kind="code"),
                 ],
                 -2,
-                [],
+                slice(0, 0),
             ),
             (
                 [
@@ -95,11 +78,7 @@ class TestGetSection(unittest.TestCase):
                     sw_luadocs.flatdoc.FlatElem(txt="sect 1", kind="code"),
                 ],
                 1,
-                [
-                    sw_luadocs.flatdoc.FlatElem(txt="sect 1", kind="head"),
-                    sw_luadocs.flatdoc.FlatElem(txt="sect 1", kind="body"),
-                    sw_luadocs.flatdoc.FlatElem(txt="sect 1", kind="code"),
-                ],
+                slice(0, 3),
             ),
             (
                 [
@@ -108,24 +87,7 @@ class TestGetSection(unittest.TestCase):
                     sw_luadocs.flatdoc.FlatElem(txt="sect 1", kind="code"),
                 ],
                 -1,
-                [
-                    sw_luadocs.flatdoc.FlatElem(txt="sect 1", kind="head"),
-                    sw_luadocs.flatdoc.FlatElem(txt="sect 1", kind="body"),
-                    sw_luadocs.flatdoc.FlatElem(txt="sect 1", kind="code"),
-                ],
-            ),
-            (
-                [
-                    sw_luadocs.flatdoc.FlatElem(txt="sect 1", kind="head"),
-                    sw_luadocs.flatdoc.FlatElem(txt="sect 1", kind="body"),
-                    sw_luadocs.flatdoc.FlatElem(txt="sect 1", kind="code"),
-                ],
-                None,
-                [
-                    sw_luadocs.flatdoc.FlatElem(txt="sect 1", kind="head"),
-                    sw_luadocs.flatdoc.FlatElem(txt="sect 1", kind="body"),
-                    sw_luadocs.flatdoc.FlatElem(txt="sect 1", kind="code"),
-                ],
+                slice(0, 3),
             ),
             (
                 [
@@ -136,10 +98,7 @@ class TestGetSection(unittest.TestCase):
                     sw_luadocs.flatdoc.FlatElem(txt="sect 1", kind="code"),
                 ],
                 0,
-                [
-                    sw_luadocs.flatdoc.FlatElem(txt="sect 0", kind="body"),
-                    sw_luadocs.flatdoc.FlatElem(txt="sect 0", kind="code"),
-                ],
+                slice(0, 2),
             ),
             (
                 [
@@ -150,10 +109,7 @@ class TestGetSection(unittest.TestCase):
                     sw_luadocs.flatdoc.FlatElem(txt="sect 1", kind="code"),
                 ],
                 -2,
-                [
-                    sw_luadocs.flatdoc.FlatElem(txt="sect 0", kind="body"),
-                    sw_luadocs.flatdoc.FlatElem(txt="sect 0", kind="code"),
-                ],
+                slice(0, 2),
             ),
             (
                 [
@@ -164,11 +120,7 @@ class TestGetSection(unittest.TestCase):
                     sw_luadocs.flatdoc.FlatElem(txt="sect 1", kind="code"),
                 ],
                 1,
-                [
-                    sw_luadocs.flatdoc.FlatElem(txt="sect 1", kind="head"),
-                    sw_luadocs.flatdoc.FlatElem(txt="sect 1", kind="body"),
-                    sw_luadocs.flatdoc.FlatElem(txt="sect 1", kind="code"),
-                ],
+                slice(2, 5),
             ),
             (
                 [
@@ -179,28 +131,7 @@ class TestGetSection(unittest.TestCase):
                     sw_luadocs.flatdoc.FlatElem(txt="sect 1", kind="code"),
                 ],
                 -1,
-                [
-                    sw_luadocs.flatdoc.FlatElem(txt="sect 1", kind="head"),
-                    sw_luadocs.flatdoc.FlatElem(txt="sect 1", kind="body"),
-                    sw_luadocs.flatdoc.FlatElem(txt="sect 1", kind="code"),
-                ],
-            ),
-            (
-                [
-                    sw_luadocs.flatdoc.FlatElem(txt="sect 0", kind="body"),
-                    sw_luadocs.flatdoc.FlatElem(txt="sect 0", kind="code"),
-                    sw_luadocs.flatdoc.FlatElem(txt="sect 1", kind="head"),
-                    sw_luadocs.flatdoc.FlatElem(txt="sect 1", kind="body"),
-                    sw_luadocs.flatdoc.FlatElem(txt="sect 1", kind="code"),
-                ],
-                None,
-                [
-                    sw_luadocs.flatdoc.FlatElem(txt="sect 0", kind="body"),
-                    sw_luadocs.flatdoc.FlatElem(txt="sect 0", kind="code"),
-                    sw_luadocs.flatdoc.FlatElem(txt="sect 1", kind="head"),
-                    sw_luadocs.flatdoc.FlatElem(txt="sect 1", kind="body"),
-                    sw_luadocs.flatdoc.FlatElem(txt="sect 1", kind="code"),
-                ],
+                slice(2, 5),
             ),
             (
                 [
@@ -212,10 +143,7 @@ class TestGetSection(unittest.TestCase):
                     sw_luadocs.flatdoc.FlatElem(txt="sect 2", kind="code"),
                 ],
                 0,
-                [
-                    sw_luadocs.flatdoc.FlatElem(txt="sect 0", kind="body"),
-                    sw_luadocs.flatdoc.FlatElem(txt="sect 0", kind="code"),
-                ],
+                slice(0, 2),
             ),
             (
                 [
@@ -227,10 +155,7 @@ class TestGetSection(unittest.TestCase):
                     sw_luadocs.flatdoc.FlatElem(txt="sect 2", kind="code"),
                 ],
                 -3,
-                [
-                    sw_luadocs.flatdoc.FlatElem(txt="sect 0", kind="body"),
-                    sw_luadocs.flatdoc.FlatElem(txt="sect 0", kind="code"),
-                ],
+                slice(0, 2),
             ),
             (
                 [
@@ -242,9 +167,7 @@ class TestGetSection(unittest.TestCase):
                     sw_luadocs.flatdoc.FlatElem(txt="sect 2", kind="code"),
                 ],
                 1,
-                [
-                    sw_luadocs.flatdoc.FlatElem(txt="sect 1", kind="head"),
-                ],
+                slice(2, 3),
             ),
             (
                 [
@@ -256,9 +179,7 @@ class TestGetSection(unittest.TestCase):
                     sw_luadocs.flatdoc.FlatElem(txt="sect 2", kind="code"),
                 ],
                 -2,
-                [
-                    sw_luadocs.flatdoc.FlatElem(txt="sect 1", kind="head"),
-                ],
+                slice(2, 3),
             ),
             (
                 [
@@ -270,11 +191,7 @@ class TestGetSection(unittest.TestCase):
                     sw_luadocs.flatdoc.FlatElem(txt="sect 2", kind="code"),
                 ],
                 2,
-                [
-                    sw_luadocs.flatdoc.FlatElem(txt="sect 2", kind="head"),
-                    sw_luadocs.flatdoc.FlatElem(txt="sect 2", kind="body"),
-                    sw_luadocs.flatdoc.FlatElem(txt="sect 2", kind="code"),
-                ],
+                slice(3, 6),
             ),
             (
                 [
@@ -286,37 +203,14 @@ class TestGetSection(unittest.TestCase):
                     sw_luadocs.flatdoc.FlatElem(txt="sect 2", kind="code"),
                 ],
                 -1,
-                [
-                    sw_luadocs.flatdoc.FlatElem(txt="sect 2", kind="head"),
-                    sw_luadocs.flatdoc.FlatElem(txt="sect 2", kind="body"),
-                    sw_luadocs.flatdoc.FlatElem(txt="sect 2", kind="code"),
-                ],
-            ),
-            (
-                [
-                    sw_luadocs.flatdoc.FlatElem(txt="sect 0", kind="body"),
-                    sw_luadocs.flatdoc.FlatElem(txt="sect 0", kind="code"),
-                    sw_luadocs.flatdoc.FlatElem(txt="sect 1", kind="head"),
-                    sw_luadocs.flatdoc.FlatElem(txt="sect 2", kind="head"),
-                    sw_luadocs.flatdoc.FlatElem(txt="sect 2", kind="body"),
-                    sw_luadocs.flatdoc.FlatElem(txt="sect 2", kind="code"),
-                ],
-                None,
-                [
-                    sw_luadocs.flatdoc.FlatElem(txt="sect 0", kind="body"),
-                    sw_luadocs.flatdoc.FlatElem(txt="sect 0", kind="code"),
-                    sw_luadocs.flatdoc.FlatElem(txt="sect 1", kind="head"),
-                    sw_luadocs.flatdoc.FlatElem(txt="sect 2", kind="head"),
-                    sw_luadocs.flatdoc.FlatElem(txt="sect 2", kind="body"),
-                    sw_luadocs.flatdoc.FlatElem(txt="sect 2", kind="code"),
-                ],
+                slice(3, 6),
             ),
         ]:
             with self.subTest(flatdoc=input_flatdoc, section_nth=input_section_nth):
-                actual_flatsect = sw_luadocs.hint.get_section(
+                actual_section = sw_luadocs.hint.get_section(
                     input_flatdoc, input_section_nth
                 )
-                self.assertEqual(actual_flatsect, expected_flatsect)
+                self.assertEqual(actual_section, expected_section)
 
 
 class TestJoinHintPostInit(unittest.TestCase):

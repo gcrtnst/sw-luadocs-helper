@@ -10,7 +10,7 @@ def get_section(flatdoc, section_nth=None):
     section_nth = int(section_nth) if section_nth is not None else None
 
     if section_nth is None:
-        return flatdoc[:]
+        return slice(None, None)
 
     start_idx_list = [0]
     for idx, flatelem in enumerate(flatdoc):
@@ -20,7 +20,7 @@ def get_section(flatdoc, section_nth=None):
 
     start_idx = start_idx_list[section_nth]
     stop_idx = stop_idx_list[section_nth]
-    return flatdoc[start_idx:stop_idx]
+    return slice(start_idx, stop_idx)
 
 
 @dataclasses.dataclass(frozen=True, kw_only=True, slots=True)
