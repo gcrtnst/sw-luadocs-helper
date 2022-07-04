@@ -857,6 +857,7 @@ class TestJoinHintApply(unittest.TestCase):
                 input_flatdoc_copy = input_flatdoc[:]
                 actual_flatdoc = input_hint.apply(input_flatdoc_copy)
                 self.assertEqual(actual_flatdoc, expected_flatdoc)
+                self.assertIsNot(actual_flatdoc, input_flatdoc_copy)
                 self.assertEqual(input_flatdoc_copy, input_flatdoc)
 
 
@@ -1310,6 +1311,7 @@ class TestSplitHintApply(unittest.TestCase):
                 input_flatdoc_copy = input_flatdoc[:]
                 actual_flatdoc = input_hint.apply(input_flatdoc_copy)
                 self.assertEqual(actual_flatdoc, expected_flatdoc)
+                self.assertIsNot(actual_flatdoc, input_flatdoc_copy)
                 self.assertEqual(input_flatdoc_copy, input_flatdoc)
 
 
