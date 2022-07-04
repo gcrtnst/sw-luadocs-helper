@@ -5,9 +5,12 @@ import typing
 from . import flatdoc as dot_flatdoc
 
 
-def get_section(flatdoc, section_nth):
+def get_section(flatdoc, section_nth=None):
     flatdoc = dot_flatdoc.as_flatdoc(flatdoc)
-    section_nth = int(section_nth)
+    section_nth = int(section_nth) if section_nth is not None else None
+
+    if section_nth is None:
+        return flatdoc[:]
 
     start_idx_list = [0]
     for idx, flatelem in enumerate(flatdoc):
