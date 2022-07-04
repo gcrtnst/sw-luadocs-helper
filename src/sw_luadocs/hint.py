@@ -75,3 +75,19 @@ class JoinHint(Hint):
         flatsect[sl_part] = flatpart
         flatdoc[sl_sect] = flatsect
         return flatdoc
+
+
+@dataclasses.dataclass(frozen=True, kw_only=True, slots=True)
+class SplitHint(Hint):
+    section_nth: typing.Any = None
+    idx: typing.Any
+    txt_len: typing.Any
+
+    def __post_init__(self):
+        section_nth = int(self.section_nth) if self.section_nth is not None else None
+        idx = int(self.idx)
+        txt_len = int(self.txt_len)
+
+        object.__setattr__(self, "section_nth", section_nth)
+        object.__setattr__(self, "idx", idx)
+        object.__setattr__(self, "txt_len", txt_len)

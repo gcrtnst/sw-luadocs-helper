@@ -760,3 +760,24 @@ class TestJoinHintApply(unittest.TestCase):
                 actual_flatdoc = input_joinhint.apply(input_flatdoc_copy)
                 self.assertEqual(actual_flatdoc, expected_flatdoc)
                 self.assertEqual(input_flatdoc_copy, input_flatdoc)
+
+
+class TestSplitHintPostInit(unittest.TestCase):
+    def test_main(self):
+        for (
+            input_section_nth,
+            input_idx,
+            input_txt_len,
+            expected_section_nth,
+            expected_idx,
+            expected_txt_len,
+        ) in [(0, 1, 2, 0, 1, 2), ("0", "1", "2", 0, 1, 2), (None, 1, 2, None, 1, 2)]:
+            with self.subTest(
+                section_nth=input_section_nth, idx=input_idx, txt_len=input_txt_len
+            ):
+                actual_hint = sw_luadocs.hint.SplitHint(
+                    section_nth=input_section_nth, idx=input_idx, txt_len=input_txt_len
+                )
+                self.assertEqual(actual_hint.section_nth, expected_section_nth)
+                self.assertEqual(actual_hint.idx, expected_idx)
+                self.assertEqual(actual_hint.txt_len, expected_txt_len)
