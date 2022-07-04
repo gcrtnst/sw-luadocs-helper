@@ -13,14 +13,14 @@ def get_section(flatdoc, section_nth=None):
         return slice(None, None)
 
     start_idx_list = [0]
-    for idx, flatelem in enumerate(flatdoc):
+    for elem_idx, flatelem in enumerate(flatdoc):
         if flatelem.kind == "head":
-            start_idx_list.append(idx)
+            start_idx_list.append(elem_idx)
     stop_idx_list = start_idx_list[1:] + [len(flatdoc)]
 
-    start_idx = start_idx_list[section_nth]
-    stop_idx = stop_idx_list[section_nth]
-    return slice(start_idx, stop_idx)
+    elem_start_idx = start_idx_list[section_nth]
+    elem_stop_idx = stop_idx_list[section_nth]
+    return slice(elem_start_idx, elem_stop_idx)
 
 
 def join_flatelem(flatdoc, *, sep="\n\n"):
@@ -47,19 +47,23 @@ class Hint:
 @dataclasses.dataclass(frozen=True, kw_only=True, slots=True)
 class JoinHint(Hint):
     section_nth: typing.Any = None
-    start_idx: typing.Any = None
-    stop_idx: typing.Any = None
+    elem_start_idx: typing.Any = None
+    elem_stop_idx: typing.Any = None
     sep: typing.Any = "\n\n"
 
     def __post_init__(self):
         section_nth = int(self.section_nth) if self.section_nth is not None else None
-        start_idx = int(self.start_idx) if self.start_idx is not None else None
-        stop_idx = int(self.stop_idx) if self.stop_idx is not None else None
+        elem_start_idx = (
+            int(self.elem_start_idx) if self.elem_start_idx is not None else None
+        )
+        elem_stop_idx = (
+            int(self.elem_stop_idx) if self.elem_stop_idx is not None else None
+        )
         sep = str(self.sep)
 
         object.__setattr__(self, "section_nth", section_nth)
-        object.__setattr__(self, "start_idx", start_idx)
-        object.__setattr__(self, "stop_idx", stop_idx)
+        object.__setattr__(self, "elem_start_idx", elem_start_idx)
+        object.__setattr__(self, "elem_stop_idx", elem_stop_idx)
         object.__setattr__(self, "sep", sep)
 
     def apply(self, flatdoc):
@@ -67,7 +71,7 @@ class JoinHint(Hint):
         flatdoc = flatdoc[:]
 
         sl_sect = get_section(flatdoc, self.section_nth)
-        sl_part = slice(self.start_idx, self.stop_idx)
+        sl_part = slice(self.elem_start_idx, self.elem_stop_idx)
 
         flatsect = flatdoc[sl_sect]
         flatpart = flatsect[sl_part]
@@ -80,14 +84,14 @@ class JoinHint(Hint):
 @dataclasses.dataclass(frozen=True, kw_only=True, slots=True)
 class SplitHint(Hint):
     section_nth: typing.Any = None
-    idx: typing.Any
+    elem_idx: typing.Any
     txt_len: typing.Any
 
     def __post_init__(self):
         section_nth = int(self.section_nth) if self.section_nth is not None else None
-        idx = int(self.idx)
+        elem_idx = int(self.elem_idx)
         txt_len = int(self.txt_len)
 
         object.__setattr__(self, "section_nth", section_nth)
-        object.__setattr__(self, "idx", idx)
+        object.__setattr__(self, "elem_idx", elem_idx)
         object.__setattr__(self, "txt_len", txt_len)

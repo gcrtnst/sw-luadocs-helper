@@ -280,12 +280,12 @@ class TestJoinHintPostInit(unittest.TestCase):
     def test_main(self):
         for (
             input_section_nth,
-            input_start_idx,
-            input_stop_idx,
+            input_elem_start_idx,
+            input_elem_stop_idx,
             input_sep,
             expected_section_nth,
-            expected_start_idx,
-            expected_stop_idx,
+            expected_elem_start_idx,
+            expected_elem_stop_idx,
             expected_sep,
         ) in [
             (0, 1, 2, "3", 0, 1, 2, "3"),
@@ -294,19 +294,21 @@ class TestJoinHintPostInit(unittest.TestCase):
         ]:
             with self.subTest(
                 section_nth=input_section_nth,
-                start_idx=input_start_idx,
-                stop_idx=input_stop_idx,
+                elem_start_idx=input_elem_start_idx,
+                elem_stop_idx=input_elem_stop_idx,
                 sep=input_sep,
             ):
                 actual_joinhint = sw_luadocs.hint.JoinHint(
                     section_nth=input_section_nth,
-                    start_idx=input_start_idx,
-                    stop_idx=input_stop_idx,
+                    elem_start_idx=input_elem_start_idx,
+                    elem_stop_idx=input_elem_stop_idx,
                     sep=input_sep,
                 )
                 self.assertEqual(actual_joinhint.section_nth, expected_section_nth)
-                self.assertEqual(actual_joinhint.start_idx, expected_start_idx)
-                self.assertEqual(actual_joinhint.stop_idx, expected_stop_idx)
+                self.assertEqual(
+                    actual_joinhint.elem_start_idx, expected_elem_start_idx
+                )
+                self.assertEqual(actual_joinhint.elem_stop_idx, expected_elem_stop_idx)
                 self.assertEqual(actual_joinhint.sep, expected_sep)
 
 
@@ -317,7 +319,7 @@ class TestJoinHintApply(unittest.TestCase):
             joinhint.apply([None])
 
     def test_invalid_value(self):
-        for section_nth, start_idx, stop_idx, sep, flatdoc in [
+        for section_nth, elem_start_idx, elem_stop_idx, sep, flatdoc in [
             (None, None, None, "\n\n", []),
             (
                 1,
@@ -333,15 +335,15 @@ class TestJoinHintApply(unittest.TestCase):
         ]:
             with self.subTest(
                 section_nth=section_nth,
-                start_idx=start_idx,
-                stop_idx=stop_idx,
+                elem_start_idx=elem_start_idx,
+                elem_stop_idx=elem_stop_idx,
                 sep=sep,
                 flatdoc=flatdoc,
             ):
                 joinhint = sw_luadocs.hint.JoinHint(
                     section_nth=section_nth,
-                    start_idx=start_idx,
-                    stop_idx=stop_idx,
+                    elem_start_idx=elem_start_idx,
+                    elem_stop_idx=elem_stop_idx,
                     sep=sep,
                 )
                 flatdoc = flatdoc[:]
@@ -351,8 +353,8 @@ class TestJoinHintApply(unittest.TestCase):
     def test_main(self):
         for (
             input_section_nth,
-            input_start_idx,
-            input_stop_idx,
+            input_elem_start_idx,
+            input_elem_stop_idx,
             input_sep,
             input_flatdoc,
             expected_flatdoc,
@@ -745,15 +747,15 @@ class TestJoinHintApply(unittest.TestCase):
         ]:
             with self.subTest(
                 section_nth=input_section_nth,
-                start_idx=input_start_idx,
-                stop_idx=input_stop_idx,
+                elem_start_idx=input_elem_start_idx,
+                elem_stop_idx=input_elem_stop_idx,
                 sep=input_sep,
                 flatdoc=input_flatdoc,
             ):
                 input_joinhint = sw_luadocs.hint.JoinHint(
                     section_nth=input_section_nth,
-                    start_idx=input_start_idx,
-                    stop_idx=input_stop_idx,
+                    elem_start_idx=input_elem_start_idx,
+                    elem_stop_idx=input_elem_stop_idx,
                     sep=input_sep,
                 )
                 input_flatdoc_copy = input_flatdoc[:]
@@ -766,18 +768,22 @@ class TestSplitHintPostInit(unittest.TestCase):
     def test_main(self):
         for (
             input_section_nth,
-            input_idx,
+            input_elem_idx,
             input_txt_len,
             expected_section_nth,
-            expected_idx,
+            expected_elem_idx,
             expected_txt_len,
         ) in [(0, 1, 2, 0, 1, 2), ("0", "1", "2", 0, 1, 2), (None, 1, 2, None, 1, 2)]:
             with self.subTest(
-                section_nth=input_section_nth, idx=input_idx, txt_len=input_txt_len
+                section_nth=input_section_nth,
+                elem_idx=input_elem_idx,
+                txt_len=input_txt_len,
             ):
                 actual_hint = sw_luadocs.hint.SplitHint(
-                    section_nth=input_section_nth, idx=input_idx, txt_len=input_txt_len
+                    section_nth=input_section_nth,
+                    elem_idx=input_elem_idx,
+                    txt_len=input_txt_len,
                 )
                 self.assertEqual(actual_hint.section_nth, expected_section_nth)
-                self.assertEqual(actual_hint.idx, expected_idx)
+                self.assertEqual(actual_hint.elem_idx, expected_elem_idx)
                 self.assertEqual(actual_hint.txt_len, expected_txt_len)
