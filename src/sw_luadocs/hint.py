@@ -130,3 +130,16 @@ class SplitHint(Hint):
 
         flatdoc[sl] = flatsect
         return flatdoc
+
+
+def hint_from_dict(d):
+    d = dict(d)
+
+    op = d.get("op")
+    if op == "join":
+        del d["op"]
+        return JoinHint(**d)
+    if op == "split":
+        del d["op"]
+        return SplitHint(**d)
+    raise ValueError

@@ -1311,3 +1311,38 @@ class TestSplitHintApply(unittest.TestCase):
                 actual_flatdoc = input_hint.apply(input_flatdoc_copy)
                 self.assertEqual(actual_flatdoc, expected_flatdoc)
                 self.assertEqual(input_flatdoc_copy, input_flatdoc)
+
+
+class TestHintFromDict(unittest.TestCase):
+    def test_invalid_value(self):
+        for d in [{}, {"op": "invalid"}]:
+            with self.subTest(d=d):
+                with self.assertRaises(ValueError):
+                    sw_luadocs.hint.hint_from_dict(d)
+
+    def test_main(self):
+        for input_d, expected_hint in [
+            ([("op", "join")], sw_luadocs.hint.JoinHint()),
+            ({"op": "join"}, sw_luadocs.hint.JoinHint()),
+            (
+                {
+                    "op": "join",
+                    "section_nth": 0,
+                    "elem_start_idx": 1,
+                    "elem_stop_idx": 2,
+                    "sep": "3",
+                },
+                sw_luadocs.hint.JoinHint(
+                    section_nth=0, elem_start_idx=1, elem_stop_idx=2, sep="3"
+                ),
+            ),
+            (
+                {"op": "split", "section_nth": 0, "elem_idx": 1, "txt_pos": 2},
+                sw_luadocs.hint.SplitHint(section_nth=0, elem_idx=1, txt_pos=2),
+            ),
+        ]:
+            with self.subTest(d=input_d):
+                input_d_copy = input_d.copy()
+                actual_hint = sw_luadocs.hint.hint_from_dict(input_d_copy)
+                self.assertEqual(actual_hint, expected_hint)
+                self.assertEqual(input_d_copy, input_d)
