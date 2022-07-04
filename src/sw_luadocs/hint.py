@@ -143,3 +143,11 @@ def hint_from_dict(d):
         del d["op"]
         return SplitHint(**d)
     raise ValueError
+
+
+def as_hint(v):
+    if isinstance(v, dict):
+        v = hint_from_dict(v)
+    if not isinstance(v, Hint):
+        raise TypeError
+    return v

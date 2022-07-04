@@ -1346,3 +1346,44 @@ class TestHintFromDict(unittest.TestCase):
                 actual_hint = sw_luadocs.hint.hint_from_dict(input_d_copy)
                 self.assertEqual(actual_hint, expected_hint)
                 self.assertEqual(input_d_copy, input_d)
+
+
+class TestAsHint(unittest.TestCase):
+    def test_invalid_type(self):
+        with self.assertRaises(TypeError):
+            sw_luadocs.hint.as_hint(None)
+
+    def test_main(self):
+        for input_v, expected_hint in [
+            (
+                sw_luadocs.hint.JoinHint(
+                    section_nth=0, elem_start_idx=1, elem_stop_idx=2, sep="3"
+                ),
+                sw_luadocs.hint.JoinHint(
+                    section_nth=0, elem_start_idx=1, elem_stop_idx=2, sep="3"
+                ),
+            ),
+            (
+                sw_luadocs.hint.SplitHint(section_nth=0, elem_idx=1, txt_pos=2),
+                sw_luadocs.hint.SplitHint(section_nth=0, elem_idx=1, txt_pos=2),
+            ),
+            (
+                {
+                    "op": "join",
+                    "section_nth": 0,
+                    "elem_start_idx": 1,
+                    "elem_stop_idx": 2,
+                    "sep": "3",
+                },
+                sw_luadocs.hint.JoinHint(
+                    section_nth=0, elem_start_idx=1, elem_stop_idx=2, sep="3"
+                ),
+            ),
+            (
+                {"op": "split", "section_nth": 0, "elem_idx": 1, "txt_pos": 2},
+                sw_luadocs.hint.SplitHint(section_nth=0, elem_idx=1, txt_pos=2),
+            ),
+        ]:
+            with self.subTest(v=input_v):
+                actual_hint = sw_luadocs.hint.as_hint(input_v)
+                self.assertEqual(actual_hint, expected_hint)
