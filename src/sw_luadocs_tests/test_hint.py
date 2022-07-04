@@ -256,3 +256,28 @@ class TestGetSection(unittest.TestCase):
                     input_flatdoc, input_sect_nth
                 )
                 self.assertEqual(actual_flatsect, expected_flatsect)
+
+
+class TestJoinHintPostInit(unittest.TestCase):
+    def test_main(self):
+        for (
+            input_section_nth,
+            input_start_idx,
+            input_stop_idx,
+            expected_section_nth,
+            expected_start_idx,
+            expected_stop_idx,
+        ) in [("0", "1", "2", 0, 1, 2), ("0", None, None, 0, None, None)]:
+            with self.subTest(
+                section_nth=input_section_nth,
+                start_idx=input_start_idx,
+                stop_idx=input_stop_idx,
+            ):
+                actual_joinhint = sw_luadocs.hint.JoinHint(
+                    section_nth=input_section_nth,
+                    start_idx=input_start_idx,
+                    stop_idx=input_stop_idx,
+                )
+                self.assertEqual(actual_joinhint.section_nth, expected_section_nth)
+                self.assertEqual(actual_joinhint.start_idx, expected_start_idx)
+                self.assertEqual(actual_joinhint.stop_idx, expected_stop_idx)
