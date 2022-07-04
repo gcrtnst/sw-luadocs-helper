@@ -45,6 +45,113 @@ class TestAsFlatDoc(unittest.TestCase):
                 self.assertEqual(flatdoc, v)
 
 
+class TestAsFlatDocMonoKind(unittest.TestCase):
+    def test_validate_type_error(self):
+        with self.assertRaises(TypeError):
+            sw_luadocs.flatdoc.as_flatdoc_monokind([None])
+
+    def test_validate_value_error(self):
+        for v, kind in [
+            ([], "invalid"),
+            (
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="a", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c", kind="body"),
+                ],
+                None,
+            ),
+            (
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="a", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c", kind="code"),
+                ],
+                None,
+            ),
+            (
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="a", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c", kind="head"),
+                ],
+                None,
+            ),
+            ([sw_luadocs.flatdoc.FlatElem(txt="a", kind="head")], "body"),
+            ([sw_luadocs.flatdoc.FlatElem(txt="a", kind="body")], "code"),
+            ([sw_luadocs.flatdoc.FlatElem(txt="a", kind="code")], "head"),
+        ]:
+            with self.subTest(v=v, kind=kind):
+                with self.assertRaises(ValueError):
+                    sw_luadocs.flatdoc.as_flatdoc_monokind(v, kind=kind)
+
+    def test_main(self):
+        for v, kind in [
+            ([], None),
+            ([], "head"),
+            ([], "body"),
+            ([], "code"),
+            ([sw_luadocs.flatdoc.FlatElem(txt="a", kind="head")], None),
+            ([sw_luadocs.flatdoc.FlatElem(txt="a", kind="body")], None),
+            ([sw_luadocs.flatdoc.FlatElem(txt="a", kind="code")], None),
+            ([sw_luadocs.flatdoc.FlatElem(txt="a", kind="head")], "head"),
+            ([sw_luadocs.flatdoc.FlatElem(txt="a", kind="body")], "body"),
+            ([sw_luadocs.flatdoc.FlatElem(txt="a", kind="code")], "code"),
+            (
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="a", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="a", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="a", kind="head"),
+                ],
+                None,
+            ),
+            (
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="a", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="a", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="a", kind="body"),
+                ],
+                None,
+            ),
+            (
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="a", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="a", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="a", kind="code"),
+                ],
+                None,
+            ),
+            (
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="a", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="a", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="a", kind="head"),
+                ],
+                "head",
+            ),
+            (
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="a", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="a", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="a", kind="body"),
+                ],
+                "body",
+            ),
+            (
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="a", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="a", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="a", kind="code"),
+                ],
+                "code",
+            ),
+        ]:
+            with self.subTest(v=v, kind=kind):
+                flatdoc = sw_luadocs.flatdoc.as_flatdoc_monokind(v, kind=kind)
+                self.assertIs(type(flatdoc), list)
+                self.assertEqual(flatdoc, v)
+
+
 class TestParse(unittest.TestCase):
     def test_invalid(self):
         for s in [
