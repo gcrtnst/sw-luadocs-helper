@@ -61,3 +61,17 @@ class JoinHint(Hint):
         object.__setattr__(self, "start_idx", start_idx)
         object.__setattr__(self, "stop_idx", stop_idx)
         object.__setattr__(self, "sep", sep)
+
+    def apply(self, flatdoc):
+        flatdoc = dot_flatdoc.as_flatdoc(flatdoc)
+        flatdoc = flatdoc[:]
+
+        sl_sect = get_section(flatdoc, self.section_nth)
+        sl_part = slice(self.start_idx, self.stop_idx)
+
+        flatsect = flatdoc[sl_sect]
+        flatpart = flatsect[sl_part]
+        flatpart = [join_flatelem(flatpart, sep=self.sep)]
+        flatsect[sl_part] = flatpart
+        flatdoc[sl_sect] = flatsect
+        return flatdoc
