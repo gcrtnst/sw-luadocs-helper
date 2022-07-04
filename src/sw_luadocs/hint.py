@@ -46,10 +46,10 @@ class Hint:
 
 @dataclasses.dataclass(frozen=True, kw_only=True, slots=True)
 class JoinHint(Hint):
-    section_nth: typing.Any
-    start_idx: typing.Any
-    stop_idx: typing.Any
-    sep: typing.Any
+    section_nth: typing.Any = None
+    start_idx: typing.Any = None
+    stop_idx: typing.Any = None
+    sep: typing.Any = "\n\n"
 
     def __post_init__(self):
         section_nth = int(self.section_nth) if self.section_nth is not None else None
