@@ -213,6 +213,69 @@ class TestGetSection(unittest.TestCase):
                 self.assertEqual(actual_section, expected_section)
 
 
+class TestJoinFlatElem(unittest.TestCase):
+    def test_invalid_value(self):
+        for flatdoc, sep in [
+            ([], "\n\n"),
+            (
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="", kind="code"),
+                ],
+                "\n\n",
+            ),
+        ]:
+            with self.subTest(flatdoc=flatdoc, sep=sep):
+                with self.assertRaises(ValueError):
+                    sw_luadocs.hint.join_flatelem(flatdoc, sep=sep)
+
+    def test_main(self):
+        for input_flatdoc, input_sep, expected_flatelem in [
+            (
+                [sw_luadocs.flatdoc.FlatElem(txt="a", kind="body")],
+                "\n\n",
+                sw_luadocs.flatdoc.FlatElem(txt="a", kind="body"),
+            ),
+            (
+                [sw_luadocs.flatdoc.FlatElem(txt="b", kind="code")],
+                "\n\n",
+                sw_luadocs.flatdoc.FlatElem(txt="b", kind="code"),
+            ),
+            (
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="a", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c", kind="body"),
+                ],
+                "\n\n",
+                sw_luadocs.flatdoc.FlatElem(txt="a\n\nb\n\nc", kind="body"),
+            ),
+            (
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="a", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c", kind="body"),
+                ],
+                ", ",
+                sw_luadocs.flatdoc.FlatElem(txt="a, b, c", kind="body"),
+            ),
+            (
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="a", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c", kind="body"),
+                ],
+                0,
+                sw_luadocs.flatdoc.FlatElem(txt="a0b0c", kind="body"),
+            ),
+        ]:
+            with self.subTest(flatdoc=input_flatdoc, sep=input_sep):
+                actual_flatelem = sw_luadocs.hint.join_flatelem(
+                    input_flatdoc, sep=input_sep
+                )
+                self.assertEqual(actual_flatelem, expected_flatelem)
+
+
 class TestJoinHintPostInit(unittest.TestCase):
     def test_main(self):
         for (

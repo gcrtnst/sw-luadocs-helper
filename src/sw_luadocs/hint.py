@@ -23,6 +23,18 @@ def get_section(flatdoc, section_nth=None):
     return slice(start_idx, stop_idx)
 
 
+def join_flatelem(flatdoc, *, sep="\n\n"):
+    flatdoc = dot_flatdoc.as_flatdoc_monokind(flatdoc)
+    sep = str(sep)
+
+    if len(flatdoc) <= 0:
+        raise ValueError
+
+    kind = flatdoc[0].kind
+    txt = sep.join(flatelem.txt for flatelem in flatdoc)
+    return dot_flatdoc.FlatElem(txt=txt, kind=kind)
+
+
 @dataclasses.dataclass(frozen=True, kw_only=True, slots=True)
 class Hint:
     def __post_init__(self):
