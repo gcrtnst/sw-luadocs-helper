@@ -111,3 +111,22 @@ class SplitHint(Hint):
         object.__setattr__(self, "section_nth", section_nth)
         object.__setattr__(self, "elem_idx", elem_idx)
         object.__setattr__(self, "txt_pos", txt_pos)
+
+    def apply(self, flatdoc):
+        flatdoc = dot_flatdoc.as_flatdoc(flatdoc)
+        flatdoc = flatdoc[:]
+
+        sl = get_section(flatdoc, self.section_nth)
+        flatsect = flatdoc[sl]
+
+        elem_idx = self.elem_idx
+        if elem_idx < 0:
+            elem_idx += len(flatsect)
+        if elem_idx < 0 or len(flatsect) <= elem_idx:
+            raise IndexError
+        flatsect[elem_idx : elem_idx + 1] = split_flatelem(
+            flatsect[elem_idx], self.txt_pos
+        )
+
+        flatdoc[sl] = flatsect
+        return flatdoc
