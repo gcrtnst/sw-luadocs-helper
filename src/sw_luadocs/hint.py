@@ -5,9 +5,9 @@ import typing
 from . import flatdoc as dot_flatdoc
 
 
-def get_section(flatdoc, sect_nth):
+def get_section(flatdoc, section_nth):
     flatdoc = dot_flatdoc.as_flatdoc(flatdoc)
-    sect_nth = int(sect_nth)
+    section_nth = int(section_nth)
 
     start_idx_list = [0]
     for idx, flatelem in enumerate(flatdoc):
@@ -15,8 +15,8 @@ def get_section(flatdoc, sect_nth):
             start_idx_list.append(idx)
     stop_idx_list = start_idx_list[1:] + [len(flatdoc)]
 
-    start_idx = start_idx_list[sect_nth]
-    stop_idx = stop_idx_list[sect_nth]
+    start_idx = start_idx_list[section_nth]
+    stop_idx = stop_idx_list[section_nth]
     return flatdoc[start_idx:stop_idx]
 
 

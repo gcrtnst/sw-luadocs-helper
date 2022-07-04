@@ -9,7 +9,7 @@ class TestGetSection(unittest.TestCase):
             sw_luadocs.hint.get_section([None], 0)
 
     def test_invalid_index(self):
-        for flatdoc, sect_nth in [
+        for flatdoc, section_nth in [
             ([], 1),
             ([], -2),
             (
@@ -27,12 +27,12 @@ class TestGetSection(unittest.TestCase):
                 -4,
             ),
         ]:
-            with self.subTest(flatdoc=flatdoc, sect_nth=sect_nth):
+            with self.subTest(flatdoc=flatdoc, section_nth=section_nth):
                 with self.assertRaises(IndexError):
-                    sw_luadocs.hint.get_section(flatdoc, sect_nth)
+                    sw_luadocs.hint.get_section(flatdoc, section_nth)
 
     def test_main(self):
-        for input_flatdoc, input_sect_nth, expected_flatsect in [
+        for input_flatdoc, input_section_nth, expected_flatsect in [
             ([], 0, []),
             ([], -1, []),
             ([], "0", []),
@@ -251,9 +251,9 @@ class TestGetSection(unittest.TestCase):
                 ],
             ),
         ]:
-            with self.subTest(flatdoc=input_flatdoc, sect_nth=input_sect_nth):
+            with self.subTest(flatdoc=input_flatdoc, section_nth=input_section_nth):
                 actual_flatsect = sw_luadocs.hint.get_section(
-                    input_flatdoc, input_sect_nth
+                    input_flatdoc, input_section_nth
                 )
                 self.assertEqual(actual_flatsect, expected_flatsect)
 
