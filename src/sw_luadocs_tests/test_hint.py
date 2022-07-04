@@ -867,21 +867,21 @@ class TestSplitHintPostInit(unittest.TestCase):
         for (
             input_section_nth,
             input_elem_idx,
-            input_txt_len,
+            input_txt_pos,
             expected_section_nth,
             expected_elem_idx,
-            expected_txt_len,
+            expected_txt_pos,
         ) in [(0, 1, 2, 0, 1, 2), ("0", "1", "2", 0, 1, 2), (None, 1, 2, None, 1, 2)]:
             with self.subTest(
                 section_nth=input_section_nth,
                 elem_idx=input_elem_idx,
-                txt_len=input_txt_len,
+                txt_pos=input_txt_pos,
             ):
                 actual_hint = sw_luadocs.hint.SplitHint(
                     section_nth=input_section_nth,
                     elem_idx=input_elem_idx,
-                    txt_len=input_txt_len,
+                    txt_pos=input_txt_pos,
                 )
                 self.assertEqual(actual_hint.section_nth, expected_section_nth)
                 self.assertEqual(actual_hint.elem_idx, expected_elem_idx)
-                self.assertEqual(actual_hint.txt_len, expected_txt_len)
+                self.assertEqual(actual_hint.txt_pos, expected_txt_pos)

@@ -101,13 +101,13 @@ class JoinHint(Hint):
 class SplitHint(Hint):
     section_nth: typing.Any = None
     elem_idx: typing.Any
-    txt_len: typing.Any
+    txt_pos: typing.Any
 
     def __post_init__(self):
         section_nth = int(self.section_nth) if self.section_nth is not None else None
         elem_idx = int(self.elem_idx)
-        txt_len = int(self.txt_len)
+        txt_pos = int(self.txt_pos)
 
         object.__setattr__(self, "section_nth", section_nth)
         object.__setattr__(self, "elem_idx", elem_idx)
-        object.__setattr__(self, "txt_len", txt_len)
+        object.__setattr__(self, "txt_pos", txt_pos)
