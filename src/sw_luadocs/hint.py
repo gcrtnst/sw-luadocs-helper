@@ -35,6 +35,22 @@ def join_flatelem(flatdoc, *, sep="\n\n"):
     return dot_flatdoc.FlatElem(txt=txt, kind=kind)
 
 
+def split_flatelem(flatelem, txt_pos):
+    txt_pos = int(txt_pos)
+    if not isinstance(flatelem, dot_flatdoc.FlatElem):
+        raise TypeError
+
+    txt1 = flatelem.txt[:txt_pos]
+    txt2 = flatelem.txt[txt_pos:]
+    if txt1 == "" or txt2 == "":
+        raise ValueError
+
+    return [
+        dot_flatdoc.FlatElem(txt=txt1, kind=flatelem.kind),
+        dot_flatdoc.FlatElem(txt=txt2, kind=flatelem.kind),
+    ]
+
+
 @dataclasses.dataclass(frozen=True, kw_only=True, slots=True)
 class Hint:
     def __post_init__(self):

@@ -276,6 +276,104 @@ class TestJoinFlatElem(unittest.TestCase):
                 self.assertEqual(actual_flatelem, expected_flatelem)
 
 
+class TestSplitFlatElem(unittest.TestCase):
+    def test_invalid_type(self):
+        with self.assertRaises(TypeError):
+            sw_luadocs.hint.split_flatelem(None, 0)
+
+    def test_invalid_value(self):
+        for flatelem, txt_pos in [
+            (sw_luadocs.flatdoc.FlatElem(txt="", kind="body"), 1),
+            (sw_luadocs.flatdoc.FlatElem(txt="123456789", kind="body"), 0),
+            (sw_luadocs.flatdoc.FlatElem(txt="123456789", kind="body"), 9),
+            (sw_luadocs.flatdoc.FlatElem(txt="123456789", kind="body"), -9),
+        ]:
+            with self.subTest(flatelem=flatelem, txt_pos=txt_pos):
+                with self.assertRaises(ValueError):
+                    sw_luadocs.hint.split_flatelem(flatelem, txt_pos)
+
+    def test_main(self):
+        for input_flatelem, input_txt_pos, expected_flatdoc in [
+            (
+                sw_luadocs.flatdoc.FlatElem(txt="123456789", kind="head"),
+                1,
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="1", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="23456789", kind="head"),
+                ],
+            ),
+            (
+                sw_luadocs.flatdoc.FlatElem(txt="123456789", kind="body"),
+                1,
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="1", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="23456789", kind="body"),
+                ],
+            ),
+            (
+                sw_luadocs.flatdoc.FlatElem(txt="123456789", kind="code"),
+                1,
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="1", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="23456789", kind="code"),
+                ],
+            ),
+            (
+                sw_luadocs.flatdoc.FlatElem(txt="123456789", kind="body"),
+                "1",
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="1", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="23456789", kind="body"),
+                ],
+            ),
+            (
+                sw_luadocs.flatdoc.FlatElem(txt="123456789", kind="body"),
+                5,
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="12345", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="6789", kind="body"),
+                ],
+            ),
+            (
+                sw_luadocs.flatdoc.FlatElem(txt="123456789", kind="body"),
+                8,
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="12345678", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="9", kind="body"),
+                ],
+            ),
+            (
+                sw_luadocs.flatdoc.FlatElem(txt="123456789", kind="body"),
+                -1,
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="12345678", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="9", kind="body"),
+                ],
+            ),
+            (
+                sw_luadocs.flatdoc.FlatElem(txt="123456789", kind="body"),
+                -4,
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="12345", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="6789", kind="body"),
+                ],
+            ),
+            (
+                sw_luadocs.flatdoc.FlatElem(txt="123456789", kind="body"),
+                -8,
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="1", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="23456789", kind="body"),
+                ],
+            ),
+        ]:
+            with self.subTest(flatelem=input_flatelem, txt_pos=input_txt_pos):
+                actual_flatdoc = sw_luadocs.hint.split_flatelem(
+                    input_flatelem, input_txt_pos
+                )
+                self.assertEqual(actual_flatdoc, expected_flatdoc)
+
+
 class TestJoinHintPostInit(unittest.TestCase):
     def test_main(self):
         for (
