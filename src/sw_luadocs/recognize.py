@@ -5,8 +5,9 @@ import numpy as np
 import pytesseract
 import typing
 
-from . import image as dot_image
 from . import flatdoc as dot_flatdoc
+from . import hint as dot_hint
+from . import image as dot_image
 
 
 def as_tesstsv(v):
@@ -361,7 +362,8 @@ def recognize(
     code_base_x,
     code_indent_w,
     code_line_h,
-    bg_thresh_rgb
+    bg_thresh_rgb,
+    hint_list
 ):
     preprocess_img = preprocess_image(capture_img)
     tesstsv = pytesseract.image_to_data(
@@ -383,6 +385,8 @@ def recognize(
         )
         for tessline in tessline_list
     ]
-    return convert_ocrline_to_flatdoc(
+    flatdoc = convert_ocrline_to_flatdoc(
         ocrline_list, body_line_h=body_line_h, code_line_h=code_line_h
     )
+    flatdoc = dot_hint.apply_hint_list(flatdoc, hint_list)
+    return flatdoc

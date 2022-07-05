@@ -72,6 +72,7 @@ def recognize_main(ns):
             recognize_cfg["bg_thresh_g"],
             recognize_cfg["bg_thresh_b"],
         ),
+        hint_list=recognize_cfg.get("hint_list", []),
     )
     txt = dot_flatdoc.format(flatdoc)
     with open(ns.recognize_file, mode="w", encoding="utf-8", newline="\n") as fobj:
