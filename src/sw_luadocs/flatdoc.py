@@ -43,6 +43,23 @@ def as_flatdoc_monokind(v, *, kind=None):
     return flatdoc
 
 
+def split_flatdoc_by_kind(flatdoc):
+    flatdoc = as_flatdoc(flatdoc)
+
+    flatdoc_monokind_list = []
+    idx = 0
+    while idx < len(flatdoc):
+        sl_start = idx
+        sl_kind = flatdoc[idx].kind
+        while idx < len(flatdoc) and flatdoc[idx].kind == sl_kind:
+            idx += 1
+        sl_stop = idx
+
+        flatdoc_monokind = flatdoc[sl_start:sl_stop]
+        flatdoc_monokind_list.append(flatdoc_monokind)
+    return flatdoc_monokind_list
+
+
 def parse(s):
     s = str(s)
 
