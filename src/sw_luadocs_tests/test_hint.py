@@ -753,6 +753,91 @@ class TestSplitModifierInit(unittest.TestCase):
                 self.assertEqual(actual_mod._sep, expected_sep)
 
 
+class TestSplitModifierModify(unittest.TestCase):
+    def test_invalid_type(self):
+        mod = sw_luadocs.hint.SplitModifier()
+        with self.assertRaises(TypeError):
+            mod.modify([None])
+
+    def test_main(self):
+        for input_mod, input_flatdoc, expected_flatdoc in [
+            (sw_luadocs.hint.SplitModifier(), [], []),
+            (
+                sw_luadocs.hint.SplitModifier(sep=","),
+                [sw_luadocs.flatdoc.FlatElem(txt="h", kind="head")],
+                [sw_luadocs.flatdoc.FlatElem(txt="h", kind="head")],
+            ),
+            (
+                sw_luadocs.hint.SplitModifier(sep=","),
+                [sw_luadocs.flatdoc.FlatElem(txt="b", kind="body")],
+                [sw_luadocs.flatdoc.FlatElem(txt="b", kind="body")],
+            ),
+            (
+                sw_luadocs.hint.SplitModifier(sep=","),
+                [sw_luadocs.flatdoc.FlatElem(txt="c", kind="code")],
+                [sw_luadocs.flatdoc.FlatElem(txt="c", kind="code")],
+            ),
+            (
+                sw_luadocs.hint.SplitModifier(sep=","),
+                [sw_luadocs.flatdoc.FlatElem(txt="abc,def,ghi", kind="head")],
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="abc", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="def", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="ghi", kind="head"),
+                ],
+            ),
+            (
+                sw_luadocs.hint.SplitModifier(sep=","),
+                [sw_luadocs.flatdoc.FlatElem(txt="abc,def,ghi", kind="body")],
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="abc", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="def", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="ghi", kind="body"),
+                ],
+            ),
+            (
+                sw_luadocs.hint.SplitModifier(sep=","),
+                [sw_luadocs.flatdoc.FlatElem(txt="abc,def,ghi", kind="code")],
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="abc", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="def", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="ghi", kind="code"),
+                ],
+            ),
+            (
+                sw_luadocs.hint.SplitModifier(sep=","),
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="1", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="2,3,4", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="5", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="6,7,8", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="9", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="10,11,12", kind="code"),
+                ],
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="1", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="2", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="3", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="4", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="5", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="6", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="7", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="8", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="9", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="10", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="11", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="12", kind="code"),
+                ],
+            ),
+        ]:
+            with self.subTest(mod=input_mod, flatdoc=input_flatdoc):
+                input_flatdoc_copy = input_flatdoc[:]
+                actual_flatdoc = input_mod.modify(input_flatdoc_copy)
+                self.assertEqual(actual_flatdoc, expected_flatdoc)
+                self.assertIsNot(actual_flatdoc, input_flatdoc_copy)
+                self.assertIsNot(input_flatdoc_copy, input_flatdoc)
+
+
 class TestJoinHintPostInit(unittest.TestCase):
     def test_main(self):
         for (

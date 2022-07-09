@@ -119,6 +119,17 @@ class SplitModifier(Modifier):
         if self._sep == "":
             raise ValueError
 
+    def modify(self, flatdoc):
+        flatdoc = dot_flatdoc.as_flatdoc(flatdoc)
+
+        old_flatdoc = flatdoc[:]
+        new_flatdoc = []
+        for old_flatelem in old_flatdoc:
+            for txt in old_flatelem.txt.split(sep=self._sep):
+                new_flatelem = dot_flatdoc.FlatElem(txt=txt, kind=old_flatelem.kind)
+                new_flatdoc.append(new_flatelem)
+        return new_flatdoc
+
 
 @dataclasses.dataclass(frozen=True, kw_only=True, slots=True)
 class Hint:
