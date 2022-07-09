@@ -81,6 +81,13 @@ class SplitModifier(Modifier):
         return new_flatdoc
 
 
+class LineSplitModifier(Modifier):
+    def __init__(self, *, keyword_set=None):
+        if keyword_set is None:
+            keyword_set = set()
+        self._keyword_set = set(map(str, keyword_set))
+
+
 class Patch:
     def __init__(self, *, selector, modifier):
         if not isinstance(selector, Selector) or not isinstance(modifier, Modifier):

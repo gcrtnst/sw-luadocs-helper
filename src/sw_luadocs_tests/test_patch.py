@@ -467,6 +467,22 @@ class TestSplitModifierModify(unittest.TestCase):
                 self.assertIsNot(input_flatdoc_copy, input_flatdoc)
 
 
+class TestLineSplitModifierInit(unittest.TestCase):
+    def test_main(self):
+        for input_keyword_set, expected_keyword_set in [
+            (None, set()),
+            (set(), set()),
+            ([], set()),
+            ({"0", "1", "2"}, {"0", "1", "2"}),
+            ([0, 1, 2], {"0", "1", "2"}),
+        ]:
+            with self.subTest(keyword_set=input_keyword_set):
+                actual_modifier = sw_luadocs.patch.LineSplitModifier(
+                    keyword_set=input_keyword_set
+                )
+                self.assertEqual(actual_modifier._keyword_set, expected_keyword_set)
+
+
 class TestPatchInit(unittest.TestCase):
     def test_invalid_type(self):
         for selector, modifier in [
