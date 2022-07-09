@@ -183,6 +183,16 @@ def as_patch(v):
     raise TypeError
 
 
+def apply_patch_list(flatdoc, patch_list):
+    flatdoc = dot_flatdoc.as_flatdoc(flatdoc)
+    patch_list = list(map(as_patch, patch_list))
+
+    flatdoc = flatdoc[:]
+    for patch in patch_list:
+        flatdoc = patch.apply(flatdoc)
+    return flatdoc
+
+
 @dataclasses.dataclass(frozen=True, kw_only=True, slots=True)
 class Hint:
     def __post_init__(self):
