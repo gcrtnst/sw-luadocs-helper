@@ -637,18 +637,18 @@ class TestJoinModifierInit(unittest.TestCase):
     def test_main(self):
         for input_sep, expected_sep in [("abc", "abc"), (123, "123")]:
             with self.subTest(sep=input_sep):
-                actual_mod = sw_luadocs.hint.JoinModifier(sep=input_sep)
-                self.assertEqual(actual_mod._sep, expected_sep)
+                actual_modifier = sw_luadocs.hint.JoinModifier(sep=input_sep)
+                self.assertEqual(actual_modifier._sep, expected_sep)
 
 
 class TestJoinModifierModify(unittest.TestCase):
     def test_invalid_type(self):
-        mod = sw_luadocs.hint.JoinModifier()
+        modifier = sw_luadocs.hint.JoinModifier()
         with self.assertRaises(TypeError):
-            mod.modify([None])
+            modifier.modify([None])
 
     def test_main(self):
-        for input_mod, input_flatdoc, expected_flatdoc in [
+        for input_modifier, input_flatdoc, expected_flatdoc in [
             (sw_luadocs.hint.JoinModifier(), [], []),
             (
                 sw_luadocs.hint.JoinModifier(),
@@ -735,7 +735,7 @@ class TestJoinModifierModify(unittest.TestCase):
             ),
         ]:
             input_flatdoc_copy = input_flatdoc[:]
-            actual_flatdoc = input_mod.modify(input_flatdoc_copy)
+            actual_flatdoc = input_modifier.modify(input_flatdoc_copy)
             self.assertEqual(actual_flatdoc, expected_flatdoc)
             self.assertIsNot(actual_flatdoc, input_flatdoc_copy)
             self.assertEqual(input_flatdoc_copy, input_flatdoc)
@@ -749,18 +749,18 @@ class TestSplitModifierInit(unittest.TestCase):
     def test_main(self):
         for input_sep, expected_sep in [("abc", "abc"), (123, "123")]:
             with self.subTest(sep=input_sep):
-                actual_mod = sw_luadocs.hint.SplitModifier(sep=input_sep)
-                self.assertEqual(actual_mod._sep, expected_sep)
+                actual_modifier = sw_luadocs.hint.SplitModifier(sep=input_sep)
+                self.assertEqual(actual_modifier._sep, expected_sep)
 
 
 class TestSplitModifierModify(unittest.TestCase):
     def test_invalid_type(self):
-        mod = sw_luadocs.hint.SplitModifier()
+        modifier = sw_luadocs.hint.SplitModifier()
         with self.assertRaises(TypeError):
-            mod.modify([None])
+            modifier.modify([None])
 
     def test_main(self):
-        for input_mod, input_flatdoc, expected_flatdoc in [
+        for input_modifier, input_flatdoc, expected_flatdoc in [
             (sw_luadocs.hint.SplitModifier(), [], []),
             (
                 sw_luadocs.hint.SplitModifier(sep=","),
@@ -830,9 +830,9 @@ class TestSplitModifierModify(unittest.TestCase):
                 ],
             ),
         ]:
-            with self.subTest(mod=input_mod, flatdoc=input_flatdoc):
+            with self.subTest(modifier=input_modifier, flatdoc=input_flatdoc):
                 input_flatdoc_copy = input_flatdoc[:]
-                actual_flatdoc = input_mod.modify(input_flatdoc_copy)
+                actual_flatdoc = input_modifier.modify(input_flatdoc_copy)
                 self.assertEqual(actual_flatdoc, expected_flatdoc)
                 self.assertIsNot(actual_flatdoc, input_flatdoc_copy)
                 self.assertIsNot(input_flatdoc_copy, input_flatdoc)
