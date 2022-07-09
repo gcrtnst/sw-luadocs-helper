@@ -633,6 +633,14 @@ class TestSelectorSelect(unittest.TestCase):
                 self.assertEqual(actual_sl_list, expected_sl_list)
 
 
+class TestJoinModifierPostInit(unittest.TestCase):
+    def test_main(self):
+        for input_sep, expected_sep in [("abc", "abc"), (123, "123")]:
+            with self.subTest(sep=input_sep):
+                actual_mod = sw_luadocs.hint.JoinModifier(sep=input_sep)
+                self.assertEqual(actual_mod.sep, expected_sep)
+
+
 class TestJoinHintPostInit(unittest.TestCase):
     def test_main(self):
         for (

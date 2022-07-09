@@ -104,6 +104,14 @@ class Modifier:
 
 
 @dataclasses.dataclass(frozen=True, kw_only=True, slots=True)
+class JoinModifier(Modifier):
+    sep: typing.Any = "\n\n"
+
+    def __post_init__(self):
+        object.__setattr__(self, "sep", str(self.sep))
+
+
+@dataclasses.dataclass(frozen=True, kw_only=True, slots=True)
 class Hint:
     def __post_init__(self):
         raise NotImplementedError
