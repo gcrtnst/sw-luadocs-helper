@@ -363,7 +363,7 @@ def recognize(
     code_indent_w,
     code_line_h,
     bg_thresh_rgb,
-    hint_list
+    patch_list
 ):
     preprocess_img = preprocess_image(capture_img)
     tesstsv = pytesseract.image_to_data(
@@ -388,5 +388,5 @@ def recognize(
     flatdoc = convert_ocrline_to_flatdoc(
         ocrline_list, body_line_h=body_line_h, code_line_h=code_line_h
     )
-    flatdoc = dot_hint.apply_hint_list(flatdoc, hint_list)
+    flatdoc = dot_hint.apply_patch_list(flatdoc, patch_list)
     return flatdoc
