@@ -175,6 +175,14 @@ def patcher_from_dict(d):
     return Patcher(selector=selector, modifier=modifier)
 
 
+def as_patcher(v):
+    if isinstance(v, Patcher):
+        return v
+    if isinstance(v, dict):
+        return patcher_from_dict(v)
+    raise TypeError
+
+
 @dataclasses.dataclass(frozen=True, kw_only=True, slots=True)
 class Hint:
     def __post_init__(self):

@@ -1104,6 +1104,67 @@ class TestPatcherFromDict(unittest.TestCase):
                 self.assertEqual(actual_patcher._modifier._sep, expected_modifier_sep)
 
 
+class TestAsPatcher(unittest.TestCase):
+    def test_invalid_type(self):
+        with self.assertRaises(TypeError):
+            sw_luadocs.hint.as_patcher(None)
+
+    def test_main(self):
+        for (
+            input_v,
+            expected_selector_section,
+            expected_selector_kind,
+            expected_selector_start,
+            expected_selector_stop,
+            expected_modifier_cls,
+            expected_modifier_sep,
+        ) in [
+            (
+                sw_luadocs.hint.Patcher(
+                    selector=sw_luadocs.hint.Selector(
+                        section=1, kind="body", start=2, stop=3
+                    ),
+                    modifier=sw_luadocs.hint.SplitModifier(sep="4"),
+                ),
+                1,
+                "body",
+                2,
+                3,
+                sw_luadocs.hint.SplitModifier,
+                "4",
+            ),
+            (
+                {
+                    "op": "split",
+                    "section": 1,
+                    "kind": "body",
+                    "start": 2,
+                    "stop": 3,
+                    "sep": "4",
+                },
+                1,
+                "body",
+                2,
+                3,
+                sw_luadocs.hint.SplitModifier,
+                "4",
+            ),
+        ]:
+            with self.subTest(v=input_v):
+                actual_patcher = sw_luadocs.hint.as_patcher(input_v)
+                self.assertIs(type(actual_patcher), sw_luadocs.hint.Patcher)
+                self.assertEqual(
+                    actual_patcher._selector._section, expected_selector_section
+                )
+                self.assertEqual(actual_patcher._selector._kind, expected_selector_kind)
+                self.assertEqual(
+                    actual_patcher._selector._start, expected_selector_start
+                )
+                self.assertEqual(actual_patcher._selector._stop, expected_selector_stop)
+                self.assertIs(type(actual_patcher._modifier), expected_modifier_cls)
+                self.assertEqual(actual_patcher._modifier._sep, expected_modifier_sep)
+
+
 class TestJoinHintPostInit(unittest.TestCase):
     def test_main(self):
         for (
