@@ -83,21 +83,17 @@ class Selector:
         return sl_list
 
 
-@dataclasses.dataclass(frozen=True, kw_only=True, slots=True)
 class Modifier:
-    def __post_init__(self):
+    def __init__(self):
         raise NotImplementedError
 
     def modify(self, flatdoc):
         raise NotImplementedError
 
 
-@dataclasses.dataclass(frozen=True, kw_only=True, slots=True)
 class JoinModifier(Modifier):
-    sep: typing.Any = "\n\n"
-
-    def __post_init__(self):
-        object.__setattr__(self, "sep", str(self.sep))
+    def __init__(self, *, sep="\n\n"):
+        self._sep = str(sep)
 
     def modify(self, flatdoc):
         flatdoc = dot_flatdoc.as_flatdoc(flatdoc)
@@ -106,7 +102,7 @@ class JoinModifier(Modifier):
         new_flatdoc = list(
             map(
                 lambda old_flatdoc_monokind: dot_flatdoc.FlatElem(
-                    txt=self.sep.join(
+                    txt=self._sep.join(
                         old_flatelem.txt for old_flatelem in old_flatdoc_monokind
                     ),
                     kind=old_flatdoc_monokind[0].kind,
