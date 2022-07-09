@@ -95,6 +95,15 @@ class Selector:
 
 
 @dataclasses.dataclass(frozen=True, kw_only=True, slots=True)
+class Modifier:
+    def __post_init__(self):
+        raise NotImplementedError
+
+    def modify(self, flatdoc):
+        raise NotImplementedError
+
+
+@dataclasses.dataclass(frozen=True, kw_only=True, slots=True)
 class Hint:
     def __post_init__(self):
         raise NotImplementedError
