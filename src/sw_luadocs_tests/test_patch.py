@@ -1,5 +1,5 @@
 import sw_luadocs.flatdoc
-import sw_luadocs.hint
+import sw_luadocs.patch
 import unittest
 
 
@@ -25,7 +25,7 @@ class TestSelectorInit(unittest.TestCase):
                 start=input_start,
                 stop=input_stop,
             ):
-                actual_selector = sw_luadocs.hint.Selector(
+                actual_selector = sw_luadocs.patch.Selector(
                     section=input_section,
                     kind=input_kind,
                     start=input_start,
@@ -39,60 +39,60 @@ class TestSelectorInit(unittest.TestCase):
 
 class TestSelectorSelect(unittest.TestCase):
     def test_invalid_type(self):
-        selector = sw_luadocs.hint.Selector()
+        selector = sw_luadocs.patch.Selector()
         with self.assertRaises(TypeError):
             selector.select([None])
 
     def test_main(self):
         for input_selector, input_flatdoc, expected_sl_list in [
-            (sw_luadocs.hint.Selector(), [], []),
+            (sw_luadocs.patch.Selector(), [], []),
             (
-                sw_luadocs.hint.Selector(),
+                sw_luadocs.patch.Selector(),
                 [sw_luadocs.flatdoc.FlatElem(txt="h1", kind="head")],
                 [slice(0, 1)],
             ),
             (
-                sw_luadocs.hint.Selector(section=0),
+                sw_luadocs.patch.Selector(section=0),
                 [sw_luadocs.flatdoc.FlatElem(txt="h1", kind="head")],
                 [],
             ),
             (
-                sw_luadocs.hint.Selector(section=1),
+                sw_luadocs.patch.Selector(section=1),
                 [sw_luadocs.flatdoc.FlatElem(txt="h1", kind="head")],
                 [slice(0, 1)],
             ),
             (
-                sw_luadocs.hint.Selector(kind="head"),
+                sw_luadocs.patch.Selector(kind="head"),
                 [sw_luadocs.flatdoc.FlatElem(txt="h1", kind="head")],
                 [slice(0, 1)],
             ),
             (
-                sw_luadocs.hint.Selector(kind="body"),
+                sw_luadocs.patch.Selector(kind="body"),
                 [sw_luadocs.flatdoc.FlatElem(txt="b1", kind="body")],
                 [slice(0, 1)],
             ),
             (
-                sw_luadocs.hint.Selector(kind="code"),
+                sw_luadocs.patch.Selector(kind="code"),
                 [sw_luadocs.flatdoc.FlatElem(txt="c1", kind="code")],
                 [slice(0, 1)],
             ),
             (
-                sw_luadocs.hint.Selector(kind="head"),
+                sw_luadocs.patch.Selector(kind="head"),
                 [sw_luadocs.flatdoc.FlatElem(txt="b1", kind="body")],
                 [],
             ),
             (
-                sw_luadocs.hint.Selector(kind="body"),
+                sw_luadocs.patch.Selector(kind="body"),
                 [sw_luadocs.flatdoc.FlatElem(txt="c1", kind="code")],
                 [],
             ),
             (
-                sw_luadocs.hint.Selector(kind="code"),
+                sw_luadocs.patch.Selector(kind="code"),
                 [sw_luadocs.flatdoc.FlatElem(txt="h1", kind="head")],
                 [],
             ),
             (
-                sw_luadocs.hint.Selector(),
+                sw_luadocs.patch.Selector(),
                 [
                     sw_luadocs.flatdoc.FlatElem(txt="b0", kind="body"),
                     sw_luadocs.flatdoc.FlatElem(txt="c0", kind="code"),
@@ -106,7 +106,7 @@ class TestSelectorSelect(unittest.TestCase):
                 [slice(0, 8)],
             ),
             (
-                sw_luadocs.hint.Selector(section=0),
+                sw_luadocs.patch.Selector(section=0),
                 [
                     sw_luadocs.flatdoc.FlatElem(txt="b0", kind="body"),
                     sw_luadocs.flatdoc.FlatElem(txt="c0", kind="code"),
@@ -120,7 +120,7 @@ class TestSelectorSelect(unittest.TestCase):
                 [slice(0, 2)],
             ),
             (
-                sw_luadocs.hint.Selector(section=1),
+                sw_luadocs.patch.Selector(section=1),
                 [
                     sw_luadocs.flatdoc.FlatElem(txt="b0", kind="body"),
                     sw_luadocs.flatdoc.FlatElem(txt="c0", kind="code"),
@@ -134,7 +134,7 @@ class TestSelectorSelect(unittest.TestCase):
                 [slice(2, 5)],
             ),
             (
-                sw_luadocs.hint.Selector(section=2),
+                sw_luadocs.patch.Selector(section=2),
                 [
                     sw_luadocs.flatdoc.FlatElem(txt="b0", kind="body"),
                     sw_luadocs.flatdoc.FlatElem(txt="c0", kind="code"),
@@ -148,7 +148,7 @@ class TestSelectorSelect(unittest.TestCase):
                 [slice(5, 8)],
             ),
             (
-                sw_luadocs.hint.Selector(kind="head"),
+                sw_luadocs.patch.Selector(kind="head"),
                 [
                     sw_luadocs.flatdoc.FlatElem(txt="b0", kind="body"),
                     sw_luadocs.flatdoc.FlatElem(txt="c0", kind="code"),
@@ -162,7 +162,7 @@ class TestSelectorSelect(unittest.TestCase):
                 [slice(2, 3), slice(5, 6)],
             ),
             (
-                sw_luadocs.hint.Selector(kind="body"),
+                sw_luadocs.patch.Selector(kind="body"),
                 [
                     sw_luadocs.flatdoc.FlatElem(txt="b0", kind="body"),
                     sw_luadocs.flatdoc.FlatElem(txt="c0", kind="code"),
@@ -176,7 +176,7 @@ class TestSelectorSelect(unittest.TestCase):
                 [slice(0, 1), slice(3, 4), slice(6, 7)],
             ),
             (
-                sw_luadocs.hint.Selector(kind="code"),
+                sw_luadocs.patch.Selector(kind="code"),
                 [
                     sw_luadocs.flatdoc.FlatElem(txt="b0", kind="body"),
                     sw_luadocs.flatdoc.FlatElem(txt="c0", kind="code"),
@@ -190,7 +190,7 @@ class TestSelectorSelect(unittest.TestCase):
                 [slice(1, 2), slice(4, 5), slice(7, 8)],
             ),
             (
-                sw_luadocs.hint.Selector(start=1),
+                sw_luadocs.patch.Selector(start=1),
                 [
                     sw_luadocs.flatdoc.FlatElem(txt="b0", kind="body"),
                     sw_luadocs.flatdoc.FlatElem(txt="c0", kind="code"),
@@ -204,7 +204,7 @@ class TestSelectorSelect(unittest.TestCase):
                 [slice(1, 8)],
             ),
             (
-                sw_luadocs.hint.Selector(stop=7),
+                sw_luadocs.patch.Selector(stop=7),
                 [
                     sw_luadocs.flatdoc.FlatElem(txt="b0", kind="body"),
                     sw_luadocs.flatdoc.FlatElem(txt="c0", kind="code"),
@@ -218,7 +218,7 @@ class TestSelectorSelect(unittest.TestCase):
                 [slice(0, 7)],
             ),
             (
-                sw_luadocs.hint.Selector(start=-7),
+                sw_luadocs.patch.Selector(start=-7),
                 [
                     sw_luadocs.flatdoc.FlatElem(txt="b0", kind="body"),
                     sw_luadocs.flatdoc.FlatElem(txt="c0", kind="code"),
@@ -232,7 +232,7 @@ class TestSelectorSelect(unittest.TestCase):
                 [slice(1, 8)],
             ),
             (
-                sw_luadocs.hint.Selector(stop=-1),
+                sw_luadocs.patch.Selector(stop=-1),
                 [
                     sw_luadocs.flatdoc.FlatElem(txt="b0", kind="body"),
                     sw_luadocs.flatdoc.FlatElem(txt="c0", kind="code"),
@@ -246,7 +246,7 @@ class TestSelectorSelect(unittest.TestCase):
                 [slice(0, 7)],
             ),
             (
-                sw_luadocs.hint.Selector(section=1, kind="code", start=1, stop=-1),
+                sw_luadocs.patch.Selector(section=1, kind="code", start=1, stop=-1),
                 [
                     sw_luadocs.flatdoc.FlatElem(txt="c0", kind="code"),
                     sw_luadocs.flatdoc.FlatElem(txt="h1", kind="head"),
@@ -266,36 +266,36 @@ class TestJoinModifierInit(unittest.TestCase):
     def test_main(self):
         for input_sep, expected_sep in [("abc", "abc"), (123, "123")]:
             with self.subTest(sep=input_sep):
-                actual_modifier = sw_luadocs.hint.JoinModifier(sep=input_sep)
+                actual_modifier = sw_luadocs.patch.JoinModifier(sep=input_sep)
                 self.assertEqual(actual_modifier._sep, expected_sep)
 
 
 class TestJoinModifierModify(unittest.TestCase):
     def test_invalid_type(self):
-        modifier = sw_luadocs.hint.JoinModifier()
+        modifier = sw_luadocs.patch.JoinModifier()
         with self.assertRaises(TypeError):
             modifier.modify([None])
 
     def test_main(self):
         for input_modifier, input_flatdoc, expected_flatdoc in [
-            (sw_luadocs.hint.JoinModifier(), [], []),
+            (sw_luadocs.patch.JoinModifier(), [], []),
             (
-                sw_luadocs.hint.JoinModifier(),
+                sw_luadocs.patch.JoinModifier(),
                 [sw_luadocs.flatdoc.FlatElem(txt="h", kind="head")],
                 [sw_luadocs.flatdoc.FlatElem(txt="h", kind="head")],
             ),
             (
-                sw_luadocs.hint.JoinModifier(),
+                sw_luadocs.patch.JoinModifier(),
                 [sw_luadocs.flatdoc.FlatElem(txt="b", kind="body")],
                 [sw_luadocs.flatdoc.FlatElem(txt="b", kind="body")],
             ),
             (
-                sw_luadocs.hint.JoinModifier(),
+                sw_luadocs.patch.JoinModifier(),
                 [sw_luadocs.flatdoc.FlatElem(txt="c", kind="code")],
                 [sw_luadocs.flatdoc.FlatElem(txt="c", kind="code")],
             ),
             (
-                sw_luadocs.hint.JoinModifier(),
+                sw_luadocs.patch.JoinModifier(),
                 [
                     sw_luadocs.flatdoc.FlatElem(txt="h", kind="head"),
                     sw_luadocs.flatdoc.FlatElem(txt="b", kind="body"),
@@ -308,7 +308,7 @@ class TestJoinModifierModify(unittest.TestCase):
                 ],
             ),
             (
-                sw_luadocs.hint.JoinModifier(sep=", "),
+                sw_luadocs.patch.JoinModifier(sep=", "),
                 [
                     sw_luadocs.flatdoc.FlatElem(txt="h1", kind="head"),
                     sw_luadocs.flatdoc.FlatElem(txt="h2", kind="head"),
@@ -317,7 +317,7 @@ class TestJoinModifierModify(unittest.TestCase):
                 [sw_luadocs.flatdoc.FlatElem(txt="h1, h2, h3", kind="head")],
             ),
             (
-                sw_luadocs.hint.JoinModifier(sep=", "),
+                sw_luadocs.patch.JoinModifier(sep=", "),
                 [
                     sw_luadocs.flatdoc.FlatElem(txt="b1", kind="body"),
                     sw_luadocs.flatdoc.FlatElem(txt="b2", kind="body"),
@@ -326,7 +326,7 @@ class TestJoinModifierModify(unittest.TestCase):
                 [sw_luadocs.flatdoc.FlatElem(txt="b1, b2, b3", kind="body")],
             ),
             (
-                sw_luadocs.hint.JoinModifier(sep=", "),
+                sw_luadocs.patch.JoinModifier(sep=", "),
                 [
                     sw_luadocs.flatdoc.FlatElem(txt="c1", kind="code"),
                     sw_luadocs.flatdoc.FlatElem(txt="c2", kind="code"),
@@ -335,7 +335,7 @@ class TestJoinModifierModify(unittest.TestCase):
                 [sw_luadocs.flatdoc.FlatElem(txt="c1, c2, c3", kind="code")],
             ),
             (
-                sw_luadocs.hint.JoinModifier(sep=", "),
+                sw_luadocs.patch.JoinModifier(sep=", "),
                 [
                     sw_luadocs.flatdoc.FlatElem(txt="h1", kind="head"),
                     sw_luadocs.flatdoc.FlatElem(txt="h2", kind="head"),
@@ -354,7 +354,7 @@ class TestJoinModifierModify(unittest.TestCase):
                 ],
             ),
             (
-                sw_luadocs.hint.JoinModifier(sep="::"),
+                sw_luadocs.patch.JoinModifier(sep="::"),
                 [
                     sw_luadocs.flatdoc.FlatElem(txt="h1", kind="head"),
                     sw_luadocs.flatdoc.FlatElem(txt="h2", kind="head"),
@@ -373,41 +373,41 @@ class TestJoinModifierModify(unittest.TestCase):
 class TestSplitModifierInit(unittest.TestCase):
     def test_invalid_value(self):
         with self.assertRaises(ValueError):
-            sw_luadocs.hint.SplitModifier(sep="")
+            sw_luadocs.patch.SplitModifier(sep="")
 
     def test_main(self):
         for input_sep, expected_sep in [("abc", "abc"), (123, "123")]:
             with self.subTest(sep=input_sep):
-                actual_modifier = sw_luadocs.hint.SplitModifier(sep=input_sep)
+                actual_modifier = sw_luadocs.patch.SplitModifier(sep=input_sep)
                 self.assertEqual(actual_modifier._sep, expected_sep)
 
 
 class TestSplitModifierModify(unittest.TestCase):
     def test_invalid_type(self):
-        modifier = sw_luadocs.hint.SplitModifier()
+        modifier = sw_luadocs.patch.SplitModifier()
         with self.assertRaises(TypeError):
             modifier.modify([None])
 
     def test_main(self):
         for input_modifier, input_flatdoc, expected_flatdoc in [
-            (sw_luadocs.hint.SplitModifier(), [], []),
+            (sw_luadocs.patch.SplitModifier(), [], []),
             (
-                sw_luadocs.hint.SplitModifier(sep=","),
+                sw_luadocs.patch.SplitModifier(sep=","),
                 [sw_luadocs.flatdoc.FlatElem(txt="h", kind="head")],
                 [sw_luadocs.flatdoc.FlatElem(txt="h", kind="head")],
             ),
             (
-                sw_luadocs.hint.SplitModifier(sep=","),
+                sw_luadocs.patch.SplitModifier(sep=","),
                 [sw_luadocs.flatdoc.FlatElem(txt="b", kind="body")],
                 [sw_luadocs.flatdoc.FlatElem(txt="b", kind="body")],
             ),
             (
-                sw_luadocs.hint.SplitModifier(sep=","),
+                sw_luadocs.patch.SplitModifier(sep=","),
                 [sw_luadocs.flatdoc.FlatElem(txt="c", kind="code")],
                 [sw_luadocs.flatdoc.FlatElem(txt="c", kind="code")],
             ),
             (
-                sw_luadocs.hint.SplitModifier(sep=","),
+                sw_luadocs.patch.SplitModifier(sep=","),
                 [sw_luadocs.flatdoc.FlatElem(txt="abc,def,ghi", kind="head")],
                 [
                     sw_luadocs.flatdoc.FlatElem(txt="abc", kind="head"),
@@ -416,7 +416,7 @@ class TestSplitModifierModify(unittest.TestCase):
                 ],
             ),
             (
-                sw_luadocs.hint.SplitModifier(sep=","),
+                sw_luadocs.patch.SplitModifier(sep=","),
                 [sw_luadocs.flatdoc.FlatElem(txt="abc,def,ghi", kind="body")],
                 [
                     sw_luadocs.flatdoc.FlatElem(txt="abc", kind="body"),
@@ -425,7 +425,7 @@ class TestSplitModifierModify(unittest.TestCase):
                 ],
             ),
             (
-                sw_luadocs.hint.SplitModifier(sep=","),
+                sw_luadocs.patch.SplitModifier(sep=","),
                 [sw_luadocs.flatdoc.FlatElem(txt="abc,def,ghi", kind="code")],
                 [
                     sw_luadocs.flatdoc.FlatElem(txt="abc", kind="code"),
@@ -434,7 +434,7 @@ class TestSplitModifierModify(unittest.TestCase):
                 ],
             ),
             (
-                sw_luadocs.hint.SplitModifier(sep=","),
+                sw_luadocs.patch.SplitModifier(sep=","),
                 [
                     sw_luadocs.flatdoc.FlatElem(txt="1", kind="head"),
                     sw_luadocs.flatdoc.FlatElem(txt="2,3,4", kind="head"),
@@ -470,18 +470,18 @@ class TestSplitModifierModify(unittest.TestCase):
 class TestPatchInit(unittest.TestCase):
     def test_invalid_type(self):
         for selector, modifier in [
-            (None, sw_luadocs.hint.JoinModifier()),
-            (sw_luadocs.hint.Selector(), None),
+            (None, sw_luadocs.patch.JoinModifier()),
+            (sw_luadocs.patch.Selector(), None),
         ]:
             with self.subTest(selector=selector, modifier=modifier):
                 with self.assertRaises(TypeError):
-                    sw_luadocs.hint.Patch(selector=selector, modifier=modifier)
+                    sw_luadocs.patch.Patch(selector=selector, modifier=modifier)
 
 
 class TestPatchApply(unittest.TestCase):
     def test_invalid_type(self):
-        patch = sw_luadocs.hint.Patch(
-            selector=sw_luadocs.hint.Selector(), modifier=MockModifier([])
+        patch = sw_luadocs.patch.Patch(
+            selector=sw_luadocs.patch.Selector(), modifier=MockModifier([])
         )
         with self.assertRaises(TypeError):
             patch.apply([None])
@@ -494,23 +494,23 @@ class TestPatchApply(unittest.TestCase):
             expected_flatdoc,
             expected_modifier_arg_list,
         ) in [
-            (sw_luadocs.hint.Selector(), [], [], [], []),
+            (sw_luadocs.patch.Selector(), [], [], [], []),
             (
-                sw_luadocs.hint.Selector(start=1),
+                sw_luadocs.patch.Selector(start=1),
                 [],
                 [sw_luadocs.flatdoc.FlatElem(txt="1", kind="head")],
                 [sw_luadocs.flatdoc.FlatElem(txt="1", kind="head")],
                 [],
             ),
             (
-                sw_luadocs.hint.Selector(),
+                sw_luadocs.patch.Selector(),
                 [[]],
                 [sw_luadocs.flatdoc.FlatElem(txt="1", kind="head")],
                 [],
                 [[sw_luadocs.flatdoc.FlatElem(txt="1", kind="head")]],
             ),
             (
-                sw_luadocs.hint.Selector(),
+                sw_luadocs.patch.Selector(),
                 [
                     [
                         sw_luadocs.flatdoc.FlatElem(txt="2", kind="head"),
@@ -525,7 +525,7 @@ class TestPatchApply(unittest.TestCase):
                 [[sw_luadocs.flatdoc.FlatElem(txt="1", kind="head")]],
             ),
             (
-                sw_luadocs.hint.Selector(start=9),
+                sw_luadocs.patch.Selector(start=9),
                 [],
                 [
                     sw_luadocs.flatdoc.FlatElem(txt="1", kind="head"),
@@ -552,7 +552,7 @@ class TestPatchApply(unittest.TestCase):
                 [],
             ),
             (
-                sw_luadocs.hint.Selector(kind="body"),
+                sw_luadocs.patch.Selector(kind="body"),
                 [[], []],
                 [
                     sw_luadocs.flatdoc.FlatElem(txt="1", kind="head"),
@@ -584,7 +584,7 @@ class TestPatchApply(unittest.TestCase):
                 ],
             ),
             (
-                sw_luadocs.hint.Selector(kind="body"),
+                sw_luadocs.patch.Selector(kind="body"),
                 [
                     [
                         sw_luadocs.flatdoc.FlatElem(txt="10", kind="body"),
@@ -635,7 +635,7 @@ class TestPatchApply(unittest.TestCase):
                 flatdoc=input_flatdoc,
             ):
                 modifier = MockModifier(input_modifier_ret_list)
-                patch = sw_luadocs.hint.Patch(
+                patch = sw_luadocs.patch.Patch(
                     selector=input_selector, modifier=modifier
                 )
                 input_flatdoc_copy = input_flatdoc[:]
@@ -656,7 +656,7 @@ class TestPatchFromDict(unittest.TestCase):
         ]:
             with self.subTest(d=d):
                 with self.assertRaises(ValueError):
-                    sw_luadocs.hint.patch_from_dict(d)
+                    sw_luadocs.patch.patch_from_dict(d)
 
     def test_main(self):
         for (
@@ -674,7 +674,7 @@ class TestPatchFromDict(unittest.TestCase):
                 None,
                 None,
                 None,
-                sw_luadocs.hint.JoinModifier,
+                sw_luadocs.patch.JoinModifier,
                 "\n\n",
             ),
             (
@@ -683,7 +683,7 @@ class TestPatchFromDict(unittest.TestCase):
                 None,
                 None,
                 None,
-                sw_luadocs.hint.SplitModifier,
+                sw_luadocs.patch.SplitModifier,
                 "\n\n",
             ),
             (
@@ -699,7 +699,7 @@ class TestPatchFromDict(unittest.TestCase):
                 "body",
                 2,
                 3,
-                sw_luadocs.hint.JoinModifier,
+                sw_luadocs.patch.JoinModifier,
                 "4",
             ),
             (
@@ -715,12 +715,12 @@ class TestPatchFromDict(unittest.TestCase):
                 "body",
                 2,
                 3,
-                sw_luadocs.hint.SplitModifier,
+                sw_luadocs.patch.SplitModifier,
                 "4",
             ),
         ]:
             with self.subTest(d=input_d):
-                actual_patch = sw_luadocs.hint.patch_from_dict(input_d)
+                actual_patch = sw_luadocs.patch.patch_from_dict(input_d)
                 self.assertEqual(
                     actual_patch._selector._section, expected_selector_section
                 )
@@ -734,7 +734,7 @@ class TestPatchFromDict(unittest.TestCase):
 class TestAsPatch(unittest.TestCase):
     def test_invalid_type(self):
         with self.assertRaises(TypeError):
-            sw_luadocs.hint.as_patch(None)
+            sw_luadocs.patch.as_patch(None)
 
     def test_main(self):
         for (
@@ -747,17 +747,17 @@ class TestAsPatch(unittest.TestCase):
             expected_modifier_sep,
         ) in [
             (
-                sw_luadocs.hint.Patch(
-                    selector=sw_luadocs.hint.Selector(
+                sw_luadocs.patch.Patch(
+                    selector=sw_luadocs.patch.Selector(
                         section=1, kind="body", start=2, stop=3
                     ),
-                    modifier=sw_luadocs.hint.SplitModifier(sep="4"),
+                    modifier=sw_luadocs.patch.SplitModifier(sep="4"),
                 ),
                 1,
                 "body",
                 2,
                 3,
-                sw_luadocs.hint.SplitModifier,
+                sw_luadocs.patch.SplitModifier,
                 "4",
             ),
             (
@@ -773,13 +773,13 @@ class TestAsPatch(unittest.TestCase):
                 "body",
                 2,
                 3,
-                sw_luadocs.hint.SplitModifier,
+                sw_luadocs.patch.SplitModifier,
                 "4",
             ),
         ]:
             with self.subTest(v=input_v):
-                actual_patch = sw_luadocs.hint.as_patch(input_v)
-                self.assertIs(type(actual_patch), sw_luadocs.hint.Patch)
+                actual_patch = sw_luadocs.patch.as_patch(input_v)
+                self.assertIs(type(actual_patch), sw_luadocs.patch.Patch)
                 self.assertEqual(
                     actual_patch._selector._section, expected_selector_section
                 )
@@ -795,7 +795,7 @@ class TestApplyPatchList(unittest.TestCase):
         for flatdoc, patch_list in [([None], []), ([], [None])]:
             with self.subTest(flatdoc=flatdoc, patch_list=patch_list):
                 with self.assertRaises(TypeError):
-                    sw_luadocs.hint.apply_patch_list(flatdoc, patch_list)
+                    sw_luadocs.patch.apply_patch_list(flatdoc, patch_list)
 
     def test_main(self):
         for input_flatdoc, input_patch_list, expected_flatdoc in [
@@ -820,9 +820,9 @@ class TestApplyPatchList(unittest.TestCase):
                     sw_luadocs.flatdoc.FlatElem(txt="body#2", kind="body"),
                 ],
                 [
-                    sw_luadocs.hint.Patch(
-                        selector=sw_luadocs.hint.Selector(kind="body"),
-                        modifier=sw_luadocs.hint.JoinModifier(sep=", "),
+                    sw_luadocs.patch.Patch(
+                        selector=sw_luadocs.patch.Selector(kind="body"),
+                        modifier=sw_luadocs.patch.JoinModifier(sep=", "),
                     )
                 ],
                 [
@@ -849,13 +849,13 @@ class TestApplyPatchList(unittest.TestCase):
                     sw_luadocs.flatdoc.FlatElem(txt="body#2", kind="body"),
                 ],
                 [
-                    sw_luadocs.hint.Patch(
-                        selector=sw_luadocs.hint.Selector(kind="body"),
-                        modifier=sw_luadocs.hint.JoinModifier(sep=", "),
+                    sw_luadocs.patch.Patch(
+                        selector=sw_luadocs.patch.Selector(kind="body"),
+                        modifier=sw_luadocs.patch.JoinModifier(sep=", "),
                     ),
-                    sw_luadocs.hint.Patch(
-                        selector=sw_luadocs.hint.Selector(kind="body"),
-                        modifier=sw_luadocs.hint.SplitModifier(sep="#"),
+                    sw_luadocs.patch.Patch(
+                        selector=sw_luadocs.patch.Selector(kind="body"),
+                        modifier=sw_luadocs.patch.SplitModifier(sep="#"),
                     ),
                 ],
                 [
@@ -867,13 +867,13 @@ class TestApplyPatchList(unittest.TestCase):
             ),
         ]:
             with self.subTest(flatdoc=input_flatdoc, patch_list=input_patch_list):
-                actual_flatdoc = sw_luadocs.hint.apply_patch_list(
+                actual_flatdoc = sw_luadocs.patch.apply_patch_list(
                     input_flatdoc, input_patch_list
                 )
                 self.assertEqual(actual_flatdoc, expected_flatdoc)
 
 
-class MockModifier(sw_luadocs.hint.Modifier):
+class MockModifier(sw_luadocs.patch.Modifier):
     def __init__(self, ret_list):
         self.arg_list = []
         self.ret_list = ret_list[:]

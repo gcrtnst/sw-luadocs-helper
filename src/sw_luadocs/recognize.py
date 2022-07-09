@@ -6,7 +6,7 @@ import pytesseract
 import typing
 
 from . import flatdoc as dot_flatdoc
-from . import hint as dot_hint
+from . import patch as dot_patch
 from . import image as dot_image
 
 
@@ -388,5 +388,5 @@ def recognize(
     flatdoc = convert_ocrline_to_flatdoc(
         ocrline_list, body_line_h=body_line_h, code_line_h=code_line_h
     )
-    flatdoc = dot_hint.apply_patch_list(flatdoc, patch_list)
+    flatdoc = dot_patch.apply_patch_list(flatdoc, patch_list)
     return flatdoc
