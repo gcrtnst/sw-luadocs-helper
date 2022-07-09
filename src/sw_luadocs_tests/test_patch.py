@@ -1,6 +1,29 @@
+import re
 import sw_luadocs.flatdoc
 import sw_luadocs.patch
 import unittest
+
+
+class TestAsPattern(unittest.TestCase):
+    def test_invalid_type(self):
+        with self.assertRaises(TypeError):
+            sw_luadocs.patch.as_pattern(None)
+
+    def test_main(self):
+        for (
+            input_v,
+            input_flags,
+            expected_pattern_pattern,
+            expected_pattern_flags,
+        ) in [
+            (re.compile("test", flags=re.ASCII), 0, "test", re.ASCII),
+            ("test", re.ASCII, "test", re.ASCII),
+        ]:
+            with self.subTest(v=input_v):
+                actual_pattern = sw_luadocs.patch.as_pattern(input_v, flags=input_flags)
+                self.assertIs(type(actual_pattern), re.Pattern)
+                self.assertEqual(actual_pattern.pattern, expected_pattern_pattern)
+                self.assertEqual(actual_pattern.flags, expected_pattern_flags)
 
 
 class TestSelectorInit(unittest.TestCase):

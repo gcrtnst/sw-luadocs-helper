@@ -1,4 +1,15 @@
+import re
+
+
 from . import flatdoc as dot_flatdoc
+
+
+def as_pattern(v, flags=0):
+    if isinstance(v, re.Pattern):
+        return v
+    if isinstance(v, str) or isinstance(v, bytes):
+        return re.compile(v, flags=flags)
+    raise TypeError
 
 
 class Selector:
