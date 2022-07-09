@@ -116,6 +116,8 @@ class JoinModifier(Modifier):
 class SplitModifier(Modifier):
     def __init__(self, *, sep="\n\n"):
         self._sep = str(sep)
+        if self._sep == "":
+            raise ValueError
 
 
 @dataclasses.dataclass(frozen=True, kw_only=True, slots=True)

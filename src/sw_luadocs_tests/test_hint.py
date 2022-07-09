@@ -742,6 +742,10 @@ class TestJoinModifierModify(unittest.TestCase):
 
 
 class TestSplitModifierInit(unittest.TestCase):
+    def test_invalid_value(self):
+        with self.assertRaises(ValueError):
+            sw_luadocs.hint.SplitModifier(sep="")
+
     def test_main(self):
         for input_sep, expected_sep in [("abc", "abc"), (123, "123")]:
             with self.subTest(sep=input_sep):
