@@ -838,7 +838,7 @@ class TestSplitModifierModify(unittest.TestCase):
                 self.assertIsNot(input_flatdoc_copy, input_flatdoc)
 
 
-class TestPatcherInit(unittest.TestCase):
+class TestPatchInit(unittest.TestCase):
     def test_invalid_type(self):
         for selector, modifier in [
             (None, sw_luadocs.hint.JoinModifier()),
@@ -846,16 +846,16 @@ class TestPatcherInit(unittest.TestCase):
         ]:
             with self.subTest(selector=selector, modifier=modifier):
                 with self.assertRaises(TypeError):
-                    sw_luadocs.hint.Patcher(selector=selector, modifier=modifier)
+                    sw_luadocs.hint.Patch(selector=selector, modifier=modifier)
 
 
-class TestPatcherPatch(unittest.TestCase):
+class TestPatchApply(unittest.TestCase):
     def test_invalid_type(self):
-        patcher = sw_luadocs.hint.Patcher(
+        patch = sw_luadocs.hint.Patch(
             selector=sw_luadocs.hint.Selector(), modifier=MockModifier([])
         )
         with self.assertRaises(TypeError):
-            patcher.patch([None])
+            patch.apply([None])
 
     def test_main(self):
         for (
@@ -1006,18 +1006,18 @@ class TestPatcherPatch(unittest.TestCase):
                 flatdoc=input_flatdoc,
             ):
                 modifier = MockModifier(input_modifier_ret_list)
-                patcher = sw_luadocs.hint.Patcher(
+                patch = sw_luadocs.hint.Patch(
                     selector=input_selector, modifier=modifier
                 )
                 input_flatdoc_copy = input_flatdoc[:]
-                actual_flatdoc = patcher.patch(input_flatdoc_copy)
+                actual_flatdoc = patch.apply(input_flatdoc_copy)
                 self.assertEqual(actual_flatdoc, expected_flatdoc)
                 self.assertIsNot(actual_flatdoc, input_flatdoc_copy)
                 self.assertEqual(input_flatdoc_copy, input_flatdoc)
                 self.assertEqual(modifier.arg_list, expected_modifier_arg_list)
 
 
-class TestPatcherFromDict(unittest.TestCase):
+class TestPatchFromDict(unittest.TestCase):
     def test_invalid_value(self):
         for d in [
             {},
@@ -1027,7 +1027,7 @@ class TestPatcherFromDict(unittest.TestCase):
         ]:
             with self.subTest(d=d):
                 with self.assertRaises(ValueError):
-                    sw_luadocs.hint.patcher_from_dict(d)
+                    sw_luadocs.hint.patch_from_dict(d)
 
     def test_main(self):
         for (
@@ -1091,23 +1091,21 @@ class TestPatcherFromDict(unittest.TestCase):
             ),
         ]:
             with self.subTest(d=input_d):
-                actual_patcher = sw_luadocs.hint.patcher_from_dict(input_d)
+                actual_patch = sw_luadocs.hint.patch_from_dict(input_d)
                 self.assertEqual(
-                    actual_patcher._selector._section, expected_selector_section
+                    actual_patch._selector._section, expected_selector_section
                 )
-                self.assertEqual(actual_patcher._selector._kind, expected_selector_kind)
-                self.assertEqual(
-                    actual_patcher._selector._start, expected_selector_start
-                )
-                self.assertEqual(actual_patcher._selector._stop, expected_selector_stop)
-                self.assertIs(type(actual_patcher._modifier), expected_modifier_cls)
-                self.assertEqual(actual_patcher._modifier._sep, expected_modifier_sep)
+                self.assertEqual(actual_patch._selector._kind, expected_selector_kind)
+                self.assertEqual(actual_patch._selector._start, expected_selector_start)
+                self.assertEqual(actual_patch._selector._stop, expected_selector_stop)
+                self.assertIs(type(actual_patch._modifier), expected_modifier_cls)
+                self.assertEqual(actual_patch._modifier._sep, expected_modifier_sep)
 
 
-class TestAsPatcher(unittest.TestCase):
+class TestAsPatch(unittest.TestCase):
     def test_invalid_type(self):
         with self.assertRaises(TypeError):
-            sw_luadocs.hint.as_patcher(None)
+            sw_luadocs.hint.as_patch(None)
 
     def test_main(self):
         for (
@@ -1120,7 +1118,7 @@ class TestAsPatcher(unittest.TestCase):
             expected_modifier_sep,
         ) in [
             (
-                sw_luadocs.hint.Patcher(
+                sw_luadocs.hint.Patch(
                     selector=sw_luadocs.hint.Selector(
                         section=1, kind="body", start=2, stop=3
                     ),
@@ -1151,18 +1149,16 @@ class TestAsPatcher(unittest.TestCase):
             ),
         ]:
             with self.subTest(v=input_v):
-                actual_patcher = sw_luadocs.hint.as_patcher(input_v)
-                self.assertIs(type(actual_patcher), sw_luadocs.hint.Patcher)
+                actual_patch = sw_luadocs.hint.as_patch(input_v)
+                self.assertIs(type(actual_patch), sw_luadocs.hint.Patch)
                 self.assertEqual(
-                    actual_patcher._selector._section, expected_selector_section
+                    actual_patch._selector._section, expected_selector_section
                 )
-                self.assertEqual(actual_patcher._selector._kind, expected_selector_kind)
-                self.assertEqual(
-                    actual_patcher._selector._start, expected_selector_start
-                )
-                self.assertEqual(actual_patcher._selector._stop, expected_selector_stop)
-                self.assertIs(type(actual_patcher._modifier), expected_modifier_cls)
-                self.assertEqual(actual_patcher._modifier._sep, expected_modifier_sep)
+                self.assertEqual(actual_patch._selector._kind, expected_selector_kind)
+                self.assertEqual(actual_patch._selector._start, expected_selector_start)
+                self.assertEqual(actual_patch._selector._stop, expected_selector_stop)
+                self.assertIs(type(actual_patch._modifier), expected_modifier_cls)
+                self.assertEqual(actual_patch._modifier._sep, expected_modifier_sep)
 
 
 class TestJoinHintPostInit(unittest.TestCase):

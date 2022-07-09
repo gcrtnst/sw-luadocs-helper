@@ -131,14 +131,14 @@ class SplitModifier(Modifier):
         return new_flatdoc
 
 
-class Patcher:
+class Patch:
     def __init__(self, *, selector, modifier):
         if not isinstance(selector, Selector) or not isinstance(modifier, Modifier):
             raise TypeError
         self._selector = selector
         self._modifier = modifier
 
-    def patch(self, flatdoc):
+    def apply(self, flatdoc):
         flatdoc = dot_flatdoc.as_flatdoc(flatdoc)
 
         old_idx = 0
@@ -152,7 +152,7 @@ class Patcher:
         return new_flatdoc
 
 
-def patcher_from_dict(d):
+def patch_from_dict(d):
     d = dict(d)
 
     selector = Selector(
@@ -172,14 +172,14 @@ def patcher_from_dict(d):
 
     if len(d) > 0:
         raise ValueError
-    return Patcher(selector=selector, modifier=modifier)
+    return Patch(selector=selector, modifier=modifier)
 
 
-def as_patcher(v):
-    if isinstance(v, Patcher):
+def as_patch(v):
+    if isinstance(v, Patch):
         return v
     if isinstance(v, dict):
-        return patcher_from_dict(v)
+        return patch_from_dict(v)
     raise TypeError
 
 
