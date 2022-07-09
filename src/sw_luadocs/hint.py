@@ -152,6 +152,29 @@ class Patcher:
         return new_flatdoc
 
 
+def patcher_from_dict(d):
+    d = dict(d)
+
+    selector = Selector(
+        section=d.pop("section", None),
+        kind=d.pop("kind", None),
+        start=d.pop("start", None),
+        stop=d.pop("stop", None),
+    )
+
+    op = d.pop("op", None)
+    if op == "join":
+        modifier = JoinModifier(sep=d.pop("sep", "\n\n"))
+    elif op == "split":
+        modifier = SplitModifier(sep=d.pop("sep", "\n\n"))
+    else:
+        raise ValueError
+
+    if len(d) > 0:
+        raise ValueError
+    return Patcher(selector=selector, modifier=modifier)
+
+
 @dataclasses.dataclass(frozen=True, kw_only=True, slots=True)
 class Hint:
     def __post_init__(self):

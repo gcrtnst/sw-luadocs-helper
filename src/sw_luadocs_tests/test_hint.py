@@ -1017,6 +1017,93 @@ class TestPatcherPatch(unittest.TestCase):
                 self.assertEqual(modifier.arg_list, expected_modifier_arg_list)
 
 
+class TestPatcherFromDict(unittest.TestCase):
+    def test_invalid_value(self):
+        for d in [
+            {},
+            {"op": "invalid"},
+            {"op": "join", "extra": None},
+            {"op": "split", "extra": None},
+        ]:
+            with self.subTest(d=d):
+                with self.assertRaises(ValueError):
+                    sw_luadocs.hint.patcher_from_dict(d)
+
+    def test_main(self):
+        for (
+            input_d,
+            expected_selector_section,
+            expected_selector_kind,
+            expected_selector_start,
+            expected_selector_stop,
+            expected_modifier_cls,
+            expected_modifier_sep,
+        ) in [
+            (
+                {"op": "join"},
+                None,
+                None,
+                None,
+                None,
+                sw_luadocs.hint.JoinModifier,
+                "\n\n",
+            ),
+            (
+                {"op": "split"},
+                None,
+                None,
+                None,
+                None,
+                sw_luadocs.hint.SplitModifier,
+                "\n\n",
+            ),
+            (
+                {
+                    "op": "join",
+                    "section": 1,
+                    "kind": "body",
+                    "start": 2,
+                    "stop": 3,
+                    "sep": "4",
+                },
+                1,
+                "body",
+                2,
+                3,
+                sw_luadocs.hint.JoinModifier,
+                "4",
+            ),
+            (
+                {
+                    "op": "split",
+                    "section": 1,
+                    "kind": "body",
+                    "start": 2,
+                    "stop": 3,
+                    "sep": "4",
+                },
+                1,
+                "body",
+                2,
+                3,
+                sw_luadocs.hint.SplitModifier,
+                "4",
+            ),
+        ]:
+            with self.subTest(d=input_d):
+                actual_patcher = sw_luadocs.hint.patcher_from_dict(input_d)
+                self.assertEqual(
+                    actual_patcher._selector._section, expected_selector_section
+                )
+                self.assertEqual(actual_patcher._selector._kind, expected_selector_kind)
+                self.assertEqual(
+                    actual_patcher._selector._start, expected_selector_start
+                )
+                self.assertEqual(actual_patcher._selector._stop, expected_selector_stop)
+                self.assertIs(type(actual_patcher._modifier), expected_modifier_cls)
+                self.assertEqual(actual_patcher._modifier._sep, expected_modifier_sep)
+
+
 class TestJoinHintPostInit(unittest.TestCase):
     def test_main(self):
         for (
