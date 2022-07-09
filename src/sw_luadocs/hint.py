@@ -144,7 +144,7 @@ class Patcher:
         old_idx = 0
         old_flatdoc = flatdoc[:]
         new_flatdoc = []
-        for sl in self._selector.select(flatdoc):
+        for sl in self._selector.select(old_flatdoc):
             new_flatdoc.extend(old_flatdoc[old_idx : sl.start])
             new_flatdoc.extend(self._modifier.modify(old_flatdoc[sl]))
             old_idx = sl.stop
