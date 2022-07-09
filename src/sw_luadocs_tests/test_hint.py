@@ -838,6 +838,17 @@ class TestSplitModifierModify(unittest.TestCase):
                 self.assertIsNot(input_flatdoc_copy, input_flatdoc)
 
 
+class TestPatcherInit(unittest.TestCase):
+    def test_invalid_type(self):
+        for selector, modifier in [
+            (None, sw_luadocs.hint.JoinModifier()),
+            (sw_luadocs.hint.Selector(), None),
+        ]:
+            with self.subTest(selector=selector, modifier=modifier):
+                with self.assertRaises(TypeError):
+                    sw_luadocs.hint.Patcher(selector=selector, modifier=modifier)
+
+
 class TestJoinHintPostInit(unittest.TestCase):
     def test_main(self):
         for (

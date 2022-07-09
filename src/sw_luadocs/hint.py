@@ -131,6 +131,14 @@ class SplitModifier(Modifier):
         return new_flatdoc
 
 
+class Patcher:
+    def __init__(self, *, selector, modifier):
+        if not isinstance(selector, Selector) or not isinstance(modifier, Modifier):
+            raise TypeError
+        self._selector = selector
+        self._modifier = modifier
+
+
 @dataclasses.dataclass(frozen=True, kw_only=True, slots=True)
 class Hint:
     def __post_init__(self):
