@@ -849,6 +849,174 @@ class TestPatcherInit(unittest.TestCase):
                     sw_luadocs.hint.Patcher(selector=selector, modifier=modifier)
 
 
+class TestPatcherPatch(unittest.TestCase):
+    def test_invalid_type(self):
+        patcher = sw_luadocs.hint.Patcher(
+            selector=sw_luadocs.hint.Selector(), modifier=MockModifier([])
+        )
+        with self.assertRaises(TypeError):
+            patcher.patch([None])
+
+    def test_main(self):
+        for (
+            input_selector,
+            input_modifier_ret_list,
+            input_flatdoc,
+            expected_flatdoc,
+            expected_modifier_arg_list,
+        ) in [
+            (sw_luadocs.hint.Selector(), [], [], [], []),
+            (
+                sw_luadocs.hint.Selector(start=1),
+                [],
+                [sw_luadocs.flatdoc.FlatElem(txt="1", kind="head")],
+                [sw_luadocs.flatdoc.FlatElem(txt="1", kind="head")],
+                [],
+            ),
+            (
+                sw_luadocs.hint.Selector(),
+                [[]],
+                [sw_luadocs.flatdoc.FlatElem(txt="1", kind="head")],
+                [],
+                [[sw_luadocs.flatdoc.FlatElem(txt="1", kind="head")]],
+            ),
+            (
+                sw_luadocs.hint.Selector(),
+                [
+                    [
+                        sw_luadocs.flatdoc.FlatElem(txt="2", kind="head"),
+                        sw_luadocs.flatdoc.FlatElem(txt="3", kind="head"),
+                    ]
+                ],
+                [sw_luadocs.flatdoc.FlatElem(txt="1", kind="head")],
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="2", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="3", kind="head"),
+                ],
+                [[sw_luadocs.flatdoc.FlatElem(txt="1", kind="head")]],
+            ),
+            (
+                sw_luadocs.hint.Selector(start=9),
+                [],
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="1", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="2", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="3", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="4", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="5", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="6", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="7", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="8", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="9", kind="code"),
+                ],
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="1", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="2", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="3", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="4", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="5", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="6", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="7", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="8", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="9", kind="code"),
+                ],
+                [],
+            ),
+            (
+                sw_luadocs.hint.Selector(kind="body"),
+                [[], []],
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="1", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="2", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="3", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="4", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="5", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="6", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="7", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="8", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="9", kind="code"),
+                ],
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="1", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="3", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="4", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="5", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="8", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="9", kind="code"),
+                ],
+                [
+                    [
+                        sw_luadocs.flatdoc.FlatElem(txt="2", kind="body"),
+                    ],
+                    [
+                        sw_luadocs.flatdoc.FlatElem(txt="6", kind="body"),
+                        sw_luadocs.flatdoc.FlatElem(txt="7", kind="body"),
+                    ],
+                ],
+            ),
+            (
+                sw_luadocs.hint.Selector(kind="body"),
+                [
+                    [
+                        sw_luadocs.flatdoc.FlatElem(txt="10", kind="body"),
+                        sw_luadocs.flatdoc.FlatElem(txt="11", kind="body"),
+                    ],
+                    [
+                        sw_luadocs.flatdoc.FlatElem(txt="12", kind="body"),
+                        sw_luadocs.flatdoc.FlatElem(txt="13", kind="body"),
+                    ],
+                ],
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="1", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="2", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="3", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="4", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="5", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="6", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="7", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="8", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="9", kind="code"),
+                ],
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="1", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="10", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="11", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="3", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="4", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="5", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="12", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="13", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="8", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="9", kind="code"),
+                ],
+                [
+                    [
+                        sw_luadocs.flatdoc.FlatElem(txt="2", kind="body"),
+                    ],
+                    [
+                        sw_luadocs.flatdoc.FlatElem(txt="6", kind="body"),
+                        sw_luadocs.flatdoc.FlatElem(txt="7", kind="body"),
+                    ],
+                ],
+            ),
+        ]:
+            with self.subTest(
+                selector=input_selector,
+                modifier_ret_list=input_modifier_ret_list,
+                flatdoc=input_flatdoc,
+            ):
+                modifier = MockModifier(input_modifier_ret_list)
+                patcher = sw_luadocs.hint.Patcher(
+                    selector=input_selector, modifier=modifier
+                )
+                input_flatdoc_copy = input_flatdoc[:]
+                actual_flatdoc = patcher.patch(input_flatdoc_copy)
+                self.assertEqual(actual_flatdoc, expected_flatdoc)
+                self.assertIsNot(actual_flatdoc, input_flatdoc_copy)
+                self.assertEqual(input_flatdoc_copy, input_flatdoc)
+                self.assertEqual(modifier.arg_list, expected_modifier_arg_list)
+
+
 class TestJoinHintPostInit(unittest.TestCase):
     def test_main(self):
         for (
@@ -1966,3 +2134,16 @@ class TestApplyHintList(unittest.TestCase):
                 self.assertEqual(actual_flatdoc, expected_flatdoc)
                 self.assertIsNot(actual_flatdoc, input_flatdoc_copy)
                 self.assertEqual(input_flatdoc_copy, input_flatdoc)
+
+
+class MockModifier(sw_luadocs.hint.Modifier):
+    def __init__(self, ret_list):
+        self.arg_list = []
+        self.ret_list = ret_list[:]
+        self.idx = 0
+
+    def modify(self, flatdoc):
+        self.arg_list.append(flatdoc[:])
+        ret = self.ret_list[self.idx]
+        self.idx += 1
+        return ret

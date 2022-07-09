@@ -138,6 +138,19 @@ class Patcher:
         self._selector = selector
         self._modifier = modifier
 
+    def patch(self, flatdoc):
+        flatdoc = dot_flatdoc.as_flatdoc(flatdoc)
+
+        old_idx = 0
+        old_flatdoc = flatdoc[:]
+        new_flatdoc = []
+        for sl in self._selector.select(flatdoc):
+            new_flatdoc.extend(old_flatdoc[old_idx : sl.start])
+            new_flatdoc.extend(self._modifier.modify(old_flatdoc[sl]))
+            old_idx = sl.stop
+        new_flatdoc.extend(old_flatdoc[old_idx:])
+        return new_flatdoc
+
 
 @dataclasses.dataclass(frozen=True, kw_only=True, slots=True)
 class Hint:
