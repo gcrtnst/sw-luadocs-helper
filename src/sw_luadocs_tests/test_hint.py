@@ -374,7 +374,7 @@ class TestSplitFlatElem(unittest.TestCase):
                 self.assertEqual(actual_flatdoc, expected_flatdoc)
 
 
-class TestSelectorPostInit(unittest.TestCase):
+class TestSelectorInit(unittest.TestCase):
     def test_main(self):
         for (
             input_section,
@@ -402,10 +402,10 @@ class TestSelectorPostInit(unittest.TestCase):
                     start=input_start,
                     stop=input_stop,
                 )
-                self.assertEqual(actual_selector.section, expected_section)
-                self.assertEqual(actual_selector.kind, expected_kind)
-                self.assertEqual(actual_selector.start, expected_start)
-                self.assertEqual(actual_selector.stop, expected_stop)
+                self.assertEqual(actual_selector._section, expected_section)
+                self.assertEqual(actual_selector._kind, expected_kind)
+                self.assertEqual(actual_selector._start, expected_start)
+                self.assertEqual(actual_selector._stop, expected_stop)
 
 
 class TestSelectorSelect(unittest.TestCase):

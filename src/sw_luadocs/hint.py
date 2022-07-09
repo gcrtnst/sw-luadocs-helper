@@ -51,23 +51,12 @@ def split_flatelem(flatelem, txt_pos):
     ]
 
 
-@dataclasses.dataclass(frozen=True, kw_only=True, slots=True)
 class Selector:
-    section: typing.Any = None
-    kind: typing.Any = None
-    start: typing.Any = None
-    stop: typing.Any = None
-
-    def __post_init__(self):
-        section = int(self.section) if self.section is not None else None
-        kind = dot_flatdoc.as_kind(self.kind) if self.kind is not None else None
-        start = int(self.start) if self.start is not None else None
-        stop = int(self.stop) if self.stop is not None else None
-
-        object.__setattr__(self, "section", section)
-        object.__setattr__(self, "kind", kind)
-        object.__setattr__(self, "start", start)
-        object.__setattr__(self, "stop", stop)
+    def __init__(self, *, section=None, kind=None, start=None, stop=None):
+        self._section = int(section) if section is not None else None
+        self._kind = dot_flatdoc.as_kind(kind) if kind is not None else None
+        self._start = int(start) if start is not None else None
+        self._stop = int(stop) if stop is not None else None
 
     def select(self, flatdoc):
         flatdoc = dot_flatdoc.as_flatdoc(flatdoc)
@@ -77,11 +66,11 @@ class Selector:
         for idx, flatelem in enumerate(flatdoc):
             if flatelem.kind == "head":
                 section_cnt += 1
-            if (self.section is None or section_cnt == self.section) and (
-                self.kind is None or flatelem.kind == self.kind
+            if (self._section is None or section_cnt == self._section) and (
+                self._kind is None or flatelem.kind == self._kind
             ):
                 idx_list.append(idx)
-        idx_list = idx_list[self.start : self.stop]
+        idx_list = idx_list[self._start : self._stop]
 
         sl_list = []
         for idx in idx_list:
