@@ -408,6 +408,231 @@ class TestSelectorPostInit(unittest.TestCase):
                 self.assertEqual(actual_selector.stop, expected_stop)
 
 
+class TestSelectorSelect(unittest.TestCase):
+    def test_invalid_type(self):
+        selector = sw_luadocs.hint.Selector()
+        with self.assertRaises(TypeError):
+            selector.select([None])
+
+    def test_main(self):
+        for input_selector, input_flatdoc, expected_sl_list in [
+            (sw_luadocs.hint.Selector(), [], []),
+            (
+                sw_luadocs.hint.Selector(),
+                [sw_luadocs.flatdoc.FlatElem(txt="h1", kind="head")],
+                [slice(0, 1)],
+            ),
+            (
+                sw_luadocs.hint.Selector(section=0),
+                [sw_luadocs.flatdoc.FlatElem(txt="h1", kind="head")],
+                [],
+            ),
+            (
+                sw_luadocs.hint.Selector(section=1),
+                [sw_luadocs.flatdoc.FlatElem(txt="h1", kind="head")],
+                [slice(0, 1)],
+            ),
+            (
+                sw_luadocs.hint.Selector(kind="head"),
+                [sw_luadocs.flatdoc.FlatElem(txt="h1", kind="head")],
+                [slice(0, 1)],
+            ),
+            (
+                sw_luadocs.hint.Selector(kind="body"),
+                [sw_luadocs.flatdoc.FlatElem(txt="b1", kind="body")],
+                [slice(0, 1)],
+            ),
+            (
+                sw_luadocs.hint.Selector(kind="code"),
+                [sw_luadocs.flatdoc.FlatElem(txt="c1", kind="code")],
+                [slice(0, 1)],
+            ),
+            (
+                sw_luadocs.hint.Selector(kind="head"),
+                [sw_luadocs.flatdoc.FlatElem(txt="b1", kind="body")],
+                [],
+            ),
+            (
+                sw_luadocs.hint.Selector(kind="body"),
+                [sw_luadocs.flatdoc.FlatElem(txt="c1", kind="code")],
+                [],
+            ),
+            (
+                sw_luadocs.hint.Selector(kind="code"),
+                [sw_luadocs.flatdoc.FlatElem(txt="h1", kind="head")],
+                [],
+            ),
+            (
+                sw_luadocs.hint.Selector(),
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="b0", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c0", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="h1", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b1", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c1", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="h2", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b2", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c2", kind="code"),
+                ],
+                [slice(0, 8)],
+            ),
+            (
+                sw_luadocs.hint.Selector(section=0),
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="b0", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c0", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="h1", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b1", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c1", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="h2", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b2", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c2", kind="code"),
+                ],
+                [slice(0, 2)],
+            ),
+            (
+                sw_luadocs.hint.Selector(section=1),
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="b0", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c0", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="h1", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b1", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c1", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="h2", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b2", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c2", kind="code"),
+                ],
+                [slice(2, 5)],
+            ),
+            (
+                sw_luadocs.hint.Selector(section=2),
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="b0", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c0", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="h1", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b1", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c1", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="h2", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b2", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c2", kind="code"),
+                ],
+                [slice(5, 8)],
+            ),
+            (
+                sw_luadocs.hint.Selector(kind="head"),
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="b0", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c0", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="h1", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b1", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c1", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="h2", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b2", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c2", kind="code"),
+                ],
+                [slice(2, 3), slice(5, 6)],
+            ),
+            (
+                sw_luadocs.hint.Selector(kind="body"),
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="b0", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c0", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="h1", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b1", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c1", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="h2", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b2", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c2", kind="code"),
+                ],
+                [slice(0, 1), slice(3, 4), slice(6, 7)],
+            ),
+            (
+                sw_luadocs.hint.Selector(kind="code"),
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="b0", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c0", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="h1", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b1", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c1", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="h2", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b2", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c2", kind="code"),
+                ],
+                [slice(1, 2), slice(4, 5), slice(7, 8)],
+            ),
+            (
+                sw_luadocs.hint.Selector(start=1),
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="b0", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c0", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="h1", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b1", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c1", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="h2", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b2", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c2", kind="code"),
+                ],
+                [slice(1, 8)],
+            ),
+            (
+                sw_luadocs.hint.Selector(stop=7),
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="b0", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c0", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="h1", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b1", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c1", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="h2", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b2", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c2", kind="code"),
+                ],
+                [slice(0, 7)],
+            ),
+            (
+                sw_luadocs.hint.Selector(start=-7),
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="b0", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c0", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="h1", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b1", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c1", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="h2", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b2", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c2", kind="code"),
+                ],
+                [slice(1, 8)],
+            ),
+            (
+                sw_luadocs.hint.Selector(stop=-1),
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="b0", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c0", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="h1", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b1", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c1", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="h2", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b2", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c2", kind="code"),
+                ],
+                [slice(0, 7)],
+            ),
+            (
+                sw_luadocs.hint.Selector(section=1, kind="code", start=1, stop=-1),
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="c0", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="h1", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c1", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c1", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c1", kind="code"),
+                ],
+                [slice(3, 4)],
+            ),
+        ]:
+            with self.subTest(selector=input_selector, flatdoc=input_flatdoc):
+                actual_sl_list = input_selector.select(input_flatdoc)
+                self.assertEqual(actual_sl_list, expected_sl_list)
+
+
 class TestJoinHintPostInit(unittest.TestCase):
     def test_main(self):
         for (

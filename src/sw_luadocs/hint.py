@@ -69,6 +69,30 @@ class Selector:
         object.__setattr__(self, "start", start)
         object.__setattr__(self, "stop", stop)
 
+    def select(self, flatdoc):
+        flatdoc = dot_flatdoc.as_flatdoc(flatdoc)
+
+        idx_list = []
+        section_cnt = 0
+        for idx, flatelem in enumerate(flatdoc):
+            if flatelem.kind == "head":
+                section_cnt += 1
+            if (self.section is None or section_cnt == self.section) and (
+                self.kind is None or flatelem.kind == self.kind
+            ):
+                idx_list.append(idx)
+        idx_list = idx_list[self.start : self.stop]
+
+        sl_list = []
+        for idx in idx_list:
+            if len(sl_list) <= 0 or sl_list[-1].stop < idx:
+                sl = slice(idx, idx + 1)
+                sl_list.append(sl)
+            else:
+                sl = slice(sl_list[-1].start, idx + 1)
+                sl_list[-1] = sl
+        return sl_list
+
 
 @dataclasses.dataclass(frozen=True, kw_only=True, slots=True)
 class Hint:
