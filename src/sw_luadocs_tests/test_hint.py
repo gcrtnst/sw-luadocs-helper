@@ -374,6 +374,40 @@ class TestSplitFlatElem(unittest.TestCase):
                 self.assertEqual(actual_flatdoc, expected_flatdoc)
 
 
+class TestSelectorPostInit(unittest.TestCase):
+    def test_main(self):
+        for (
+            input_section,
+            input_kind,
+            input_start,
+            input_stop,
+            expected_section,
+            expected_kind,
+            expected_start,
+            expected_stop,
+        ) in [
+            (1, "body", 2, 3, 1, "body", 2, 3),
+            ("1", "body", "2", "3", 1, "body", 2, 3),
+            (None, None, None, None, None, None, None, None),
+        ]:
+            with self.subTest(
+                section=input_section,
+                kind=input_kind,
+                start=input_start,
+                stop=input_stop,
+            ):
+                actual_selector = sw_luadocs.hint.Selector(
+                    section=input_section,
+                    kind=input_kind,
+                    start=input_start,
+                    stop=input_stop,
+                )
+                self.assertEqual(actual_selector.section, expected_section)
+                self.assertEqual(actual_selector.kind, expected_kind)
+                self.assertEqual(actual_selector.start, expected_start)
+                self.assertEqual(actual_selector.stop, expected_stop)
+
+
 class TestJoinHintPostInit(unittest.TestCase):
     def test_main(self):
         for (

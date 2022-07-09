@@ -52,6 +52,25 @@ def split_flatelem(flatelem, txt_pos):
 
 
 @dataclasses.dataclass(frozen=True, kw_only=True, slots=True)
+class Selector:
+    section: typing.Any = None
+    kind: typing.Any = None
+    start: typing.Any = None
+    stop: typing.Any = None
+
+    def __post_init__(self):
+        section = int(self.section) if self.section is not None else None
+        kind = dot_flatdoc.as_kind(self.kind) if self.kind is not None else None
+        start = int(self.start) if self.start is not None else None
+        stop = int(self.stop) if self.stop is not None else None
+
+        object.__setattr__(self, "section", section)
+        object.__setattr__(self, "kind", kind)
+        object.__setattr__(self, "start", start)
+        object.__setattr__(self, "stop", stop)
+
+
+@dataclasses.dataclass(frozen=True, kw_only=True, slots=True)
 class Hint:
     def __post_init__(self):
         raise NotImplementedError
