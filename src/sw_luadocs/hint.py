@@ -113,6 +113,11 @@ class JoinModifier(Modifier):
         return new_flatdoc
 
 
+class SplitModifier(Modifier):
+    def __init__(self, *, sep="\n\n"):
+        self._sep = str(sep)
+
+
 @dataclasses.dataclass(frozen=True, kw_only=True, slots=True)
 class Hint:
     def __post_init__(self):

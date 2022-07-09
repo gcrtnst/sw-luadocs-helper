@@ -741,6 +741,14 @@ class TestJoinModifierModify(unittest.TestCase):
             self.assertEqual(input_flatdoc_copy, input_flatdoc)
 
 
+class TestSplitModifierInit(unittest.TestCase):
+    def test_main(self):
+        for input_sep, expected_sep in [("abc", "abc"), (123, "123")]:
+            with self.subTest(sep=input_sep):
+                actual_mod = sw_luadocs.hint.SplitModifier(sep=input_sep)
+                self.assertEqual(actual_mod._sep, expected_sep)
+
+
 class TestJoinHintPostInit(unittest.TestCase):
     def test_main(self):
         for (
