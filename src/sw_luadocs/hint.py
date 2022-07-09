@@ -110,6 +110,23 @@ class JoinModifier(Modifier):
     def __post_init__(self):
         object.__setattr__(self, "sep", str(self.sep))
 
+    def modify(self, flatdoc):
+        flatdoc = dot_flatdoc.as_flatdoc(flatdoc)
+
+        old_flatdoc = flatdoc[:]
+        new_flatdoc = list(
+            map(
+                lambda old_flatdoc_monokind: dot_flatdoc.FlatElem(
+                    txt=self.sep.join(
+                        old_flatelem.txt for old_flatelem in old_flatdoc_monokind
+                    ),
+                    kind=old_flatdoc_monokind[0].kind,
+                ),
+                dot_flatdoc.split_flatdoc_by_kind(old_flatdoc),
+            )
+        )
+        return new_flatdoc
+
 
 @dataclasses.dataclass(frozen=True, kw_only=True, slots=True)
 class Hint:

@@ -641,6 +641,106 @@ class TestJoinModifierPostInit(unittest.TestCase):
                 self.assertEqual(actual_mod.sep, expected_sep)
 
 
+class TestJoinModifierModify(unittest.TestCase):
+    def test_invalid_type(self):
+        mod = sw_luadocs.hint.JoinModifier()
+        with self.assertRaises(TypeError):
+            mod.modify([None])
+
+    def test_main(self):
+        for input_mod, input_flatdoc, expected_flatdoc in [
+            (sw_luadocs.hint.JoinModifier(), [], []),
+            (
+                sw_luadocs.hint.JoinModifier(),
+                [sw_luadocs.flatdoc.FlatElem(txt="h", kind="head")],
+                [sw_luadocs.flatdoc.FlatElem(txt="h", kind="head")],
+            ),
+            (
+                sw_luadocs.hint.JoinModifier(),
+                [sw_luadocs.flatdoc.FlatElem(txt="b", kind="body")],
+                [sw_luadocs.flatdoc.FlatElem(txt="b", kind="body")],
+            ),
+            (
+                sw_luadocs.hint.JoinModifier(),
+                [sw_luadocs.flatdoc.FlatElem(txt="c", kind="code")],
+                [sw_luadocs.flatdoc.FlatElem(txt="c", kind="code")],
+            ),
+            (
+                sw_luadocs.hint.JoinModifier(),
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="h", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c", kind="code"),
+                ],
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="h", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c", kind="code"),
+                ],
+            ),
+            (
+                sw_luadocs.hint.JoinModifier(sep=", "),
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="h1", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="h2", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="h3", kind="head"),
+                ],
+                [sw_luadocs.flatdoc.FlatElem(txt="h1, h2, h3", kind="head")],
+            ),
+            (
+                sw_luadocs.hint.JoinModifier(sep=", "),
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="b1", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b2", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b3", kind="body"),
+                ],
+                [sw_luadocs.flatdoc.FlatElem(txt="b1, b2, b3", kind="body")],
+            ),
+            (
+                sw_luadocs.hint.JoinModifier(sep=", "),
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="c1", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c2", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c3", kind="code"),
+                ],
+                [sw_luadocs.flatdoc.FlatElem(txt="c1, c2, c3", kind="code")],
+            ),
+            (
+                sw_luadocs.hint.JoinModifier(sep=", "),
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="h1", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="h2", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="h3", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b1", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b2", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b3", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c1", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c2", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c3", kind="code"),
+                ],
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="h1, h2, h3", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b1, b2, b3", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c1, c2, c3", kind="code"),
+                ],
+            ),
+            (
+                sw_luadocs.hint.JoinModifier(sep="::"),
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="h1", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="h2", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="h3", kind="head"),
+                ],
+                [sw_luadocs.flatdoc.FlatElem(txt="h1::h2::h3", kind="head")],
+            ),
+        ]:
+            input_flatdoc_copy = input_flatdoc[:]
+            actual_flatdoc = input_mod.modify(input_flatdoc_copy)
+            self.assertEqual(actual_flatdoc, expected_flatdoc)
+            self.assertIsNot(actual_flatdoc, input_flatdoc_copy)
+            self.assertEqual(input_flatdoc_copy, input_flatdoc)
+
+
 class TestJoinHintPostInit(unittest.TestCase):
     def test_main(self):
         for (
