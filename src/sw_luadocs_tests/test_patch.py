@@ -492,18 +492,10 @@ class TestSplitModifierModify(unittest.TestCase):
 
 class TestLineSplitModifierInit(unittest.TestCase):
     def test_main(self):
-        for input_keyword_set, expected_keyword_set in [
-            (None, set()),
-            (set(), set()),
-            ([], set()),
-            ({"0", "1", "2"}, {"0", "1", "2"}),
-            ([0, 1, 2], {"0", "1", "2"}),
-        ]:
-            with self.subTest(keyword_set=input_keyword_set):
-                actual_modifier = sw_luadocs.patch.LineSplitModifier(
-                    keyword_set=input_keyword_set
-                )
-                self.assertEqual(actual_modifier._keyword_set, expected_keyword_set)
+        modifier = sw_luadocs.patch.LineSplitModifier(line_pattern=".")
+        self.assertIs(type(modifier._line_pattern), re.Pattern)
+        self.assertEqual(modifier._line_pattern.pattern, ".")
+        self.assertEqual(modifier._line_pattern.flags, re.ASCII)
 
 
 class TestPatchInit(unittest.TestCase):

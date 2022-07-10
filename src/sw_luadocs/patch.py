@@ -93,10 +93,8 @@ class SplitModifier(Modifier):
 
 
 class LineSplitModifier(Modifier):
-    def __init__(self, *, keyword_set=None):
-        if keyword_set is None:
-            keyword_set = set()
-        self._keyword_set = set(map(str, keyword_set))
+    def __init__(self, *, line_pattern):
+        self._line_pattern = as_pattern(line_pattern, flags=re.ASCII)
 
 
 class Patch:
