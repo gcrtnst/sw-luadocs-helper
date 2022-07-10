@@ -498,6 +498,91 @@ class TestLineSplitModifierInit(unittest.TestCase):
         self.assertEqual(modifier._line_pattern.flags, re.ASCII)
 
 
+class TestLineSplitModifierModify(unittest.TestCase):
+    def test_invalid_type(self):
+        modifier = sw_luadocs.patch.LineSplitModifier(line_pattern="")
+        with self.assertRaises(TypeError):
+            modifier.modify([None])
+
+    def test_main(self):
+        for input_line_pattern, input_flatdoc, expected_flatdoc in [
+            ("", [], []),
+            (
+                "",
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="h", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c", kind="code"),
+                ],
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="h", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c", kind="code"),
+                ],
+            ),
+            (
+                "",
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="h1\nh2\nh3", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b1\nb2\nb3", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c1\nc2\nc3", kind="code"),
+                ],
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="h1", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="h2", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="h3", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b1", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b2", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b3", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c1", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c2", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c3", kind="code"),
+                ],
+            ),
+            (
+                r"^[hbc]2$",
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="h1\nh2\nh3", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b1\nb2\nb3", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c1\nc2\nc3", kind="code"),
+                ],
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="h1", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="h2\nh3", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b1", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b2\nb3", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c1", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c2\nc3", kind="code"),
+                ],
+            ),
+            (
+                r"^[hbc]3$",
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="h1\nh2\nh3", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b1\nb2\nb3", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c1\nc2\nc3", kind="code"),
+                ],
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="h1\nh2", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="h3", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b1\nb2", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b3", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c1\nc2", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="c3", kind="code"),
+                ],
+            ),
+        ]:
+            with self.subTest(line_pattern=input_line_pattern, flatdoc=input_flatdoc):
+                input_modifier = sw_luadocs.patch.LineSplitModifier(
+                    line_pattern=input_line_pattern
+                )
+                input_flatdoc_copy = input_flatdoc[:]
+                actual_flatdoc = input_modifier.modify(input_flatdoc_copy)
+                self.assertEqual(actual_flatdoc, expected_flatdoc)
+                self.assertIsNot(actual_flatdoc, input_flatdoc_copy)
+                self.assertEqual(input_flatdoc_copy, input_flatdoc)
+
+
 class TestPatchInit(unittest.TestCase):
     def test_invalid_type(self):
         for selector, modifier in [

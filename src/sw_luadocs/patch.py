@@ -96,6 +96,35 @@ class LineSplitModifier(Modifier):
     def __init__(self, *, line_pattern):
         self._line_pattern = as_pattern(line_pattern, flags=re.ASCII)
 
+    def modify(self, flatdoc):
+        flatdoc = dot_flatdoc.as_flatdoc(flatdoc)
+
+        old_flatdoc = flatdoc[:]
+        new_flatdoc = []
+        for old_flatelem in old_flatdoc:
+            old_line_list = old_flatelem.txt.split(sep="\n")
+            old_line_idx_list = []
+            for old_line_idx in range(1, len(old_line_list)):
+                if self._line_pattern.search(old_line_list[old_line_idx]) is not None:
+                    old_line_idx_list.append(old_line_idx)
+
+            new_txt_list = []
+            for old_line_idx_start, old_line_idx_stop in zip(
+                [None] + old_line_idx_list, old_line_idx_list + [None]
+            ):
+                new_txt = "\n".join(old_line_list[old_line_idx_start:old_line_idx_stop])
+                new_txt_list.append(new_txt)
+
+            new_flatdoc.extend(
+                map(
+                    lambda new_txt: dot_flatdoc.FlatElem(
+                        txt=new_txt, kind=old_flatelem.kind
+                    ),
+                    new_txt_list,
+                )
+            )
+        return new_flatdoc
+
 
 class Patch:
     def __init__(self, *, selector, modifier):
