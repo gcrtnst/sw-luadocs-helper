@@ -160,8 +160,6 @@ def patch_from_dict(d):
     op = d.pop("op", None)
     if op == "join":
         modifier = JoinModifier(sep=d.pop("sep", "\n\n"))
-    elif op == "split":
-        modifier = SplitModifier(sep=d.pop("sep", "\n\n"))
     elif op == "split_line":
         modifier = LineSplitModifier(line_pattern=d.pop("line_pattern", ""))
     else:

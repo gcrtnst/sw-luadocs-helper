@@ -768,7 +768,6 @@ class TestPatchFromDict(unittest.TestCase):
             {},
             {"op": "invalid"},
             {"op": "join", "extra": None},
-            {"op": "split", "extra": None},
             {"op": "split_line", "extra": None},
         ]:
             with self.subTest(d=d):
@@ -797,16 +796,6 @@ class TestPatchFromDict(unittest.TestCase):
                 "",
             ),
             (
-                {"op": "split"},
-                None,
-                None,
-                None,
-                None,
-                sw_luadocs.patch.SplitModifier,
-                "\n\n",
-                "",
-            ),
-            (
                 {"op": "split_line"},
                 None,
                 None,
@@ -830,23 +819,6 @@ class TestPatchFromDict(unittest.TestCase):
                 2,
                 3,
                 sw_luadocs.patch.JoinModifier,
-                "4",
-                "",
-            ),
-            (
-                {
-                    "op": "split",
-                    "section": 1,
-                    "kind": "body",
-                    "start": 2,
-                    "stop": 3,
-                    "sep": "4",
-                },
-                1,
-                "body",
-                2,
-                3,
-                sw_luadocs.patch.SplitModifier,
                 "4",
                 "",
             ),
