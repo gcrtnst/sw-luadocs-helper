@@ -769,6 +769,7 @@ class TestPatchFromDict(unittest.TestCase):
             {"op": "invalid"},
             {"op": "join", "extra": None},
             {"op": "split", "extra": None},
+            {"op": "split_line", "extra": None},
         ]:
             with self.subTest(d=d):
                 with self.assertRaises(ValueError):
@@ -783,6 +784,7 @@ class TestPatchFromDict(unittest.TestCase):
             expected_selector_stop,
             expected_modifier_cls,
             expected_modifier_sep,
+            expected_modifier_line_pattern,
         ) in [
             (
                 {"op": "join"},
@@ -792,6 +794,7 @@ class TestPatchFromDict(unittest.TestCase):
                 None,
                 sw_luadocs.patch.JoinModifier,
                 "\n\n",
+                "",
             ),
             (
                 {"op": "split"},
@@ -801,6 +804,17 @@ class TestPatchFromDict(unittest.TestCase):
                 None,
                 sw_luadocs.patch.SplitModifier,
                 "\n\n",
+                "",
+            ),
+            (
+                {"op": "split_line"},
+                None,
+                None,
+                None,
+                None,
+                sw_luadocs.patch.LineSplitModifier,
+                "",
+                "",
             ),
             (
                 {
@@ -817,6 +831,7 @@ class TestPatchFromDict(unittest.TestCase):
                 3,
                 sw_luadocs.patch.JoinModifier,
                 "4",
+                "",
             ),
             (
                 {
@@ -833,6 +848,24 @@ class TestPatchFromDict(unittest.TestCase):
                 3,
                 sw_luadocs.patch.SplitModifier,
                 "4",
+                "",
+            ),
+            (
+                {
+                    "op": "split_line",
+                    "section": 1,
+                    "kind": "body",
+                    "start": 2,
+                    "stop": 3,
+                    "line_pattern": "4",
+                },
+                1,
+                "body",
+                2,
+                3,
+                sw_luadocs.patch.LineSplitModifier,
+                "",
+                "4",
             ),
         ]:
             with self.subTest(d=input_d):
@@ -844,7 +877,16 @@ class TestPatchFromDict(unittest.TestCase):
                 self.assertEqual(actual_patch._selector._start, expected_selector_start)
                 self.assertEqual(actual_patch._selector._stop, expected_selector_stop)
                 self.assertIs(type(actual_patch._modifier), expected_modifier_cls)
-                self.assertEqual(actual_patch._modifier._sep, expected_modifier_sep)
+                if (
+                    expected_modifier_cls is sw_luadocs.patch.JoinModifier
+                    or expected_modifier_cls is sw_luadocs.patch.SplitModifier
+                ):
+                    self.assertEqual(actual_patch._modifier._sep, expected_modifier_sep)
+                if expected_modifier_cls is sw_luadocs.patch.LineSplitModifier:
+                    self.assertEqual(
+                        actual_patch._modifier._line_pattern.pattern,
+                        expected_modifier_line_pattern,
+                    )
 
 
 class TestAsPatch(unittest.TestCase):
