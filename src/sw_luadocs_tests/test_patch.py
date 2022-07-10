@@ -500,7 +500,7 @@ class TestLineSplitModifierInit(unittest.TestCase):
 
 class TestLineSplitModifierModify(unittest.TestCase):
     def test_invalid_type(self):
-        modifier = sw_luadocs.patch.LineSplitModifier(line_pattern="")
+        modifier = sw_luadocs.patch.LineSplitModifier()
         with self.assertRaises(TypeError):
             modifier.modify([None])
 

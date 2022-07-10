@@ -93,7 +93,7 @@ class SplitModifier(Modifier):
 
 
 class LineSplitModifier(Modifier):
-    def __init__(self, *, line_pattern):
+    def __init__(self, *, line_pattern=""):
         self._line_pattern = as_pattern(line_pattern, flags=re.ASCII)
 
     def modify(self, flatdoc):
