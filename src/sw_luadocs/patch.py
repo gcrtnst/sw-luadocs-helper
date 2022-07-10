@@ -74,24 +74,6 @@ class JoinModifier(Modifier):
         return new_flatdoc
 
 
-class SplitModifier(Modifier):
-    def __init__(self, *, sep="\n\n"):
-        self._sep = str(sep)
-        if self._sep == "":
-            raise ValueError
-
-    def modify(self, flatdoc):
-        flatdoc = dot_flatdoc.as_flatdoc(flatdoc)
-
-        old_flatdoc = flatdoc[:]
-        new_flatdoc = []
-        for old_flatelem in old_flatdoc:
-            for txt in old_flatelem.txt.split(sep=self._sep):
-                new_flatelem = dot_flatdoc.FlatElem(txt=txt, kind=old_flatelem.kind)
-                new_flatdoc.append(new_flatelem)
-        return new_flatdoc
-
-
 class LineSplitModifier(Modifier):
     def __init__(self, *, line_pattern=""):
         self._line_pattern = as_pattern(line_pattern, flags=re.ASCII)

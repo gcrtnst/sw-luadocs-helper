@@ -393,103 +393,6 @@ class TestJoinModifierModify(unittest.TestCase):
             self.assertEqual(input_flatdoc_copy, input_flatdoc)
 
 
-class TestSplitModifierInit(unittest.TestCase):
-    def test_invalid_value(self):
-        with self.assertRaises(ValueError):
-            sw_luadocs.patch.SplitModifier(sep="")
-
-    def test_main(self):
-        for input_sep, expected_sep in [("abc", "abc"), (123, "123")]:
-            with self.subTest(sep=input_sep):
-                actual_modifier = sw_luadocs.patch.SplitModifier(sep=input_sep)
-                self.assertEqual(actual_modifier._sep, expected_sep)
-
-
-class TestSplitModifierModify(unittest.TestCase):
-    def test_invalid_type(self):
-        modifier = sw_luadocs.patch.SplitModifier()
-        with self.assertRaises(TypeError):
-            modifier.modify([None])
-
-    def test_main(self):
-        for input_modifier, input_flatdoc, expected_flatdoc in [
-            (sw_luadocs.patch.SplitModifier(), [], []),
-            (
-                sw_luadocs.patch.SplitModifier(sep=","),
-                [sw_luadocs.flatdoc.FlatElem(txt="h", kind="head")],
-                [sw_luadocs.flatdoc.FlatElem(txt="h", kind="head")],
-            ),
-            (
-                sw_luadocs.patch.SplitModifier(sep=","),
-                [sw_luadocs.flatdoc.FlatElem(txt="b", kind="body")],
-                [sw_luadocs.flatdoc.FlatElem(txt="b", kind="body")],
-            ),
-            (
-                sw_luadocs.patch.SplitModifier(sep=","),
-                [sw_luadocs.flatdoc.FlatElem(txt="c", kind="code")],
-                [sw_luadocs.flatdoc.FlatElem(txt="c", kind="code")],
-            ),
-            (
-                sw_luadocs.patch.SplitModifier(sep=","),
-                [sw_luadocs.flatdoc.FlatElem(txt="abc,def,ghi", kind="head")],
-                [
-                    sw_luadocs.flatdoc.FlatElem(txt="abc", kind="head"),
-                    sw_luadocs.flatdoc.FlatElem(txt="def", kind="head"),
-                    sw_luadocs.flatdoc.FlatElem(txt="ghi", kind="head"),
-                ],
-            ),
-            (
-                sw_luadocs.patch.SplitModifier(sep=","),
-                [sw_luadocs.flatdoc.FlatElem(txt="abc,def,ghi", kind="body")],
-                [
-                    sw_luadocs.flatdoc.FlatElem(txt="abc", kind="body"),
-                    sw_luadocs.flatdoc.FlatElem(txt="def", kind="body"),
-                    sw_luadocs.flatdoc.FlatElem(txt="ghi", kind="body"),
-                ],
-            ),
-            (
-                sw_luadocs.patch.SplitModifier(sep=","),
-                [sw_luadocs.flatdoc.FlatElem(txt="abc,def,ghi", kind="code")],
-                [
-                    sw_luadocs.flatdoc.FlatElem(txt="abc", kind="code"),
-                    sw_luadocs.flatdoc.FlatElem(txt="def", kind="code"),
-                    sw_luadocs.flatdoc.FlatElem(txt="ghi", kind="code"),
-                ],
-            ),
-            (
-                sw_luadocs.patch.SplitModifier(sep=","),
-                [
-                    sw_luadocs.flatdoc.FlatElem(txt="1", kind="head"),
-                    sw_luadocs.flatdoc.FlatElem(txt="2,3,4", kind="head"),
-                    sw_luadocs.flatdoc.FlatElem(txt="5", kind="body"),
-                    sw_luadocs.flatdoc.FlatElem(txt="6,7,8", kind="body"),
-                    sw_luadocs.flatdoc.FlatElem(txt="9", kind="code"),
-                    sw_luadocs.flatdoc.FlatElem(txt="10,11,12", kind="code"),
-                ],
-                [
-                    sw_luadocs.flatdoc.FlatElem(txt="1", kind="head"),
-                    sw_luadocs.flatdoc.FlatElem(txt="2", kind="head"),
-                    sw_luadocs.flatdoc.FlatElem(txt="3", kind="head"),
-                    sw_luadocs.flatdoc.FlatElem(txt="4", kind="head"),
-                    sw_luadocs.flatdoc.FlatElem(txt="5", kind="body"),
-                    sw_luadocs.flatdoc.FlatElem(txt="6", kind="body"),
-                    sw_luadocs.flatdoc.FlatElem(txt="7", kind="body"),
-                    sw_luadocs.flatdoc.FlatElem(txt="8", kind="body"),
-                    sw_luadocs.flatdoc.FlatElem(txt="9", kind="code"),
-                    sw_luadocs.flatdoc.FlatElem(txt="10", kind="code"),
-                    sw_luadocs.flatdoc.FlatElem(txt="11", kind="code"),
-                    sw_luadocs.flatdoc.FlatElem(txt="12", kind="code"),
-                ],
-            ),
-        ]:
-            with self.subTest(modifier=input_modifier, flatdoc=input_flatdoc):
-                input_flatdoc_copy = input_flatdoc[:]
-                actual_flatdoc = input_modifier.modify(input_flatdoc_copy)
-                self.assertEqual(actual_flatdoc, expected_flatdoc)
-                self.assertIsNot(actual_flatdoc, input_flatdoc_copy)
-                self.assertIsNot(input_flatdoc_copy, input_flatdoc)
-
-
 class TestLineSplitModifierInit(unittest.TestCase):
     def test_main(self):
         modifier = sw_luadocs.patch.LineSplitModifier(line_pattern=".")
@@ -849,10 +752,7 @@ class TestPatchFromDict(unittest.TestCase):
                 self.assertEqual(actual_patch._selector._start, expected_selector_start)
                 self.assertEqual(actual_patch._selector._stop, expected_selector_stop)
                 self.assertIs(type(actual_patch._modifier), expected_modifier_cls)
-                if (
-                    expected_modifier_cls is sw_luadocs.patch.JoinModifier
-                    or expected_modifier_cls is sw_luadocs.patch.SplitModifier
-                ):
+                if expected_modifier_cls is sw_luadocs.patch.JoinModifier:
                     self.assertEqual(actual_patch._modifier._sep, expected_modifier_sep)
                 if expected_modifier_cls is sw_luadocs.patch.LineSplitModifier:
                     self.assertEqual(
