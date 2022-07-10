@@ -909,18 +909,18 @@ class TestAsPatch(unittest.TestCase):
                     selector=sw_luadocs.patch.Selector(
                         section=1, kind="body", start=2, stop=3
                     ),
-                    modifier=sw_luadocs.patch.SplitModifier(sep="4"),
+                    modifier=sw_luadocs.patch.JoinModifier(sep="4"),
                 ),
                 1,
                 "body",
                 2,
                 3,
-                sw_luadocs.patch.SplitModifier,
+                sw_luadocs.patch.JoinModifier,
                 "4",
             ),
             (
                 {
-                    "op": "split",
+                    "op": "join",
                     "section": 1,
                     "kind": "body",
                     "start": 2,
@@ -931,7 +931,7 @@ class TestAsPatch(unittest.TestCase):
                 "body",
                 2,
                 3,
-                sw_luadocs.patch.SplitModifier,
+                sw_luadocs.patch.JoinModifier,
                 "4",
             ),
         ]:
