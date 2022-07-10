@@ -1003,24 +1003,23 @@ class TestApplyPatchList(unittest.TestCase):
             (
                 [
                     sw_luadocs.flatdoc.FlatElem(txt="head", kind="head"),
-                    sw_luadocs.flatdoc.FlatElem(txt="body#1", kind="body"),
-                    sw_luadocs.flatdoc.FlatElem(txt="body#2", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="body#1\nbody#2", kind="body"),
                 ],
                 [
+                    sw_luadocs.patch.Patch(
+                        selector=sw_luadocs.patch.Selector(kind="body"),
+                        modifier=sw_luadocs.patch.LineSplitModifier(
+                            line_pattern="body"
+                        ),
+                    ),
                     sw_luadocs.patch.Patch(
                         selector=sw_luadocs.patch.Selector(kind="body"),
                         modifier=sw_luadocs.patch.JoinModifier(sep=", "),
                     ),
-                    sw_luadocs.patch.Patch(
-                        selector=sw_luadocs.patch.Selector(kind="body"),
-                        modifier=sw_luadocs.patch.SplitModifier(sep="#"),
-                    ),
                 ],
                 [
                     sw_luadocs.flatdoc.FlatElem(txt="head", kind="head"),
-                    sw_luadocs.flatdoc.FlatElem(txt="body", kind="body"),
-                    sw_luadocs.flatdoc.FlatElem(txt="1, body", kind="body"),
-                    sw_luadocs.flatdoc.FlatElem(txt="2", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="body#1, body#2", kind="body"),
                 ],
             ),
         ]:
