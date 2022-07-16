@@ -1,4 +1,3 @@
-import numpy as np
 import sw_luadocs.extract
 import sw_luadocs.flatdoc
 import unittest
