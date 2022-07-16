@@ -89,6 +89,16 @@ def calc_jaccard_similarity(ngram1, ngram2):
     return len(ngram1.bag & ngram2.bag) / len(ngram1.bag | ngram2.bag)
 
 
+class NgramDatabase:
+    def __init__(self, *, n=2):
+        n = int(n)
+        if n <= 0:
+            raise ValueError
+
+        self._n = n
+        self._db = set()
+
+
 def match_txt(ocr_txt, ext_txt_set):
     ocr_txt = str(ocr_txt)
     ext_txt_set = set(map(str, ext_txt_set))

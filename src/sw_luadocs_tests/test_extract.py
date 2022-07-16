@@ -153,6 +153,19 @@ class TestCalcJaccardSimilarity(unittest.TestCase):
                 self.assertEqual(actual_score, expected_score)
 
 
+class TestNgramDatabaseInit(unittest.TestCase):
+    def test_invalid_value(self):
+        with self.assertRaises(ValueError):
+            sw_luadocs.extract.NgramDatabase(n=0)
+
+    def test_main(self):
+        for input_n, expected_n in [(1, 1), ("1", 1)]:
+            with self.subTest(n=input_n):
+                actual_db = sw_luadocs.extract.NgramDatabase(n=input_n)
+                self.assertEqual(actual_db._n, expected_n)
+                self.assertEqual(actual_db._db, set())
+
+
 class TestMatchTxt(unittest.TestCase):
     def test_validate_convert(self):
         best_ext_txt, best_ld = sw_luadocs.extract.match_txt(1, [1, 2])
