@@ -110,6 +110,49 @@ class TestNgramEq(unittest.TestCase):
                 self.assertEqual(actual_result, expected_result)
 
 
+class TestCalcJaccardSimilarity(unittest.TestCase):
+    def test_invalid_type(self):
+        for ngram1, ngram2 in [
+            (None, sw_luadocs.extract.Ngram("")),
+            (sw_luadocs.extract.Ngram(""), None),
+        ]:
+            with self.subTest(ngram1=ngram1, ngram2=ngram2):
+                with self.assertRaises(TypeError):
+                    sw_luadocs.extract.calc_jaccard_similarity(ngram1, ngram2)
+
+    def test_invalid_value(self):
+        with self.assertRaises(ValueError):
+            sw_luadocs.extract.calc_jaccard_similarity(
+                sw_luadocs.extract.Ngram("", n=1), sw_luadocs.extract.Ngram("", n=2)
+            )
+
+    def test_main(self):
+        for input_ngram1, input_ngram2, expected_score in [
+            (sw_luadocs.extract.Ngram("", n=1), sw_luadocs.extract.Ngram("", n=1), 1.0),
+            (
+                sw_luadocs.extract.Ngram("a", n=1),
+                sw_luadocs.extract.Ngram("a", n=1),
+                1.0,
+            ),
+            (
+                sw_luadocs.extract.Ngram("a", n=1),
+                sw_luadocs.extract.Ngram("b", n=1),
+                0.0,
+            ),
+            (
+                sw_luadocs.extract.Ngram("abc", n=1),
+                sw_luadocs.extract.Ngram("abd", n=1),
+                0.5,
+            ),
+        ]:
+            with self.subTest(ngram1=input_ngram1, ngram2=input_ngram2):
+                actual_score = sw_luadocs.extract.calc_jaccard_similarity(
+                    input_ngram1, input_ngram2
+                )
+                self.assertIs(type(actual_score), float)
+                self.assertEqual(actual_score, expected_score)
+
+
 class TestMatchTxt(unittest.TestCase):
     def test_validate_convert(self):
         best_ext_txt, best_ld = sw_luadocs.extract.match_txt(1, [1, 2])

@@ -79,6 +79,16 @@ class Ngram:
         return hash((self.n, self.txt))
 
 
+def calc_jaccard_similarity(ngram1, ngram2):
+    if not isinstance(ngram1, Ngram) or not isinstance(ngram2, Ngram):
+        raise TypeError
+    if ngram1.n != ngram2.n:
+        raise ValueError
+    if len(ngram1.bag) <= 0 or len(ngram2.bag) <= 0:
+        return 1.0
+    return len(ngram1.bag & ngram2.bag) / len(ngram1.bag | ngram2.bag)
+
+
 def match_txt(ocr_txt, ext_txt_set):
     ocr_txt = str(ocr_txt)
     ext_txt_set = set(map(str, ext_txt_set))
