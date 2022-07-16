@@ -131,6 +131,16 @@ class TestCalcJaccardSimilarity(unittest.TestCase):
             (sw_luadocs.extract.Ngram("", n=1), sw_luadocs.extract.Ngram("", n=1), 1.0),
             (
                 sw_luadocs.extract.Ngram("a", n=1),
+                sw_luadocs.extract.Ngram("", n=1),
+                0.0,
+            ),
+            (
+                sw_luadocs.extract.Ngram("", n=1),
+                sw_luadocs.extract.Ngram("a", n=1),
+                0.0,
+            ),
+            (
+                sw_luadocs.extract.Ngram("a", n=1),
                 sw_luadocs.extract.Ngram("a", n=1),
                 1.0,
             ),

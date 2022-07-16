@@ -84,7 +84,7 @@ def calc_jaccard_similarity(ngram1, ngram2):
         raise TypeError
     if ngram1.n != ngram2.n:
         raise ValueError
-    if len(ngram1.bag) <= 0 or len(ngram2.bag) <= 0:
+    if len(ngram1.bag) <= 0 and len(ngram2.bag) <= 0:
         return 1.0
     return len(ngram1.bag & ngram2.bag) / len(ngram1.bag | ngram2.bag)
 
