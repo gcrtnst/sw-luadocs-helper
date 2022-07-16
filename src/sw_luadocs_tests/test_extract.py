@@ -193,6 +193,37 @@ class TestNgramDatabaseInit(unittest.TestCase):
                 self.assertEqual(actual_db._db, expected_db_db)
 
 
+class TestNgramDatabaseMatchAll(unittest.TestCase):
+    def test_main(self):
+        for input_self, input_txt, expected_result_list in [
+            (sw_luadocs.extract.NgramDatabase([], n=1), "", []),
+            (
+                sw_luadocs.extract.NgramDatabase(
+                    {"abc", "abd", "def", "bca", "cab"}, n=1
+                ),
+                "abc",
+                [("abc", 1.0), ("bca", 1.0), ("cab", 1.0), ("abd", 0.5), ("def", 0.0)],
+            ),
+            (
+                sw_luadocs.extract.NgramDatabase(
+                    {"312", "231", "456", "124", "123"}, n=1
+                ),
+                "123",
+                [("123", 1.0), ("231", 1.0), ("312", 1.0), ("124", 0.5), ("456", 0.0)],
+            ),
+            (
+                sw_luadocs.extract.NgramDatabase(
+                    {"abc", "abd", "def", "bca", "cab"}, n=3
+                ),
+                "abc",
+                [("abc", 1.0), ("abd", 0.25), ("bca", 0.0), ("cab", 0.0), ("def", 0.0)],
+            ),
+        ]:
+            with self.subTest(input_self=input_self, input_txt=input_txt):
+                actual_result_list = input_self.match_all(input_txt)
+                self.assertEqual(actual_result_list, expected_result_list)
+
+
 class TestMatchTxt(unittest.TestCase):
     def test_validate_convert(self):
         best_ext_txt, best_ld = sw_luadocs.extract.match_txt(1, [1, 2])

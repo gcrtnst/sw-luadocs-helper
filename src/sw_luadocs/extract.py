@@ -101,6 +101,16 @@ class NgramDatabase:
         self._n = n
         self._db = db
 
+    def match_all(self, txt):
+        query_ngram = Ngram(txt, n=self._n)
+
+        result_list = [
+            (db_ngram.txt, calc_jaccard_similarity(query_ngram, db_ngram))
+            for db_ngram in self._db
+        ]
+        result_list.sort(key=lambda result: (-result[1], result[0]))
+        return result_list
+
 
 def match_txt(ocr_txt, ext_txt_set):
     ocr_txt = str(ocr_txt)
