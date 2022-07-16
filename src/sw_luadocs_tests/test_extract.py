@@ -156,14 +156,41 @@ class TestCalcJaccardSimilarity(unittest.TestCase):
 class TestNgramDatabaseInit(unittest.TestCase):
     def test_invalid_value(self):
         with self.assertRaises(ValueError):
-            sw_luadocs.extract.NgramDatabase(n=0)
+            sw_luadocs.extract.NgramDatabase(set(), n=0)
 
     def test_main(self):
-        for input_n, expected_n in [(1, 1), ("1", 1)]:
-            with self.subTest(n=input_n):
-                actual_db = sw_luadocs.extract.NgramDatabase(n=input_n)
-                self.assertEqual(actual_db._n, expected_n)
-                self.assertEqual(actual_db._db, set())
+        for input_txt_set, input_n, expected_db_n, expected_db_db in [
+            (set(), 1, 1, frozenset()),
+            (set(), "1", 1, frozenset()),
+            (
+                {"a", "b", "c"},
+                1,
+                1,
+                frozenset(
+                    [
+                        sw_luadocs.extract.Ngram("a", n=1),
+                        sw_luadocs.extract.Ngram("b", n=1),
+                        sw_luadocs.extract.Ngram("c", n=1),
+                    ]
+                ),
+            ),
+            (
+                {"a", "b", "c"},
+                2,
+                2,
+                frozenset(
+                    [
+                        sw_luadocs.extract.Ngram("a", n=2),
+                        sw_luadocs.extract.Ngram("b", n=2),
+                        sw_luadocs.extract.Ngram("c", n=2),
+                    ]
+                ),
+            ),
+        ]:
+            with self.subTest(txt_set=input_txt_set, n=input_n):
+                actual_db = sw_luadocs.extract.NgramDatabase(input_txt_set, n=input_n)
+                self.assertEqual(actual_db._n, expected_db_n)
+                self.assertEqual(actual_db._db, expected_db_db)
 
 
 class TestMatchTxt(unittest.TestCase):

@@ -90,13 +90,16 @@ def calc_jaccard_similarity(ngram1, ngram2):
 
 
 class NgramDatabase:
-    def __init__(self, *, n=2):
+    def __init__(self, txt_set, *, n=2):
         n = int(n)
         if n <= 0:
             raise ValueError
 
+        txt_set = frozenset(map(str, txt_set))
+        db = frozenset(Ngram(txt, n=n) for txt in txt_set)
+
         self._n = n
-        self._db = set()
+        self._db = db
 
 
 def match_txt(ocr_txt, ext_txt_set):
