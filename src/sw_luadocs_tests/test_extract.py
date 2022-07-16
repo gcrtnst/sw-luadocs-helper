@@ -58,6 +58,33 @@ class TestExtractStrings(unittest.TestCase):
                 self.assertEqual(actual_ext_txt_set, expected_ext_txt_set)
 
 
+class TestNgramInit(unittest.TestCase):
+    def test_invalid_value(self):
+        with self.assertRaises(ValueError):
+            sw_luadocs.extract.Ngram("", n=0)
+
+    def test_main(self):
+        for input_txt, input_n, expected_n, expected_txt, expected_bag in [
+            ("", 1, 1, "", frozenset()),
+            ("abc", 1, 1, "abc", frozenset(["a", "b", "c"])),
+            (123, "1", 1, "123", frozenset(["1", "2", "3"])),
+            ("", 3, 3, "", frozenset()),
+            ("a", 3, 3, "a", frozenset(["\0\0a", "\0a\0", "a\0\0"])),
+            (
+                "abcde",
+                3,
+                3,
+                "abcde",
+                frozenset(["\0\0a", "\0ab", "abc", "bcd", "cde", "de\0", "e\0\0"]),
+            ),
+        ]:
+            with self.subTest(txt=input_txt, n=input_n):
+                actual_ngram = sw_luadocs.extract.Ngram(input_txt, n=input_n)
+                self.assertEqual(actual_ngram.n, expected_n)
+                self.assertEqual(actual_ngram.txt, expected_txt)
+                self.assertEqual(actual_ngram.bag, expected_bag)
+
+
 class TestMatchTxt(unittest.TestCase):
     def test_validate_convert(self):
         best_ext_txt, best_ld = sw_luadocs.extract.match_txt(1, [1, 2])

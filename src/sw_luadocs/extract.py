@@ -47,6 +47,27 @@ def extract_strings(section_bin):
     return ext_txt_set
 
 
+class Ngram:
+    def __init__(self, txt, *, n=2):
+        n = int(n)
+        if n <= 0:
+            raise ValueError
+
+        txt = str(txt)
+        bag = frozenset()
+        if txt != "":
+            pad = "\0" * (n - 1) + txt + "\0" * (n - 1)
+            bag = frozenset(pad[i : i + n] for i in range(len(pad) - n + 1))
+
+        self._n = n
+        self._txt = txt
+        self._bag = bag
+
+    n = property(lambda self: self._n)
+    txt = property(lambda self: self._txt)
+    bag = property(lambda self: self._bag)
+
+
 def match_txt(ocr_txt, ext_txt_set):
     ocr_txt = str(ocr_txt)
     ext_txt_set = set(map(str, ext_txt_set))
