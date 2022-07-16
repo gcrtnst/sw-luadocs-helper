@@ -67,6 +67,9 @@ class Ngram:
     txt = property(lambda self: self._txt)
     bag = property(lambda self: self._bag)
 
+    def __repr__(self):
+        return f"{type(self).__name__}({repr(self.txt)}, n={repr(self.n)})"
+
 
 def match_txt(ocr_txt, ext_txt_set):
     ocr_txt = str(ocr_txt)
