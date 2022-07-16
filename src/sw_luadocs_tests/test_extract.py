@@ -355,6 +355,74 @@ class TestMatchTxtLeft(unittest.TestCase):
                 self.assertEqual(actual_adv, expected_adv)
 
 
+class TestMatchTxtPack(unittest.TestCase):
+    def test_invalid_type(self):
+        with self.assertRaises(TypeError):
+            sw_luadocs.extract.match_txt_pack([], set())
+
+    def test_main(self):
+        for (
+            input_ocr_txt_list,
+            input_ext_txt_db,
+            input_sep,
+            expected_ext_txt_list,
+        ) in [
+            ([], sw_luadocs.extract.NgramDatabase([""], n=1), "", []),
+            (["abc"], sw_luadocs.extract.NgramDatabase(["def"], n=1), "", ["def"]),
+            (
+                ["abc", "def"],
+                sw_luadocs.extract.NgramDatabase(["abg", "deh"], n=1),
+                "",
+                ["abg", "deh"],
+            ),
+            (
+                ["abc", "def"],
+                sw_luadocs.extract.NgramDatabase(["abcdef"], n=1),
+                "",
+                ["abcdef"],
+            ),
+            (
+                ["abc", "def"],
+                sw_luadocs.extract.NgramDatabase(["abc#def", "abc,def"], n=1),
+                ",",
+                ["abc,def"],
+            ),
+            (
+                [123, 456],
+                sw_luadocs.extract.NgramDatabase(["123789456"], n=1),
+                789,
+                ["123789456"],
+            ),
+            (
+                ["abc", "def", "ghi"],
+                sw_luadocs.extract.NgramDatabase(["abc!", "def!", "ghi!"], n=1),
+                "#",
+                ["abc!", "def!", "ghi!"],
+            ),
+            (
+                ["abc", "def", "ghi"],
+                sw_luadocs.extract.NgramDatabase(["abc#def", "ghi"], n=1),
+                "#",
+                ["abc#def", "ghi"],
+            ),
+            (
+                ["abc", "def", "ghi"],
+                sw_luadocs.extract.NgramDatabase(["abc", "def#ghi"], n=1),
+                "#",
+                ["abc", "def#ghi"],
+            ),
+        ]:
+            with self.subTest(
+                ocr_txt_list=input_ocr_txt_list,
+                ext_txt_db=input_ext_txt_db,
+                sep=input_sep,
+            ):
+                actual_ext_txt_list = sw_luadocs.extract.match_txt_pack(
+                    input_ocr_txt_list, input_ext_txt_db, sep=input_sep
+                )
+                self.assertEqual(actual_ext_txt_list, expected_ext_txt_list)
+
+
 class TestMatchTxt(unittest.TestCase):
     def test_validate_convert(self):
         best_ext_txt, best_ld = sw_luadocs.extract.match_txt(1, [1, 2])

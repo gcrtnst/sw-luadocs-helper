@@ -139,6 +139,21 @@ def match_txt_left(ocr_txt_list, ext_txt_db, *, sep="\n"):
     return best_ext_txt, best_adv
 
 
+def match_txt_pack(ocr_txt_list, ext_txt_db, *, sep="\n"):
+    ocr_txt_list = list(map(str, ocr_txt_list))
+    sep = str(sep)
+    if not isinstance(ext_txt_db, NgramDatabase):
+        raise TypeError
+
+    ext_txt_list = []
+    idx = 0
+    while idx < len(ocr_txt_list):
+        ext_txt, adv = match_txt_left(ocr_txt_list[idx:], ext_txt_db, sep=sep)
+        ext_txt_list.append(ext_txt)
+        idx += adv
+    return ext_txt_list
+
+
 def match_txt(ocr_txt, ext_txt_set):
     ocr_txt = str(ocr_txt)
     ext_txt_set = set(map(str, ext_txt_set))
