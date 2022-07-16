@@ -85,6 +85,31 @@ class TestNgramInit(unittest.TestCase):
                 self.assertEqual(actual_ngram.bag, expected_bag)
 
 
+class TestNgramEq(unittest.TestCase):
+    def test_main(self):
+        for input_self, input_other, expected_result in [
+            (sw_luadocs.extract.Ngram("", n=1), None, NotImplemented),
+            (
+                sw_luadocs.extract.Ngram("", n=1),
+                sw_luadocs.extract.Ngram("", n=1),
+                True,
+            ),
+            (
+                sw_luadocs.extract.Ngram("", n=1),
+                sw_luadocs.extract.Ngram("a", n=1),
+                False,
+            ),
+            (
+                sw_luadocs.extract.Ngram("", n=1),
+                sw_luadocs.extract.Ngram("", n=2),
+                False,
+            ),
+        ]:
+            with self.subTest(input_self=input_self, input_other=input_other):
+                actual_result = input_self.__eq__(input_other)
+                self.assertEqual(actual_result, expected_result)
+
+
 class TestMatchTxt(unittest.TestCase):
     def test_validate_convert(self):
         best_ext_txt, best_ld = sw_luadocs.extract.match_txt(1, [1, 2])

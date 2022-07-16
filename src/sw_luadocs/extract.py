@@ -70,6 +70,11 @@ class Ngram:
     def __repr__(self):
         return f"{type(self).__name__}({repr(self.txt)}, n={repr(self.n)})"
 
+    def __eq__(self, other):
+        if type(self) is not type(other):
+            return NotImplemented
+        return self.n == other.n and self.txt == other.txt
+
 
 def match_txt(ocr_txt, ext_txt_set):
     ocr_txt = str(ocr_txt)
