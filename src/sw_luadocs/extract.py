@@ -75,6 +75,9 @@ class Ngram:
             return NotImplemented
         return self.n == other.n and self.txt == other.txt
 
+    def __hash__(self):
+        return hash((self.n, self.txt))
+
 
 def match_txt(ocr_txt, ext_txt_set):
     ocr_txt = str(ocr_txt)
