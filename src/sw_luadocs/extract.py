@@ -118,6 +118,27 @@ class NgramDatabase:
         return result_list[0]
 
 
+def match_txt_left(ocr_txt_list, ext_txt_db, *, sep="\n"):
+    ocr_txt_list = list(map(str, ocr_txt_list))
+    sep = str(sep)
+    if not isinstance(ext_txt_db, NgramDatabase):
+        raise TypeError
+
+    best_ext_txt = None
+    best_adv = None
+    best_score = None
+    for adv in range(1, len(ocr_txt_list) + 1):
+        ocr_txt = sep.join(ocr_txt_list[:adv])
+        ext_txt, score = ext_txt_db.match_txt(ocr_txt)
+        if best_score is None or best_score < score:
+            best_ext_txt = ext_txt
+            best_adv = adv
+            best_score = score
+    if best_ext_txt is None or best_adv is None:
+        raise ValueError
+    return best_ext_txt, best_adv
+
+
 def match_txt(ocr_txt, ext_txt_set):
     ocr_txt = str(ocr_txt)
     ext_txt_set = set(map(str, ext_txt_set))

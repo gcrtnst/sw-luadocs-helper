@@ -271,6 +271,90 @@ class TestNgramDatabaseMatchTxt(unittest.TestCase):
                 self.assertEqual(actual_score, expected_score)
 
 
+class TestMatchTxtLeft(unittest.TestCase):
+    def test_invalid_type(self):
+        with self.assertRaises(TypeError):
+            sw_luadocs.extract.match_txt_left([], set())
+
+    def test_invalid_value(self):
+        with self.assertRaises(ValueError):
+            sw_luadocs.extract.match_txt_left(
+                [], sw_luadocs.extract.NgramDatabase(["a"])
+            )
+
+    def test_main(self):
+        for (
+            input_ocr_txt_list,
+            input_ext_txt_db,
+            input_sep,
+            expected_ext_txt,
+            expected_adv,
+        ) in [
+            (["a"], sw_luadocs.extract.NgramDatabase(["ab", "bc"], n=1), "\n", "ab", 1),
+            (
+                ["a", "b", "c"],
+                sw_luadocs.extract.NgramDatabase(["a"], n=3),
+                ",",
+                "a",
+                1,
+            ),
+            (
+                ["a", "b", "c"],
+                sw_luadocs.extract.NgramDatabase(["a,b"], n=3),
+                ",",
+                "a,b",
+                2,
+            ),
+            (
+                ["a", "b", "c"],
+                sw_luadocs.extract.NgramDatabase(["a,b,c"], n=3),
+                ",",
+                "a,b,c",
+                3,
+            ),
+            (
+                ["a", "b", "c"],
+                sw_luadocs.extract.NgramDatabase(["a:b:c"], n=3),
+                ":",
+                "a:b:c",
+                3,
+            ),
+            (
+                [1, 2, 3],
+                sw_luadocs.extract.NgramDatabase(["14243"], n=3),
+                4,
+                "14243",
+                3,
+            ),
+            (
+                ["a", "b", "c"],
+                sw_luadocs.extract.NgramDatabase(["a", "a,b", "a,b,c"], n=3),
+                ",",
+                "a",
+                1,
+            ),
+            (
+                ["abc", "def", "ghi"],
+                sw_luadocs.extract.NgramDatabase(
+                    ["ghi", "abc,def", "abc:def:jkl"], n=1
+                ),
+                ":",
+                "abc,def",
+                2,
+            ),
+        ]:
+            with self.subTest(
+                ocr_txt_list=input_ocr_txt_list,
+                ext_txt_db=input_ext_txt_db,
+                sep=input_sep,
+            ):
+                actual_ext_txt, actual_adv = sw_luadocs.extract.match_txt_left(
+                    input_ocr_txt_list, input_ext_txt_db, sep=input_sep
+                )
+                self.assertEqual(actual_ext_txt, expected_ext_txt)
+                self.assertEqual(actual_adv, expected_adv)
+
+
 class TestMatchTxt(unittest.TestCase):
     def test_validate_convert(self):
         best_ext_txt, best_ld = sw_luadocs.extract.match_txt(1, [1, 2])
