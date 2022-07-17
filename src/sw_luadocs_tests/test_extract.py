@@ -641,45 +641,28 @@ class TestMatchTxtMultiple(unittest.TestCase):
 
 class TestMatchTxtRepack(unittest.TestCase):
     def test_invalid_type(self):
-        for pak_txt_list_list, ext_txt_eng, cache in [
-            ([], None, {}),
-            ([], sw_luadocs.extract.NgramSearchEngine(["a"]), []),
-        ]:
-            with self.subTest(
-                pak_txt_list_list=pak_txt_list_list,
-                ext_txt_eng=ext_txt_eng,
-                cache=cache,
-            ):
-                with self.assertRaises(TypeError):
-                    sw_luadocs.extract.match_txt_repack(
-                        pak_txt_list_list, ext_txt_eng, cache=cache
-                    )
+        with self.assertRaises(TypeError):
+            sw_luadocs.extract.match_txt_repack([], None)
 
     def test_main(self):
         for (
             input_pak_txt_list_list,
             input_ext_txt_eng,
-            input_cache,
             expected_ext_txt_list,
             expected_score,
-            expected_cache,
         ) in [
-            ([], sw_luadocs.extract.NgramSearchEngine(["a"], n=1), None, [], 1.0, None),
+            ([], sw_luadocs.extract.NgramSearchEngine(["a"], n=1), [], 1.0),
             (
                 [["a", "b", "c"]],
                 sw_luadocs.extract.NgramSearchEngine(["a!", "b!", "c!"], n=1),
-                None,
                 ["a!", "b!", "c!"],
                 0.5,
-                None,
             ),
             (
                 [[1, 2, 3]],
                 sw_luadocs.extract.NgramSearchEngine(["1!", "2!", "3!"], n=1),
-                None,
                 ["1!", "2!", "3!"],
                 0.5,
-                None,
             ),
             (
                 [["a", "b", "c"], ["d", "e", "f"], ["g", "h", "i"]],
@@ -687,10 +670,8 @@ class TestMatchTxtRepack(unittest.TestCase):
                     ["a!", "b!", "c!", "d!?#", "e!?#", "f!?#", "g!?#", "h!?#", "i!?#"],
                     n=1,
                 ),
-                None,
                 ["a!", "b!", "c!"],
                 0.5,
-                None,
             ),
             (
                 [["a", "b", "c"], ["d", "e", "f"], ["g", "h", "i"]],
@@ -698,10 +679,8 @@ class TestMatchTxtRepack(unittest.TestCase):
                     ["a!?#", "b!?#", "c!?#", "d!", "e!", "f!", "g!?#", "h!?#", "i!?#"],
                     n=1,
                 ),
-                None,
                 ["d!", "e!", "f!"],
                 0.5,
-                None,
             ),
             (
                 [["a", "b", "c"], ["d", "e", "f"], ["g", "h", "i"]],
@@ -709,204 +688,18 @@ class TestMatchTxtRepack(unittest.TestCase):
                     ["a!?#", "b!?#", "c!?#", "d!?#", "e!?#", "f!?#", "g!", "h!", "i!"],
                     n=1,
                 ),
-                None,
                 ["g!", "h!", "i!"],
                 0.5,
-                None,
-            ),
-            ([], sw_luadocs.extract.NgramSearchEngine(["a"], n=1), {}, [], 1.0, {}),
-            (
-                [["a", "b", "c"]],
-                sw_luadocs.extract.NgramSearchEngine(["a!", "b!", "c!"], n=1),
-                {},
-                ["a!", "b!", "c!"],
-                0.5,
-                {"a": ("a!", 0.5), "b": ("b!", 0.5), "c": ("c!", 0.5)},
-            ),
-            (
-                [[1, 2, 3]],
-                sw_luadocs.extract.NgramSearchEngine(["1!", "2!", "3!"], n=1),
-                {},
-                ["1!", "2!", "3!"],
-                0.5,
-                {"1": ("1!", 0.5), "2": ("2!", 0.5), "3": ("3!", 0.5)},
-            ),
-            (
-                [["a", "b", "c"], ["d", "e", "f"], ["g", "h", "i"]],
-                sw_luadocs.extract.NgramSearchEngine(
-                    ["a!", "b!", "c!", "d!?#", "e!?#", "f!?#", "g!?#", "h!?#", "i!?#"],
-                    n=1,
-                ),
-                {},
-                ["a!", "b!", "c!"],
-                0.5,
-                {
-                    "a": ("a!", 0.5),
-                    "b": ("b!", 0.5),
-                    "c": ("c!", 0.5),
-                    "d": ("d!?#", 0.25),
-                    "e": ("e!?#", 0.25),
-                    "f": ("f!?#", 0.25),
-                    "g": ("g!?#", 0.25),
-                    "h": ("h!?#", 0.25),
-                    "i": ("i!?#", 0.25),
-                },
-            ),
-            (
-                [["a", "b", "c"], ["d", "e", "f"], ["g", "h", "i"]],
-                sw_luadocs.extract.NgramSearchEngine(
-                    ["a!?#", "b!?#", "c!?#", "d!", "e!", "f!", "g!?#", "h!?#", "i!?#"],
-                    n=1,
-                ),
-                {},
-                ["d!", "e!", "f!"],
-                0.5,
-                {
-                    "a": ("a!?#", 0.25),
-                    "b": ("b!?#", 0.25),
-                    "c": ("c!?#", 0.25),
-                    "d": ("d!", 0.5),
-                    "e": ("e!", 0.5),
-                    "f": ("f!", 0.5),
-                    "g": ("g!?#", 0.25),
-                    "h": ("h!?#", 0.25),
-                    "i": ("i!?#", 0.25),
-                },
-            ),
-            (
-                [["a", "b", "c"], ["d", "e", "f"], ["g", "h", "i"]],
-                sw_luadocs.extract.NgramSearchEngine(
-                    ["a!?#", "b!?#", "c!?#", "d!?#", "e!?#", "f!?#", "g!", "h!", "i!"],
-                    n=1,
-                ),
-                {},
-                ["g!", "h!", "i!"],
-                0.5,
-                {
-                    "a": ("a!?#", 0.25),
-                    "b": ("b!?#", 0.25),
-                    "c": ("c!?#", 0.25),
-                    "d": ("d!?#", 0.25),
-                    "e": ("e!?#", 0.25),
-                    "f": ("f!?#", 0.25),
-                    "g": ("g!", 0.5),
-                    "h": ("h!", 0.5),
-                    "i": ("i!", 0.5),
-                },
-            ),
-            (
-                [["a", "b", "c"]],
-                sw_luadocs.extract.NgramSearchEngine([], n=1),
-                {"a": ("a!", 0.5), "b": ("b!", 0.5), "c": ("c!", 0.5)},
-                ["a!", "b!", "c!"],
-                0.5,
-                {"a": ("a!", 0.5), "b": ("b!", 0.5), "c": ("c!", 0.5)},
-            ),
-            (
-                [[1, 2, 3]],
-                sw_luadocs.extract.NgramSearchEngine([], n=1),
-                {"1": ("1!", 0.5), "2": ("2!", 0.5), "3": ("3!", 0.5)},
-                ["1!", "2!", "3!"],
-                0.5,
-                {"1": ("1!", 0.5), "2": ("2!", 0.5), "3": ("3!", 0.5)},
-            ),
-            (
-                [["a", "b", "c"], ["d", "e", "f"], ["g", "h", "i"]],
-                sw_luadocs.extract.NgramSearchEngine([], n=1),
-                {
-                    "a": ("a!", 0.5),
-                    "b": ("b!", 0.5),
-                    "c": ("c!", 0.5),
-                    "d": ("d!?#", 0.25),
-                    "e": ("e!?#", 0.25),
-                    "f": ("f!?#", 0.25),
-                    "g": ("g!?#", 0.25),
-                    "h": ("h!?#", 0.25),
-                    "i": ("i!?#", 0.25),
-                },
-                ["a!", "b!", "c!"],
-                0.5,
-                {
-                    "a": ("a!", 0.5),
-                    "b": ("b!", 0.5),
-                    "c": ("c!", 0.5),
-                    "d": ("d!?#", 0.25),
-                    "e": ("e!?#", 0.25),
-                    "f": ("f!?#", 0.25),
-                    "g": ("g!?#", 0.25),
-                    "h": ("h!?#", 0.25),
-                    "i": ("i!?#", 0.25),
-                },
-            ),
-            (
-                [["a", "b", "c"], ["d", "e", "f"], ["g", "h", "i"]],
-                sw_luadocs.extract.NgramSearchEngine([], n=1),
-                {
-                    "a": ("a!?#", 0.25),
-                    "b": ("b!?#", 0.25),
-                    "c": ("c!?#", 0.25),
-                    "d": ("d!", 0.5),
-                    "e": ("e!", 0.5),
-                    "f": ("f!", 0.5),
-                    "g": ("g!?#", 0.25),
-                    "h": ("h!?#", 0.25),
-                    "i": ("i!?#", 0.25),
-                },
-                ["d!", "e!", "f!"],
-                0.5,
-                {
-                    "a": ("a!?#", 0.25),
-                    "b": ("b!?#", 0.25),
-                    "c": ("c!?#", 0.25),
-                    "d": ("d!", 0.5),
-                    "e": ("e!", 0.5),
-                    "f": ("f!", 0.5),
-                    "g": ("g!?#", 0.25),
-                    "h": ("h!?#", 0.25),
-                    "i": ("i!?#", 0.25),
-                },
-            ),
-            (
-                [["a", "b", "c"], ["d", "e", "f"], ["g", "h", "i"]],
-                sw_luadocs.extract.NgramSearchEngine([], n=1),
-                {
-                    "a": ("a!?#", 0.25),
-                    "b": ("b!?#", 0.25),
-                    "c": ("c!?#", 0.25),
-                    "d": ("d!?#", 0.25),
-                    "e": ("e!?#", 0.25),
-                    "f": ("f!?#", 0.25),
-                    "g": ("g!", 0.5),
-                    "h": ("h!", 0.5),
-                    "i": ("i!", 0.5),
-                },
-                ["g!", "h!", "i!"],
-                0.5,
-                {
-                    "a": ("a!?#", 0.25),
-                    "b": ("b!?#", 0.25),
-                    "c": ("c!?#", 0.25),
-                    "d": ("d!?#", 0.25),
-                    "e": ("e!?#", 0.25),
-                    "f": ("f!?#", 0.25),
-                    "g": ("g!", 0.5),
-                    "h": ("h!", 0.5),
-                    "i": ("i!", 0.5),
-                },
             ),
         ]:
             with self.subTest(
-                pak_txt_list_list=input_pak_txt_list_list,
-                ext_txt_eng=input_ext_txt_eng,
-                cache=input_cache,
+                pak_txt_list_list=input_pak_txt_list_list, ext_txt_eng=input_ext_txt_eng
             ):
-                actual_cache = input_cache.copy() if input_cache is not None else None
                 actual_ext_txt_list, actual_score = sw_luadocs.extract.match_txt_repack(
-                    input_pak_txt_list_list, input_ext_txt_eng, cache=actual_cache
+                    input_pak_txt_list_list, input_ext_txt_eng
                 )
                 self.assertEqual(actual_ext_txt_list, expected_ext_txt_list)
                 self.assertEqual(actual_score, expected_score)
-                self.assertEqual(actual_cache, expected_cache)
 
 
 class TestMatchTxtLeft(unittest.TestCase):

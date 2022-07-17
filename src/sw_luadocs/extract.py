@@ -162,23 +162,17 @@ def match_txt_multiple(ocr_txt_list, ext_txt_eng, *, cache=None):
     return ext_txt_list, min_score
 
 
-def match_txt_repack(pak_txt_list_list, ext_txt_eng, *, cache=None):
+def match_txt_repack(pak_txt_list_list, ext_txt_eng):
     pak_txt_list_list = list(pak_txt_list_list)
     for i in range(len(pak_txt_list_list)):
         pak_txt_list_list[i] = list(map(str, pak_txt_list_list[i]))
-
     if not isinstance(ext_txt_eng, NgramSearchEngine):
-        raise TypeError
-
-    if cache is None:
-        cache = {}
-    if not isinstance(cache, dict):
         raise TypeError
 
     best_ext_txt_list = None
     best_score = None
     for pak_txt_list in pak_txt_list_list:
-        ext_txt_list, score = match_txt_multiple(pak_txt_list, ext_txt_eng, cache=cache)
+        ext_txt_list, score = match_txt_multiple(pak_txt_list, ext_txt_eng)
         if best_score is None or best_score < score:
             best_ext_txt_list = ext_txt_list
             best_score = score
