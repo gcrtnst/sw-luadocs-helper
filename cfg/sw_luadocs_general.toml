@@ -45,3 +45,4 @@ kind = "body"
 
 [extract]
 section_name = ".rdata"
+ngram = 3

@@ -90,7 +90,11 @@ def extract_main(ns):
 
     ocr_flatdoc = dot_flatdoc.parse(ocr_txt)
     ext_flatdoc = dot_extract.extract(
-        ocr_flatdoc, exe_bin, section_name=extract_cfg["section_name"]
+        ocr_flatdoc,
+        exe_bin,
+        section_name=extract_cfg["section_name"],
+        ngram=extract_cfg["ngram"],
+        sep="\n\n",
     )
     ext_txt = dot_flatdoc.format(ext_flatdoc)
 

@@ -35,3 +35,4 @@ bg_thresh_b = 40
 
 [extract]
 section_name = ".rdata"
+ngram = 3

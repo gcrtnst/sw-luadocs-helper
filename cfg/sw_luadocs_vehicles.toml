@@ -40,3 +40,4 @@ line_pattern = '^DATA = {$'
 
 [extract]
 section_name = ".rdata"
+ngram = 3

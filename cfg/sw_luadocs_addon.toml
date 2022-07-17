@@ -40,3 +40,4 @@ line_pattern = '^\t[A-Z_ ]+ = {$'
 
 [extract]
 section_name = ".rdata"
+ngram = 3

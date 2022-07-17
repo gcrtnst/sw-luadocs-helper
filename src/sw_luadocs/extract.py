@@ -226,8 +226,9 @@ def match_flatdoc(ocr_flatdoc, ext_txt_set):
     return ext_flatdoc, ld_sum
 
 
-def extract(ocr_flatdoc, exe_bin, *, section_name):
+def extract(ocr_flatdoc, exe_bin, *, section_name, ngram, sep):
     section_bin = extract_section(exe_bin, section_name, ignore_padding=True)
     ext_txt_set = extract_strings(section_bin)
-    ext_flatdoc, _ = match_flatdoc(ocr_flatdoc, ext_txt_set)
+    ext_txt_db = NgramDatabase(ext_txt_set, n=ngram)
+    ext_flatdoc = match_flatdoc_ngram(ocr_flatdoc, ext_txt_db, sep=sep)
     return ext_flatdoc
