@@ -168,7 +168,7 @@ def match_flatdoc_monokind(ocr_flatdoc, ext_txt_db, *, sep="\n\n"):
     return [dot_flatdoc.FlatElem(txt=ext_txt, kind=kind) for ext_txt in ext_txt_list]
 
 
-def match_flatdoc_ngram(ocr_flatdoc, ext_txt_db, *, sep="\n\n"):
+def match_flatdoc(ocr_flatdoc, ext_txt_db, *, sep="\n\n"):
     ocr_flatdoc = dot_flatdoc.as_flatdoc(ocr_flatdoc)
     sep = str(sep)
     if not isinstance(ext_txt_db, NgramDatabase):
@@ -187,5 +187,5 @@ def extract(ocr_flatdoc, exe_bin, *, section_name, ngram, sep):
     section_bin = extract_section(exe_bin, section_name, ignore_padding=True)
     ext_txt_set = extract_strings(section_bin)
     ext_txt_db = NgramDatabase(ext_txt_set, n=ngram)
-    ext_flatdoc = match_flatdoc_ngram(ocr_flatdoc, ext_txt_db, sep=sep)
+    ext_flatdoc = match_flatdoc(ocr_flatdoc, ext_txt_db, sep=sep)
     return ext_flatdoc
