@@ -133,6 +133,25 @@ def match_txt_single(ocr_txt, ext_txt_db, *, cache=None):
     return result
 
 
+def match_txt_multiple(ocr_txt_list, ext_txt_db, *, cache=None):
+    ocr_txt_list = list(map(str, ocr_txt_list))
+    if not isinstance(ext_txt_db, NgramDatabase):
+        raise TypeError
+
+    if cache is None:
+        cache = {}
+    if not isinstance(cache, dict):
+        raise TypeError
+
+    ext_txt_list = []
+    min_score = 1.0
+    for ocr_txt in ocr_txt_list:
+        ext_txt, score = match_txt_single(ocr_txt, ext_txt_db, cache=cache)
+        ext_txt_list.append(ext_txt)
+        min_score = min(min_score, score)
+    return ext_txt_list, min_score
+
+
 def match_txt_left(ocr_txt_list, ext_txt_db, *, sep="\n"):
     ocr_txt_list = list(map(str, ocr_txt_list))
     sep = str(sep)

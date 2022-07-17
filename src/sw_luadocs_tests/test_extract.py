@@ -369,6 +369,217 @@ class TestMatchTxtSingle(unittest.TestCase):
                 self.assertEqual(actual_cache, expected_cache)
 
 
+class TestMatchTxtMultiple(unittest.TestCase):
+    def test_invalid_type(self):
+        for ocr_txt_list, ext_txt_db, cache in [
+            ([], None, {}),
+            ([], sw_luadocs.extract.NgramDatabase(["a"]), []),
+        ]:
+            with self.subTest(
+                ocr_txt_list=ocr_txt_list, ext_txt_db=ext_txt_db, cache=cache
+            ):
+                with self.assertRaises(TypeError):
+                    sw_luadocs.extract.match_txt_multiple(
+                        ocr_txt_list, ext_txt_db, cache=cache
+                    )
+
+    def test_main(self):
+        for (
+            input_ocr_txt_list,
+            input_ext_txt_db,
+            input_cache,
+            expected_ext_txt_list,
+            expected_score,
+            expected_cache,
+        ) in [
+            ([], sw_luadocs.extract.NgramDatabase(["a"], n=1), None, [], 1.0, None),
+            (
+                ["a"],
+                sw_luadocs.extract.NgramDatabase(["a!", "b!"], n=1),
+                None,
+                ["a!"],
+                0.5,
+                None,
+            ),
+            (
+                [1],
+                sw_luadocs.extract.NgramDatabase(["1!", "2!"], n=1),
+                None,
+                ["1!"],
+                0.5,
+                None,
+            ),
+            (
+                ["a", "b", "c"],
+                sw_luadocs.extract.NgramDatabase(["a!", "b!", "c!"], n=1),
+                None,
+                ["a!", "b!", "c!"],
+                0.5,
+                None,
+            ),
+            (
+                [1, 2, 3],
+                sw_luadocs.extract.NgramDatabase(["1!", "2!", "3!"], n=1),
+                None,
+                ["1!", "2!", "3!"],
+                0.5,
+                None,
+            ),
+            (
+                ["a", "b", "c"],
+                sw_luadocs.extract.NgramDatabase(["a!?#", "b!", "c!"], n=1),
+                None,
+                ["a!?#", "b!", "c!"],
+                0.25,
+                None,
+            ),
+            (
+                ["a", "b", "c"],
+                sw_luadocs.extract.NgramDatabase(["a!", "b!?#", "c!"], n=1),
+                None,
+                ["a!", "b!?#", "c!"],
+                0.25,
+                None,
+            ),
+            (
+                ["a", "b", "c"],
+                sw_luadocs.extract.NgramDatabase(["a!", "b!", "c!?#"], n=1),
+                None,
+                ["a!", "b!", "c!?#"],
+                0.25,
+                None,
+            ),
+            ([], sw_luadocs.extract.NgramDatabase(["a"], n=1), {}, [], 1.0, {}),
+            (
+                ["a"],
+                sw_luadocs.extract.NgramDatabase(["a!", "b!"], n=1),
+                {},
+                ["a!"],
+                0.5,
+                {"a": ("a!", 0.5)},
+            ),
+            (
+                [1],
+                sw_luadocs.extract.NgramDatabase(["1!", "2!"], n=1),
+                {},
+                ["1!"],
+                0.5,
+                {"1": ("1!", 0.5)},
+            ),
+            (
+                ["a", "b", "c"],
+                sw_luadocs.extract.NgramDatabase(["a!", "b!", "c!"], n=1),
+                {},
+                ["a!", "b!", "c!"],
+                0.5,
+                {"a": ("a!", 0.5), "b": ("b!", 0.5), "c": ("c!", 0.5)},
+            ),
+            (
+                [1, 2, 3],
+                sw_luadocs.extract.NgramDatabase(["1!", "2!", "3!"], n=1),
+                {},
+                ["1!", "2!", "3!"],
+                0.5,
+                {"1": ("1!", 0.5), "2": ("2!", 0.5), "3": ("3!", 0.5)},
+            ),
+            (
+                ["a", "b", "c"],
+                sw_luadocs.extract.NgramDatabase(["a!?#", "b!", "c!"], n=1),
+                {},
+                ["a!?#", "b!", "c!"],
+                0.25,
+                {"a": ("a!?#", 0.25), "b": ("b!", 0.5), "c": ("c!", 0.5)},
+            ),
+            (
+                ["a", "b", "c"],
+                sw_luadocs.extract.NgramDatabase(["a!", "b!?#", "c!"], n=1),
+                {},
+                ["a!", "b!?#", "c!"],
+                0.25,
+                {"a": ("a!", 0.5), "b": ("b!?#", 0.25), "c": ("c!", 0.5)},
+            ),
+            (
+                ["a", "b", "c"],
+                sw_luadocs.extract.NgramDatabase(["a!", "b!", "c!?#"], n=1),
+                {},
+                ["a!", "b!", "c!?#"],
+                0.25,
+                {"a": ("a!", 0.5), "b": ("b!", 0.5), "c": ("c!?#", 0.25)},
+            ),
+            (
+                ["a"],
+                sw_luadocs.extract.NgramDatabase([], n=1),
+                {"a": ("a!", 0.5)},
+                ["a!"],
+                0.5,
+                {"a": ("a!", 0.5)},
+            ),
+            (
+                [1],
+                sw_luadocs.extract.NgramDatabase([], n=1),
+                {"1": ("1!", 0.5)},
+                ["1!"],
+                0.5,
+                {"1": ("1!", 0.5)},
+            ),
+            (
+                ["a", "b", "c"],
+                sw_luadocs.extract.NgramDatabase([], n=1),
+                {"a": ("a!", 0.5), "b": ("b!", 0.5), "c": ("c!", 0.5)},
+                ["a!", "b!", "c!"],
+                0.5,
+                {"a": ("a!", 0.5), "b": ("b!", 0.5), "c": ("c!", 0.5)},
+            ),
+            (
+                [1, 2, 3],
+                sw_luadocs.extract.NgramDatabase([], n=1),
+                {"1": ("1!", 0.5), "2": ("2!", 0.5), "3": ("3!", 0.5)},
+                ["1!", "2!", "3!"],
+                0.5,
+                {"1": ("1!", 0.5), "2": ("2!", 0.5), "3": ("3!", 0.5)},
+            ),
+            (
+                ["a", "b", "c"],
+                sw_luadocs.extract.NgramDatabase([], n=1),
+                {"a": ("a!?#", 0.25), "b": ("b!", 0.5), "c": ("c!", 0.5)},
+                ["a!?#", "b!", "c!"],
+                0.25,
+                {"a": ("a!?#", 0.25), "b": ("b!", 0.5), "c": ("c!", 0.5)},
+            ),
+            (
+                ["a", "b", "c"],
+                sw_luadocs.extract.NgramDatabase([], n=1),
+                {"a": ("a!", 0.5), "b": ("b!?#", 0.25), "c": ("c!", 0.5)},
+                ["a!", "b!?#", "c!"],
+                0.25,
+                {"a": ("a!", 0.5), "b": ("b!?#", 0.25), "c": ("c!", 0.5)},
+            ),
+            (
+                ["a", "b", "c"],
+                sw_luadocs.extract.NgramDatabase([], n=1),
+                {"a": ("a!", 0.5), "b": ("b!", 0.5), "c": ("c!?#", 0.25)},
+                ["a!", "b!", "c!?#"],
+                0.25,
+                {"a": ("a!", 0.5), "b": ("b!", 0.5), "c": ("c!?#", 0.25)},
+            ),
+        ]:
+            with self.subTest(
+                ocr_txt_list=input_ocr_txt_list,
+                ext_txt_db=input_ext_txt_db,
+                cache=input_cache,
+            ):
+                actual_cache = input_cache.copy() if input_cache is not None else None
+                (
+                    actual_ext_txt_list,
+                    actual_score,
+                ) = sw_luadocs.extract.match_txt_multiple(
+                    input_ocr_txt_list, input_ext_txt_db, cache=actual_cache
+                )
+                self.assertEqual(actual_ext_txt_list, expected_ext_txt_list)
+                self.assertEqual(actual_score, expected_score)
+                self.assertEqual(actual_cache, expected_cache)
+
+
 class TestMatchTxtLeft(unittest.TestCase):
     def test_invalid_type(self):
         with self.assertRaises(TypeError):
