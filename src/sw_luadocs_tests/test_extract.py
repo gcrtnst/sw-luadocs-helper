@@ -205,7 +205,7 @@ class TestNgramSearchEngineInit(unittest.TestCase):
                 self.assertEqual(actual_db._db, expected_db_db)
 
 
-class TestNgramSearchEngineMatchAll(unittest.TestCase):
+class TestNgramSearchEngineSearchAll(unittest.TestCase):
     def test_main(self):
         for input_self, input_txt, expected_result_list in [
             (sw_luadocs.extract.NgramSearchEngine([], n=1), "", []),
@@ -232,15 +232,15 @@ class TestNgramSearchEngineMatchAll(unittest.TestCase):
             ),
         ]:
             with self.subTest(input_self=input_self, input_txt=input_txt):
-                actual_result_list = input_self.match_all(input_txt)
+                actual_result_list = input_self.search_all(input_txt)
                 self.assertEqual(actual_result_list, expected_result_list)
 
 
-class TestNgramSearchEngineMatchTxt(unittest.TestCase):
+class TestNgramSearchEngineSearchLucky(unittest.TestCase):
     def test_invalid_value(self):
         db = sw_luadocs.extract.NgramSearchEngine([], n=1)
         with self.assertRaises(ValueError):
-            db.match_txt("")
+            db.search_lucky("")
 
     def test_main(self):
         for input_self, input_txt, expected_txt, expected_score in [
@@ -268,7 +268,7 @@ class TestNgramSearchEngineMatchTxt(unittest.TestCase):
             ),
         ]:
             with self.subTest(input_self=input_self, input_txt=input_txt):
-                actual_txt, actual_score = input_self.match_txt(input_txt)
+                actual_txt, actual_score = input_self.search_lucky(input_txt)
                 self.assertEqual(actual_txt, expected_txt)
                 self.assertEqual(actual_score, expected_score)
 

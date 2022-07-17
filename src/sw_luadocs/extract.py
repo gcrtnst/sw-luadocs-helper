@@ -99,7 +99,7 @@ class NgramSearchEngine:
         self._n = n
         self._db = db
 
-    def match_all(self, txt):
+    def search_all(self, txt):
         query_ngram = Ngram(txt, n=self._n)
 
         result_list = [
@@ -109,8 +109,8 @@ class NgramSearchEngine:
         result_list.sort(key=lambda result: (-result[1], result[0]))
         return result_list
 
-    def match_txt(self, txt):
-        result_list = self.match_all(txt)
+    def search_lucky(self, txt):
+        result_list = self.search_all(txt)
         if len(result_list) <= 0:
             raise ValueError
         return result_list[0]
@@ -122,13 +122,13 @@ def match_txt_single(ocr_txt, ext_txt_eng, *, cache=None):
         raise TypeError
 
     if cache is None:
-        return ext_txt_eng.match_txt(ocr_txt)
+        return ext_txt_eng.search_lucky(ocr_txt)
     if not isinstance(cache, dict):
         raise TypeError
 
     result = cache.get(ocr_txt)
     if result is None:
-        result = ext_txt_eng.match_txt(ocr_txt)
+        result = ext_txt_eng.search_lucky(ocr_txt)
         cache[ocr_txt] = result
     return result
 
@@ -188,7 +188,7 @@ def match_txt_left(ocr_txt_list, ext_txt_eng, *, sep="\n"):
     best_score = None
     for adv in range(1, len(ocr_txt_list) + 1):
         ocr_txt = sep.join(ocr_txt_list[:adv])
-        ext_txt, score = ext_txt_eng.match_txt(ocr_txt)
+        ext_txt, score = ext_txt_eng.search_lucky(ocr_txt)
         if best_score is None or best_score < score:
             best_ext_txt = ext_txt
             best_adv = adv
