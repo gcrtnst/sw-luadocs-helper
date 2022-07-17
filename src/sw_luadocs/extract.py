@@ -98,9 +98,8 @@ class NgramSearchEngine:
 
         self._n = n
         self._db = db
-        self._cache = {}
 
-    def _search(self, txt):
+    def search_all(self, txt):
         query_ngram = Ngram(txt, n=self._n)
 
         result_list = [
@@ -110,15 +109,6 @@ class NgramSearchEngine:
         result_list.sort(key=lambda result: (-result[1], result[0]))
         return result_list
 
-    def search_all(self, txt):
-        txt = str(txt)
-
-        result_list = self._cache.get(txt)
-        if result_list is None:
-            result_list = self._search(txt)
-            self._cache[txt] = result_list
-        return result_list[:]
-
     def search_lucky(self, txt):
         result_list = self.search_all(txt)
         if len(result_list) <= 0:
@@ -126,31 +116,59 @@ class NgramSearchEngine:
         return result_list[0]
 
 
-def match_txt_multiple(ocr_txt_list, ext_txt_eng):
+def match_txt_single(ocr_txt, ext_txt_eng, *, cache=None):
+    ocr_txt = str(ocr_txt)
+    if not isinstance(ext_txt_eng, NgramSearchEngine):
+        raise TypeError
+
+    if cache is None:
+        return ext_txt_eng.search_lucky(ocr_txt)
+    if not isinstance(cache, dict):
+        raise TypeError
+
+    result = cache.get(ocr_txt)
+    if result is None:
+        result = ext_txt_eng.search_lucky(ocr_txt)
+        cache[ocr_txt] = result
+    return result
+
+
+def match_txt_multiple(ocr_txt_list, ext_txt_eng, *, cache=None):
     ocr_txt_list = list(map(str, ocr_txt_list))
     if not isinstance(ext_txt_eng, NgramSearchEngine):
+        raise TypeError
+
+    if cache is None:
+        cache = {}
+    if not isinstance(cache, dict):
         raise TypeError
 
     ext_txt_list = []
     min_score = 1.0
     for ocr_txt in ocr_txt_list:
-        ext_txt, score = ext_txt_eng.search_lucky(ocr_txt)
+        ext_txt, score = match_txt_single(ocr_txt, ext_txt_eng, cache=cache)
         ext_txt_list.append(ext_txt)
         min_score = min(min_score, score)
     return ext_txt_list, min_score
 
 
-def match_txt_repack(pak_txt_list_list, ext_txt_eng):
+def match_txt_repack(pak_txt_list_list, ext_txt_eng, *, cache=None):
     pak_txt_list_list = list(pak_txt_list_list)
     for i in range(len(pak_txt_list_list)):
         pak_txt_list_list[i] = list(map(str, pak_txt_list_list[i]))
+
     if not isinstance(ext_txt_eng, NgramSearchEngine):
+        raise TypeError
+
+    if cache is None:
+        cache = {}
+    if not isinstance(cache, dict):
         raise TypeError
 
     best_ext_txt_list = None
     best_score = None
     for pak_txt_list in pak_txt_list_list:
-        ext_txt_list, score = match_txt_multiple(pak_txt_list, ext_txt_eng)
+        ext_txt_list, score = match_txt_multiple(pak_txt_list, ext_txt_eng, cache=cache)
         if best_score is None or best_score < score:
             best_ext_txt_list = ext_txt_list
             best_score = score
