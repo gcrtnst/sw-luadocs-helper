@@ -6,7 +6,6 @@ import pytesseract
 import typing
 
 from . import flatdoc as dot_flatdoc
-from . import patch as dot_patch
 from . import image as dot_image
 
 
@@ -220,7 +219,7 @@ def convert_tessline_to_ocrline(
     code_thresh_x,
     code_base_x,
     code_indent_w,
-    bg_thresh_rgb
+    bg_thresh_rgb,
 ):
     capture_img = dot_image.convert_image(capture_img, dst_mode="RGB")
     code_thresh_x = int(code_thresh_x)
@@ -363,7 +362,6 @@ def recognize(
     code_indent_w,
     code_line_h,
     bg_thresh_rgb,
-    patch_list
 ):
     preprocess_img = preprocess_image(capture_img)
     tesstsv = pytesseract.image_to_data(
@@ -388,5 +386,4 @@ def recognize(
     flatdoc = convert_ocrline_to_flatdoc(
         ocrline_list, body_line_h=body_line_h, code_line_h=code_line_h
     )
-    flatdoc = dot_patch.apply_patch_list(flatdoc, patch_list)
     return flatdoc
