@@ -163,10 +163,10 @@ class TestCalcJaccardSimilarity(unittest.TestCase):
                 self.assertEqual(actual_score, expected_score)
 
 
-class TestNgramDatabaseInit(unittest.TestCase):
+class TestNgramSearchEngineInit(unittest.TestCase):
     def test_invalid_value(self):
         with self.assertRaises(ValueError):
-            sw_luadocs.extract.NgramDatabase(set(), n=0)
+            sw_luadocs.extract.NgramSearchEngine(set(), n=0)
 
     def test_main(self):
         for input_txt_set, input_n, expected_db_n, expected_db_db in [
@@ -198,31 +198,33 @@ class TestNgramDatabaseInit(unittest.TestCase):
             ),
         ]:
             with self.subTest(txt_set=input_txt_set, n=input_n):
-                actual_db = sw_luadocs.extract.NgramDatabase(input_txt_set, n=input_n)
+                actual_db = sw_luadocs.extract.NgramSearchEngine(
+                    input_txt_set, n=input_n
+                )
                 self.assertEqual(actual_db._n, expected_db_n)
                 self.assertEqual(actual_db._db, expected_db_db)
 
 
-class TestNgramDatabaseMatchAll(unittest.TestCase):
+class TestNgramSearchEngineMatchAll(unittest.TestCase):
     def test_main(self):
         for input_self, input_txt, expected_result_list in [
-            (sw_luadocs.extract.NgramDatabase([], n=1), "", []),
+            (sw_luadocs.extract.NgramSearchEngine([], n=1), "", []),
             (
-                sw_luadocs.extract.NgramDatabase(
+                sw_luadocs.extract.NgramSearchEngine(
                     {"abc", "abd", "def", "bca", "cab"}, n=1
                 ),
                 "abc",
                 [("abc", 1.0), ("bca", 1.0), ("cab", 1.0), ("abd", 0.5), ("def", 0.0)],
             ),
             (
-                sw_luadocs.extract.NgramDatabase(
+                sw_luadocs.extract.NgramSearchEngine(
                     {"312", "231", "456", "124", "123"}, n=1
                 ),
                 "123",
                 [("123", 1.0), ("231", 1.0), ("312", 1.0), ("124", 0.5), ("456", 0.0)],
             ),
             (
-                sw_luadocs.extract.NgramDatabase(
+                sw_luadocs.extract.NgramSearchEngine(
                     {"abc", "abd", "def", "bca", "cab"}, n=3
                 ),
                 "abc",
@@ -234,16 +236,16 @@ class TestNgramDatabaseMatchAll(unittest.TestCase):
                 self.assertEqual(actual_result_list, expected_result_list)
 
 
-class TestNgramDatabaseMatchTxt(unittest.TestCase):
+class TestNgramSearchEngineMatchTxt(unittest.TestCase):
     def test_invalid_value(self):
-        db = sw_luadocs.extract.NgramDatabase([], n=1)
+        db = sw_luadocs.extract.NgramSearchEngine([], n=1)
         with self.assertRaises(ValueError):
             db.match_txt("")
 
     def test_main(self):
         for input_self, input_txt, expected_txt, expected_score in [
             (
-                sw_luadocs.extract.NgramDatabase(
+                sw_luadocs.extract.NgramSearchEngine(
                     {"abc", "abd", "def", "bca", "cab"}, n=1
                 ),
                 "abc",
@@ -251,7 +253,7 @@ class TestNgramDatabaseMatchTxt(unittest.TestCase):
                 1.0,
             ),
             (
-                sw_luadocs.extract.NgramDatabase(
+                sw_luadocs.extract.NgramSearchEngine(
                     {"312", "231", "456", "124", "123"}, n=1
                 ),
                 "312",
@@ -259,7 +261,7 @@ class TestNgramDatabaseMatchTxt(unittest.TestCase):
                 1.0,
             ),
             (
-                sw_luadocs.extract.NgramDatabase({"abd", "def", "bca", "cab"}, n=3),
+                sw_luadocs.extract.NgramSearchEngine({"abd", "def", "bca", "cab"}, n=3),
                 "abc",
                 "abd",
                 0.25,
@@ -273,20 +275,20 @@ class TestNgramDatabaseMatchTxt(unittest.TestCase):
 
 class TestMatchTxtSingle(unittest.TestCase):
     def test_invalid_type(self):
-        for ocr_txt, ext_txt_db, cache in [
+        for ocr_txt, ext_txt_eng, cache in [
             ("", None, {}),
-            ("", sw_luadocs.extract.NgramDatabase(["a"]), []),
+            ("", sw_luadocs.extract.NgramSearchEngine(["a"]), []),
         ]:
-            with self.subTest(ocr_txt=ocr_txt, ext_txt_db=ext_txt_db, cache=cache):
+            with self.subTest(ocr_txt=ocr_txt, ext_txt_eng=ext_txt_eng, cache=cache):
                 with self.assertRaises(TypeError):
                     sw_luadocs.extract.match_txt_single(
-                        ocr_txt, ext_txt_db, cache=cache
+                        ocr_txt, ext_txt_eng, cache=cache
                     )
 
     def test_main(self):
         for (
             input_ocr_txt,
-            input_ext_txt_db,
+            input_ext_txt_eng,
             input_cache,
             expected_ext_txt,
             expected_score,
@@ -294,7 +296,7 @@ class TestMatchTxtSingle(unittest.TestCase):
         ) in [
             (
                 "a",
-                sw_luadocs.extract.NgramDatabase(["a"], n=1),
+                sw_luadocs.extract.NgramSearchEngine(["a"], n=1),
                 None,
                 "a",
                 1.0,
@@ -302,7 +304,7 @@ class TestMatchTxtSingle(unittest.TestCase):
             ),
             (
                 "a",
-                sw_luadocs.extract.NgramDatabase(["a!", "b!"], n=1),
+                sw_luadocs.extract.NgramSearchEngine(["a!", "b!"], n=1),
                 None,
                 "a!",
                 0.5,
@@ -310,7 +312,7 @@ class TestMatchTxtSingle(unittest.TestCase):
             ),
             (
                 1,
-                sw_luadocs.extract.NgramDatabase(["1!", "2!"], n=1),
+                sw_luadocs.extract.NgramSearchEngine(["1!", "2!"], n=1),
                 None,
                 "1!",
                 0.5,
@@ -318,7 +320,7 @@ class TestMatchTxtSingle(unittest.TestCase):
             ),
             (
                 "a",
-                sw_luadocs.extract.NgramDatabase(["a"], n=1),
+                sw_luadocs.extract.NgramSearchEngine(["a"], n=1),
                 {},
                 "a",
                 1,
@@ -326,7 +328,7 @@ class TestMatchTxtSingle(unittest.TestCase):
             ),
             (
                 "a",
-                sw_luadocs.extract.NgramDatabase(["a!", "b!"], n=1),
+                sw_luadocs.extract.NgramSearchEngine(["a!", "b!"], n=1),
                 {},
                 "a!",
                 0.5,
@@ -334,7 +336,7 @@ class TestMatchTxtSingle(unittest.TestCase):
             ),
             (
                 1,
-                sw_luadocs.extract.NgramDatabase(["1!", "2!"], n=1),
+                sw_luadocs.extract.NgramSearchEngine(["1!", "2!"], n=1),
                 {},
                 "1!",
                 0.5,
@@ -342,7 +344,7 @@ class TestMatchTxtSingle(unittest.TestCase):
             ),
             (
                 "a",
-                sw_luadocs.extract.NgramDatabase(["a!", "b!"], n=1),
+                sw_luadocs.extract.NgramSearchEngine(["a!", "b!"], n=1),
                 {"a": ("a?", 0.75)},
                 "a?",
                 0.75,
@@ -350,7 +352,7 @@ class TestMatchTxtSingle(unittest.TestCase):
             ),
             (
                 1,
-                sw_luadocs.extract.NgramDatabase(["1!", "2!"], n=1),
+                sw_luadocs.extract.NgramSearchEngine(["1!", "2!"], n=1),
                 {"1": ("1?", 0.75)},
                 "1?",
                 0.75,
@@ -358,11 +360,11 @@ class TestMatchTxtSingle(unittest.TestCase):
             ),
         ]:
             with self.subTest(
-                ocr_txt=input_ocr_txt, ext_txt_db=input_ext_txt_db, cache=input_cache
+                ocr_txt=input_ocr_txt, ext_txt_eng=input_ext_txt_eng, cache=input_cache
             ):
                 actual_cache = input_cache.copy() if input_cache is not None else None
                 actual_ext_txt, actual_score = sw_luadocs.extract.match_txt_single(
-                    input_ocr_txt, input_ext_txt_db, cache=actual_cache
+                    input_ocr_txt, input_ext_txt_eng, cache=actual_cache
                 )
                 self.assertEqual(actual_ext_txt, expected_ext_txt)
                 self.assertEqual(actual_score, expected_score)
@@ -371,31 +373,31 @@ class TestMatchTxtSingle(unittest.TestCase):
 
 class TestMatchTxtMultiple(unittest.TestCase):
     def test_invalid_type(self):
-        for ocr_txt_list, ext_txt_db, cache in [
+        for ocr_txt_list, ext_txt_eng, cache in [
             ([], None, {}),
-            ([], sw_luadocs.extract.NgramDatabase(["a"]), []),
+            ([], sw_luadocs.extract.NgramSearchEngine(["a"]), []),
         ]:
             with self.subTest(
-                ocr_txt_list=ocr_txt_list, ext_txt_db=ext_txt_db, cache=cache
+                ocr_txt_list=ocr_txt_list, ext_txt_eng=ext_txt_eng, cache=cache
             ):
                 with self.assertRaises(TypeError):
                     sw_luadocs.extract.match_txt_multiple(
-                        ocr_txt_list, ext_txt_db, cache=cache
+                        ocr_txt_list, ext_txt_eng, cache=cache
                     )
 
     def test_main(self):
         for (
             input_ocr_txt_list,
-            input_ext_txt_db,
+            input_ext_txt_eng,
             input_cache,
             expected_ext_txt_list,
             expected_score,
             expected_cache,
         ) in [
-            ([], sw_luadocs.extract.NgramDatabase(["a"], n=1), None, [], 1.0, None),
+            ([], sw_luadocs.extract.NgramSearchEngine(["a"], n=1), None, [], 1.0, None),
             (
                 ["a"],
-                sw_luadocs.extract.NgramDatabase(["a!", "b!"], n=1),
+                sw_luadocs.extract.NgramSearchEngine(["a!", "b!"], n=1),
                 None,
                 ["a!"],
                 0.5,
@@ -403,7 +405,7 @@ class TestMatchTxtMultiple(unittest.TestCase):
             ),
             (
                 [1],
-                sw_luadocs.extract.NgramDatabase(["1!", "2!"], n=1),
+                sw_luadocs.extract.NgramSearchEngine(["1!", "2!"], n=1),
                 None,
                 ["1!"],
                 0.5,
@@ -411,7 +413,7 @@ class TestMatchTxtMultiple(unittest.TestCase):
             ),
             (
                 ["a", "b", "c"],
-                sw_luadocs.extract.NgramDatabase(["a!", "b!", "c!"], n=1),
+                sw_luadocs.extract.NgramSearchEngine(["a!", "b!", "c!"], n=1),
                 None,
                 ["a!", "b!", "c!"],
                 0.5,
@@ -419,7 +421,7 @@ class TestMatchTxtMultiple(unittest.TestCase):
             ),
             (
                 [1, 2, 3],
-                sw_luadocs.extract.NgramDatabase(["1!", "2!", "3!"], n=1),
+                sw_luadocs.extract.NgramSearchEngine(["1!", "2!", "3!"], n=1),
                 None,
                 ["1!", "2!", "3!"],
                 0.5,
@@ -427,7 +429,7 @@ class TestMatchTxtMultiple(unittest.TestCase):
             ),
             (
                 ["a", "b", "c"],
-                sw_luadocs.extract.NgramDatabase(["a!?#", "b!", "c!"], n=1),
+                sw_luadocs.extract.NgramSearchEngine(["a!?#", "b!", "c!"], n=1),
                 None,
                 ["a!?#", "b!", "c!"],
                 0.25,
@@ -435,7 +437,7 @@ class TestMatchTxtMultiple(unittest.TestCase):
             ),
             (
                 ["a", "b", "c"],
-                sw_luadocs.extract.NgramDatabase(["a!", "b!?#", "c!"], n=1),
+                sw_luadocs.extract.NgramSearchEngine(["a!", "b!?#", "c!"], n=1),
                 None,
                 ["a!", "b!?#", "c!"],
                 0.25,
@@ -443,16 +445,16 @@ class TestMatchTxtMultiple(unittest.TestCase):
             ),
             (
                 ["a", "b", "c"],
-                sw_luadocs.extract.NgramDatabase(["a!", "b!", "c!?#"], n=1),
+                sw_luadocs.extract.NgramSearchEngine(["a!", "b!", "c!?#"], n=1),
                 None,
                 ["a!", "b!", "c!?#"],
                 0.25,
                 None,
             ),
-            ([], sw_luadocs.extract.NgramDatabase(["a"], n=1), {}, [], 1.0, {}),
+            ([], sw_luadocs.extract.NgramSearchEngine(["a"], n=1), {}, [], 1.0, {}),
             (
                 ["a"],
-                sw_luadocs.extract.NgramDatabase(["a!", "b!"], n=1),
+                sw_luadocs.extract.NgramSearchEngine(["a!", "b!"], n=1),
                 {},
                 ["a!"],
                 0.5,
@@ -460,7 +462,7 @@ class TestMatchTxtMultiple(unittest.TestCase):
             ),
             (
                 [1],
-                sw_luadocs.extract.NgramDatabase(["1!", "2!"], n=1),
+                sw_luadocs.extract.NgramSearchEngine(["1!", "2!"], n=1),
                 {},
                 ["1!"],
                 0.5,
@@ -468,7 +470,7 @@ class TestMatchTxtMultiple(unittest.TestCase):
             ),
             (
                 ["a", "b", "c"],
-                sw_luadocs.extract.NgramDatabase(["a!", "b!", "c!"], n=1),
+                sw_luadocs.extract.NgramSearchEngine(["a!", "b!", "c!"], n=1),
                 {},
                 ["a!", "b!", "c!"],
                 0.5,
@@ -476,7 +478,7 @@ class TestMatchTxtMultiple(unittest.TestCase):
             ),
             (
                 [1, 2, 3],
-                sw_luadocs.extract.NgramDatabase(["1!", "2!", "3!"], n=1),
+                sw_luadocs.extract.NgramSearchEngine(["1!", "2!", "3!"], n=1),
                 {},
                 ["1!", "2!", "3!"],
                 0.5,
@@ -484,7 +486,7 @@ class TestMatchTxtMultiple(unittest.TestCase):
             ),
             (
                 ["a", "b", "c"],
-                sw_luadocs.extract.NgramDatabase(["a!?#", "b!", "c!"], n=1),
+                sw_luadocs.extract.NgramSearchEngine(["a!?#", "b!", "c!"], n=1),
                 {},
                 ["a!?#", "b!", "c!"],
                 0.25,
@@ -492,7 +494,7 @@ class TestMatchTxtMultiple(unittest.TestCase):
             ),
             (
                 ["a", "b", "c"],
-                sw_luadocs.extract.NgramDatabase(["a!", "b!?#", "c!"], n=1),
+                sw_luadocs.extract.NgramSearchEngine(["a!", "b!?#", "c!"], n=1),
                 {},
                 ["a!", "b!?#", "c!"],
                 0.25,
@@ -500,7 +502,7 @@ class TestMatchTxtMultiple(unittest.TestCase):
             ),
             (
                 ["a", "b", "c"],
-                sw_luadocs.extract.NgramDatabase(["a!", "b!", "c!?#"], n=1),
+                sw_luadocs.extract.NgramSearchEngine(["a!", "b!", "c!?#"], n=1),
                 {},
                 ["a!", "b!", "c!?#"],
                 0.25,
@@ -508,7 +510,7 @@ class TestMatchTxtMultiple(unittest.TestCase):
             ),
             (
                 ["a"],
-                sw_luadocs.extract.NgramDatabase([], n=1),
+                sw_luadocs.extract.NgramSearchEngine([], n=1),
                 {"a": ("a!", 0.5)},
                 ["a!"],
                 0.5,
@@ -516,7 +518,7 @@ class TestMatchTxtMultiple(unittest.TestCase):
             ),
             (
                 [1],
-                sw_luadocs.extract.NgramDatabase([], n=1),
+                sw_luadocs.extract.NgramSearchEngine([], n=1),
                 {"1": ("1!", 0.5)},
                 ["1!"],
                 0.5,
@@ -524,7 +526,7 @@ class TestMatchTxtMultiple(unittest.TestCase):
             ),
             (
                 ["a", "b", "c"],
-                sw_luadocs.extract.NgramDatabase([], n=1),
+                sw_luadocs.extract.NgramSearchEngine([], n=1),
                 {"a": ("a!", 0.5), "b": ("b!", 0.5), "c": ("c!", 0.5)},
                 ["a!", "b!", "c!"],
                 0.5,
@@ -532,7 +534,7 @@ class TestMatchTxtMultiple(unittest.TestCase):
             ),
             (
                 [1, 2, 3],
-                sw_luadocs.extract.NgramDatabase([], n=1),
+                sw_luadocs.extract.NgramSearchEngine([], n=1),
                 {"1": ("1!", 0.5), "2": ("2!", 0.5), "3": ("3!", 0.5)},
                 ["1!", "2!", "3!"],
                 0.5,
@@ -540,7 +542,7 @@ class TestMatchTxtMultiple(unittest.TestCase):
             ),
             (
                 ["a", "b", "c"],
-                sw_luadocs.extract.NgramDatabase([], n=1),
+                sw_luadocs.extract.NgramSearchEngine([], n=1),
                 {"a": ("a!?#", 0.25), "b": ("b!", 0.5), "c": ("c!", 0.5)},
                 ["a!?#", "b!", "c!"],
                 0.25,
@@ -548,7 +550,7 @@ class TestMatchTxtMultiple(unittest.TestCase):
             ),
             (
                 ["a", "b", "c"],
-                sw_luadocs.extract.NgramDatabase([], n=1),
+                sw_luadocs.extract.NgramSearchEngine([], n=1),
                 {"a": ("a!", 0.5), "b": ("b!?#", 0.25), "c": ("c!", 0.5)},
                 ["a!", "b!?#", "c!"],
                 0.25,
@@ -556,7 +558,7 @@ class TestMatchTxtMultiple(unittest.TestCase):
             ),
             (
                 ["a", "b", "c"],
-                sw_luadocs.extract.NgramDatabase([], n=1),
+                sw_luadocs.extract.NgramSearchEngine([], n=1),
                 {"a": ("a!", 0.5), "b": ("b!", 0.5), "c": ("c!?#", 0.25)},
                 ["a!", "b!", "c!?#"],
                 0.25,
@@ -565,7 +567,7 @@ class TestMatchTxtMultiple(unittest.TestCase):
         ]:
             with self.subTest(
                 ocr_txt_list=input_ocr_txt_list,
-                ext_txt_db=input_ext_txt_db,
+                ext_txt_eng=input_ext_txt_eng,
                 cache=input_cache,
             ):
                 actual_cache = input_cache.copy() if input_cache is not None else None
@@ -573,7 +575,7 @@ class TestMatchTxtMultiple(unittest.TestCase):
                     actual_ext_txt_list,
                     actual_score,
                 ) = sw_luadocs.extract.match_txt_multiple(
-                    input_ocr_txt_list, input_ext_txt_db, cache=actual_cache
+                    input_ocr_txt_list, input_ext_txt_eng, cache=actual_cache
                 )
                 self.assertEqual(actual_ext_txt_list, expected_ext_txt_list)
                 self.assertEqual(actual_score, expected_score)
@@ -582,31 +584,33 @@ class TestMatchTxtMultiple(unittest.TestCase):
 
 class TestMatchTxtRepack(unittest.TestCase):
     def test_invalid_type(self):
-        for pak_txt_list_list, ext_txt_db, cache in [
+        for pak_txt_list_list, ext_txt_eng, cache in [
             ([], None, {}),
-            ([], sw_luadocs.extract.NgramDatabase(["a"]), []),
+            ([], sw_luadocs.extract.NgramSearchEngine(["a"]), []),
         ]:
             with self.subTest(
-                pak_txt_list_list=pak_txt_list_list, ext_txt_db=ext_txt_db, cache=cache
+                pak_txt_list_list=pak_txt_list_list,
+                ext_txt_eng=ext_txt_eng,
+                cache=cache,
             ):
                 with self.assertRaises(TypeError):
                     sw_luadocs.extract.match_txt_repack(
-                        pak_txt_list_list, ext_txt_db, cache=cache
+                        pak_txt_list_list, ext_txt_eng, cache=cache
                     )
 
     def test_main(self):
         for (
             input_pak_txt_list_list,
-            input_ext_txt_db,
+            input_ext_txt_eng,
             input_cache,
             expected_ext_txt_list,
             expected_score,
             expected_cache,
         ) in [
-            ([], sw_luadocs.extract.NgramDatabase(["a"], n=1), None, [], 1.0, None),
+            ([], sw_luadocs.extract.NgramSearchEngine(["a"], n=1), None, [], 1.0, None),
             (
                 [["a", "b", "c"]],
-                sw_luadocs.extract.NgramDatabase(["a!", "b!", "c!"], n=1),
+                sw_luadocs.extract.NgramSearchEngine(["a!", "b!", "c!"], n=1),
                 None,
                 ["a!", "b!", "c!"],
                 0.5,
@@ -614,7 +618,7 @@ class TestMatchTxtRepack(unittest.TestCase):
             ),
             (
                 [[1, 2, 3]],
-                sw_luadocs.extract.NgramDatabase(["1!", "2!", "3!"], n=1),
+                sw_luadocs.extract.NgramSearchEngine(["1!", "2!", "3!"], n=1),
                 None,
                 ["1!", "2!", "3!"],
                 0.5,
@@ -622,7 +626,7 @@ class TestMatchTxtRepack(unittest.TestCase):
             ),
             (
                 [["a", "b", "c"], ["d", "e", "f"], ["g", "h", "i"]],
-                sw_luadocs.extract.NgramDatabase(
+                sw_luadocs.extract.NgramSearchEngine(
                     ["a!", "b!", "c!", "d!?#", "e!?#", "f!?#", "g!?#", "h!?#", "i!?#"],
                     n=1,
                 ),
@@ -633,7 +637,7 @@ class TestMatchTxtRepack(unittest.TestCase):
             ),
             (
                 [["a", "b", "c"], ["d", "e", "f"], ["g", "h", "i"]],
-                sw_luadocs.extract.NgramDatabase(
+                sw_luadocs.extract.NgramSearchEngine(
                     ["a!?#", "b!?#", "c!?#", "d!", "e!", "f!", "g!?#", "h!?#", "i!?#"],
                     n=1,
                 ),
@@ -644,7 +648,7 @@ class TestMatchTxtRepack(unittest.TestCase):
             ),
             (
                 [["a", "b", "c"], ["d", "e", "f"], ["g", "h", "i"]],
-                sw_luadocs.extract.NgramDatabase(
+                sw_luadocs.extract.NgramSearchEngine(
                     ["a!?#", "b!?#", "c!?#", "d!?#", "e!?#", "f!?#", "g!", "h!", "i!"],
                     n=1,
                 ),
@@ -653,10 +657,10 @@ class TestMatchTxtRepack(unittest.TestCase):
                 0.5,
                 None,
             ),
-            ([], sw_luadocs.extract.NgramDatabase(["a"], n=1), {}, [], 1.0, {}),
+            ([], sw_luadocs.extract.NgramSearchEngine(["a"], n=1), {}, [], 1.0, {}),
             (
                 [["a", "b", "c"]],
-                sw_luadocs.extract.NgramDatabase(["a!", "b!", "c!"], n=1),
+                sw_luadocs.extract.NgramSearchEngine(["a!", "b!", "c!"], n=1),
                 {},
                 ["a!", "b!", "c!"],
                 0.5,
@@ -664,7 +668,7 @@ class TestMatchTxtRepack(unittest.TestCase):
             ),
             (
                 [[1, 2, 3]],
-                sw_luadocs.extract.NgramDatabase(["1!", "2!", "3!"], n=1),
+                sw_luadocs.extract.NgramSearchEngine(["1!", "2!", "3!"], n=1),
                 {},
                 ["1!", "2!", "3!"],
                 0.5,
@@ -672,7 +676,7 @@ class TestMatchTxtRepack(unittest.TestCase):
             ),
             (
                 [["a", "b", "c"], ["d", "e", "f"], ["g", "h", "i"]],
-                sw_luadocs.extract.NgramDatabase(
+                sw_luadocs.extract.NgramSearchEngine(
                     ["a!", "b!", "c!", "d!?#", "e!?#", "f!?#", "g!?#", "h!?#", "i!?#"],
                     n=1,
                 ),
@@ -693,7 +697,7 @@ class TestMatchTxtRepack(unittest.TestCase):
             ),
             (
                 [["a", "b", "c"], ["d", "e", "f"], ["g", "h", "i"]],
-                sw_luadocs.extract.NgramDatabase(
+                sw_luadocs.extract.NgramSearchEngine(
                     ["a!?#", "b!?#", "c!?#", "d!", "e!", "f!", "g!?#", "h!?#", "i!?#"],
                     n=1,
                 ),
@@ -714,7 +718,7 @@ class TestMatchTxtRepack(unittest.TestCase):
             ),
             (
                 [["a", "b", "c"], ["d", "e", "f"], ["g", "h", "i"]],
-                sw_luadocs.extract.NgramDatabase(
+                sw_luadocs.extract.NgramSearchEngine(
                     ["a!?#", "b!?#", "c!?#", "d!?#", "e!?#", "f!?#", "g!", "h!", "i!"],
                     n=1,
                 ),
@@ -735,7 +739,7 @@ class TestMatchTxtRepack(unittest.TestCase):
             ),
             (
                 [["a", "b", "c"]],
-                sw_luadocs.extract.NgramDatabase([], n=1),
+                sw_luadocs.extract.NgramSearchEngine([], n=1),
                 {"a": ("a!", 0.5), "b": ("b!", 0.5), "c": ("c!", 0.5)},
                 ["a!", "b!", "c!"],
                 0.5,
@@ -743,7 +747,7 @@ class TestMatchTxtRepack(unittest.TestCase):
             ),
             (
                 [[1, 2, 3]],
-                sw_luadocs.extract.NgramDatabase([], n=1),
+                sw_luadocs.extract.NgramSearchEngine([], n=1),
                 {"1": ("1!", 0.5), "2": ("2!", 0.5), "3": ("3!", 0.5)},
                 ["1!", "2!", "3!"],
                 0.5,
@@ -751,7 +755,7 @@ class TestMatchTxtRepack(unittest.TestCase):
             ),
             (
                 [["a", "b", "c"], ["d", "e", "f"], ["g", "h", "i"]],
-                sw_luadocs.extract.NgramDatabase([], n=1),
+                sw_luadocs.extract.NgramSearchEngine([], n=1),
                 {
                     "a": ("a!", 0.5),
                     "b": ("b!", 0.5),
@@ -779,7 +783,7 @@ class TestMatchTxtRepack(unittest.TestCase):
             ),
             (
                 [["a", "b", "c"], ["d", "e", "f"], ["g", "h", "i"]],
-                sw_luadocs.extract.NgramDatabase([], n=1),
+                sw_luadocs.extract.NgramSearchEngine([], n=1),
                 {
                     "a": ("a!?#", 0.25),
                     "b": ("b!?#", 0.25),
@@ -807,7 +811,7 @@ class TestMatchTxtRepack(unittest.TestCase):
             ),
             (
                 [["a", "b", "c"], ["d", "e", "f"], ["g", "h", "i"]],
-                sw_luadocs.extract.NgramDatabase([], n=1),
+                sw_luadocs.extract.NgramSearchEngine([], n=1),
                 {
                     "a": ("a!?#", 0.25),
                     "b": ("b!?#", 0.25),
@@ -836,12 +840,12 @@ class TestMatchTxtRepack(unittest.TestCase):
         ]:
             with self.subTest(
                 pak_txt_list_list=input_pak_txt_list_list,
-                ext_txt_db=input_ext_txt_db,
+                ext_txt_eng=input_ext_txt_eng,
                 cache=input_cache,
             ):
                 actual_cache = input_cache.copy() if input_cache is not None else None
                 actual_ext_txt_list, actual_score = sw_luadocs.extract.match_txt_repack(
-                    input_pak_txt_list_list, input_ext_txt_db, cache=actual_cache
+                    input_pak_txt_list_list, input_ext_txt_eng, cache=actual_cache
                 )
                 self.assertEqual(actual_ext_txt_list, expected_ext_txt_list)
                 self.assertEqual(actual_score, expected_score)
@@ -856,63 +860,69 @@ class TestMatchTxtLeft(unittest.TestCase):
     def test_invalid_value(self):
         with self.assertRaises(ValueError):
             sw_luadocs.extract.match_txt_left(
-                [], sw_luadocs.extract.NgramDatabase(["a"])
+                [], sw_luadocs.extract.NgramSearchEngine(["a"])
             )
 
     def test_main(self):
         for (
             input_ocr_txt_list,
-            input_ext_txt_db,
+            input_ext_txt_eng,
             input_sep,
             expected_ext_txt,
             expected_adv,
         ) in [
-            (["a"], sw_luadocs.extract.NgramDatabase(["ab", "bc"], n=1), "\n", "ab", 1),
+            (
+                ["a"],
+                sw_luadocs.extract.NgramSearchEngine(["ab", "bc"], n=1),
+                "\n",
+                "ab",
+                1,
+            ),
             (
                 ["a", "b", "c"],
-                sw_luadocs.extract.NgramDatabase(["a"], n=3),
+                sw_luadocs.extract.NgramSearchEngine(["a"], n=3),
                 ",",
                 "a",
                 1,
             ),
             (
                 ["a", "b", "c"],
-                sw_luadocs.extract.NgramDatabase(["a,b"], n=3),
+                sw_luadocs.extract.NgramSearchEngine(["a,b"], n=3),
                 ",",
                 "a,b",
                 2,
             ),
             (
                 ["a", "b", "c"],
-                sw_luadocs.extract.NgramDatabase(["a,b,c"], n=3),
+                sw_luadocs.extract.NgramSearchEngine(["a,b,c"], n=3),
                 ",",
                 "a,b,c",
                 3,
             ),
             (
                 ["a", "b", "c"],
-                sw_luadocs.extract.NgramDatabase(["a:b:c"], n=3),
+                sw_luadocs.extract.NgramSearchEngine(["a:b:c"], n=3),
                 ":",
                 "a:b:c",
                 3,
             ),
             (
                 [1, 2, 3],
-                sw_luadocs.extract.NgramDatabase(["14243"], n=3),
+                sw_luadocs.extract.NgramSearchEngine(["14243"], n=3),
                 4,
                 "14243",
                 3,
             ),
             (
                 ["a", "b", "c"],
-                sw_luadocs.extract.NgramDatabase(["a", "a,b", "a,b,c"], n=3),
+                sw_luadocs.extract.NgramSearchEngine(["a", "a,b", "a,b,c"], n=3),
                 ",",
                 "a",
                 1,
             ),
             (
                 ["abc", "def", "ghi"],
-                sw_luadocs.extract.NgramDatabase(
+                sw_luadocs.extract.NgramSearchEngine(
                     ["ghi", "abc,def", "abc:def:jkl"], n=1
                 ),
                 ":",
@@ -922,11 +932,11 @@ class TestMatchTxtLeft(unittest.TestCase):
         ]:
             with self.subTest(
                 ocr_txt_list=input_ocr_txt_list,
-                ext_txt_db=input_ext_txt_db,
+                ext_txt_eng=input_ext_txt_eng,
                 sep=input_sep,
             ):
                 actual_ext_txt, actual_adv = sw_luadocs.extract.match_txt_left(
-                    input_ocr_txt_list, input_ext_txt_db, sep=input_sep
+                    input_ocr_txt_list, input_ext_txt_eng, sep=input_sep
                 )
                 self.assertEqual(actual_ext_txt, expected_ext_txt)
                 self.assertEqual(actual_adv, expected_adv)
@@ -940,62 +950,62 @@ class TestMatchTxtPack(unittest.TestCase):
     def test_main(self):
         for (
             input_ocr_txt_list,
-            input_ext_txt_db,
+            input_ext_txt_eng,
             input_sep,
             expected_ext_txt_list,
         ) in [
-            ([], sw_luadocs.extract.NgramDatabase([""], n=1), "", []),
-            (["abc"], sw_luadocs.extract.NgramDatabase(["def"], n=1), "", ["def"]),
+            ([], sw_luadocs.extract.NgramSearchEngine([""], n=1), "", []),
+            (["abc"], sw_luadocs.extract.NgramSearchEngine(["def"], n=1), "", ["def"]),
             (
                 ["abc", "def"],
-                sw_luadocs.extract.NgramDatabase(["abg", "deh"], n=1),
+                sw_luadocs.extract.NgramSearchEngine(["abg", "deh"], n=1),
                 "",
                 ["abg", "deh"],
             ),
             (
                 ["abc", "def"],
-                sw_luadocs.extract.NgramDatabase(["abcdef"], n=1),
+                sw_luadocs.extract.NgramSearchEngine(["abcdef"], n=1),
                 "",
                 ["abcdef"],
             ),
             (
                 ["abc", "def"],
-                sw_luadocs.extract.NgramDatabase(["abc#def", "abc,def"], n=1),
+                sw_luadocs.extract.NgramSearchEngine(["abc#def", "abc,def"], n=1),
                 ",",
                 ["abc,def"],
             ),
             (
                 [123, 456],
-                sw_luadocs.extract.NgramDatabase(["123789456"], n=1),
+                sw_luadocs.extract.NgramSearchEngine(["123789456"], n=1),
                 789,
                 ["123789456"],
             ),
             (
                 ["abc", "def", "ghi"],
-                sw_luadocs.extract.NgramDatabase(["abc!", "def!", "ghi!"], n=1),
+                sw_luadocs.extract.NgramSearchEngine(["abc!", "def!", "ghi!"], n=1),
                 "#",
                 ["abc!", "def!", "ghi!"],
             ),
             (
                 ["abc", "def", "ghi"],
-                sw_luadocs.extract.NgramDatabase(["abc#def", "ghi"], n=1),
+                sw_luadocs.extract.NgramSearchEngine(["abc#def", "ghi"], n=1),
                 "#",
                 ["abc#def", "ghi"],
             ),
             (
                 ["abc", "def", "ghi"],
-                sw_luadocs.extract.NgramDatabase(["abc", "def#ghi"], n=1),
+                sw_luadocs.extract.NgramSearchEngine(["abc", "def#ghi"], n=1),
                 "#",
                 ["abc", "def#ghi"],
             ),
         ]:
             with self.subTest(
                 ocr_txt_list=input_ocr_txt_list,
-                ext_txt_db=input_ext_txt_db,
+                ext_txt_eng=input_ext_txt_eng,
                 sep=input_sep,
             ):
                 actual_ext_txt_list = sw_luadocs.extract.match_txt_pack(
-                    input_ocr_txt_list, input_ext_txt_db, sep=input_sep
+                    input_ocr_txt_list, input_ext_txt_eng, sep=input_sep
                 )
                 self.assertEqual(actual_ext_txt_list, expected_ext_txt_list)
 
@@ -1008,7 +1018,7 @@ class TestMatchFlatDocMonoKind(unittest.TestCase):
                     sw_luadocs.flatdoc.FlatElem(txt="a", kind="body"),
                     sw_luadocs.flatdoc.FlatElem(txt="a", kind="code"),
                 ],
-                sw_luadocs.extract.NgramDatabase(["a"]),
+                sw_luadocs.extract.NgramSearchEngine(["a"]),
             )
 
     def test_invalid_type(self):
@@ -1016,23 +1026,23 @@ class TestMatchFlatDocMonoKind(unittest.TestCase):
             sw_luadocs.extract.match_flatdoc_monokind([], None)
 
     def test_main(self):
-        for input_ocr_flatdoc, input_ext_txt_db, input_sep, expected_ext_flatdoc in [
-            ([], sw_luadocs.extract.NgramDatabase(["a"], n=1), "\n\n", []),
+        for input_ocr_flatdoc, input_ext_txt_eng, input_sep, expected_ext_flatdoc in [
+            ([], sw_luadocs.extract.NgramSearchEngine(["a"], n=1), "\n\n", []),
             (
                 [sw_luadocs.flatdoc.FlatElem(txt="a", kind="code")],
-                sw_luadocs.extract.NgramDatabase(["b"], n=1),
+                sw_luadocs.extract.NgramSearchEngine(["b"], n=1),
                 "\n\n",
                 [sw_luadocs.flatdoc.FlatElem(txt="b", kind="code")],
             ),
             (
                 [sw_luadocs.flatdoc.FlatElem(txt="c", kind="body")],
-                sw_luadocs.extract.NgramDatabase(["d"], n=1),
+                sw_luadocs.extract.NgramSearchEngine(["d"], n=1),
                 "\n\n",
                 [sw_luadocs.flatdoc.FlatElem(txt="d", kind="body")],
             ),
             (
                 [sw_luadocs.flatdoc.FlatElem(txt="a\nb", kind="code")],
-                sw_luadocs.extract.NgramDatabase(["a!", "b!"], n=1),
+                sw_luadocs.extract.NgramSearchEngine(["a!", "b!"], n=1),
                 "\n\n",
                 [
                     sw_luadocs.flatdoc.FlatElem(txt="a!", kind="code"),
@@ -1044,7 +1054,7 @@ class TestMatchFlatDocMonoKind(unittest.TestCase):
                     sw_luadocs.flatdoc.FlatElem(txt="a", kind="code"),
                     sw_luadocs.flatdoc.FlatElem(txt="b", kind="code"),
                 ],
-                sw_luadocs.extract.NgramDatabase(["a\n\nb!"], n=1),
+                sw_luadocs.extract.NgramSearchEngine(["a\n\nb!"], n=1),
                 "\n\n",
                 [sw_luadocs.flatdoc.FlatElem(txt="a\n\nb!", kind="code")],
             ),
@@ -1053,7 +1063,7 @@ class TestMatchFlatDocMonoKind(unittest.TestCase):
                     sw_luadocs.flatdoc.FlatElem(txt="a", kind="code"),
                     sw_luadocs.flatdoc.FlatElem(txt="b", kind="code"),
                 ],
-                sw_luadocs.extract.NgramDatabase(["a!", "\nb!"], n=1),
+                sw_luadocs.extract.NgramSearchEngine(["a!", "\nb!"], n=1),
                 "\n\n",
                 [
                     sw_luadocs.flatdoc.FlatElem(txt="a!", kind="code"),
@@ -1065,7 +1075,7 @@ class TestMatchFlatDocMonoKind(unittest.TestCase):
                     sw_luadocs.flatdoc.FlatElem(txt="a", kind="code"),
                     sw_luadocs.flatdoc.FlatElem(txt="b", kind="code"),
                 ],
-                sw_luadocs.extract.NgramDatabase(["a\n\nb!", "a,b!"], n=1),
+                sw_luadocs.extract.NgramSearchEngine(["a\n\nb!", "a,b!"], n=1),
                 ",",
                 [sw_luadocs.flatdoc.FlatElem(txt="a,b!", kind="code")],
             ),
@@ -1074,50 +1084,52 @@ class TestMatchFlatDocMonoKind(unittest.TestCase):
                     sw_luadocs.flatdoc.FlatElem(txt="a", kind="code"),
                     sw_luadocs.flatdoc.FlatElem(txt="b", kind="code"),
                 ],
-                sw_luadocs.extract.NgramDatabase(["a\n\nb!", "a1b!"], n=1),
+                sw_luadocs.extract.NgramSearchEngine(["a\n\nb!", "a1b!"], n=1),
                 1,
                 [sw_luadocs.flatdoc.FlatElem(txt="a1b!", kind="code")],
             ),
         ]:
             with self.subTest(
                 ocr_flatdoc=input_ocr_flatdoc,
-                ext_txt_db=input_ext_txt_db,
+                ext_txt_eng=input_ext_txt_eng,
                 sep=input_sep,
             ):
                 actual_ext_flatdoc = sw_luadocs.extract.match_flatdoc_monokind(
-                    input_ocr_flatdoc, input_ext_txt_db, sep=input_sep
+                    input_ocr_flatdoc, input_ext_txt_eng, sep=input_sep
                 )
                 self.assertEqual(actual_ext_flatdoc, expected_ext_flatdoc)
 
 
 class TestMatchFlatDoc(unittest.TestCase):
     def test_invalid_type(self):
-        for ocr_flatdoc, ext_txt_db, sep in [
-            ([None], sw_luadocs.extract.NgramDatabase(["a"]), "\n\n"),
+        for ocr_flatdoc, ext_txt_eng, sep in [
+            ([None], sw_luadocs.extract.NgramSearchEngine(["a"]), "\n\n"),
             ([], {"a"}, "\n\n"),
         ]:
-            with self.subTest(ocr_flatdoc=ocr_flatdoc, ext_txt_db=ext_txt_db, sep=sep):
+            with self.subTest(
+                ocr_flatdoc=ocr_flatdoc, ext_txt_eng=ext_txt_eng, sep=sep
+            ):
                 with self.assertRaises(TypeError):
-                    sw_luadocs.extract.match_flatdoc(ocr_flatdoc, ext_txt_db, sep=sep)
+                    sw_luadocs.extract.match_flatdoc(ocr_flatdoc, ext_txt_eng, sep=sep)
 
     def test_main(self):
-        for input_ocr_flatdoc, input_ext_txt_db, input_sep, expected_ext_flatdoc in [
-            ([], sw_luadocs.extract.NgramDatabase(["a"], n=1), "", []),
+        for input_ocr_flatdoc, input_ext_txt_eng, input_sep, expected_ext_flatdoc in [
+            ([], sw_luadocs.extract.NgramSearchEngine(["a"], n=1), "", []),
             (
                 [sw_luadocs.flatdoc.FlatElem(txt="a", kind="head")],
-                sw_luadocs.extract.NgramDatabase(["b"], n=1),
+                sw_luadocs.extract.NgramSearchEngine(["b"], n=1),
                 "",
                 [sw_luadocs.flatdoc.FlatElem(txt="b", kind="head")],
             ),
             (
                 [sw_luadocs.flatdoc.FlatElem(txt="c", kind="body")],
-                sw_luadocs.extract.NgramDatabase(["d"], n=1),
+                sw_luadocs.extract.NgramSearchEngine(["d"], n=1),
                 "",
                 [sw_luadocs.flatdoc.FlatElem(txt="d", kind="body")],
             ),
             (
                 [sw_luadocs.flatdoc.FlatElem(txt="e", kind="code")],
-                sw_luadocs.extract.NgramDatabase(["f"], n=1),
+                sw_luadocs.extract.NgramSearchEngine(["f"], n=1),
                 "",
                 [sw_luadocs.flatdoc.FlatElem(txt="f", kind="code")],
             ),
@@ -1126,7 +1138,7 @@ class TestMatchFlatDoc(unittest.TestCase):
                     sw_luadocs.flatdoc.FlatElem(txt="a", kind="head"),
                     sw_luadocs.flatdoc.FlatElem(txt="b", kind="head"),
                 ],
-                sw_luadocs.extract.NgramDatabase(["a\n\nb", "a!", "b!"], n=1),
+                sw_luadocs.extract.NgramSearchEngine(["a\n\nb", "a!", "b!"], n=1),
                 "\n\n",
                 [sw_luadocs.flatdoc.FlatElem(txt="a\n\nb", kind="head")],
             ),
@@ -1135,7 +1147,7 @@ class TestMatchFlatDoc(unittest.TestCase):
                     sw_luadocs.flatdoc.FlatElem(txt="a", kind="body"),
                     sw_luadocs.flatdoc.FlatElem(txt="b", kind="body"),
                 ],
-                sw_luadocs.extract.NgramDatabase(["a\n\nb", "a!", "b!"], n=1),
+                sw_luadocs.extract.NgramSearchEngine(["a\n\nb", "a!", "b!"], n=1),
                 "\n\n",
                 [sw_luadocs.flatdoc.FlatElem(txt="a\n\nb", kind="body")],
             ),
@@ -1144,7 +1156,7 @@ class TestMatchFlatDoc(unittest.TestCase):
                     sw_luadocs.flatdoc.FlatElem(txt="a", kind="code"),
                     sw_luadocs.flatdoc.FlatElem(txt="b", kind="code"),
                 ],
-                sw_luadocs.extract.NgramDatabase(["a\n\nb", "a!", "b!"], n=1),
+                sw_luadocs.extract.NgramSearchEngine(["a\n\nb", "a!", "b!"], n=1),
                 "\n\n",
                 [sw_luadocs.flatdoc.FlatElem(txt="a\n\nb", kind="code")],
             ),
@@ -1153,7 +1165,7 @@ class TestMatchFlatDoc(unittest.TestCase):
                     sw_luadocs.flatdoc.FlatElem(txt="a", kind="code"),
                     sw_luadocs.flatdoc.FlatElem(txt="b", kind="code"),
                 ],
-                sw_luadocs.extract.NgramDatabase(["a,b", "a1b"], n=1),
+                sw_luadocs.extract.NgramSearchEngine(["a,b", "a1b"], n=1),
                 ",",
                 [sw_luadocs.flatdoc.FlatElem(txt="a,b", kind="code")],
             ),
@@ -1162,7 +1174,7 @@ class TestMatchFlatDoc(unittest.TestCase):
                     sw_luadocs.flatdoc.FlatElem(txt="a", kind="code"),
                     sw_luadocs.flatdoc.FlatElem(txt="b", kind="code"),
                 ],
-                sw_luadocs.extract.NgramDatabase(["a,b", "a1b"], n=1),
+                sw_luadocs.extract.NgramSearchEngine(["a,b", "a1b"], n=1),
                 1,
                 [sw_luadocs.flatdoc.FlatElem(txt="a1b", kind="code")],
             ),
@@ -1171,7 +1183,7 @@ class TestMatchFlatDoc(unittest.TestCase):
                     sw_luadocs.flatdoc.FlatElem(txt="a", kind="head"),
                     sw_luadocs.flatdoc.FlatElem(txt="b", kind="body"),
                 ],
-                sw_luadocs.extract.NgramDatabase(["a\n\nb", "a!", "b!"], n=1),
+                sw_luadocs.extract.NgramSearchEngine(["a\n\nb", "a!", "b!"], n=1),
                 "\n\n",
                 [
                     sw_luadocs.flatdoc.FlatElem(txt="a!", kind="head"),
@@ -1183,7 +1195,7 @@ class TestMatchFlatDoc(unittest.TestCase):
                     sw_luadocs.flatdoc.FlatElem(txt="a", kind="body"),
                     sw_luadocs.flatdoc.FlatElem(txt="b", kind="code"),
                 ],
-                sw_luadocs.extract.NgramDatabase(["a\n\nb", "a!", "b!"], n=1),
+                sw_luadocs.extract.NgramSearchEngine(["a\n\nb", "a!", "b!"], n=1),
                 "\n\n",
                 [
                     sw_luadocs.flatdoc.FlatElem(txt="a!", kind="body"),
@@ -1195,7 +1207,7 @@ class TestMatchFlatDoc(unittest.TestCase):
                     sw_luadocs.flatdoc.FlatElem(txt="a", kind="code"),
                     sw_luadocs.flatdoc.FlatElem(txt="b", kind="head"),
                 ],
-                sw_luadocs.extract.NgramDatabase(["a\n\nb", "a!", "b!"], n=1),
+                sw_luadocs.extract.NgramSearchEngine(["a\n\nb", "a!", "b!"], n=1),
                 "\n\n",
                 [
                     sw_luadocs.flatdoc.FlatElem(txt="a!", kind="code"),
@@ -1211,7 +1223,7 @@ class TestMatchFlatDoc(unittest.TestCase):
                     sw_luadocs.flatdoc.FlatElem(txt="c1", kind="code"),
                     sw_luadocs.flatdoc.FlatElem(txt="c2", kind="code"),
                 ],
-                sw_luadocs.extract.NgramDatabase(
+                sw_luadocs.extract.NgramSearchEngine(
                     [
                         "h1",
                         "h2",
@@ -1244,7 +1256,7 @@ class TestMatchFlatDoc(unittest.TestCase):
                     sw_luadocs.flatdoc.FlatElem(txt="c1", kind="code"),
                     sw_luadocs.flatdoc.FlatElem(txt="c2", kind="code"),
                 ],
-                sw_luadocs.extract.NgramDatabase(
+                sw_luadocs.extract.NgramSearchEngine(
                     [
                         "h1!",
                         "h2!",
@@ -1268,10 +1280,10 @@ class TestMatchFlatDoc(unittest.TestCase):
         ]:
             with self.subTest(
                 ocr_flatdoc=input_ocr_flatdoc,
-                ext_txt_db=input_ext_txt_db,
+                ext_txt_eng=input_ext_txt_eng,
                 sep=input_sep,
             ):
                 actual_ext_flatdoc = sw_luadocs.extract.match_flatdoc(
-                    input_ocr_flatdoc, input_ext_txt_db, sep=input_sep
+                    input_ocr_flatdoc, input_ext_txt_eng, sep=input_sep
                 )
                 self.assertEqual(actual_ext_flatdoc, expected_ext_flatdoc)
