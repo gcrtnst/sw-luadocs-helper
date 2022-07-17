@@ -126,23 +126,6 @@ class NgramSearchEngine:
         return result_list[0]
 
 
-def match_txt_single(ocr_txt, ext_txt_eng, *, cache=None):
-    ocr_txt = str(ocr_txt)
-    if not isinstance(ext_txt_eng, NgramSearchEngine):
-        raise TypeError
-
-    if cache is None:
-        return ext_txt_eng.search_lucky(ocr_txt)
-    if not isinstance(cache, dict):
-        raise TypeError
-
-    result = cache.get(ocr_txt)
-    if result is None:
-        result = ext_txt_eng.search_lucky(ocr_txt)
-        cache[ocr_txt] = result
-    return result
-
-
 def match_txt_multiple(ocr_txt_list, ext_txt_eng):
     ocr_txt_list = list(map(str, ocr_txt_list))
     if not isinstance(ext_txt_eng, NgramSearchEngine):
@@ -151,7 +134,7 @@ def match_txt_multiple(ocr_txt_list, ext_txt_eng):
     ext_txt_list = []
     min_score = 1.0
     for ocr_txt in ocr_txt_list:
-        ext_txt, score = match_txt_single(ocr_txt, ext_txt_eng)
+        ext_txt, score = ext_txt_eng.search_lucky(ocr_txt)
         ext_txt_list.append(ext_txt)
         min_score = min(min_score, score)
     return ext_txt_list, min_score
