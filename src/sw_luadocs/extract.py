@@ -1,5 +1,3 @@
-import dataclasses
-import Levenshtein
 import pefile
 import re
 
@@ -183,47 +181,6 @@ def match_flatdoc_ngram(ocr_flatdoc, ext_txt_db, *, sep="\n\n"):
         )
         ext_flatdoc.extend(ext_flatdoc_monokind)
     return ext_flatdoc
-
-
-def match_txt(ocr_txt, ext_txt_set):
-    ocr_txt = str(ocr_txt)
-    ext_txt_set = set(map(str, ext_txt_set))
-
-    best_ext_txt = None
-    best_ld = None
-    ext_txt_list = sorted(ext_txt_set)
-    for ext_txt in ext_txt_list:
-        ld = Levenshtein.distance(ocr_txt, ext_txt)
-        if best_ld is None or ld < best_ld:
-            best_ext_txt = ext_txt
-            best_ld = ld
-
-    if best_ext_txt is None or best_ld is None:
-        raise ValueError
-    return best_ext_txt, best_ld
-
-
-def match_flatelem(ocr_flatelem, ext_txt_set):
-    if not isinstance(ocr_flatelem, dot_flatdoc.FlatElem):
-        raise TypeError
-
-    ocr_txt = ocr_flatelem.txt
-    ext_txt, ld = match_txt(ocr_txt, ext_txt_set)
-    ext_flatelem = dataclasses.replace(ocr_flatelem, txt=ext_txt)
-    return ext_flatelem, ld
-
-
-def match_flatdoc(ocr_flatdoc, ext_txt_set):
-    ocr_flatdoc = dot_flatdoc.as_flatdoc(ocr_flatdoc)
-    ext_txt_set = set(map(str, ext_txt_set))
-
-    ext_flatdoc = []
-    ld_sum = 0
-    for ocr_flatelem in ocr_flatdoc:
-        ext_flatelem, ld = match_flatelem(ocr_flatelem, ext_txt_set)
-        ext_flatdoc.append(ext_flatelem)
-        ld_sum += ld
-    return ext_flatdoc, ld_sum
 
 
 def extract(ocr_flatdoc, exe_bin, *, section_name, ngram, sep):
