@@ -170,6 +170,21 @@ def match_flatdoc_monokind(ocr_flatdoc, ext_txt_db, *, sep="\n\n"):
     return [dot_flatdoc.FlatElem(txt=ext_txt, kind=kind) for ext_txt in ext_txt_list]
 
 
+def match_flatdoc_ngram(ocr_flatdoc, ext_txt_db, *, sep="\n\n"):
+    ocr_flatdoc = dot_flatdoc.as_flatdoc(ocr_flatdoc)
+    sep = str(sep)
+    if not isinstance(ext_txt_db, NgramDatabase):
+        raise TypeError
+
+    ext_flatdoc = []
+    for ocr_flatdoc_monokind in dot_flatdoc.split_flatdoc_by_kind(ocr_flatdoc):
+        ext_flatdoc_monokind = match_flatdoc_monokind(
+            ocr_flatdoc_monokind, ext_txt_db, sep=sep
+        )
+        ext_flatdoc.extend(ext_flatdoc_monokind)
+    return ext_flatdoc
+
+
 def match_txt(ocr_txt, ext_txt_set):
     ocr_txt = str(ocr_txt)
     ext_txt_set = set(map(str, ext_txt_set))
