@@ -285,6 +285,17 @@ class TestMatchTxtSingle(unittest.TestCase):
                         ocr_txt, ext_txt_eng, cache=cache
                     )
 
+    def test_invalid_value(self):
+        for ocr_txt, ext_txt_eng, cache in [
+            ("a", sw_luadocs.extract.NgramSearchEngine(["a"], n=1), {"a": ("a", -0.1)}),
+            ("a", sw_luadocs.extract.NgramSearchEngine(["a"], n=1), {"a": ("a", 1.1)}),
+        ]:
+            with self.subTest(ocr_txt=ocr_txt, ext_txt_eng=ext_txt_eng, cache=cache):
+                with self.assertRaises(ValueError):
+                    sw_luadocs.extract.match_txt_single(
+                        ocr_txt, ext_txt_eng, cache=cache
+                    )
+
     def test_main(self):
         for (
             input_ocr_txt,
@@ -357,6 +368,14 @@ class TestMatchTxtSingle(unittest.TestCase):
                 "1?",
                 0.75,
                 {"1": ("1?", 0.75)},
+            ),
+            (
+                "a",
+                sw_luadocs.extract.NgramSearchEngine(["a!", "b!"], n=1),
+                {"a": (1, "0.75")},
+                "1",
+                0.75,
+                {"a": ("1", 0.75)},
             ),
         ]:
             with self.subTest(

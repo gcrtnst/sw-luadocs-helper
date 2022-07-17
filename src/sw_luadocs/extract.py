@@ -129,8 +129,15 @@ def match_txt_single(ocr_txt, ext_txt_eng, *, cache=None):
     result = cache.get(ocr_txt)
     if result is None:
         result = ext_txt_eng.search_lucky(ocr_txt)
-        cache[ocr_txt] = result
-    return result
+
+    ext_txt, score = result
+    ext_txt = str(ext_txt)
+    score = float(score)
+    if score < 0.0 or 1.0 < score:
+        raise ValueError
+    cache[ocr_txt] = ext_txt, score
+
+    return ext_txt, score
 
 
 def match_txt_multiple(ocr_txt_list, ext_txt_eng, *, cache=None):
