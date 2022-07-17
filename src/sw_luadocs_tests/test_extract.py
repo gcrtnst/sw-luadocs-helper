@@ -271,6 +271,104 @@ class TestNgramDatabaseMatchTxt(unittest.TestCase):
                 self.assertEqual(actual_score, expected_score)
 
 
+class TestMatchTxtSingle(unittest.TestCase):
+    def test_invalid_type(self):
+        for ocr_txt, ext_txt_db, cache in [
+            ("", None, {}),
+            ("", sw_luadocs.extract.NgramDatabase(["a"]), []),
+        ]:
+            with self.subTest(ocr_txt=ocr_txt, ext_txt_db=ext_txt_db, cache=cache):
+                with self.assertRaises(TypeError):
+                    sw_luadocs.extract.match_txt_single(
+                        ocr_txt, ext_txt_db, cache=cache
+                    )
+
+    def test_main(self):
+        for (
+            input_ocr_txt,
+            input_ext_txt_db,
+            input_cache,
+            expected_ext_txt,
+            expected_score,
+            expected_cache,
+        ) in [
+            (
+                "a",
+                sw_luadocs.extract.NgramDatabase(["a"], n=1),
+                None,
+                "a",
+                1.0,
+                None,
+            ),
+            (
+                "a",
+                sw_luadocs.extract.NgramDatabase(["a!", "b!"], n=1),
+                None,
+                "a!",
+                0.5,
+                None,
+            ),
+            (
+                1,
+                sw_luadocs.extract.NgramDatabase(["1!", "2!"], n=1),
+                None,
+                "1!",
+                0.5,
+                None,
+            ),
+            (
+                "a",
+                sw_luadocs.extract.NgramDatabase(["a"], n=1),
+                {},
+                "a",
+                1,
+                {"a": ("a", 1.0)},
+            ),
+            (
+                "a",
+                sw_luadocs.extract.NgramDatabase(["a!", "b!"], n=1),
+                {},
+                "a!",
+                0.5,
+                {"a": ("a!", 0.5)},
+            ),
+            (
+                1,
+                sw_luadocs.extract.NgramDatabase(["1!", "2!"], n=1),
+                {},
+                "1!",
+                0.5,
+                {"1": ("1!", 0.5)},
+            ),
+            (
+                "a",
+                sw_luadocs.extract.NgramDatabase(["a!", "b!"], n=1),
+                {"a": ("a?", 0.75)},
+                "a?",
+                0.75,
+                {"a": ("a?", 0.75)},
+            ),
+            (
+                1,
+                sw_luadocs.extract.NgramDatabase(["1!", "2!"], n=1),
+                {"1": ("1?", 0.75)},
+                "1?",
+                0.75,
+                {"1": ("1?", 0.75)},
+            ),
+        ]:
+            with self.subTest(
+                ocr_txt=input_ocr_txt, ext_txt_db=input_ext_txt_db, cache=input_cache
+            ):
+                actual_cache = input_cache.copy() if input_cache is not None else None
+                actual_ext_txt, actual_score = sw_luadocs.extract.match_txt_single(
+                    input_ocr_txt, input_ext_txt_db, cache=actual_cache
+                )
+                self.assertEqual(actual_ext_txt, expected_ext_txt)
+                self.assertEqual(actual_score, expected_score)
+                self.assertEqual(actual_cache, expected_cache)
+
+
 class TestMatchTxtLeft(unittest.TestCase):
     def test_invalid_type(self):
         with self.assertRaises(TypeError):

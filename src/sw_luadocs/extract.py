@@ -116,6 +116,23 @@ class NgramDatabase:
         return result_list[0]
 
 
+def match_txt_single(ocr_txt, ext_txt_db, *, cache=None):
+    ocr_txt = str(ocr_txt)
+    if not isinstance(ext_txt_db, NgramDatabase):
+        raise TypeError
+
+    if cache is None:
+        return ext_txt_db.match_txt(ocr_txt)
+    if not isinstance(cache, dict):
+        raise TypeError
+
+    result = cache.get(ocr_txt)
+    if result is None:
+        result = ext_txt_db.match_txt(ocr_txt)
+        cache[ocr_txt] = result
+    return result
+
+
 def match_txt_left(ocr_txt_list, ext_txt_db, *, sep="\n"):
     ocr_txt_list = list(map(str, ocr_txt_list))
     sep = str(sep)
