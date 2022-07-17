@@ -205,7 +205,7 @@ class TestNgramSearchEngineInit(unittest.TestCase):
                 self.assertEqual(actual_db._db, expected_db_db)
 
 
-class TestNgramSearchEngineSearchAll(unittest.TestCase):
+class TestNgramSearchEngineUnderSearch(unittest.TestCase):
     def test_main(self):
         for input_self, input_txt, expected_result_list in [
             (sw_luadocs.extract.NgramSearchEngine([], n=1), "", []),
@@ -232,8 +232,65 @@ class TestNgramSearchEngineSearchAll(unittest.TestCase):
             ),
         ]:
             with self.subTest(input_self=input_self, input_txt=input_txt):
-                actual_result_list = input_self.search_all(input_txt)
+                actual_result_list = input_self._search(input_txt)
                 self.assertEqual(actual_result_list, expected_result_list)
+
+
+class TestNgramSearchEnginSearchAll(unittest.TestCase):
+    def test_main(self):
+        for (
+            input_txt_set,
+            input_n,
+            input_cache,
+            input_txt,
+            expected_result_list,
+            expected_cache,
+        ) in [
+            ([], 1, {}, "", [], {"": []}),
+            ([], 1, {}, "abc", [], {"abc": []}),
+            ([], 1, {}, 123, [], {"123": []}),
+            (
+                ["abc", "abcdef", "def"],
+                1,
+                {},
+                "abc",
+                [("abc", 1.0), ("abcdef", 0.5), ("def", 0.0)],
+                {"abc": [("abc", 1.0), ("abcdef", 0.5), ("def", 0.0)]},
+            ),
+            (
+                ["123", "123456", "456"],
+                1,
+                {},
+                123,
+                [("123", 1.0), ("123456", 0.5), ("456", 0.0)],
+                {"123": [("123", 1.0), ("123456", 0.5), ("456", 0.0)]},
+            ),
+            (
+                [],
+                1,
+                {"abc": [("abc", 1.0), ("abcdef", 0.5), ("def", 0.0)]},
+                "abc",
+                [("abc", 1.0), ("abcdef", 0.5), ("def", 0.0)],
+                {"abc": [("abc", 1.0), ("abcdef", 0.5), ("def", 0.0)]},
+            ),
+            (
+                [],
+                1,
+                {"123": [("123", 1.0), ("123456", 0.5), ("456", 0.0)]},
+                123,
+                [("123", 1.0), ("123456", 0.5), ("456", 0.0)],
+                {"123": [("123", 1.0), ("123456", 0.5), ("456", 0.0)]},
+            ),
+        ]:
+            with self.subTest(
+                txt_set=input_txt_set, n=input_n, cache=input_cache, txt=input_txt
+            ):
+                eng = sw_luadocs.extract.NgramSearchEngine(input_txt_set, n=input_n)
+                eng._cache = input_cache.copy()
+                actual_result_list = eng.search_all(input_txt)
+                self.assertEqual(actual_result_list, expected_result_list)
+                self.assertEqual(eng._cache, expected_cache)
+                self.assertIsNot(eng._cache[str(input_txt)], actual_result_list)
 
 
 class TestNgramSearchEngineSearchLucky(unittest.TestCase):

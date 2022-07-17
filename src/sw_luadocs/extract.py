@@ -98,8 +98,9 @@ class NgramSearchEngine:
 
         self._n = n
         self._db = db
+        self._cache = {}
 
-    def search_all(self, txt):
+    def _search(self, txt):
         query_ngram = Ngram(txt, n=self._n)
 
         result_list = [
@@ -108,6 +109,15 @@ class NgramSearchEngine:
         ]
         result_list.sort(key=lambda result: (-result[1], result[0]))
         return result_list
+
+    def search_all(self, txt):
+        txt = str(txt)
+
+        result_list = self._cache.get(txt)
+        if result_list is None:
+            result_list = self._search(txt)
+            self._cache[txt] = result_list
+        return result_list[:]
 
     def search_lucky(self, txt):
         result_list = self.search_all(txt)
