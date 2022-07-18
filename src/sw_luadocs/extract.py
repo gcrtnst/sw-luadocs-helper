@@ -295,6 +295,31 @@ def match_flatdoc_monokind(
     raise RuntimeError
 
 
+def match_flatdoc(
+    ocr_flatdoc, ext_txt_eng, *, body_sep="\n\n", code_sep="\n\n", cache=None
+):
+    ocr_flatdoc = dot_flatdoc.as_flatdoc(ocr_flatdoc)
+    if not isinstance(ext_txt_eng, NgramSearchEngine):
+        raise TypeError
+    body_sep = str(body_sep)
+    code_sep = str(code_sep)
+    cache = as_cache(cache)
+
+    ext_flatdoc = []
+    min_score = 1.0
+    for ocr_flatdoc_monokind in dot_flatdoc.split_flatdoc_by_kind(ocr_flatdoc):
+        ext_flatdoc_monokind, score = match_flatdoc_monokind(
+            ocr_flatdoc_monokind,
+            ext_txt_eng,
+            body_sep=body_sep,
+            code_sep=code_sep,
+            cache=cache,
+        )
+        ext_flatdoc.extend(ext_flatdoc_monokind)
+        min_score = min(min_score, score)
+    return ext_flatdoc, min_score
+
+
 def match_txt_left(ocr_txt_list, ext_txt_eng, *, sep="\n"):
     ocr_txt_list = list(map(str, ocr_txt_list))
     sep = str(sep)
