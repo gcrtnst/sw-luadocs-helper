@@ -387,9 +387,11 @@ def match_flatdoc_old(ocr_flatdoc, ext_txt_eng, *, sep="\n\n"):
     return ext_flatdoc
 
 
-def extract(ocr_flatdoc, exe_bin, *, section_name, ngram, sep):
+def extract(ocr_flatdoc, exe_bin, *, section_name, ngram, body_sep, code_sep):
     section_bin = extract_section(exe_bin, section_name, ignore_padding=True)
     ext_txt_set = extract_strings(section_bin)
     ext_txt_eng = NgramSearchEngine(ext_txt_set, n=ngram)
-    ext_flatdoc = match_flatdoc_old(ocr_flatdoc, ext_txt_eng, sep=sep)
+    ext_flatdoc, _ = match_flatdoc(
+        ocr_flatdoc, ext_txt_eng, body_sep=body_sep, code_sep=code_sep
+    )
     return ext_flatdoc
