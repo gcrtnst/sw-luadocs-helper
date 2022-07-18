@@ -2714,7 +2714,7 @@ class TestMatchFlatDocMonoKindOld(unittest.TestCase):
                 self.assertEqual(actual_ext_flatdoc, expected_ext_flatdoc)
 
 
-class TestMatchFlatDoc(unittest.TestCase):
+class TestMatchFlatDocOld(unittest.TestCase):
     def test_invalid_type(self):
         for ocr_flatdoc, ext_txt_eng, sep in [
             ([None], sw_luadocs.extract.NgramSearchEngine(["a"]), "\n\n"),
@@ -2724,7 +2724,9 @@ class TestMatchFlatDoc(unittest.TestCase):
                 ocr_flatdoc=ocr_flatdoc, ext_txt_eng=ext_txt_eng, sep=sep
             ):
                 with self.assertRaises(TypeError):
-                    sw_luadocs.extract.match_flatdoc(ocr_flatdoc, ext_txt_eng, sep=sep)
+                    sw_luadocs.extract.match_flatdoc_old(
+                        ocr_flatdoc, ext_txt_eng, sep=sep
+                    )
 
     def test_main(self):
         for input_ocr_flatdoc, input_ext_txt_eng, input_sep, expected_ext_flatdoc in [
@@ -2897,7 +2899,7 @@ class TestMatchFlatDoc(unittest.TestCase):
                 ext_txt_eng=input_ext_txt_eng,
                 sep=input_sep,
             ):
-                actual_ext_flatdoc = sw_luadocs.extract.match_flatdoc(
+                actual_ext_flatdoc = sw_luadocs.extract.match_flatdoc_old(
                     input_ocr_flatdoc, input_ext_txt_eng, sep=input_sep
                 )
                 self.assertEqual(actual_ext_flatdoc, expected_ext_flatdoc)
