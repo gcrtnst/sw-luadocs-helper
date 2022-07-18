@@ -405,6 +405,21 @@ class TestMatchTxtSingle(unittest.TestCase):
         for ocr_txt, ext_txt_eng, cache in [
             ("a", sw_luadocs.extract.NgramSearchEngine(["a"], n=1), {"a": ("a", -0.1)}),
             ("a", sw_luadocs.extract.NgramSearchEngine(["a"], n=1), {"a": ("a", 1.1)}),
+            (
+                "a",
+                sw_luadocs.extract.NgramSearchEngine(["a"], n=1),
+                {"a": ("a", float("nan"))},
+            ),
+            (
+                "a",
+                sw_luadocs.extract.NgramSearchEngine(["a"], n=1),
+                {"a": ("a", float("inf"))},
+            ),
+            (
+                "a",
+                sw_luadocs.extract.NgramSearchEngine(["a"], n=1),
+                {"a": ("a", float("-inf"))},
+            ),
         ]:
             with self.subTest(ocr_txt=ocr_txt, ext_txt_eng=ext_txt_eng, cache=cache):
                 with self.assertRaises(ValueError):

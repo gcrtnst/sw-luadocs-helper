@@ -1,3 +1,4 @@
+import math
 import pefile
 import re
 
@@ -184,7 +185,7 @@ def match_txt_single(ocr_txt, ext_txt_eng, *, cache=None):
     ext_txt, score = result
     ext_txt = str(ext_txt)
     score = float(score)
-    if score < 0.0 or 1.0 < score:
+    if not math.isfinite(score) or score < 0.0 or 1.0 < score:
         raise ValueError
     cache[ocr_txt] = ext_txt, score
 
