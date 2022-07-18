@@ -2264,10 +2264,10 @@ class TestMatchTxtPack(unittest.TestCase):
                 self.assertEqual(actual_ext_txt_list, expected_ext_txt_list)
 
 
-class TestMatchFlatDocMonoKind(unittest.TestCase):
+class TestMatchFlatDocMonoKindOld(unittest.TestCase):
     def test_invalid_value(self):
         with self.assertRaises(ValueError):
-            sw_luadocs.extract.match_flatdoc_monokind(
+            sw_luadocs.extract.match_flatdoc_monokind_old(
                 [
                     sw_luadocs.flatdoc.FlatElem(txt="a", kind="body"),
                     sw_luadocs.flatdoc.FlatElem(txt="a", kind="code"),
@@ -2277,7 +2277,7 @@ class TestMatchFlatDocMonoKind(unittest.TestCase):
 
     def test_invalid_type(self):
         with self.assertRaises(TypeError):
-            sw_luadocs.extract.match_flatdoc_monokind([], None)
+            sw_luadocs.extract.match_flatdoc_monokind_old([], None)
 
     def test_main(self):
         for input_ocr_flatdoc, input_ext_txt_eng, input_sep, expected_ext_flatdoc in [
@@ -2348,7 +2348,7 @@ class TestMatchFlatDocMonoKind(unittest.TestCase):
                 ext_txt_eng=input_ext_txt_eng,
                 sep=input_sep,
             ):
-                actual_ext_flatdoc = sw_luadocs.extract.match_flatdoc_monokind(
+                actual_ext_flatdoc = sw_luadocs.extract.match_flatdoc_monokind_old(
                     input_ocr_flatdoc, input_ext_txt_eng, sep=input_sep
                 )
                 self.assertEqual(actual_ext_flatdoc, expected_ext_flatdoc)

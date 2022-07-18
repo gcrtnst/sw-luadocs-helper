@@ -308,7 +308,7 @@ def match_txt_pack(ocr_txt_list, ext_txt_eng, *, sep="\n"):
     return ext_txt_list
 
 
-def match_flatdoc_monokind(ocr_flatdoc, ext_txt_eng, *, sep="\n\n"):
+def match_flatdoc_monokind_old(ocr_flatdoc, ext_txt_eng, *, sep="\n\n"):
     ocr_flatdoc = dot_flatdoc.as_flatdoc_monokind(ocr_flatdoc)
     sep = str(sep)
     if not isinstance(ext_txt_eng, NgramSearchEngine):
@@ -332,7 +332,7 @@ def match_flatdoc(ocr_flatdoc, ext_txt_eng, *, sep="\n\n"):
 
     ext_flatdoc = []
     for ocr_flatdoc_monokind in dot_flatdoc.split_flatdoc_by_kind(ocr_flatdoc):
-        ext_flatdoc_monokind = match_flatdoc_monokind(
+        ext_flatdoc_monokind = match_flatdoc_monokind_old(
             ocr_flatdoc_monokind, ext_txt_eng, sep=sep
         )
         ext_flatdoc.extend(ext_flatdoc_monokind)
