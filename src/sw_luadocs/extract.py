@@ -244,6 +244,19 @@ def match_flatdoc_each(ocr_flatdoc, ext_txt_eng, *, cache=None):
     return ext_flatdoc, min_score
 
 
+def match_flatdoc_repack_elem(ocr_flatdoc, ext_txt_eng, *, sep="\n\n", cache=None):
+    ocr_flatdoc = dot_flatdoc.as_flatdoc_monokind(ocr_flatdoc)
+
+    kind = ocr_flatdoc[0].kind if len(ocr_flatdoc) > 0 else None
+    ocr_txt_list = [ocr_flatelem.txt for ocr_flatelem in ocr_flatdoc]
+    pak_txt_list_list = generate_repack_elem_patterns(ocr_txt_list, sep=sep)
+    ext_txt_list, score = match_txt_repack(pak_txt_list_list, ext_txt_eng, cache=cache)
+    ext_flatdoc = [
+        dot_flatdoc.FlatElem(txt=ext_txt, kind=kind) for ext_txt in ext_txt_list
+    ]
+    return ext_flatdoc, score
+
+
 def match_txt_left(ocr_txt_list, ext_txt_eng, *, sep="\n"):
     ocr_txt_list = list(map(str, ocr_txt_list))
     sep = str(sep)
