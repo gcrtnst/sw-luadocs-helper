@@ -195,11 +195,7 @@ def match_txt_multiple(ocr_txt_list, ext_txt_eng, *, cache=None):
     ocr_txt_list = list(map(str, ocr_txt_list))
     if not isinstance(ext_txt_eng, NgramSearchEngine):
         raise TypeError
-
-    if cache is None:
-        cache = {}
-    if not isinstance(cache, dict):
-        raise TypeError
+    cache = as_cache(cache)
 
     ext_txt_list = []
     min_score = 1.0
@@ -214,14 +210,9 @@ def match_txt_repack(pak_txt_list_list, ext_txt_eng, *, cache=None):
     pak_txt_list_list = list(pak_txt_list_list)
     for i in range(len(pak_txt_list_list)):
         pak_txt_list_list[i] = list(map(str, pak_txt_list_list[i]))
-
     if not isinstance(ext_txt_eng, NgramSearchEngine):
         raise TypeError
-
-    if cache is None:
-        cache = {}
-    if not isinstance(cache, dict):
-        raise TypeError
+    cache = as_cache(cache)
 
     best_ext_txt_list = None
     best_score = None
@@ -239,11 +230,7 @@ def match_flatdoc_each(ocr_flatdoc, ext_txt_eng, *, cache=None):
     ocr_flatdoc = dot_flatdoc.as_flatdoc(ocr_flatdoc)
     if not isinstance(ext_txt_eng, NgramSearchEngine):
         raise TypeError
-
-    if cache is None:
-        cache = {}
-    if not isinstance(cache, dict):
-        raise TypeError
+    cache = as_cache(cache)
 
     ext_flatdoc = []
     min_score = 1.0
