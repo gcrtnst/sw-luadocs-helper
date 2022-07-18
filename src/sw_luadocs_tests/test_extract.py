@@ -58,6 +58,43 @@ class TestExtractStrings(unittest.TestCase):
                 self.assertEqual(actual_ext_txt_set, expected_ext_txt_set)
 
 
+class TestGenerateRepackElemPatterns(unittest.TestCase):
+    def test_main(self):
+        for input_ocr_txt_list, input_sep, expected_pak_txt_list_list in [
+            ([], "-", []),
+            (["a"], "-", [["a"]]),
+            (["a", "b"], "-", [["a", "b"], ["a-b"]]),
+            (["a", "b"], ":", [["a", "b"], ["a:b"]]),
+            ({1: None, 2: None}, 3, [["1", "2"], ["132"]]),
+            (
+                ["a", "b", "c"],
+                "-",
+                [["a", "b", "c"], ["a", "b-c"], ["a-b", "c"], ["a-b-c"]],
+            ),
+            (
+                ["a", "b", "c", "d"],
+                "-",
+                [
+                    ["a", "b", "c", "d"],
+                    ["a", "b", "c-d"],
+                    ["a", "b-c", "d"],
+                    ["a", "b-c-d"],
+                    ["a-b", "c", "d"],
+                    ["a-b", "c-d"],
+                    ["a-b-c", "d"],
+                    ["a-b-c-d"],
+                ],
+            ),
+        ]:
+            with self.subTest(ocr_txt_list=input_ocr_txt_list, sep=input_sep):
+                actual_pak_txt_list_list = (
+                    sw_luadocs.extract.generate_repack_elem_patterns(
+                        input_ocr_txt_list, sep=input_sep
+                    )
+                )
+                self.assertEqual(actual_pak_txt_list_list, expected_pak_txt_list_list)
+
+
 class TestNgramInit(unittest.TestCase):
     def test_invalid_value(self):
         with self.assertRaises(ValueError):

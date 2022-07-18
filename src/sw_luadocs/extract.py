@@ -45,6 +45,32 @@ def extract_strings(section_bin):
     return ext_txt_set
 
 
+def generate_repack_elem_patterns(ocr_txt_list, *, sep="\n\n"):
+    ocr_txt_list = list(map(str, ocr_txt_list))
+    sep = str(sep)
+
+    if len(ocr_txt_list) <= 0:
+        return []
+
+    pak_txt_tuple_set = set()
+    for pattern in range(1 << (len(ocr_txt_list) - 1)):
+        pak_txt_list = []
+        start_idx = 0
+        for idx in range(1, len(ocr_txt_list)):
+            if pattern & (1 << (idx - 1)) == 0:
+                pak_txt = sep.join(ocr_txt_list[start_idx:idx])
+                pak_txt_list.append(pak_txt)
+                start_idx = idx
+        pak_txt = sep.join(ocr_txt_list[start_idx:])
+        pak_txt_list.append(pak_txt)
+
+        pak_txt_tuple = tuple(pak_txt_list)
+        pak_txt_tuple_set.add(pak_txt_tuple)
+
+    pak_txt_list_list = sorted(map(list, pak_txt_tuple_set))
+    return pak_txt_list_list
+
+
 class Ngram:
     def __init__(self, txt, *, n=2):
         n = int(n)
