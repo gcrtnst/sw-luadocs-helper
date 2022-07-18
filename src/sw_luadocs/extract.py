@@ -159,6 +159,14 @@ class NgramSearchEngine:
         return result_list[0]
 
 
+def as_cache(v):
+    if v is None:
+        v = {}
+    if not isinstance(v, dict):
+        raise TypeError
+    return v
+
+
 def match_txt_single(ocr_txt, ext_txt_eng, *, cache=None):
     ocr_txt = str(ocr_txt)
     if not isinstance(ext_txt_eng, NgramSearchEngine):

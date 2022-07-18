@@ -371,6 +371,24 @@ class TestNgramSearchEngineSearchLucky(unittest.TestCase):
                 self.assertEqual(actual_score, expected_score)
 
 
+class TestAsCache(unittest.TestCase):
+    def test_invalid_type(self):
+        with self.assertRaises(TypeError):
+            sw_luadocs.extract.as_cache([])
+
+    def test_main(self):
+        for input_v, expected_cache in [
+            (None, {}),
+            ({}, {}),
+            ({"a": ("a", 1.0)}, {"a": ("a", 1.0)}),
+        ]:
+            with self.subTest(v=input_v):
+                actual_cache = sw_luadocs.extract.as_cache(input_v)
+                self.assertEqual(actual_cache, expected_cache)
+                if input_v is not None:
+                    self.assertIs(actual_cache, input_v)
+
+
 class TestMatchTxtSingle(unittest.TestCase):
     def test_invalid_type(self):
         for ocr_txt, ext_txt_eng, cache in [
