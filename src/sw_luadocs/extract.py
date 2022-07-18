@@ -71,6 +71,23 @@ def generate_repack_elem_patterns(ocr_txt_list, *, sep="\n\n"):
     return pak_txt_list_list
 
 
+def generate_repack_line_patterns(ocr_txt_full):
+    ocr_txt_full = str(ocr_txt_full)
+    sep = "\n"
+
+    ocr_txt_list = ocr_txt_full.split(sep=sep)
+    old_txt_list_list = generate_repack_elem_patterns(ocr_txt_list, sep=sep)
+
+    new_txt_list_list = []
+    for old_txt_list in old_txt_list_list:
+        for old_txt in old_txt_list:
+            if old_txt.replace(sep, "") == "":
+                break
+        else:
+            new_txt_list_list.append(old_txt_list)
+    return new_txt_list_list
+
+
 class Ngram:
     def __init__(self, txt, *, n=2):
         n = int(n)

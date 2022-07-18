@@ -95,6 +95,67 @@ class TestGenerateRepackElemPatterns(unittest.TestCase):
                 self.assertEqual(actual_pak_txt_list_list, expected_pak_txt_list_list)
 
 
+class TestGenerateRepackLinePatterns(unittest.TestCase):
+    def test_main(self):
+        for input_ocr_txt_full, expected_pak_txt_list_list in [
+            ("", []),
+            ("\n", []),
+            ("\n\n", []),
+            ("a", [["a"]]),
+            ("a\n", [["a\n"]]),
+            ("a\n\n", [["a\n\n"]]),
+            ("\na", [["\na"]]),
+            ("\n\na", [["\n\na"]]),
+            ("\na\n", [["\na\n"]]),
+            ("\n\na\n\n", [["\n\na\n\n"]]),
+            ("a\nb", [["a", "b"], ["a\nb"]]),
+            ("\na\nb", [["\na", "b"], ["\na\nb"]]),
+            ("\n\na\nb", [["\n\na", "b"], ["\n\na\nb"]]),
+            ("a\n\nb", [["a", "\nb"], ["a\n", "b"], ["a\n\nb"]]),
+            (
+                "a\n\n\nb",
+                [["a", "\n\nb"], ["a\n", "\nb"], ["a\n\n", "b"], ["a\n\n\nb"]],
+            ),
+            ("a\nb\n", [["a", "b\n"], ["a\nb\n"]]),
+            ("a\nb\n\n", [["a", "b\n\n"], ["a\nb\n\n"]]),
+            (
+                "\n\na\n\n\nb\n\n",
+                [
+                    ["\n\na", "\n\nb\n\n"],
+                    ["\n\na\n", "\nb\n\n"],
+                    ["\n\na\n\n", "b\n\n"],
+                    ["\n\na\n\n\nb\n\n"],
+                ],
+            ),
+            (
+                "\n\na\n\n\nb\n\n\nc\n\n",
+                [
+                    ["\n\na", "\n\nb", "\n\nc\n\n"],
+                    ["\n\na", "\n\nb\n", "\nc\n\n"],
+                    ["\n\na", "\n\nb\n\n", "c\n\n"],
+                    ["\n\na", "\n\nb\n\n\nc\n\n"],
+                    ["\n\na\n", "\nb", "\n\nc\n\n"],
+                    ["\n\na\n", "\nb\n", "\nc\n\n"],
+                    ["\n\na\n", "\nb\n\n", "c\n\n"],
+                    ["\n\na\n", "\nb\n\n\nc\n\n"],
+                    ["\n\na\n\n", "b", "\n\nc\n\n"],
+                    ["\n\na\n\n", "b\n", "\nc\n\n"],
+                    ["\n\na\n\n", "b\n\n", "c\n\n"],
+                    ["\n\na\n\n", "b\n\n\nc\n\n"],
+                    ["\n\na\n\n\nb", "\n\nc\n\n"],
+                    ["\n\na\n\n\nb\n", "\nc\n\n"],
+                    ["\n\na\n\n\nb\n\n", "c\n\n"],
+                    ["\n\na\n\n\nb\n\n\nc\n\n"],
+                ],
+            ),
+        ]:
+            with self.subTest(ocr_txt_full=input_ocr_txt_full):
+                actual_pak_txt_list_list = (
+                    sw_luadocs.extract.generate_repack_line_patterns(input_ocr_txt_full)
+                )
+                self.assertEqual(actual_pak_txt_list_list, expected_pak_txt_list_list)
+
+
 class TestNgramInit(unittest.TestCase):
     def test_invalid_value(self):
         with self.assertRaises(ValueError):
