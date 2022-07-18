@@ -53,17 +53,35 @@ def generate_repack_elem_patterns(ocr_txt_list, *, sep="\n\n"):
     if len(ocr_txt_list) <= 0:
         return []
 
+    ocr_txt_full = sep.join(ocr_txt_list)
+    ocr_txt_full_sl_list = [slice(0, len(ocr_txt_list[0]))]
+    for ocr_txt in ocr_txt_list[1:]:
+        ocr_txt_full_start = ocr_txt_full_sl_list[-1].stop + len(sep)
+        ocr_txt_full_stop = ocr_txt_full_start + len(ocr_txt)
+        ocr_txt_full_sl = slice(ocr_txt_full_start, ocr_txt_full_stop)
+        ocr_txt_full_sl_list.append(ocr_txt_full_sl)
+
     pak_txt_tuple_set = set()
     for pattern in range(1 << (len(ocr_txt_list) - 1)):
+        ocr_txt_list_sl_list = [slice(0, 1)]
+        for ocr_txt_list_idx in range(1, len(ocr_txt_list)):
+            if pattern & (1 << (ocr_txt_list_idx - 1)) == 0:
+                ocr_txt_list_start = ocr_txt_list_idx
+                ocr_txt_list_stop = ocr_txt_list_idx + 1
+                ocr_txt_list_sl = slice(ocr_txt_list_start, ocr_txt_list_stop)
+                ocr_txt_list_sl_list.append(ocr_txt_list_sl)
+            else:
+                ocr_txt_list_start = ocr_txt_list_sl_list[-1].start
+                ocr_txt_list_stop = ocr_txt_list_idx + 1
+                ocr_txt_list_sl = slice(ocr_txt_list_start, ocr_txt_list_stop)
+                ocr_txt_list_sl_list[-1] = ocr_txt_list_sl
+
         pak_txt_list = []
-        start_idx = 0
-        for idx in range(1, len(ocr_txt_list)):
-            if pattern & (1 << (idx - 1)) == 0:
-                pak_txt = sep.join(ocr_txt_list[start_idx:idx])
-                pak_txt_list.append(pak_txt)
-                start_idx = idx
-        pak_txt = sep.join(ocr_txt_list[start_idx:])
-        pak_txt_list.append(pak_txt)
+        for ocr_txt_list_sl in ocr_txt_list_sl_list:
+            ocr_txt_full_start = ocr_txt_full_sl_list[ocr_txt_list_sl.start].start
+            ocr_txt_full_stop = ocr_txt_full_sl_list[ocr_txt_list_sl.stop - 1].stop
+            pak_txt = ocr_txt_full[ocr_txt_full_start:ocr_txt_full_stop]
+            pak_txt_list.append(pak_txt)
 
         pak_txt_tuple = tuple(pak_txt_list)
         pak_txt_tuple_set.add(pak_txt_tuple)
