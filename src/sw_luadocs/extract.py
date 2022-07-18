@@ -272,6 +272,29 @@ def match_flatdoc_repack_line(ocr_flatdoc, ext_txt_eng, *, sep="\n\n", cache=Non
     return ext_flatdoc, score
 
 
+def match_flatdoc_monokind(
+    ocr_flatdoc, ext_txt_eng, *, body_sep="\n\n", code_sep="\n\n", cache=None
+):
+    ocr_flatdoc = dot_flatdoc.as_flatdoc_monokind(ocr_flatdoc)
+    if not isinstance(ext_txt_eng, NgramSearchEngine):
+        raise TypeError
+    cache = as_cache(cache)
+
+    if len(ocr_flatdoc) <= 0:
+        return [], 1.0
+    if ocr_flatdoc[0].kind == "head":
+        return match_flatdoc_each(ocr_flatdoc, ext_txt_eng, cache=cache)
+    if ocr_flatdoc[0].kind == "body":
+        return match_flatdoc_repack_elem(
+            ocr_flatdoc, ext_txt_eng, sep=body_sep, cache=cache
+        )
+    if ocr_flatdoc[0].kind == "code":
+        return match_flatdoc_repack_line(
+            ocr_flatdoc, ext_txt_eng, sep=code_sep, cache=cache
+        )
+    raise RuntimeError
+
+
 def match_txt_left(ocr_txt_list, ext_txt_eng, *, sep="\n"):
     ocr_txt_list = list(map(str, ocr_txt_list))
     sep = str(sep)
