@@ -227,6 +227,28 @@ def match_txt_repack(pak_txt_list_list, ext_txt_eng, *, cache=None):
     return best_ext_txt_list, best_score
 
 
+def match_flatdoc_each(ocr_flatdoc, ext_txt_eng, *, cache=None):
+    ocr_flatdoc = dot_flatdoc.as_flatdoc(ocr_flatdoc)
+    if not isinstance(ext_txt_eng, NgramSearchEngine):
+        raise TypeError
+
+    if cache is None:
+        cache = {}
+    if not isinstance(cache, dict):
+        raise TypeError
+
+    ext_flatdoc = []
+    min_score = 1.0
+    for ocr_flatelem in ocr_flatdoc:
+        ocr_txt = ocr_flatelem.txt
+        kind = ocr_flatelem.kind
+        ext_txt, score = match_txt_single(ocr_txt, ext_txt_eng, cache=cache)
+        ext_flatelem = dot_flatdoc.FlatElem(txt=ext_txt, kind=kind)
+        ext_flatdoc.append(ext_flatelem)
+        min_score = min(min_score, score)
+    return ext_flatdoc, min_score
+
+
 def match_txt_left(ocr_txt_list, ext_txt_eng, *, sep="\n"):
     ocr_txt_list = list(map(str, ocr_txt_list))
     sep = str(sep)
