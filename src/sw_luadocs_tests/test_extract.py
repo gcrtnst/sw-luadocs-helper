@@ -163,6 +163,33 @@ class TestCalcJaccardSimilarity(unittest.TestCase):
                 self.assertEqual(actual_score, expected_score)
 
 
+class TestCalcLengthSimilarity(unittest.TestCase):
+    def test_invalid_value(self):
+        for len1, len2 in [(-1, 0), (0, -1)]:
+            with self.subTest(len1=len1, len2=len2):
+                with self.assertRaises(ValueError):
+                    sw_luadocs.extract.calc_length_similarity(len1, len2)
+
+    def test_main(self):
+        for input_len1, input_len2, expected_score in [
+            (0, 0, 1.0),
+            (0, 1, 0.0),
+            (1, 0, 0.0),
+            (1, 4, 0.25),
+            (4, 1, 0.25),
+            (1, 2, 0.5),
+            (2, 1, 0.5),
+            (3, 4, 0.75),
+            (4, 3, 0.75),
+        ]:
+            with self.subTest(len1=input_len1, len2=input_len2):
+                actual_score = sw_luadocs.extract.calc_length_similarity(
+                    input_len1, input_len2
+                )
+                self.assertIs(type(actual_score), float)
+                self.assertEqual(actual_score, expected_score)
+
+
 class TestNgramDatabaseInit(unittest.TestCase):
     def test_invalid_value(self):
         with self.assertRaises(ValueError):

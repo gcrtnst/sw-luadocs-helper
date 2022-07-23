@@ -87,6 +87,17 @@ def calc_jaccard_similarity(ngram1, ngram2):
     return len(ngram1.bag & ngram2.bag) / len(ngram1.bag | ngram2.bag)
 
 
+def calc_length_similarity(len1, len2):
+    len1 = int(len1)
+    len2 = int(len2)
+
+    if len1 < 0 or len2 < 0:
+        raise ValueError
+    if len1 == 0 and len2 == 0:
+        return 1.0
+    return min(len1, len2) / max(len1, len2)
+
+
 class NgramDatabase:
     def __init__(self, txt_set, *, n=2):
         n = int(n)
