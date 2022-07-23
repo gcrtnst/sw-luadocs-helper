@@ -607,11 +607,11 @@ class TestMatchFlatDocMonoKind(unittest.TestCase):
                     sw_luadocs.flatdoc.FlatElem(txt="a", kind="code"),
                     sw_luadocs.flatdoc.FlatElem(txt="b", kind="code"),
                 ],
-                sw_luadocs.extract.NgramDatabase(["a!", "\nb!"], n=1),
+                sw_luadocs.extract.NgramDatabase(["a!\n", "b!"], n=1),
                 "\n\n",
                 [
-                    sw_luadocs.flatdoc.FlatElem(txt="a!", kind="code"),
-                    sw_luadocs.flatdoc.FlatElem(txt="\nb!", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="a!\n", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="b!", kind="code"),
                 ],
             ),
             (
