@@ -1,4 +1,3 @@
-import math
 import pefile
 import re
 
@@ -46,57 +45,6 @@ def extract_strings(section_bin):
     return ext_txt_set
 
 
-def generate_repack_elem_patterns(ocr_txt_list, *, sep="\n\n"):
-    ocr_txt_list = list(map(str, ocr_txt_list))
-    sep = str(sep)
-
-    if len(ocr_txt_list) <= 0:
-        return []
-
-    ocr_txt_full = sep.join(ocr_txt_list)
-    ocr_txt_full_sl_list = [slice(0, len(ocr_txt_list[0]))]
-    for ocr_txt in ocr_txt_list[1:]:
-        ocr_txt_full_start = ocr_txt_full_sl_list[-1].stop + len(sep)
-        ocr_txt_full_stop = ocr_txt_full_start + len(ocr_txt)
-        ocr_txt_full_sl = slice(ocr_txt_full_start, ocr_txt_full_stop)
-        ocr_txt_full_sl_list.append(ocr_txt_full_sl)
-
-    for pattern in range(1 << (len(ocr_txt_list) - 1)):
-        ocr_txt_list_sl_list = [slice(0, 1)]
-        for ocr_txt_list_idx in range(1, len(ocr_txt_list)):
-            if pattern & (1 << (len(ocr_txt_list) - ocr_txt_list_idx - 1)) == 0:
-                ocr_txt_list_start = ocr_txt_list_idx
-                ocr_txt_list_stop = ocr_txt_list_idx + 1
-                ocr_txt_list_sl = slice(ocr_txt_list_start, ocr_txt_list_stop)
-                ocr_txt_list_sl_list.append(ocr_txt_list_sl)
-            else:
-                ocr_txt_list_start = ocr_txt_list_sl_list[-1].start
-                ocr_txt_list_stop = ocr_txt_list_idx + 1
-                ocr_txt_list_sl = slice(ocr_txt_list_start, ocr_txt_list_stop)
-                ocr_txt_list_sl_list[-1] = ocr_txt_list_sl
-
-        pak_txt_list = []
-        for ocr_txt_list_sl in ocr_txt_list_sl_list:
-            ocr_txt_full_start = ocr_txt_full_sl_list[ocr_txt_list_sl.start].start
-            ocr_txt_full_stop = ocr_txt_full_sl_list[ocr_txt_list_sl.stop - 1].stop
-            pak_txt = ocr_txt_full[ocr_txt_full_start:ocr_txt_full_stop]
-            pak_txt_list.append(pak_txt)
-        yield pak_txt_list
-
-
-def generate_repack_line_patterns(ocr_txt_full):
-    ocr_txt_full = str(ocr_txt_full)
-    sep = "\n"
-
-    ocr_txt_list = ocr_txt_full.split(sep=sep)
-    for old_txt_list in generate_repack_elem_patterns(ocr_txt_list, sep=sep):
-        for old_txt in old_txt_list:
-            if old_txt.replace(sep, "") == "":
-                break
-        else:
-            yield old_txt_list
-
-
 class Ngram:
     def __init__(self, txt, *, n=2):
         n = int(n)
@@ -139,7 +87,7 @@ def calc_jaccard_similarity(ngram1, ngram2):
     return len(ngram1.bag & ngram2.bag) / len(ngram1.bag | ngram2.bag)
 
 
-class NgramSearchEngine:
+class NgramDatabase:
     def __init__(self, txt_set, *, n=2):
         n = int(n)
         if n <= 0:
@@ -151,7 +99,7 @@ class NgramSearchEngine:
         self._n = n
         self._db = db
 
-    def search_all(self, txt):
+    def match_all(self, txt):
         query_ngram = Ngram(txt, n=self._n)
 
         result_list = [
@@ -161,176 +109,83 @@ class NgramSearchEngine:
         result_list.sort(key=lambda result: (-result[1], result[0]))
         return result_list
 
-    def search_lucky(self, txt):
-        result_list = self.search_all(txt)
+    def match_txt(self, txt):
+        result_list = self.match_all(txt)
         if len(result_list) <= 0:
             raise ValueError
         return result_list[0]
 
 
-def as_cache(v):
-    if v is None:
-        v = {}
-    if not isinstance(v, dict):
-        raise TypeError
-    return v
-
-
-def match_txt_single(ocr_txt, ext_txt_eng, *, cache=None):
-    ocr_txt = str(ocr_txt)
-    if not isinstance(ext_txt_eng, NgramSearchEngine):
-        raise TypeError
-
-    if cache is None:
-        return ext_txt_eng.search_lucky(ocr_txt)
-    if not isinstance(cache, dict):
-        raise TypeError
-
-    result = cache.get(ocr_txt)
-    if result is None:
-        result = ext_txt_eng.search_lucky(ocr_txt)
-
-    ext_txt, score = result
-    ext_txt = str(ext_txt)
-    score = float(score)
-    if not math.isfinite(score) or score < 0.0 or 1.0 < score:
-        raise ValueError
-    cache[ocr_txt] = ext_txt, score
-
-    return ext_txt, score
-
-
-def match_txt_multiple(ocr_txt_list, ext_txt_eng, *, cache=None):
+def match_txt_left(ocr_txt_list, ext_txt_db, *, sep="\n"):
     ocr_txt_list = list(map(str, ocr_txt_list))
-    if not isinstance(ext_txt_eng, NgramSearchEngine):
+    sep = str(sep)
+    if not isinstance(ext_txt_db, NgramDatabase):
         raise TypeError
-    cache = as_cache(cache)
+
+    best_ext_txt = None
+    best_adv = None
+    best_score = None
+    for adv in range(1, len(ocr_txt_list) + 1):
+        ocr_txt = sep.join(ocr_txt_list[:adv])
+        ext_txt, score = ext_txt_db.match_txt(ocr_txt)
+        if best_score is None or best_score < score:
+            best_ext_txt = ext_txt
+            best_adv = adv
+            best_score = score
+    if best_ext_txt is None or best_adv is None:
+        raise ValueError
+    return best_ext_txt, best_adv
+
+
+def match_txt_pack(ocr_txt_list, ext_txt_db, *, sep="\n"):
+    ocr_txt_list = list(map(str, ocr_txt_list))
+    sep = str(sep)
+    if not isinstance(ext_txt_db, NgramDatabase):
+        raise TypeError
 
     ext_txt_list = []
-    min_score = 1.0
-    for ocr_txt in ocr_txt_list:
-        ext_txt, score = match_txt_single(ocr_txt, ext_txt_eng, cache=cache)
+    idx = 0
+    while idx < len(ocr_txt_list):
+        ext_txt, adv = match_txt_left(ocr_txt_list[idx:], ext_txt_db, sep=sep)
         ext_txt_list.append(ext_txt)
-        min_score = min(min_score, score)
-    return ext_txt_list, min_score
+        idx += adv
+    return ext_txt_list
 
 
-def match_txt_repack(pak_txt_list_iter, ext_txt_eng, *, cache=None):
-    if not isinstance(ext_txt_eng, NgramSearchEngine):
-        raise TypeError
-    cache = as_cache(cache)
-
-    best_ext_txt_list = None
-    best_score = None
-    for pak_txt_list in pak_txt_list_iter:
-        pak_txt_list = list(map(str, pak_txt_list))
-        ext_txt_list, score = match_txt_multiple(pak_txt_list, ext_txt_eng, cache=cache)
-        if best_score is None or best_score < score:
-            best_ext_txt_list = ext_txt_list
-            best_score = score
-    if best_ext_txt_list is None or best_score is None:
-        return [], 1.0
-    return best_ext_txt_list, best_score
-
-
-def match_flatdoc_each(ocr_flatdoc, ext_txt_eng, *, cache=None):
-    ocr_flatdoc = dot_flatdoc.as_flatdoc(ocr_flatdoc)
-    if not isinstance(ext_txt_eng, NgramSearchEngine):
-        raise TypeError
-    cache = as_cache(cache)
-
-    ext_flatdoc = []
-    min_score = 1.0
-    for ocr_flatelem in ocr_flatdoc:
-        ocr_txt = ocr_flatelem.txt
-        kind = ocr_flatelem.kind
-        ext_txt, score = match_txt_single(ocr_txt, ext_txt_eng, cache=cache)
-        ext_flatelem = dot_flatdoc.FlatElem(txt=ext_txt, kind=kind)
-        ext_flatdoc.append(ext_flatelem)
-        min_score = min(min_score, score)
-    return ext_flatdoc, min_score
-
-
-def match_flatdoc_repack_elem(ocr_flatdoc, ext_txt_eng, *, sep="\n\n", cache=None):
-    ocr_flatdoc = dot_flatdoc.as_flatdoc_monokind(ocr_flatdoc)
-
-    kind = ocr_flatdoc[0].kind if len(ocr_flatdoc) > 0 else None
-    ocr_txt_list = [ocr_flatelem.txt for ocr_flatelem in ocr_flatdoc]
-    pak_txt_list_iter = generate_repack_elem_patterns(ocr_txt_list, sep=sep)
-    ext_txt_list, score = match_txt_repack(pak_txt_list_iter, ext_txt_eng, cache=cache)
-    ext_flatdoc = [
-        dot_flatdoc.FlatElem(txt=ext_txt, kind=kind) for ext_txt in ext_txt_list
-    ]
-    return ext_flatdoc, score
-
-
-def match_flatdoc_repack_line(ocr_flatdoc, ext_txt_eng, *, sep="\n\n", cache=None):
+def match_flatdoc_monokind(ocr_flatdoc, ext_txt_db, *, sep="\n\n"):
     ocr_flatdoc = dot_flatdoc.as_flatdoc_monokind(ocr_flatdoc)
     sep = str(sep)
-
-    kind = ocr_flatdoc[0].kind if len(ocr_flatdoc) > 0 else None
-    ocr_txt_full = sep.join(ocr_flatelem.txt for ocr_flatelem in ocr_flatdoc)
-    pak_txt_list_iter = generate_repack_line_patterns(ocr_txt_full)
-    ext_txt_list, score = match_txt_repack(pak_txt_list_iter, ext_txt_eng, cache=cache)
-    ext_flatdoc = [
-        dot_flatdoc.FlatElem(txt=ext_txt, kind=kind) for ext_txt in ext_txt_list
-    ]
-    return ext_flatdoc, score
-
-
-def match_flatdoc_monokind(
-    ocr_flatdoc, ext_txt_eng, *, body_sep="\n\n", code_sep="\n\n", cache=None
-):
-    ocr_flatdoc = dot_flatdoc.as_flatdoc_monokind(ocr_flatdoc)
-    if not isinstance(ext_txt_eng, NgramSearchEngine):
+    if not isinstance(ext_txt_db, NgramDatabase):
         raise TypeError
-    cache = as_cache(cache)
 
     if len(ocr_flatdoc) <= 0:
-        return [], 1.0
-    if ocr_flatdoc[0].kind == "head":
-        return match_flatdoc_each(ocr_flatdoc, ext_txt_eng, cache=cache)
-    if ocr_flatdoc[0].kind == "body":
-        return match_flatdoc_repack_elem(
-            ocr_flatdoc, ext_txt_eng, sep=body_sep, cache=cache
-        )
-    if ocr_flatdoc[0].kind == "code":
-        return match_flatdoc_repack_line(
-            ocr_flatdoc, ext_txt_eng, sep=code_sep, cache=cache
-        )
-    raise RuntimeError
+        return []
+
+    kind = ocr_flatdoc[0].kind
+    ocr_txt_full = sep.join(ocr_flatelem.txt for ocr_flatelem in ocr_flatdoc)
+    ocr_txt_list = ocr_txt_full.split("\n")
+    ext_txt_list = match_txt_pack(ocr_txt_list, ext_txt_db, sep="\n")
+    return [dot_flatdoc.FlatElem(txt=ext_txt, kind=kind) for ext_txt in ext_txt_list]
 
 
-def match_flatdoc(
-    ocr_flatdoc, ext_txt_eng, *, body_sep="\n\n", code_sep="\n\n", cache=None
-):
+def match_flatdoc(ocr_flatdoc, ext_txt_db, *, sep="\n\n"):
     ocr_flatdoc = dot_flatdoc.as_flatdoc(ocr_flatdoc)
-    if not isinstance(ext_txt_eng, NgramSearchEngine):
+    sep = str(sep)
+    if not isinstance(ext_txt_db, NgramDatabase):
         raise TypeError
-    body_sep = str(body_sep)
-    code_sep = str(code_sep)
-    cache = as_cache(cache)
 
     ext_flatdoc = []
-    min_score = 1.0
     for ocr_flatdoc_monokind in dot_flatdoc.split_flatdoc_by_kind(ocr_flatdoc):
-        ext_flatdoc_monokind, score = match_flatdoc_monokind(
-            ocr_flatdoc_monokind,
-            ext_txt_eng,
-            body_sep=body_sep,
-            code_sep=code_sep,
-            cache=cache,
+        ext_flatdoc_monokind = match_flatdoc_monokind(
+            ocr_flatdoc_monokind, ext_txt_db, sep=sep
         )
         ext_flatdoc.extend(ext_flatdoc_monokind)
-        min_score = min(min_score, score)
-    return ext_flatdoc, min_score
+    return ext_flatdoc
 
 
-def extract(ocr_flatdoc, exe_bin, *, section_name, ngram, body_sep, code_sep):
+def extract(ocr_flatdoc, exe_bin, *, section_name, ngram, sep):
     section_bin = extract_section(exe_bin, section_name, ignore_padding=True)
     ext_txt_set = extract_strings(section_bin)
-    ext_txt_eng = NgramSearchEngine(ext_txt_set, n=ngram)
-    ext_flatdoc, _ = match_flatdoc(
-        ocr_flatdoc, ext_txt_eng, body_sep=body_sep, code_sep=code_sep
-    )
+    ext_txt_db = NgramDatabase(ext_txt_set, n=ngram)
+    ext_flatdoc = match_flatdoc(ocr_flatdoc, ext_txt_db, sep=sep)
     return ext_flatdoc

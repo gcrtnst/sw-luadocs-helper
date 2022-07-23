@@ -93,8 +93,7 @@ def extract_main(ns):
         exe_bin,
         section_name=extract_cfg["section_name"],
         ngram=extract_cfg["ngram"],
-        body_sep="\n\n",
-        code_sep="\n\n",
+        sep="\n\n",
     )
     ext_txt = dot_flatdoc.format(ext_flatdoc)
 
