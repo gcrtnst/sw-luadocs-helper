@@ -122,22 +122,6 @@ class NgramDatabase:
     n = property(lambda self: self._n)
     db = property(lambda self: (ngram for ngram in self._db))
 
-    def match_all(self, txt):
-        query_ngram = Ngram(txt, n=self._n)
-
-        result_list = [
-            (db_ngram.txt, calc_jaccard_similarity(query_ngram, db_ngram))
-            for db_ngram in self._db
-        ]
-        result_list.sort(key=lambda result: (-result[1], result[0]))
-        return result_list
-
-    def match_txt(self, txt):
-        result_list = self.match_all(txt)
-        if len(result_list) <= 0:
-            raise ValueError
-        return result_list[0]
-
 
 def match_txt_single(ocr_txt, ext_txt_db):
     ocr_txt = str(ocr_txt)
