@@ -734,23 +734,23 @@ class TestMatchTxtMultiple(unittest.TestCase):
 
 class TestMatchTxtRepack(unittest.TestCase):
     def test_invalid_type(self):
-        for pak_txt_list_list, ext_txt_eng, cache in [
+        for pak_txt_list_iter, ext_txt_eng, cache in [
             ([], None, {}),
             ([], sw_luadocs.extract.NgramSearchEngine(["a"]), []),
         ]:
             with self.subTest(
-                pak_txt_list_list=pak_txt_list_list,
+                pak_txt_list_iter=pak_txt_list_iter,
                 ext_txt_eng=ext_txt_eng,
                 cache=cache,
             ):
                 with self.assertRaises(TypeError):
                     sw_luadocs.extract.match_txt_repack(
-                        pak_txt_list_list, ext_txt_eng, cache=cache
+                        pak_txt_list_iter, ext_txt_eng, cache=cache
                     )
 
     def test_main(self):
         for (
-            input_pak_txt_list_list,
+            input_pak_txt_list_iter,
             input_ext_txt_eng,
             input_cache,
             expected_ext_txt_list,
@@ -989,13 +989,13 @@ class TestMatchTxtRepack(unittest.TestCase):
             ),
         ]:
             with self.subTest(
-                pak_txt_list_list=input_pak_txt_list_list,
+                pak_txt_list_iter=input_pak_txt_list_iter,
                 ext_txt_eng=input_ext_txt_eng,
                 cache=input_cache,
             ):
                 actual_cache = input_cache.copy() if input_cache is not None else None
                 actual_ext_txt_list, actual_score = sw_luadocs.extract.match_txt_repack(
-                    input_pak_txt_list_list, input_ext_txt_eng, cache=actual_cache
+                    input_pak_txt_list_iter, input_ext_txt_eng, cache=actual_cache
                 )
                 self.assertEqual(actual_ext_txt_list, expected_ext_txt_list)
                 self.assertEqual(actual_score, expected_score)
