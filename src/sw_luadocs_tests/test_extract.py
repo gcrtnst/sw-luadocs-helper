@@ -199,8 +199,8 @@ class TestNgramDatabaseInit(unittest.TestCase):
         ]:
             with self.subTest(txt_set=input_txt_set, n=input_n):
                 actual_db = sw_luadocs.extract.NgramDatabase(input_txt_set, n=input_n)
-                self.assertEqual(actual_db._n, expected_db_n)
-                self.assertEqual(actual_db._db, expected_db_db)
+                self.assertEqual(actual_db.n, expected_db_n)
+                self.assertEqual(frozenset(actual_db.db), expected_db_db)
 
 
 class TestNgramDatabaseMatchAll(unittest.TestCase):

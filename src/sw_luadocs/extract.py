@@ -99,6 +99,9 @@ class NgramDatabase:
         self._n = n
         self._db = db
 
+    n = property(lambda self: self._n)
+    db = property(lambda self: (ngram for ngram in self._db))
+
     def match_all(self, txt):
         query_ngram = Ngram(txt, n=self._n)
 
