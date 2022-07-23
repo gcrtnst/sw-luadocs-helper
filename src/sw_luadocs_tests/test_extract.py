@@ -150,7 +150,7 @@ class TestGenerateRepackLinePatterns(unittest.TestCase):
             ),
         ]:
             with self.subTest(ocr_txt_full=input_ocr_txt_full):
-                actual_pak_txt_list_list = (
+                actual_pak_txt_list_list = list(
                     sw_luadocs.extract.generate_repack_line_patterns(input_ocr_txt_full)
                 )
                 self.assertEqual(actual_pak_txt_list_list, expected_pak_txt_list_list)

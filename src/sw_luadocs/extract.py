@@ -91,16 +91,12 @@ def generate_repack_line_patterns(ocr_txt_full):
     sep = "\n"
 
     ocr_txt_list = ocr_txt_full.split(sep=sep)
-    old_txt_list_list = generate_repack_elem_patterns(ocr_txt_list, sep=sep)
-
-    new_txt_list_list = []
-    for old_txt_list in old_txt_list_list:
+    for old_txt_list in generate_repack_elem_patterns(ocr_txt_list, sep=sep):
         for old_txt in old_txt_list:
             if old_txt.replace(sep, "") == "":
                 break
         else:
-            new_txt_list_list.append(old_txt_list)
-    return new_txt_list_list
+            yield old_txt_list
 
 
 class Ngram:
@@ -276,8 +272,8 @@ def match_flatdoc_repack_line(ocr_flatdoc, ext_txt_eng, *, sep="\n\n", cache=Non
 
     kind = ocr_flatdoc[0].kind if len(ocr_flatdoc) > 0 else None
     ocr_txt_full = sep.join(ocr_flatelem.txt for ocr_flatelem in ocr_flatdoc)
-    pak_txt_list_list = generate_repack_line_patterns(ocr_txt_full)
-    ext_txt_list, score = match_txt_repack(pak_txt_list_list, ext_txt_eng, cache=cache)
+    pak_txt_list_iter = generate_repack_line_patterns(ocr_txt_full)
+    ext_txt_list, score = match_txt_repack(pak_txt_list_iter, ext_txt_eng, cache=cache)
     ext_flatdoc = [
         dot_flatdoc.FlatElem(txt=ext_txt, kind=kind) for ext_txt in ext_txt_list
     ]
