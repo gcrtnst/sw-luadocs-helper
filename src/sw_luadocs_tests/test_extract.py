@@ -87,7 +87,7 @@ class TestGenerateRepackElemPatterns(unittest.TestCase):
             ),
         ]:
             with self.subTest(ocr_txt_list=input_ocr_txt_list, sep=input_sep):
-                actual_pak_txt_list_list = (
+                actual_pak_txt_list_list = list(
                     sw_luadocs.extract.generate_repack_elem_patterns(
                         input_ocr_txt_list, sep=input_sep
                     )

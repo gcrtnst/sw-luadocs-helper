@@ -61,7 +61,6 @@ def generate_repack_elem_patterns(ocr_txt_list, *, sep="\n\n"):
         ocr_txt_full_sl = slice(ocr_txt_full_start, ocr_txt_full_stop)
         ocr_txt_full_sl_list.append(ocr_txt_full_sl)
 
-    pak_txt_list_list = []
     for pattern in range(1 << (len(ocr_txt_list) - 1)):
         ocr_txt_list_sl_list = [slice(0, 1)]
         for ocr_txt_list_idx in range(1, len(ocr_txt_list)):
@@ -82,8 +81,7 @@ def generate_repack_elem_patterns(ocr_txt_list, *, sep="\n\n"):
             ocr_txt_full_stop = ocr_txt_full_sl_list[ocr_txt_list_sl.stop - 1].stop
             pak_txt = ocr_txt_full[ocr_txt_full_start:ocr_txt_full_stop]
             pak_txt_list.append(pak_txt)
-        pak_txt_list_list.append(pak_txt_list)
-    return pak_txt_list_list
+        yield pak_txt_list
 
 
 def generate_repack_line_patterns(ocr_txt_full):
@@ -258,8 +256,8 @@ def match_flatdoc_repack_elem(ocr_flatdoc, ext_txt_eng, *, sep="\n\n", cache=Non
 
     kind = ocr_flatdoc[0].kind if len(ocr_flatdoc) > 0 else None
     ocr_txt_list = [ocr_flatelem.txt for ocr_flatelem in ocr_flatdoc]
-    pak_txt_list_list = generate_repack_elem_patterns(ocr_txt_list, sep=sep)
-    ext_txt_list, score = match_txt_repack(pak_txt_list_list, ext_txt_eng, cache=cache)
+    pak_txt_list_iter = generate_repack_elem_patterns(ocr_txt_list, sep=sep)
+    ext_txt_list, score = match_txt_repack(pak_txt_list_iter, ext_txt_eng, cache=cache)
     ext_flatdoc = [
         dot_flatdoc.FlatElem(txt=ext_txt, kind=kind) for ext_txt in ext_txt_list
     ]
