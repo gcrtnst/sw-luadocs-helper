@@ -353,6 +353,55 @@ class TestNgramDatabaseMatchTxt(unittest.TestCase):
                 self.assertEqual(actual_score, expected_score)
 
 
+class TestMatchTxtSingle(unittest.TestCase):
+    def test_invalid_type(self):
+        with self.assertRaises(TypeError):
+            sw_luadocs.extract.match_txt_single("", {"a"})
+
+    def test_invalid_value(self):
+        with self.assertRaises(ValueError):
+            sw_luadocs.extract.match_txt_single(
+                "", sw_luadocs.extract.NgramDatabase([])
+            )
+
+    def test_main(self):
+        for input_ocr_txt, input_ext_txt_db, expected_ext_txt, expected_score in [
+            ("", sw_luadocs.extract.NgramDatabase(["a"], n=1), "a", 0.0),
+            (
+                "abcabcabcabc",
+                sw_luadocs.extract.NgramDatabase(["abd"], n=1),
+                "abd",
+                0.125,
+            ),
+            (
+                123123123123,
+                sw_luadocs.extract.NgramDatabase(["124"], n=1),
+                "124",
+                0.125,
+            ),
+            (
+                "abc",
+                sw_luadocs.extract.NgramDatabase(["ddd", "add", "abd", "abc"], n=1),
+                "abc",
+                1.0,
+            ),
+            (
+                "abc",
+                sw_luadocs.extract.NgramDatabase(
+                    ["abd", "adb", "bad", "dab", "bda", "dba"], n=1
+                ),
+                "abd",
+                0.5,
+            ),
+        ]:
+            with self.subTest(ocr_txt=input_ocr_txt, ext_txt_db=input_ext_txt_db):
+                actual_ext_txt, actual_score = sw_luadocs.extract.match_txt_single(
+                    input_ocr_txt, input_ext_txt_db
+                )
+                self.assertEqual(actual_ext_txt, expected_ext_txt)
+                self.assertEqual(actual_score, expected_score)
+
+
 class TestMatchTxtLeft(unittest.TestCase):
     def test_invalid_type(self):
         with self.assertRaises(TypeError):
