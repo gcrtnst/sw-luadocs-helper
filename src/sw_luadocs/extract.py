@@ -98,6 +98,15 @@ def calc_length_similarity(len1, len2):
     return min(len1, len2) / max(len1, len2)
 
 
+def calc_score(ngram1, ngram2):
+    if not isinstance(ngram1, Ngram) or not isinstance(ngram2, Ngram):
+        raise TypeError
+
+    jac_score = calc_jaccard_similarity(ngram1, ngram2)
+    len_score = calc_length_similarity(len(ngram1.txt), len(ngram2.txt))
+    return jac_score * len_score
+
+
 class NgramDatabase:
     def __init__(self, txt_set, *, n=2):
         n = int(n)

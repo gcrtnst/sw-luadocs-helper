@@ -190,6 +190,61 @@ class TestCalcLengthSimilarity(unittest.TestCase):
                 self.assertEqual(actual_score, expected_score)
 
 
+class TestCalcScore(unittest.TestCase):
+    def test_invalid_type(self):
+        for ngram1, ngram2 in [
+            ("1", sw_luadocs.extract.Ngram("2")),
+            (sw_luadocs.extract.Ngram("1"), "2"),
+        ]:
+            with self.subTest(ngram1=ngram1, ngram2=ngram2):
+                with self.assertRaises(TypeError):
+                    sw_luadocs.extract.calc_score(ngram1, ngram2)
+
+    def test_main(self):
+        for input_ngram1, input_ngram2, expected_score in [
+            (sw_luadocs.extract.Ngram("", n=1), sw_luadocs.extract.Ngram("", n=1), 1.0),
+            (
+                sw_luadocs.extract.Ngram("abc", n=1),
+                sw_luadocs.extract.Ngram("abc", n=1),
+                1.0,
+            ),
+            (
+                sw_luadocs.extract.Ngram("abc", n=1),
+                sw_luadocs.extract.Ngram("abcabcabcabc", n=1),
+                0.25,
+            ),
+            (
+                sw_luadocs.extract.Ngram("abcabcabcabc", n=1),
+                sw_luadocs.extract.Ngram("abc", n=1),
+                0.25,
+            ),
+            (
+                sw_luadocs.extract.Ngram("abc", n=1),
+                sw_luadocs.extract.Ngram("abd", n=1),
+                0.5,
+            ),
+            (
+                sw_luadocs.extract.Ngram("abd", n=1),
+                sw_luadocs.extract.Ngram("abc", n=1),
+                0.5,
+            ),
+            (
+                sw_luadocs.extract.Ngram("abcabcabcabc", n=1),
+                sw_luadocs.extract.Ngram("abd", n=1),
+                0.125,
+            ),
+            (
+                sw_luadocs.extract.Ngram("abd", n=1),
+                sw_luadocs.extract.Ngram("abcabcabcabc", n=1),
+                0.125,
+            ),
+        ]:
+            with self.subTest(ngram1=input_ngram1, ngram2=input_ngram2):
+                actual_score = sw_luadocs.extract.calc_score(input_ngram1, input_ngram2)
+                self.assertIs(type(actual_score), float)
+                self.assertEqual(actual_score, expected_score)
+
+
 class TestNgramDatabaseInit(unittest.TestCase):
     def test_invalid_value(self):
         with self.assertRaises(ValueError):
