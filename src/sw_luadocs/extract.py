@@ -231,6 +231,26 @@ def match_flatdoc_packline(ocr_flatdoc, ext_txt_db, *, sep="\n\n"):
     return ext_flatdoc, score
 
 
+def match_flatdoc_monokind(
+    ocr_flatdoc, ext_txt_db, *, body_sep="\n\n", code_sep="\n\n"
+):
+    ocr_flatdoc = dot_flatdoc.as_flatdoc_monokind(ocr_flatdoc)
+    body_sep = str(body_sep)
+    code_sep = str(code_sep)
+    if not isinstance(ext_txt_db, NgramDatabase):
+        raise TypeError
+
+    if len(ocr_flatdoc) <= 0:
+        return [], 1.0
+    if ocr_flatdoc[0].kind == "head":
+        return match_flatdoc_eachelem(ocr_flatdoc, ext_txt_db)
+    if ocr_flatdoc[0].kind == "body":
+        return match_flatdoc_packelem(ocr_flatdoc, ext_txt_db, sep=body_sep)
+    if ocr_flatdoc[0].kind == "code":
+        return match_flatdoc_packline(ocr_flatdoc, ext_txt_db, sep=code_sep)
+    raise RuntimeError
+
+
 def match_flatdoc(ocr_flatdoc, ext_txt_db, *, sep="\n\n"):
     ocr_flatdoc = dot_flatdoc.as_flatdoc(ocr_flatdoc)
     sep = str(sep)
