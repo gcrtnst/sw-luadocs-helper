@@ -183,6 +183,23 @@ def match_txt_pack(ocr_txt_list, ext_txt_db, *, sep="\n"):
     return ext_txt_list, min_score
 
 
+def match_flatdoc_eachelem(ocr_flatdoc, ext_txt_db):
+    ocr_flatdoc = dot_flatdoc.as_flatdoc(ocr_flatdoc)
+    if not isinstance(ext_txt_db, NgramDatabase):
+        raise TypeError
+
+    ext_flatdoc = []
+    min_score = 1.0
+    for ocr_flatelem in ocr_flatdoc:
+        kind = ocr_flatelem.kind
+        ocr_txt = ocr_flatelem.txt
+        ext_txt, score = match_txt_single(ocr_txt, ext_txt_db)
+        ext_flatelem = dot_flatdoc.FlatElem(txt=ext_txt, kind=kind)
+        ext_flatdoc.append(ext_flatelem)
+        min_score = min(min_score, score)
+    return ext_flatdoc, min_score
+
+
 def match_flatdoc_packelem(ocr_flatdoc, ext_txt_db, *, sep="\n\n"):
     ocr_flatdoc = dot_flatdoc.as_flatdoc_monokind(ocr_flatdoc)
 
