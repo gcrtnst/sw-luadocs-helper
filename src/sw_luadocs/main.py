@@ -2,7 +2,7 @@ import argparse
 import pathlib
 import pytesseract
 import shlex
-import toml
+import tomli as tomllib
 
 from . import capture as dot_capture
 from . import extract as dot_extract
@@ -13,7 +13,8 @@ from . import which as dot_which
 
 
 def capture_main(ns):
-    cfg = toml.load(ns.config)
+    with open(ns.config, mode="rb") as fobj:
+        cfg = tomllib.load(fobj)
     capture_cfg = cfg["capture"]
 
     img = dot_capture.capture(
@@ -43,7 +44,8 @@ def capture_main(ns):
 
 
 def recognize_main(ns):
-    cfg = toml.load(ns.config)
+    with open(ns.config, mode="rb") as fobj:
+        cfg = tomllib.load(fobj)
     recognize_cfg = cfg["recognize"]
 
     if ns.tesseract_exe is not None:
@@ -79,8 +81,8 @@ def recognize_main(ns):
 
 
 def extract_main(ns):
-    cfg = toml.load(ns.config)
-
+    with open(ns.config, mode="rb") as fobj:
+        tomllib.load(fobj)
     with open(ns.recognize_file, mode="r", encoding="utf-8", newline="\n") as fobj:
         ocr_txt = fobj.read()
     with open(ns.stormworks_exe, mode="rb") as fobj:
