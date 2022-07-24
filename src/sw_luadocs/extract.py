@@ -251,26 +251,29 @@ def match_flatdoc_monokind(
     raise RuntimeError
 
 
-def match_flatdoc(ocr_flatdoc, ext_txt_db, *, sep="\n\n"):
+def match_flatdoc(ocr_flatdoc, ext_txt_db, *, body_sep="\n\n", code_sep="\n\n"):
     ocr_flatdoc = dot_flatdoc.as_flatdoc(ocr_flatdoc)
-    sep = str(sep)
+    body_sep = str(body_sep)
+    code_sep = str(code_sep)
     if not isinstance(ext_txt_db, NgramDatabase):
         raise TypeError
 
     ext_flatdoc = []
     min_score = 1.0
     for ocr_flatdoc_monokind in dot_flatdoc.split_flatdoc_by_kind(ocr_flatdoc):
-        ext_flatdoc_monokind, score = match_flatdoc_packline(
-            ocr_flatdoc_monokind, ext_txt_db, sep=sep
+        ext_flatdoc_monokind, score = match_flatdoc_monokind(
+            ocr_flatdoc_monokind, ext_txt_db, body_sep=body_sep, code_sep=code_sep
         )
         ext_flatdoc.extend(ext_flatdoc_monokind)
         min_score = min(min_score, score)
     return ext_flatdoc, min_score
 
 
-def extract(ocr_flatdoc, exe_bin, *, section_name, ngram, sep):
+def extract(ocr_flatdoc, exe_bin, *, section_name, ngram, body_sep, code_sep):
     section_bin = extract_section(exe_bin, section_name, ignore_padding=True)
     ext_txt_set = extract_strings(section_bin)
     ext_txt_db = NgramDatabase(ext_txt_set, n=ngram)
-    ext_flatdoc, _ = match_flatdoc(ocr_flatdoc, ext_txt_db, sep=sep)
+    ext_flatdoc, _ = match_flatdoc(
+        ocr_flatdoc, ext_txt_db, body_sep=body_sep, code_sep=code_sep
+    )
     return ext_flatdoc
