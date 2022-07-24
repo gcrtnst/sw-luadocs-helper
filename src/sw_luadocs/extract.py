@@ -183,6 +183,18 @@ def match_txt_pack(ocr_txt_list, ext_txt_db, *, sep="\n"):
     return ext_txt_list, min_score
 
 
+def match_flatdoc_packelem(ocr_flatdoc, ext_txt_db, *, sep="\n\n"):
+    ocr_flatdoc = dot_flatdoc.as_flatdoc_monokind(ocr_flatdoc)
+
+    kind = ocr_flatdoc[0].kind if len(ocr_flatdoc) > 0 else None
+    ocr_txt_list = [ocr_flatelem.txt for ocr_flatelem in ocr_flatdoc]
+    ext_txt_list, score = match_txt_pack(ocr_txt_list, ext_txt_db, sep=sep)
+    ext_flatdoc = [
+        dot_flatdoc.FlatElem(txt=ext_txt, kind=kind) for ext_txt in ext_txt_list
+    ]
+    return ext_flatdoc, score
+
+
 def match_flatdoc_packline(ocr_flatdoc, ext_txt_db, *, sep="\n\n"):
     ocr_flatdoc = dot_flatdoc.as_flatdoc_monokind(ocr_flatdoc)
     sep = str(sep)
