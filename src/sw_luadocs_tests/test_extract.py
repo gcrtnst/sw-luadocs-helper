@@ -552,37 +552,47 @@ class TestMatchFlatDocMonoKind(unittest.TestCase):
             sw_luadocs.extract.match_flatdoc_monokind([], None)
 
     def test_main(self):
-        for input_ocr_flatdoc, input_ext_txt_db, input_sep, expected_ext_flatdoc in [
-            ([], sw_luadocs.extract.NgramDatabase(["a"], n=1), "\n\n", []),
+        for (
+            input_ocr_flatdoc,
+            input_ext_txt_db,
+            input_sep,
+            expected_ext_flatdoc,
+            expected_score,
+        ) in [
+            ([], sw_luadocs.extract.NgramDatabase(["a"], n=1), "\n\n", [], 1.0),
             (
                 [sw_luadocs.flatdoc.FlatElem(txt="a", kind="code")],
                 sw_luadocs.extract.NgramDatabase(["b"], n=1),
-                "\n\n",
+                "\n",
                 [sw_luadocs.flatdoc.FlatElem(txt="b", kind="code")],
+                0.0,
             ),
             (
                 [sw_luadocs.flatdoc.FlatElem(txt="c", kind="body")],
                 sw_luadocs.extract.NgramDatabase(["d"], n=1),
-                "\n\n",
+                "\n",
                 [sw_luadocs.flatdoc.FlatElem(txt="d", kind="body")],
+                0.0,
             ),
             (
                 [sw_luadocs.flatdoc.FlatElem(txt="a\nb", kind="code")],
                 sw_luadocs.extract.NgramDatabase(["a!", "b!"], n=1),
-                "\n\n",
+                "\n",
                 [
                     sw_luadocs.flatdoc.FlatElem(txt="a!", kind="code"),
                     sw_luadocs.flatdoc.FlatElem(txt="b!", kind="code"),
                 ],
+                0.25,
             ),
             (
                 [
                     sw_luadocs.flatdoc.FlatElem(txt="a", kind="code"),
                     sw_luadocs.flatdoc.FlatElem(txt="b", kind="code"),
                 ],
-                sw_luadocs.extract.NgramDatabase(["a\n\nb!"], n=1),
-                "\n\n",
-                [sw_luadocs.flatdoc.FlatElem(txt="a\n\nb!", kind="code")],
+                sw_luadocs.extract.NgramDatabase(["a\nb!"], n=1),
+                "\n",
+                [sw_luadocs.flatdoc.FlatElem(txt="a\nb!", kind="code")],
+                0.5625,
             ),
             (
                 [
@@ -595,6 +605,7 @@ class TestMatchFlatDocMonoKind(unittest.TestCase):
                     sw_luadocs.flatdoc.FlatElem(txt="a!\n", kind="code"),
                     sw_luadocs.flatdoc.FlatElem(txt="b!", kind="code"),
                 ],
+                0.25,
             ),
             (
                 [
@@ -604,6 +615,7 @@ class TestMatchFlatDocMonoKind(unittest.TestCase):
                 sw_luadocs.extract.NgramDatabase(["a\n\nb!", "a,b!"], n=1),
                 ",",
                 [sw_luadocs.flatdoc.FlatElem(txt="a,b!", kind="code")],
+                0.5625,
             ),
             (
                 [
@@ -613,6 +625,7 @@ class TestMatchFlatDocMonoKind(unittest.TestCase):
                 sw_luadocs.extract.NgramDatabase(["a\n\nb!", "a1b!"], n=1),
                 1,
                 [sw_luadocs.flatdoc.FlatElem(txt="a1b!", kind="code")],
+                0.5625,
             ),
         ]:
             with self.subTest(
@@ -620,10 +633,14 @@ class TestMatchFlatDocMonoKind(unittest.TestCase):
                 ext_txt_db=input_ext_txt_db,
                 sep=input_sep,
             ):
-                actual_ext_flatdoc = sw_luadocs.extract.match_flatdoc_monokind(
+                (
+                    actual_ext_flatdoc,
+                    actual_score,
+                ) = sw_luadocs.extract.match_flatdoc_monokind(
                     input_ocr_flatdoc, input_ext_txt_db, sep=input_sep
                 )
                 self.assertEqual(actual_ext_flatdoc, expected_ext_flatdoc)
+                self.assertEqual(actual_score, expected_score)
 
 
 class TestMatchFlatDoc(unittest.TestCase):
