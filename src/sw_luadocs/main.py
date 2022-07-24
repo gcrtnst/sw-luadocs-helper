@@ -80,7 +80,6 @@ def recognize_main(ns):
 
 def extract_main(ns):
     cfg = toml.load(ns.config)
-    extract_cfg = cfg["extract"]
 
     with open(ns.recognize_file, mode="r", encoding="utf-8", newline="\n") as fobj:
         ocr_txt = fobj.read()
@@ -91,8 +90,6 @@ def extract_main(ns):
     ext_flatdoc = dot_extract.extract(
         ocr_flatdoc,
         exe_bin,
-        section_name=extract_cfg["section_name"],
-        ngram=extract_cfg["ngram"],
         body_sep="\n\n",
         code_sep="\n\n",
     )
