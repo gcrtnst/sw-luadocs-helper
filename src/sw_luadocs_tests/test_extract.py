@@ -654,25 +654,34 @@ class TestMatchFlatDoc(unittest.TestCase):
                     sw_luadocs.extract.match_flatdoc(ocr_flatdoc, ext_txt_db, sep=sep)
 
     def test_main(self):
-        for input_ocr_flatdoc, input_ext_txt_db, input_sep, expected_ext_flatdoc in [
-            ([], sw_luadocs.extract.NgramDatabase(["a"], n=1), "", []),
+        for (
+            input_ocr_flatdoc,
+            input_ext_txt_db,
+            input_sep,
+            expected_ext_flatdoc,
+            expected_score,
+        ) in [
+            ([], sw_luadocs.extract.NgramDatabase(["a"], n=1), "", [], 1.0),
             (
                 [sw_luadocs.flatdoc.FlatElem(txt="a", kind="head")],
                 sw_luadocs.extract.NgramDatabase(["b"], n=1),
                 "",
                 [sw_luadocs.flatdoc.FlatElem(txt="b", kind="head")],
+                0.0,
             ),
             (
                 [sw_luadocs.flatdoc.FlatElem(txt="c", kind="body")],
                 sw_luadocs.extract.NgramDatabase(["d"], n=1),
                 "",
                 [sw_luadocs.flatdoc.FlatElem(txt="d", kind="body")],
+                0.0,
             ),
             (
                 [sw_luadocs.flatdoc.FlatElem(txt="e", kind="code")],
                 sw_luadocs.extract.NgramDatabase(["f"], n=1),
                 "",
                 [sw_luadocs.flatdoc.FlatElem(txt="f", kind="code")],
+                0.0,
             ),
             (
                 [
@@ -682,6 +691,7 @@ class TestMatchFlatDoc(unittest.TestCase):
                 sw_luadocs.extract.NgramDatabase(["a\n\nb", "a!", "b!"], n=1),
                 "\n\n",
                 [sw_luadocs.flatdoc.FlatElem(txt="a\n\nb", kind="head")],
+                1.0,
             ),
             (
                 [
@@ -691,6 +701,7 @@ class TestMatchFlatDoc(unittest.TestCase):
                 sw_luadocs.extract.NgramDatabase(["a\n\nb", "a!", "b!"], n=1),
                 "\n\n",
                 [sw_luadocs.flatdoc.FlatElem(txt="a\n\nb", kind="body")],
+                1.0,
             ),
             (
                 [
@@ -700,6 +711,7 @@ class TestMatchFlatDoc(unittest.TestCase):
                 sw_luadocs.extract.NgramDatabase(["a\n\nb", "a!", "b!"], n=1),
                 "\n\n",
                 [sw_luadocs.flatdoc.FlatElem(txt="a\n\nb", kind="code")],
+                1.0,
             ),
             (
                 [
@@ -709,6 +721,7 @@ class TestMatchFlatDoc(unittest.TestCase):
                 sw_luadocs.extract.NgramDatabase(["a,b", "a1b"], n=1),
                 ",",
                 [sw_luadocs.flatdoc.FlatElem(txt="a,b", kind="code")],
+                1.0,
             ),
             (
                 [
@@ -718,6 +731,7 @@ class TestMatchFlatDoc(unittest.TestCase):
                 sw_luadocs.extract.NgramDatabase(["a,b", "a1b"], n=1),
                 1,
                 [sw_luadocs.flatdoc.FlatElem(txt="a1b", kind="code")],
+                1.0,
             ),
             (
                 [
@@ -730,6 +744,7 @@ class TestMatchFlatDoc(unittest.TestCase):
                     sw_luadocs.flatdoc.FlatElem(txt="a!", kind="head"),
                     sw_luadocs.flatdoc.FlatElem(txt="b!", kind="body"),
                 ],
+                0.25,
             ),
             (
                 [
@@ -742,6 +757,7 @@ class TestMatchFlatDoc(unittest.TestCase):
                     sw_luadocs.flatdoc.FlatElem(txt="a!", kind="body"),
                     sw_luadocs.flatdoc.FlatElem(txt="b!", kind="code"),
                 ],
+                0.25,
             ),
             (
                 [
@@ -754,6 +770,7 @@ class TestMatchFlatDoc(unittest.TestCase):
                     sw_luadocs.flatdoc.FlatElem(txt="a!", kind="code"),
                     sw_luadocs.flatdoc.FlatElem(txt="b!", kind="head"),
                 ],
+                0.25,
             ),
             (
                 [
@@ -787,6 +804,7 @@ class TestMatchFlatDoc(unittest.TestCase):
                     sw_luadocs.flatdoc.FlatElem(txt="c1", kind="code"),
                     sw_luadocs.flatdoc.FlatElem(txt="c2", kind="code"),
                 ],
+                1.0,
             ),
             (
                 [
@@ -817,6 +835,7 @@ class TestMatchFlatDoc(unittest.TestCase):
                     sw_luadocs.flatdoc.FlatElem(txt="b1\nb2", kind="body"),
                     sw_luadocs.flatdoc.FlatElem(txt="c1\nc2", kind="code"),
                 ],
+                1.0,
             ),
         ]:
             with self.subTest(
@@ -824,7 +843,8 @@ class TestMatchFlatDoc(unittest.TestCase):
                 ext_txt_db=input_ext_txt_db,
                 sep=input_sep,
             ):
-                actual_ext_flatdoc = sw_luadocs.extract.match_flatdoc(
+                actual_ext_flatdoc, actual_score = sw_luadocs.extract.match_flatdoc(
                     input_ocr_flatdoc, input_ext_txt_db, sep=input_sep
                 )
                 self.assertEqual(actual_ext_flatdoc, expected_ext_flatdoc)
+                self.assertEqual(actual_score, expected_score)
