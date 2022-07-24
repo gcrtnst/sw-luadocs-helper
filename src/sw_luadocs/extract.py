@@ -173,12 +173,14 @@ def match_txt_pack(ocr_txt_list, ext_txt_db, *, sep="\n"):
         raise TypeError
 
     ext_txt_list = []
+    min_score = 1.0
     idx = 0
     while idx < len(ocr_txt_list):
-        ext_txt, adv, _ = match_txt_left(ocr_txt_list[idx:], ext_txt_db, sep=sep)
+        ext_txt, adv, score = match_txt_left(ocr_txt_list[idx:], ext_txt_db, sep=sep)
         ext_txt_list.append(ext_txt)
+        min_score = min(min_score, score)
         idx += adv
-    return ext_txt_list
+    return ext_txt_list, min_score
 
 
 def match_flatdoc_monokind(ocr_flatdoc, ext_txt_db, *, sep="\n\n"):
@@ -193,7 +195,7 @@ def match_flatdoc_monokind(ocr_flatdoc, ext_txt_db, *, sep="\n\n"):
     kind = ocr_flatdoc[0].kind
     ocr_txt_full = sep.join(ocr_flatelem.txt for ocr_flatelem in ocr_flatdoc)
     ocr_txt_list = ocr_txt_full.split("\n")
-    ext_txt_list = match_txt_pack(ocr_txt_list, ext_txt_db, sep="\n")
+    ext_txt_list, _ = match_txt_pack(ocr_txt_list, ext_txt_db, sep="\n")
     return [dot_flatdoc.FlatElem(txt=ext_txt, kind=kind) for ext_txt in ext_txt_list]
 
 

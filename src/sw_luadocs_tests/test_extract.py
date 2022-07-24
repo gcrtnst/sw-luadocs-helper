@@ -449,50 +449,79 @@ class TestMatchTxtPack(unittest.TestCase):
             input_ext_txt_db,
             input_sep,
             expected_ext_txt_list,
+            expected_score,
         ) in [
-            ([], sw_luadocs.extract.NgramDatabase([""], n=1), "", []),
-            (["abc"], sw_luadocs.extract.NgramDatabase(["def"], n=1), "", ["def"]),
+            ([], sw_luadocs.extract.NgramDatabase([""], n=1), "", [], 1.0),
+            (["abc"], sw_luadocs.extract.NgramDatabase(["def"], n=1), "", ["def"], 0.0),
             (
                 ["abc", "def"],
                 sw_luadocs.extract.NgramDatabase(["abg", "deh"], n=1),
                 "",
                 ["abg", "deh"],
+                0.5,
             ),
             (
                 ["abc", "def"],
                 sw_luadocs.extract.NgramDatabase(["abcdef"], n=1),
                 "",
                 ["abcdef"],
+                1.0,
             ),
             (
                 ["abc", "def"],
                 sw_luadocs.extract.NgramDatabase(["abc#def", "abc,def"], n=1),
                 ",",
                 ["abc,def"],
+                1.0,
             ),
             (
                 [123, 456],
                 sw_luadocs.extract.NgramDatabase(["123789456"], n=1),
                 789,
                 ["123789456"],
+                1.0,
             ),
             (
                 ["abc", "def", "ghi"],
                 sw_luadocs.extract.NgramDatabase(["abc!", "def!", "ghi!"], n=1),
                 "#",
                 ["abc!", "def!", "ghi!"],
+                0.5625,
+            ),
+            (
+                ["abc", "def", "ghi"],
+                sw_luadocs.extract.NgramDatabase(["abc!", "def", "ghi"], n=1),
+                "#",
+                ["abc!", "def", "ghi"],
+                0.5625,
+            ),
+            (
+                ["abc", "def", "ghi"],
+                sw_luadocs.extract.NgramDatabase(["abc", "def!", "ghi"], n=1),
+                "#",
+                ["abc", "def!", "ghi"],
+                0.5625,
+            ),
+            (
+                ["abc", "def", "ghi"],
+                sw_luadocs.extract.NgramDatabase(["abc", "def", "ghi!"], n=1),
+                "#",
+                ["abc", "def", "ghi!"],
+                0.5625,
             ),
             (
                 ["abc", "def", "ghi"],
                 sw_luadocs.extract.NgramDatabase(["abc#def", "ghi"], n=1),
                 "#",
                 ["abc#def", "ghi"],
+                1.0,
             ),
             (
                 ["abc", "def", "ghi"],
                 sw_luadocs.extract.NgramDatabase(["abc", "def#ghi"], n=1),
                 "#",
                 ["abc", "def#ghi"],
+                1.0,
             ),
         ]:
             with self.subTest(
@@ -500,10 +529,11 @@ class TestMatchTxtPack(unittest.TestCase):
                 ext_txt_db=input_ext_txt_db,
                 sep=input_sep,
             ):
-                actual_ext_txt_list = sw_luadocs.extract.match_txt_pack(
+                actual_ext_txt_list, actual_score = sw_luadocs.extract.match_txt_pack(
                     input_ocr_txt_list, input_ext_txt_db, sep=input_sep
                 )
                 self.assertEqual(actual_ext_txt_list, expected_ext_txt_list)
+                self.assertEqual(actual_score, expected_score)
 
 
 class TestMatchFlatDocMonoKind(unittest.TestCase):
