@@ -163,7 +163,7 @@ def match_txt_left(ocr_txt_list, ext_txt_db, *, sep="\n"):
             best_score = score
     if best_ext_txt is None or best_adv is None:
         raise ValueError
-    return best_ext_txt, best_adv
+    return best_ext_txt, best_adv, best_score
 
 
 def match_txt_pack(ocr_txt_list, ext_txt_db, *, sep="\n"):
@@ -175,7 +175,7 @@ def match_txt_pack(ocr_txt_list, ext_txt_db, *, sep="\n"):
     ext_txt_list = []
     idx = 0
     while idx < len(ocr_txt_list):
-        ext_txt, adv = match_txt_left(ocr_txt_list[idx:], ext_txt_db, sep=sep)
+        ext_txt, adv, _ = match_txt_left(ocr_txt_list[idx:], ext_txt_db, sep=sep)
         ext_txt_list.append(ext_txt)
         idx += adv
     return ext_txt_list

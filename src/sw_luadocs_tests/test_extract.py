@@ -352,14 +352,23 @@ class TestMatchTxtLeft(unittest.TestCase):
             input_sep,
             expected_ext_txt,
             expected_adv,
+            expected_score,
         ) in [
-            (["a"], sw_luadocs.extract.NgramDatabase(["ab", "bc"], n=1), "\n", "ab", 1),
+            (
+                ["a"],
+                sw_luadocs.extract.NgramDatabase(["ab", "bc"], n=1),
+                "\n",
+                "ab",
+                1,
+                0.25,
+            ),
             (
                 ["a", "b", "c"],
                 sw_luadocs.extract.NgramDatabase(["a"], n=3),
                 ",",
                 "a",
                 1,
+                1.0,
             ),
             (
                 ["a", "b", "c"],
@@ -367,6 +376,7 @@ class TestMatchTxtLeft(unittest.TestCase):
                 ",",
                 "a,b",
                 2,
+                1.0,
             ),
             (
                 ["a", "b", "c"],
@@ -374,6 +384,7 @@ class TestMatchTxtLeft(unittest.TestCase):
                 ",",
                 "a,b,c",
                 3,
+                1.0,
             ),
             (
                 ["a", "b", "c"],
@@ -381,6 +392,7 @@ class TestMatchTxtLeft(unittest.TestCase):
                 ":",
                 "a:b:c",
                 3,
+                1.0,
             ),
             (
                 [1, 2, 3],
@@ -388,6 +400,7 @@ class TestMatchTxtLeft(unittest.TestCase):
                 4,
                 "14243",
                 3,
+                1.0,
             ),
             (
                 ["a", "b", "c"],
@@ -395,6 +408,7 @@ class TestMatchTxtLeft(unittest.TestCase):
                 ",",
                 "a",
                 1,
+                1.0,
             ),
             (
                 ["abc", "def", "ghi"],
@@ -404,6 +418,7 @@ class TestMatchTxtLeft(unittest.TestCase):
                 ":",
                 "abc,def",
                 2,
+                0.75,
             ),
         ]:
             with self.subTest(
@@ -411,11 +426,16 @@ class TestMatchTxtLeft(unittest.TestCase):
                 ext_txt_db=input_ext_txt_db,
                 sep=input_sep,
             ):
-                actual_ext_txt, actual_adv = sw_luadocs.extract.match_txt_left(
+                (
+                    actual_ext_txt,
+                    actual_adv,
+                    actual_score,
+                ) = sw_luadocs.extract.match_txt_left(
                     input_ocr_txt_list, input_ext_txt_db, sep=input_sep
                 )
                 self.assertEqual(actual_ext_txt, expected_ext_txt)
                 self.assertEqual(actual_adv, expected_adv)
+                self.assertEqual(actual_score, expected_score)
 
 
 class TestMatchTxtPack(unittest.TestCase):
