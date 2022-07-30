@@ -3,16 +3,6 @@ import sw_luadocs.capture
 import unittest
 
 
-class TestGetSystemMetrics(unittest.TestCase):
-    def test_call_zero(self):
-        metrics = sw_luadocs.capture.get_system_metrics(-1)
-        self.assertEqual(metrics, 0)
-
-    def test_call_nonzero(self):
-        metrics = sw_luadocs.capture.get_system_metrics(13)
-        self.assertNotEqual(metrics, 0)
-
-
 class TestStormworksControllerInit(unittest.TestCase):
     def test_winget_error(self):
         with self.assertRaises(RuntimeError):

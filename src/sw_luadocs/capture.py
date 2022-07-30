@@ -1,6 +1,4 @@
 import ahk
-import ctypes
-import ctypes.wintypes
 import cv2
 import d3dshot
 import math
@@ -10,13 +8,6 @@ import win32api
 import win32gui
 
 from . import image as dot_image
-
-
-def get_system_metrics(idx):
-    GetSystemMetrics = ctypes.windll.user32.GetSystemMetrics
-    GetSystemMetrics.argtypes = (ctypes.c_int,)
-    GetSystemMetrics.restype = ctypes.c_int
-    return GetSystemMetrics(idx)
 
 
 def get_screen_size():
