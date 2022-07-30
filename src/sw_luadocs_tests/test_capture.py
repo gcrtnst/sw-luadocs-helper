@@ -3,16 +3,6 @@ import sw_luadocs.capture
 import unittest
 
 
-class TestClientToScreen(unittest.TestCase):
-    def test_validate_type_error(self):
-        with self.assertRaises(TypeError):
-            sw_luadocs.capture.client_to_screen("")
-
-    def test_call_error(self):
-        with self.assertRaises(RuntimeError):
-            sw_luadocs.capture.client_to_screen(0)
-
-
 class TestGetSystemMetrics(unittest.TestCase):
     def test_call_zero(self):
         metrics = sw_luadocs.capture.get_system_metrics(-1)

@@ -11,26 +11,6 @@ import win32gui
 from . import image as dot_image
 
 
-def client_to_screen(hwnd):
-    if not isinstance(hwnd, int):
-        raise TypeError
-
-    def errcheck(result, func, args):
-        if result == 0:
-            raise RuntimeError
-        return result
-
-    ClientToScreen = ctypes.windll.user32.ClientToScreen
-    ClientToScreen.argtypes = ctypes.wintypes.HWND, ctypes.POINTER(
-        ctypes.wintypes.POINT
-    )
-    ClientToScreen.restype = ctypes.wintypes.BOOL
-    ClientToScreen.errcheck = errcheck
-    point = ctypes.wintypes.POINT()
-    ClientToScreen(hwnd, ctypes.byref(point))
-    return point.x, point.y
-
-
 def get_system_metrics(idx):
     GetSystemMetrics = ctypes.windll.user32.GetSystemMetrics
     GetSystemMetrics.argtypes = (ctypes.c_int,)
