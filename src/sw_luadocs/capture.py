@@ -86,7 +86,7 @@ class StormworksController:
     def client_area(self):
         hwnd = self.hwnd()
         _, _, w, h = win32gui.GetClientRect(hwnd)
-        x, y = client_to_screen(hwnd)
+        x, y = win32gui.ClientToScreen(hwnd, (0, 0))
         return x, y, w, h
 
     def is_fullscreen(self):
