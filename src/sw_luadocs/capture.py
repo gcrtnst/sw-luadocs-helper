@@ -6,6 +6,7 @@ import d3dshot
 import math
 import numpy as np
 import time
+import win32gui
 
 from . import image as dot_image
 
@@ -102,7 +103,7 @@ class StormworksController:
 
     def client_area(self):
         hwnd = self.hwnd()
-        _, _, w, h = get_client_rect(hwnd)
+        _, _, w, h = win32gui.GetClientRect(hwnd)
         x, y = client_to_screen(hwnd)
         return x, y, w, h
 
