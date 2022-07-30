@@ -3,16 +3,6 @@ import sw_luadocs.capture
 import unittest
 
 
-class TestGetClientRect(unittest.TestCase):
-    def test_validate_type_error(self):
-        with self.assertRaises(TypeError):
-            sw_luadocs.capture.get_client_rect("")
-
-    def test_call_error(self):
-        with self.assertRaises(OSError):
-            sw_luadocs.capture.get_client_rect(0)
-
-
 class TestClientToScreen(unittest.TestCase):
     def test_validate_type_error(self):
         with self.assertRaises(TypeError):

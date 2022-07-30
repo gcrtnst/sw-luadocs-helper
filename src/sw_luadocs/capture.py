@@ -11,24 +11,6 @@ import win32gui
 from . import image as dot_image
 
 
-def get_client_rect(hwnd):
-    if not isinstance(hwnd, int):
-        raise TypeError
-
-    def errcheck(result, func, args):
-        if result == 0:
-            raise ctypes.WinError()
-        return result
-
-    GetClientRect = ctypes.windll.user32.GetClientRect
-    GetClientRect.argtypes = ctypes.wintypes.HWND, ctypes.POINTER(ctypes.wintypes.RECT)
-    GetClientRect.restype = ctypes.wintypes.BOOL
-    GetClientRect.errcheck = errcheck
-    rect = ctypes.wintypes.RECT()
-    GetClientRect(hwnd, ctypes.byref(rect))
-    return rect.left, rect.top, rect.right, rect.bottom
-
-
 def client_to_screen(hwnd):
     if not isinstance(hwnd, int):
         raise TypeError
