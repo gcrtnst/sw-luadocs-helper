@@ -3,19 +3,13 @@ import _appendpath  # noqa: F401
 import sw_luadocs.capture
 
 
-win_title = "Stormworks"
-win_class = "GLFW30"
+def test_checkwindowexists_running(hwnd):
+    sw_luadocs.capture.check_window_exists(hwnd)
 
 
-def test_findwindow_running():
-    hwnd = sw_luadocs.capture.find_window(win_class, win_title)
-    if hwnd == 0:
-        raise RuntimeError
-
-
-def test_findwindow_closed():
+def test_checkwindowexists_closed(hwnd):
     try:
-        sw_luadocs.capture.find_window(win_class, win_title)
+        sw_luadocs.capture.check_window_exists(hwnd)
     except RuntimeError:
         pass
     else:
@@ -24,14 +18,16 @@ def test_findwindow_closed():
 
 def test():
     input("please launch stormworks manually ... ")
+    hwnd = sw_luadocs.capture.find_window("GLFW30", "Stormworks")
+
     input("please set stormworks to 640x480 windowed mode manually ... ")
-    test_findwindow_running()
+    test_checkwindowexists_running(hwnd)
 
     input("please set stormworks to 1920x1080 fullscreen mode manually ... ")
-    test_findwindow_running()
+    test_checkwindowexists_running(hwnd)
 
     input("please close stormworks manually ... ")
-    test_findwindow_closed()
+    test_checkwindowexists_closed(hwnd)
 
 
 if __name__ == "__main__":

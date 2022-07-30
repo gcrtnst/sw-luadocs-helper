@@ -23,6 +23,11 @@ def get_screen_size():
     return scr_w, scr_h
 
 
+def check_window_exists(hwnd):
+    if not win32gui.IsWindow(hwnd):
+        raise RuntimeError
+
+
 def screenshot(capture_output="pil", region=None):
     # Do not run this function concurrently with itself or
     # with any other function that uses the Desktop Duplication API.
