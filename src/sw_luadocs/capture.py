@@ -6,6 +6,7 @@ import d3dshot
 import math
 import numpy as np
 import time
+import win32api
 import win32gui
 
 from . import image as dot_image
@@ -19,8 +20,8 @@ def get_system_metrics(idx):
 
 
 def get_screen_size():
-    scr_w = get_system_metrics(0)
-    scr_h = get_system_metrics(1)
+    scr_w = win32api.GetSystemMetrics(0)
+    scr_h = win32api.GetSystemMetrics(1)
     return scr_w, scr_h
 
 
