@@ -1,8 +1,6 @@
 import _appendpath  # noqa: F401
 
 import ahk
-import argparse
-import pathlib
 import sw_luadocs.capture
 import time
 import traceback
