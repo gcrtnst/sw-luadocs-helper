@@ -6,6 +6,31 @@ import win32api
 import win32con
 
 
+class TestCheckWindowForeground(unittest.TestCase):
+    def test_invalid_hwnd(self):
+        foreground = sw_luadocs.capture.check_window_foreground(0)
+        self.assertEqual(foreground, False)
+
+    def test_main(self):
+        for input_foreground in [False, True]:
+            with self.subTest(foreground=input_foreground):
+                tk = tkinter.Tk()
+                try:
+                    if input_foreground:
+                        tk.focus_force()
+                    else:
+                        tk_top = tkinter.Toplevel(tk)
+                        tk_top.focus_force()
+                    tk.update()
+                    input_hwnd = int(tk.wm_frame(), 16)
+                    actual_foreground = sw_luadocs.capture.check_window_foreground(
+                        input_hwnd
+                    )
+                finally:
+                    tk.destroy()
+                self.assertEqual(actual_foreground, input_foreground)
+
+
 class TestCheckWindowTopmost(unittest.TestCase):
     def test_invalid_hwnd(self):
         topmost = sw_luadocs.capture.check_window_topmost(0)

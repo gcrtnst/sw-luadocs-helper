@@ -17,6 +17,11 @@ def get_screen_size():
     return scr_w, scr_h
 
 
+def check_window_foreground(hwnd):
+    hwnd = int(hwnd)
+    return hwnd == win32gui.GetForegroundWindow()
+
+
 def check_window_topmost(hwnd):
     exstyle = win32gui.GetWindowLong(hwnd, win32con.GWL_EXSTYLE)
     return exstyle & win32con.WS_EX_TOPMOST != 0
