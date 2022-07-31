@@ -57,6 +57,27 @@ class TestCheckWindowFullscreen(unittest.TestCase):
                 self.assertEqual(actual_fullscreen, expected_fullscreen)
 
 
+class TestRestoreWindow(unittest.TestCase):
+    def test_invalid_hwnd(self):
+        with self.assertRaises(RuntimeError):
+            sw_luadocs.capture.restore_window(0)
+
+    def test_main(self):
+        for input_state in ["normal", "iconic", "zoomed"]:
+            with self.subTest(state=input_state):
+                tk = tkinter.Tk()
+                try:
+                    tk.wm_state(input_state)
+                    tk.update()
+                    input_hwnd = int(tk.wm_frame(), 16)
+                    sw_luadocs.capture.restore_window(input_hwnd)
+                    tk.update()
+                    actual_state = tk.wm_state()
+                finally:
+                    tk.destroy()
+                self.assertEqual(actual_state, "normal")
+
+
 class TestStormworksControllerInit(unittest.TestCase):
     def test_winget_error(self):
         with self.assertRaises(RuntimeError):

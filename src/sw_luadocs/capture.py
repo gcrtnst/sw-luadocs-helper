@@ -33,6 +33,12 @@ def check_window_fullscreen(hwnd):
     return win_x == 0 and win_y == 0 and win_w == scr_w and win_h == scr_h
 
 
+def restore_window(hwnd):
+    result = win32gui.ShowWindow(hwnd, win32con.SW_RESTORE)
+    if not result:
+        raise RuntimeError
+
+
 def screenshot(capture_output="pil", region=None):
     # Do not run this function concurrently with itself or
     # with any other function that uses the Desktop Duplication API.
