@@ -5,6 +5,7 @@ import math
 import numpy as np
 import time
 import win32api
+import win32con
 import win32gui
 
 from . import image as dot_image
@@ -14,6 +15,11 @@ def get_screen_size():
     scr_w = win32api.GetSystemMetrics(0)
     scr_h = win32api.GetSystemMetrics(1)
     return scr_w, scr_h
+
+
+def check_window_topmost(hwnd):
+    exstyle = win32gui.GetWindowLong(hwnd, win32con.GWL_EXSTYLE)
+    return exstyle & win32con.WS_EX_TOPMOST != 0
 
 
 def screenshot(capture_output="pil", region=None):

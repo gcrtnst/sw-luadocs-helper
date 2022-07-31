@@ -1,6 +1,26 @@
 import numpy as np
 import sw_luadocs.capture
+import tkinter
 import unittest
+
+
+class TestCheckWindowTopmost(unittest.TestCase):
+    def test_invalid_hwnd(self):
+        topmost = sw_luadocs.capture.check_window_topmost(0)
+        self.assertEqual(topmost, False)
+
+    def test_main(self):
+        for input_topmost in [False, True]:
+            with self.subTest(topmost=input_topmost):
+                tk = tkinter.Tk()
+                try:
+                    tk.wm_attributes("-topmost", input_topmost)
+                    tk.update()
+                    input_hwnd = int(tk.wm_frame(), 16)
+                    actual_topmost = sw_luadocs.capture.check_window_topmost(input_hwnd)
+                finally:
+                    tk.destroy()
+                self.assertEqual(actual_topmost, input_topmost)
 
 
 class TestStormworksControllerInit(unittest.TestCase):
