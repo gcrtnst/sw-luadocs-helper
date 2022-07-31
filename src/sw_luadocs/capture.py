@@ -10,22 +10,10 @@ import win32gui
 from . import image as dot_image
 
 
-def find_window(class_name, window_name):
-    hwnd = win32gui.FindWindow(class_name, window_name)
-    if hwnd == 0:
-        raise RuntimeError
-    return hwnd
-
-
 def get_screen_size():
     scr_w = win32api.GetSystemMetrics(0)
     scr_h = win32api.GetSystemMetrics(1)
     return scr_w, scr_h
-
-
-def check_window_exists(hwnd):
-    if not win32gui.IsWindow(hwnd):
-        raise RuntimeError
 
 
 def screenshot(capture_output="pil", region=None):
