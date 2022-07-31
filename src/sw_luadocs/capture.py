@@ -3,7 +3,6 @@ import cv2
 import d3dshot
 import math
 import numpy as np
-import pywintypes
 import time
 import win32api
 import win32con
