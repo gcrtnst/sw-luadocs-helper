@@ -34,6 +34,40 @@ class TestShowWindow(unittest.TestCase):
                 self.assertEqual(actual_state, expected_state)
 
 
+class TestTryActivateWindow(unittest.TestCase):
+    def test_invalid_hwnd(self):
+        result = sw_luadocs.capture.try_activate_window(0)
+        self.assertEqual(result, False)
+
+    def test_main(self):
+        for input_foreground, input_state in [
+            (False, "normal"),
+            (False, "iconic"),
+            (True, "normal"),
+            (True, "iconic"),
+        ]:
+            with self.subTest(foreground=input_foreground, state=input_state):
+                tk = tkinter.Tk()
+                try:
+                    if input_foreground:
+                        tk.focus_force()
+                    else:
+                        tk_top = tkinter.Toplevel(tk)
+                        tk_top.focus_force()
+                    tk.wm_state(input_state)
+                    tk.update()
+                    input_hwnd = int(tk.wm_frame(), 16)
+                    actual_result = sw_luadocs.capture.try_activate_window(input_hwnd)
+                    tk.update()
+                    actual_foreground = tk.focus_get() == tk
+                    actual_state = tk.wm_state()
+                finally:
+                    tk.destroy()
+                self.assertTrue(actual_result)
+                self.assertTrue(actual_foreground)
+                self.assertEqual(actual_state, "normal")
+
+
 class TestCheckWindowFullscreen(unittest.TestCase):
     def test_invalid_hwnd(self):
         fullscreen = sw_luadocs.capture.check_window_fullscreen(0)

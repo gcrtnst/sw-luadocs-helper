@@ -3,6 +3,7 @@ import cv2
 import d3dshot
 import math
 import numpy as np
+import pywintypes
 import time
 import win32api
 import win32con
@@ -21,6 +22,20 @@ def show_window(hwnd, cmd):
     result = win32gui.ShowWindow(hwnd, cmd)
     if not result:
         raise RuntimeError
+
+
+def try_activate_window(hwnd):
+    result_sw = True
+    if win32gui.IsIconic(hwnd):
+        result_sw = win32gui.ShowWindow(hwnd, win32con.SW_RESTORE)
+
+    result_sfw = True
+    try:
+        win32gui.SetForegroundWindow(hwnd)
+    except pywintypes.error:
+        result_sfw = False
+
+    return result_sw and result_sfw
 
 
 def check_window_fullscreen(hwnd):
