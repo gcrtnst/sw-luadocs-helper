@@ -39,6 +39,12 @@ def restore_window(hwnd):
         raise RuntimeError
 
 
+def show_window(hwnd, cmd):
+    result = win32gui.ShowWindow(hwnd, cmd)
+    if not result:
+        raise RuntimeError
+
+
 def screenshot(capture_output="pil", region=None):
     # Do not run this function concurrently with itself or
     # with any other function that uses the Desktop Duplication API.
