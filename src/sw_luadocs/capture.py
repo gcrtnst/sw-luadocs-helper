@@ -24,6 +24,7 @@ def show_window(hwnd, cmd):
 
 
 def activate_window(hwnd):
+    hwnd = int(hwnd)
     if hwnd != win32gui.GetForegroundWindow() and not win32gui.IsIconic(hwnd):
         show_window(hwnd, win32con.SW_SHOWMINIMIZED)
     if win32gui.IsIconic(hwnd):
