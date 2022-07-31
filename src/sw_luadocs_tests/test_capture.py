@@ -6,83 +6,6 @@ import win32api
 import win32con
 
 
-class TestCheckWindowForeground(unittest.TestCase):
-    def test_invalid_hwnd(self):
-        foreground = sw_luadocs.capture.check_window_foreground(0)
-        self.assertEqual(foreground, False)
-
-    def test_main(self):
-        for input_foreground in [False, True]:
-            with self.subTest(foreground=input_foreground):
-                tk = tkinter.Tk()
-                try:
-                    if input_foreground:
-                        tk.focus_force()
-                    else:
-                        tk_top = tkinter.Toplevel(tk)
-                        tk_top.focus_force()
-                    tk.update()
-                    input_hwnd = int(tk.wm_frame(), 16)
-                    actual_foreground = sw_luadocs.capture.check_window_foreground(
-                        input_hwnd
-                    )
-                finally:
-                    tk.destroy()
-                self.assertEqual(actual_foreground, input_foreground)
-
-
-class TestCheckWindowTopmost(unittest.TestCase):
-    def test_invalid_hwnd(self):
-        topmost = sw_luadocs.capture.check_window_topmost(0)
-        self.assertEqual(topmost, False)
-
-    def test_main(self):
-        for input_topmost in [False, True]:
-            with self.subTest(topmost=input_topmost):
-                tk = tkinter.Tk()
-                try:
-                    tk.wm_attributes("-topmost", input_topmost)
-                    tk.update()
-                    input_hwnd = int(tk.wm_frame(), 16)
-                    actual_topmost = sw_luadocs.capture.check_window_topmost(input_hwnd)
-                finally:
-                    tk.destroy()
-                self.assertEqual(actual_topmost, input_topmost)
-
-
-class TestCheckWindowFullscreen(unittest.TestCase):
-    def test_invalid_hwnd(self):
-        fullscreen = sw_luadocs.capture.check_window_fullscreen(0)
-        self.assertEqual(fullscreen, False)
-
-    def test_main(self):
-        scr_w = win32api.GetSystemMetrics(0)
-        scr_h = win32api.GetSystemMetrics(1)
-
-        for input_topmost, input_geometry, expected_fullscreen in [
-            (True, f"{scr_w}x{scr_h}+0+0", True),
-            (False, f"{scr_w}x{scr_h}+0+0", False),
-            (True, f"{scr_w}x{scr_h}+1+0", False),
-            (True, f"{scr_w}x{scr_h}+0+1", False),
-            (True, f"{scr_w-1}x{scr_h}+0+0", False),
-            (True, f"{scr_w}x{scr_h-1}+0+0", False),
-        ]:
-            with self.subTest(topmost=input_topmost, geometry=input_geometry):
-                tk = tkinter.Tk()
-                try:
-                    tk.wm_overrideredirect(True)
-                    tk.wm_attributes("-topmost", input_topmost)
-                    tk.wm_geometry(input_geometry)
-                    tk.update()
-                    input_hwnd = int(tk.wm_frame(), 16)
-                    actual_fullscreen = sw_luadocs.capture.check_window_fullscreen(
-                        input_hwnd
-                    )
-                finally:
-                    tk.destroy()
-                self.assertEqual(actual_fullscreen, expected_fullscreen)
-
-
 class TestShowWindow(unittest.TestCase):
     def test_invalid_hwnd(self):
         with self.assertRaises(RuntimeError):
@@ -109,6 +32,49 @@ class TestShowWindow(unittest.TestCase):
                 finally:
                     tk.destroy()
                 self.assertEqual(actual_state, expected_state)
+
+
+class TestCheckWindowFullscreen(unittest.TestCase):
+    def test_invalid_hwnd(self):
+        fullscreen = sw_luadocs.capture.check_window_fullscreen(0)
+        self.assertEqual(fullscreen, False)
+
+    def test_main(self):
+        scr_w = win32api.GetSystemMetrics(0)
+        scr_h = win32api.GetSystemMetrics(1)
+
+        for input_foreground, input_topmost, input_geometry, expected_fullscreen in [
+            (True, True, f"{scr_w}x{scr_h}+0+0", True),
+            (False, True, f"{scr_w}x{scr_h}+0+0", False),
+            (True, False, f"{scr_w}x{scr_h}+0+0", False),
+            (True, True, f"{scr_w}x{scr_h}+1+0", False),
+            (True, True, f"{scr_w}x{scr_h}+0+1", False),
+            (True, True, f"{scr_w-1}x{scr_h}+0+0", False),
+            (True, True, f"{scr_w}x{scr_h-1}+0+0", False),
+        ]:
+            with self.subTest(
+                foreground=input_foreground,
+                topmost=input_topmost,
+                geometry=input_geometry,
+            ):
+                tk = tkinter.Tk()
+                try:
+                    tk.wm_overrideredirect(True)
+                    if input_foreground:
+                        tk.focus_force()
+                    else:
+                        tk_top = tkinter.Toplevel(tk)
+                        tk_top.focus_force()
+                    tk.wm_attributes("-topmost", input_topmost)
+                    tk.wm_geometry(input_geometry)
+                    tk.update()
+                    input_hwnd = int(tk.wm_frame(), 16)
+                    actual_fullscreen = sw_luadocs.capture.check_window_fullscreen(
+                        input_hwnd
+                    )
+                finally:
+                    tk.destroy()
+                self.assertEqual(actual_fullscreen, expected_fullscreen)
 
 
 class TestStormworksControllerInit(unittest.TestCase):

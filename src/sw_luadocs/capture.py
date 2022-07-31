@@ -17,18 +17,17 @@ def get_screen_size():
     return scr_w, scr_h
 
 
-def check_window_foreground(hwnd):
-    hwnd = int(hwnd)
-    return hwnd == win32gui.GetForegroundWindow()
-
-
-def check_window_topmost(hwnd):
-    exstyle = win32gui.GetWindowLong(hwnd, win32con.GWL_EXSTYLE)
-    return exstyle & win32con.WS_EX_TOPMOST != 0
+def show_window(hwnd, cmd):
+    result = win32gui.ShowWindow(hwnd, cmd)
+    if not result:
+        raise RuntimeError
 
 
 def check_window_fullscreen(hwnd):
-    if not check_window_topmost(hwnd):
+    hwnd = int(hwnd)
+    if hwnd != win32gui.GetForegroundWindow():
+        return False
+    if win32gui.GetWindowLong(hwnd, win32con.GWL_EXSTYLE) & win32con.WS_EX_TOPMOST == 0:
         return False
 
     scr_w = win32api.GetSystemMetrics(0)
@@ -36,12 +35,6 @@ def check_window_fullscreen(hwnd):
     win_x, win_y = win32gui.ClientToScreen(hwnd, (0, 0))
     _, _, win_w, win_h = win32gui.GetClientRect(hwnd)
     return win_x == 0 and win_y == 0 and win_w == scr_w and win_h == scr_h
-
-
-def show_window(hwnd, cmd):
-    result = win32gui.ShowWindow(hwnd, cmd)
-    if not result:
-        raise RuntimeError
 
 
 def screenshot(capture_output="pil", region=None):
