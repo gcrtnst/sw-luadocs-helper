@@ -22,6 +22,17 @@ def check_window_topmost(hwnd):
     return exstyle & win32con.WS_EX_TOPMOST != 0
 
 
+def check_window_fullscreen(hwnd):
+    if not check_window_topmost(hwnd):
+        return False
+
+    scr_w = win32api.GetSystemMetrics(0)
+    scr_h = win32api.GetSystemMetrics(1)
+    win_x, win_y = win32gui.ClientToScreen(hwnd, (0, 0))
+    _, _, win_w, win_h = win32gui.GetClientRect(hwnd)
+    return win_x == 0 and win_y == 0 and win_w == scr_w and win_h == scr_h
+
+
 def screenshot(capture_output="pil", region=None):
     # Do not run this function concurrently with itself or
     # with any other function that uses the Desktop Duplication API.

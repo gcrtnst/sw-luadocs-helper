@@ -2,6 +2,7 @@ import numpy as np
 import sw_luadocs.capture
 import tkinter
 import unittest
+import win32api
 
 
 class TestCheckWindowTopmost(unittest.TestCase):
@@ -21,6 +22,39 @@ class TestCheckWindowTopmost(unittest.TestCase):
                 finally:
                     tk.destroy()
                 self.assertEqual(actual_topmost, input_topmost)
+
+
+class TestCheckWindowFullscreen(unittest.TestCase):
+    def test_invalid_hwnd(self):
+        fullscreen = sw_luadocs.capture.check_window_fullscreen(0)
+        self.assertEqual(fullscreen, False)
+
+    def test_main(self):
+        scr_w = win32api.GetSystemMetrics(0)
+        scr_h = win32api.GetSystemMetrics(1)
+
+        for input_topmost, input_geometry, expected_fullscreen in [
+            (True, f"{scr_w}x{scr_h}+0+0", True),
+            (False, f"{scr_w}x{scr_h}+0+0", False),
+            (True, f"{scr_w}x{scr_h}+1+0", False),
+            (True, f"{scr_w}x{scr_h}+0+1", False),
+            (True, f"{scr_w-1}x{scr_h}+0+0", False),
+            (True, f"{scr_w}x{scr_h-1}+0+0", False),
+        ]:
+            with self.subTest(topmost=input_topmost, geometry=input_geometry):
+                tk = tkinter.Tk()
+                try:
+                    tk.wm_overrideredirect(True)
+                    tk.wm_attributes("-topmost", input_topmost)
+                    tk.wm_geometry(input_geometry)
+                    tk.update()
+                    input_hwnd = int(tk.wm_frame(), 16)
+                    actual_fullscreen = sw_luadocs.capture.check_window_fullscreen(
+                        input_hwnd
+                    )
+                finally:
+                    tk.destroy()
+                self.assertEqual(actual_fullscreen, expected_fullscreen)
 
 
 class TestStormworksControllerInit(unittest.TestCase):
