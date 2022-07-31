@@ -31,20 +31,6 @@ def activate_window(hwnd):
         show_window(hwnd, win32con.SW_RESTORE)
 
 
-def try_activate_window(hwnd):
-    result_sw = True
-    if win32gui.IsIconic(hwnd):
-        result_sw = win32gui.ShowWindow(hwnd, win32con.SW_RESTORE)
-
-    result_sfw = True
-    try:
-        win32gui.SetForegroundWindow(hwnd)
-    except pywintypes.error:
-        result_sfw = False
-
-    return result_sw and result_sfw
-
-
 def check_window_fullscreen(hwnd):
     hwnd = int(hwnd)
     if hwnd != win32gui.GetForegroundWindow():
