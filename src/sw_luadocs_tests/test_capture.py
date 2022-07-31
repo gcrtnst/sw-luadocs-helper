@@ -3,6 +3,35 @@ import sw_luadocs.capture
 import tkinter
 import unittest
 import win32api
+import win32con
+
+
+class TestShowWindow(unittest.TestCase):
+    def test_invalid_hwnd(self):
+        with self.assertRaises(RuntimeError):
+            sw_luadocs.capture.show_window(0, win32con.SW_RESTORE)
+
+    def test_main(self):
+        for input_state, input_cmd, expected_state in [
+            ("normal", win32con.SW_RESTORE, "normal"),
+            ("iconic", win32con.SW_RESTORE, "normal"),
+            ("zoomed", win32con.SW_RESTORE, "normal"),
+            ("normal", win32con.SW_SHOWMINNOACTIVE, "iconic"),
+            ("iconic", win32con.SW_SHOWMINNOACTIVE, "iconic"),
+            ("zoomed", win32con.SW_SHOWMINNOACTIVE, "iconic"),
+        ]:
+            with self.subTest(state=input_state):
+                tk = tkinter.Tk()
+                try:
+                    tk.wm_state(input_state)
+                    tk.update()
+                    input_hwnd = int(tk.wm_frame(), 16)
+                    sw_luadocs.capture.show_window(input_hwnd, input_cmd)
+                    tk.update()
+                    actual_state = tk.wm_state()
+                finally:
+                    tk.destroy()
+                self.assertEqual(actual_state, expected_state)
 
 
 class TestTryActivateWindow(unittest.TestCase):
