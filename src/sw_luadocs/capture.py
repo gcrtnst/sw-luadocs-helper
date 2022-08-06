@@ -123,6 +123,12 @@ def capture_screenshot(capture_area=None):
     return capture_img
 
 
+def capture_game(hwnd, capture_area=None):
+    if not is_fullscreen(hwnd):
+        raise RuntimeError
+    return capture_screenshot(capture_area=capture_area)
+
+
 class StormworksController:
     def __init__(
         self,

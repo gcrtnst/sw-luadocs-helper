@@ -211,6 +211,35 @@ class TestCaptureScreenshot(unittest.TestCase):
                 self.assertEqual(actual_img_h, expected_img_h)
 
 
+class TestCaptureGame(unittest.TestCase):
+    def test_invalid_hwnd(self):
+        with self.assertRaises(RuntimeError):
+            sw_luadocs.capture.capture_game(0)
+
+    def test_main(self):
+        scr_w = win32api.GetSystemMetrics(0)
+        scr_h = win32api.GetSystemMetrics(1)
+
+        tk = tkinter.Tk()
+        try:
+            tk.wm_overrideredirect(True)
+            tk.wm_attributes("-topmost", True)
+            tk.wm_geometry(f"{scr_w}x{scr_h}+0+0")
+            tk.update()
+            tk.focus_force()
+            tk.update()
+            hwnd = int(tk.wm_frame(), 16)
+            capture_img = sw_luadocs.capture.capture_game(
+                hwnd, capture_area=(0, 0, 1, 2)
+            )
+        finally:
+            tk.destroy()
+
+        img_h, img_w, _ = capture_img.shape
+        self.assertEqual(img_w, 1)
+        self.assertEqual(img_h, 2)
+
+
 class TestStormworksControllerInit(unittest.TestCase):
     def test_winget_error(self):
         with self.assertRaises(RuntimeError):
