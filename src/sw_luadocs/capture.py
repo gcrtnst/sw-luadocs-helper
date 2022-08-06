@@ -76,7 +76,7 @@ def scroll_game(hwnd, x=None, y=None, delta=None):
         win32api.SetCursorPos((prev_x, prev_y))
 
 
-def screenshot(capture_output="pil", region=None):
+def screenshot(*, capture_output="pil", region=None):
     # Do not run this function concurrently with itself or
     # with any other function that uses the Desktop Duplication API.
 
