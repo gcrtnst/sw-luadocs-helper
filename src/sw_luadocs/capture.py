@@ -85,6 +85,44 @@ def screenshot(capture_output="pil", region=None):
     return d.screenshot(region=region)
 
 
+def capture_screenshot(capture_area=None):
+    cap_x = None
+    cap_y = None
+    cap_w = None
+    cap_h = None
+    region = None
+    if capture_area is not None:
+        cap_x, cap_y, cap_w, cap_h = capture_area
+        cap_x = int(cap_x)
+        cap_y = int(cap_y)
+        cap_w = int(cap_w)
+        cap_h = int(cap_h)
+
+        scr_w = win32api.GetSystemMetrics(0)
+        scr_h = win32api.GetSystemMetrics(1)
+        if (
+            cap_x < 0
+            or scr_w <= cap_x
+            or cap_y < 0
+            or scr_h <= cap_y
+            or cap_w < 1
+            or scr_w <= cap_x + cap_w - 1
+            or cap_h < 1
+            or scr_h <= cap_y + cap_h - 1
+        ):
+            raise ValueError
+        region = (cap_x, cap_y, cap_x + cap_w, cap_y + cap_h)
+
+    capture_img = screenshot(capture_output="numpy", region=region)
+    capture_img = dot_image.convert_image(capture_img, dst_mode="RGB")
+
+    if cap_w is not None or cap_h is not None:
+        img_h, img_w, _ = capture_img.shape
+        if img_w != cap_w or img_h != cap_h:
+            raise RuntimeError
+    return capture_img
+
+
 class StormworksController:
     def __init__(
         self,

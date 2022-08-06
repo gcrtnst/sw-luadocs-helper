@@ -171,6 +171,46 @@ class TestSendMouseWheel(unittest.TestCase):
                 self.assertEqual(actual_prev_y, input_prev_y)
 
 
+class TestCaptureScreenshot(unittest.TestCase):
+    def test_invalid_value(self):
+        scr_w = win32api.GetSystemMetrics(0)
+        scr_h = win32api.GetSystemMetrics(1)
+
+        for capture_area in [
+            (-1, 0, 1, 1),
+            (scr_w, 0, 1, 1),
+            (0, -1, 1, 1),
+            (0, scr_h, 1, 1),
+            (0, 0, 0, 1),
+            (0, 0, scr_w + 1, 1),
+            (1, 0, scr_w, 1),
+            (0, 0, 1, 0),
+            (0, 0, 1, scr_h + 1),
+            (0, 1, 1, scr_h),
+        ]:
+            with self.subTest(capture_area=capture_area):
+                with self.assertRaises(ValueError):
+                    sw_luadocs.capture.capture_screenshot(capture_area=capture_area)
+
+    def test_main(self):
+        scr_w = win32api.GetSystemMetrics(0)
+        scr_h = win32api.GetSystemMetrics(1)
+
+        for input_capture_area, expected_img_w, expected_img_h in [
+            (None, scr_w, scr_h),
+            ((0, 0, scr_w, scr_h), scr_w, scr_h),
+            ((0, 0, scr_w - 1, scr_h), scr_w - 1, scr_h),
+            ((0, 0, scr_w, scr_h - 1), scr_w, scr_h - 1),
+        ]:
+            with self.subTest(capture_area=input_capture_area):
+                actual_capture_img = sw_luadocs.capture.capture_screenshot(
+                    capture_area=input_capture_area
+                )
+                actual_img_h, actual_img_w, _ = actual_capture_img.shape
+                self.assertEqual(actual_img_w, expected_img_w)
+                self.assertEqual(actual_img_h, expected_img_h)
+
+
 class TestStormworksControllerInit(unittest.TestCase):
     def test_winget_error(self):
         with self.assertRaises(RuntimeError):
