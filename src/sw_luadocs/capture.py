@@ -25,10 +25,18 @@ def show_window(hwnd, cmd):
 
 def try_activate_window(hwnd):
     hwnd = int(hwnd)
-    if hwnd != win32gui.GetForegroundWindow() and not win32gui.IsIconic(hwnd):
-        show_window(hwnd, win32con.SW_SHOWMINIMIZED)
-    if win32gui.IsIconic(hwnd):
-        show_window(hwnd, win32con.SW_RESTORE)
+
+    is_iconic = win32gui.IsIconic(hwnd)
+    if hwnd != win32gui.GetForegroundWindow() and not is_iconic:
+        rslt = win32gui.ShowWindow(hwnd, win32con.SW_SHOWMINIMIZED)
+        if rslt == 0:
+            return False
+        is_iconic = True
+    if is_iconic:
+        rslt = win32gui.ShowWindow(hwnd, win32con.SW_RESTORE)
+        if rslt == 0:
+            return False
+    return True
 
 
 def check_window_fullscreen(hwnd):

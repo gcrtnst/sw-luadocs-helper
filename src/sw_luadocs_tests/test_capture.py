@@ -36,35 +36,57 @@ class TestShowWindow(unittest.TestCase):
 
 class TestTryActivateWindow(unittest.TestCase):
     def test_invalid_hwnd(self):
-        with self.assertRaises(RuntimeError):
-            sw_luadocs.capture.try_activate_window(0)
+        result = sw_luadocs.capture.try_activate_window(0)
+        self.assertFalse(result)
 
-    def test_main(self):
-        for input_foreground, input_state in [
-            (False, "normal"),
-            (False, "iconic"),
-            (True, "normal"),
-            (True, "iconic"),
+    def test_already_focused(self):
+        for input_state, expected_state in [
+            ("normal", "normal"),
+            ("iconic", "normal"),
+            ("zoomed", "zoomed"),
         ]:
-            with self.subTest(foreground=input_foreground, state=input_state):
+            with self.subTest(state=input_state):
                 tk = tkinter.Tk()
                 try:
-                    if input_foreground:
-                        tk.focus_force()
-                    else:
-                        tk_top = tkinter.Toplevel(tk)
-                        tk_top.focus_force()
                     tk.wm_state(input_state)
                     tk.update()
+                    tk.focus_force()
+                    tk.update()
                     input_hwnd = int(tk.wm_frame(), 16)
-                    sw_luadocs.capture.try_activate_window(input_hwnd)
+                    actual_result = sw_luadocs.capture.try_activate_window(input_hwnd)
                     tk.update()
                     actual_foreground = tk.focus_get() == tk
                     actual_state = tk.wm_state()
                 finally:
                     tk.destroy()
+                self.assertTrue(actual_result)
                 self.assertTrue(actual_foreground)
-                self.assertEqual(actual_state, "normal")
+                self.assertEqual(actual_state, expected_state)
+
+    def test_main(self):
+        for input_state, expected_state in [
+            ("normal", "normal"),
+            ("iconic", "normal"),
+            ("zoomed", "zoomed"),
+        ]:
+            with self.subTest(state=input_state):
+                tk = tkinter.Tk()
+                try:
+                    tk.wm_state(input_state)
+                    tk_top = tkinter.Toplevel(tk)
+                    tk.update()
+                    tk_top.focus_force()
+                    tk.update()
+                    input_hwnd = int(tk.wm_frame(), 16)
+                    actual_result = sw_luadocs.capture.try_activate_window(input_hwnd)
+                    tk.update()
+                    actual_foreground = tk.focus_get() == tk
+                    actual_state = tk.wm_state()
+                finally:
+                    tk.destroy()
+                self.assertTrue(actual_result)
+                self.assertTrue(actual_foreground)
+                self.assertEqual(actual_state, expected_state)
 
 
 class TestCheckWindowFullscreen(unittest.TestCase):
