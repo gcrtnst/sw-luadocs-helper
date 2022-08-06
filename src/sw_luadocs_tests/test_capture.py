@@ -34,10 +34,10 @@ class TestShowWindow(unittest.TestCase):
                 self.assertEqual(actual_state, expected_state)
 
 
-class TestActivateWindow(unittest.TestCase):
+class TestTryActivateWindow(unittest.TestCase):
     def test_invalid_hwnd(self):
         with self.assertRaises(RuntimeError):
-            sw_luadocs.capture.activate_window(0)
+            sw_luadocs.capture.try_activate_window(0)
 
     def test_main(self):
         for input_foreground, input_state in [
@@ -57,7 +57,7 @@ class TestActivateWindow(unittest.TestCase):
                     tk.wm_state(input_state)
                     tk.update()
                     input_hwnd = int(tk.wm_frame(), 16)
-                    sw_luadocs.capture.activate_window(input_hwnd)
+                    sw_luadocs.capture.try_activate_window(input_hwnd)
                     tk.update()
                     actual_foreground = tk.focus_get() == tk
                     actual_state = tk.wm_state()

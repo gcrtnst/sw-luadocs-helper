@@ -23,7 +23,7 @@ def show_window(hwnd, cmd):
         raise RuntimeError
 
 
-def activate_window(hwnd):
+def try_activate_window(hwnd):
     hwnd = int(hwnd)
     if hwnd != win32gui.GetForegroundWindow() and not win32gui.IsIconic(hwnd):
         show_window(hwnd, win32con.SW_SHOWMINIMIZED)
