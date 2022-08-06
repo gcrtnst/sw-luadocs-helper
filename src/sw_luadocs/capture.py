@@ -33,7 +33,7 @@ def activate_window(hwnd):
     return True
 
 
-def is_fullscreen(hwnd):
+def is_fullscreen_window(hwnd):
     hwnd = int(hwnd)
     if hwnd != win32gui.GetForegroundWindow():
         return False
@@ -47,7 +47,7 @@ def is_fullscreen(hwnd):
     return win_x == 0 and win_y == 0 and win_w == scr_w and win_h == scr_h
 
 
-def send_mousewheel(hwnd, x, y, delta):
+def scroll_game(hwnd, x, y, delta):
     hwnd = int(hwnd)
     x = int(x)
     y = int(y)
@@ -58,7 +58,7 @@ def send_mousewheel(hwnd, x, y, delta):
     if x < 0 or scr_w <= x or y < 0 or scr_h <= y:
         raise ValueError
 
-    if not is_fullscreen(hwnd):
+    if not is_fullscreen_window(hwnd):
         raise RuntimeError
 
     prev_x, prev_y = win32api.GetCursorPos()
@@ -85,7 +85,7 @@ def screenshot(capture_output="pil", region=None):
     return d.screenshot(region=region)
 
 
-def capture_screenshot(capture_area=None):
+def capture_screen(capture_area=None):
     cap_x = None
     cap_y = None
     cap_w = None
@@ -124,9 +124,9 @@ def capture_screenshot(capture_area=None):
 
 
 def capture_game(hwnd, capture_area=None):
-    if not is_fullscreen(hwnd):
+    if not is_fullscreen_window(hwnd):
         raise RuntimeError
-    return capture_screenshot(capture_area=capture_area)
+    return capture_screen(capture_area=capture_area)
 
 
 class StormworksController:

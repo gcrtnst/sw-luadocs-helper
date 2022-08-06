@@ -60,9 +60,9 @@ class TestActivateWindow(unittest.TestCase):
                 self.assertEqual(actual_state, expected_state)
 
 
-class TestIsFullscreen(unittest.TestCase):
+class TestIsFullscreenWindow(unittest.TestCase):
     def test_invalid_hwnd(self):
-        fullscreen = sw_luadocs.capture.is_fullscreen(0)
+        fullscreen = sw_luadocs.capture.is_fullscreen_window(0)
         self.assertEqual(fullscreen, False)
 
     def test_main(self):
@@ -95,16 +95,18 @@ class TestIsFullscreen(unittest.TestCase):
                     tk.wm_geometry(input_geometry)
                     tk.update()
                     input_hwnd = int(tk.wm_frame(), 16)
-                    actual_fullscreen = sw_luadocs.capture.is_fullscreen(input_hwnd)
+                    actual_fullscreen = sw_luadocs.capture.is_fullscreen_window(
+                        input_hwnd
+                    )
                 finally:
                     tk.destroy()
                 self.assertEqual(actual_fullscreen, expected_fullscreen)
 
 
-class TestSendMouseWheel(unittest.TestCase):
+class TestScrollGame(unittest.TestCase):
     def test_invalid_hwnd(self):
         with self.assertRaises(RuntimeError):
-            sw_luadocs.capture.send_mousewheel(0, 0, 0, 0)
+            sw_luadocs.capture.scroll_game(0, 0, 0, 0)
 
     def test_invalid_value(self):
         scr_w = win32api.GetSystemMetrics(0)
@@ -113,7 +115,7 @@ class TestSendMouseWheel(unittest.TestCase):
         for x, y in [(-1, 0), (0, -1), (scr_w, 0), (0, scr_h)]:
             with self.subTest(x=x, y=y):
                 with self.assertRaises(ValueError):
-                    sw_luadocs.capture.send_mousewheel(0, x, y, 0)
+                    sw_luadocs.capture.scroll_game(0, x, y, 0)
 
     def test_main(self):
         scr_w = win32api.GetSystemMetrics(0)
@@ -145,7 +147,7 @@ class TestSendMouseWheel(unittest.TestCase):
                     input_cur_x, input_cur_y = win32api.GetCursorPos()
                     try:
                         win32api.SetCursorPos((input_prev_x, input_prev_y))
-                        sw_luadocs.capture.send_mousewheel(
+                        sw_luadocs.capture.scroll_game(
                             input_hwnd, input_x, input_y, input_delta
                         )
                         actual_prev_x, actual_prev_y = win32api.GetCursorPos()
@@ -171,7 +173,7 @@ class TestSendMouseWheel(unittest.TestCase):
                 self.assertEqual(actual_prev_y, input_prev_y)
 
 
-class TestCaptureScreenshot(unittest.TestCase):
+class TestCaptureScreen(unittest.TestCase):
     def test_invalid_value(self):
         scr_w = win32api.GetSystemMetrics(0)
         scr_h = win32api.GetSystemMetrics(1)
@@ -190,7 +192,7 @@ class TestCaptureScreenshot(unittest.TestCase):
         ]:
             with self.subTest(capture_area=capture_area):
                 with self.assertRaises(ValueError):
-                    sw_luadocs.capture.capture_screenshot(capture_area=capture_area)
+                    sw_luadocs.capture.capture_screen(capture_area=capture_area)
 
     def test_main(self):
         scr_w = win32api.GetSystemMetrics(0)
@@ -203,7 +205,7 @@ class TestCaptureScreenshot(unittest.TestCase):
             ((0, 0, scr_w, scr_h - 1), scr_w, scr_h - 1),
         ]:
             with self.subTest(capture_area=input_capture_area):
-                actual_capture_img = sw_luadocs.capture.capture_screenshot(
+                actual_capture_img = sw_luadocs.capture.capture_screen(
                     capture_area=input_capture_area
                 )
                 actual_img_h, actual_img_w, _ = actual_capture_img.shape
