@@ -17,12 +17,6 @@ def get_screen_size():
     return scr_w, scr_h
 
 
-def show_window(hwnd, cmd):
-    result = win32gui.ShowWindow(hwnd, cmd)
-    if not result:
-        raise RuntimeError
-
-
 def try_activate_window(hwnd):
     hwnd = int(hwnd)
 
