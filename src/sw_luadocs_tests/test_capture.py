@@ -5,9 +5,9 @@ import unittest
 import win32api
 
 
-class TestTryActivateWindow(unittest.TestCase):
+class TestActivateWindow(unittest.TestCase):
     def test_invalid_hwnd(self):
-        result = sw_luadocs.capture.try_activate_window(0)
+        result = sw_luadocs.capture.activate_window(0)
         self.assertFalse(result)
 
     def test_already_focused(self):
@@ -24,7 +24,7 @@ class TestTryActivateWindow(unittest.TestCase):
                     tk.focus_force()
                     tk.update()
                     input_hwnd = int(tk.wm_frame(), 16)
-                    actual_result = sw_luadocs.capture.try_activate_window(input_hwnd)
+                    actual_result = sw_luadocs.capture.activate_window(input_hwnd)
                     tk.update()
                     actual_foreground = tk.focus_get() == tk
                     actual_state = tk.wm_state()
@@ -49,7 +49,7 @@ class TestTryActivateWindow(unittest.TestCase):
                     tk_top.focus_force()
                     tk.update()
                     input_hwnd = int(tk.wm_frame(), 16)
-                    actual_result = sw_luadocs.capture.try_activate_window(input_hwnd)
+                    actual_result = sw_luadocs.capture.activate_window(input_hwnd)
                     tk.update()
                     actual_foreground = tk.focus_get() == tk
                     actual_state = tk.wm_state()
@@ -60,9 +60,9 @@ class TestTryActivateWindow(unittest.TestCase):
                 self.assertEqual(actual_state, expected_state)
 
 
-class TestCheckWindowFullscreen(unittest.TestCase):
+class TestIsFullscreen(unittest.TestCase):
     def test_invalid_hwnd(self):
-        fullscreen = sw_luadocs.capture.check_window_fullscreen(0)
+        fullscreen = sw_luadocs.capture.is_fullscreen(0)
         self.assertEqual(fullscreen, False)
 
     def test_main(self):
@@ -95,18 +95,16 @@ class TestCheckWindowFullscreen(unittest.TestCase):
                     tk.wm_geometry(input_geometry)
                     tk.update()
                     input_hwnd = int(tk.wm_frame(), 16)
-                    actual_fullscreen = sw_luadocs.capture.check_window_fullscreen(
-                        input_hwnd
-                    )
+                    actual_fullscreen = sw_luadocs.capture.is_fullscreen(input_hwnd)
                 finally:
                     tk.destroy()
                 self.assertEqual(actual_fullscreen, expected_fullscreen)
 
 
-class TestSendMouseWheelToFullscreenWindow(unittest.TestCase):
+class TestSendMouseWheel(unittest.TestCase):
     def test_invalid_hwnd(self):
         with self.assertRaises(RuntimeError):
-            sw_luadocs.capture.send_mouse_wheel_to_fullscreen_window(0, 0, 0, 0)
+            sw_luadocs.capture.send_mousewheel(0, 0, 0, 0)
 
     def test_invalid_value(self):
         scr_w = win32api.GetSystemMetrics(0)
@@ -115,7 +113,7 @@ class TestSendMouseWheelToFullscreenWindow(unittest.TestCase):
         for x, y in [(-1, 0), (0, -1), (scr_w, 0), (0, scr_h)]:
             with self.subTest(x=x, y=y):
                 with self.assertRaises(ValueError):
-                    sw_luadocs.capture.send_mouse_wheel_to_fullscreen_window(0, x, y, 0)
+                    sw_luadocs.capture.send_mousewheel(0, x, y, 0)
 
     def test_main(self):
         scr_w = win32api.GetSystemMetrics(0)
@@ -147,7 +145,7 @@ class TestSendMouseWheelToFullscreenWindow(unittest.TestCase):
                     input_cur_x, input_cur_y = win32api.GetCursorPos()
                     try:
                         win32api.SetCursorPos((input_prev_x, input_prev_y))
-                        sw_luadocs.capture.send_mouse_wheel_to_fullscreen_window(
+                        sw_luadocs.capture.send_mousewheel(
                             input_hwnd, input_x, input_y, input_delta
                         )
                         actual_prev_x, actual_prev_y = win32api.GetCursorPos()

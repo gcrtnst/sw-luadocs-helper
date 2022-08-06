@@ -17,7 +17,7 @@ def get_screen_size():
     return scr_w, scr_h
 
 
-def try_activate_window(hwnd):
+def activate_window(hwnd):
     hwnd = int(hwnd)
 
     is_iconic = win32gui.IsIconic(hwnd)
@@ -33,7 +33,7 @@ def try_activate_window(hwnd):
     return True
 
 
-def check_window_fullscreen(hwnd):
+def is_fullscreen(hwnd):
     hwnd = int(hwnd)
     if hwnd != win32gui.GetForegroundWindow():
         return False
@@ -47,7 +47,7 @@ def check_window_fullscreen(hwnd):
     return win_x == 0 and win_y == 0 and win_w == scr_w and win_h == scr_h
 
 
-def send_mouse_wheel_to_fullscreen_window(hwnd, x, y, delta):
+def send_mousewheel(hwnd, x, y, delta):
     hwnd = int(hwnd)
     x = int(x)
     y = int(y)
@@ -58,7 +58,7 @@ def send_mouse_wheel_to_fullscreen_window(hwnd, x, y, delta):
     if x < 0 or scr_w <= x or y < 0 or scr_h <= y:
         raise ValueError
 
-    if not check_window_fullscreen(hwnd):
+    if not is_fullscreen(hwnd):
         raise RuntimeError
 
     prev_x, prev_y = win32api.GetCursorPos()
