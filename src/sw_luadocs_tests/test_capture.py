@@ -103,6 +103,76 @@ class TestCheckWindowFullscreen(unittest.TestCase):
                 self.assertEqual(actual_fullscreen, expected_fullscreen)
 
 
+class TestSendMouseWheelToFullscreenWindow(unittest.TestCase):
+    def test_invalid_hwnd(self):
+        with self.assertRaises(RuntimeError):
+            sw_luadocs.capture.send_mouse_wheel_to_fullscreen_window(0, 0, 0, 0)
+
+    def test_invalid_value(self):
+        scr_w = win32api.GetSystemMetrics(0)
+        scr_h = win32api.GetSystemMetrics(1)
+
+        for x, y in [(-1, 0), (0, -1), (scr_w, 0), (0, scr_h)]:
+            with self.subTest(x=x, y=y):
+                with self.assertRaises(ValueError):
+                    sw_luadocs.capture.send_mouse_wheel_to_fullscreen_window(0, x, y, 0)
+
+    def test_main(self):
+        scr_w = win32api.GetSystemMetrics(0)
+        scr_h = win32api.GetSystemMetrics(1)
+
+        for input_x, input_y, input_delta, input_prev_x, input_prev_y in [
+            (1, 2, 120, 3, 4),
+            (scr_w - 1, scr_h - 2, -240, scr_w - 3, scr_h - 4),
+        ]:
+            with self.subTest(
+                x=input_x,
+                y=input_y,
+                delta=input_delta,
+                prev_x=input_prev_x,
+                prev_y=input_prev_y,
+            ):
+                actual_event = None
+
+                tk = tkinter.Tk()
+                try:
+                    tk.wm_overrideredirect(True)
+                    tk.wm_attributes("-topmost", True)
+                    tk.wm_geometry(f"{scr_w}x{scr_h}+0+0")
+                    tk.update()
+                    tk.focus_force()
+                    tk.update()
+
+                    input_hwnd = int(tk.wm_frame(), 16)
+                    input_cur_x, input_cur_y = win32api.GetCursorPos()
+                    try:
+                        win32api.SetCursorPos((input_prev_x, input_prev_y))
+                        sw_luadocs.capture.send_mouse_wheel_to_fullscreen_window(
+                            input_hwnd, input_x, input_y, input_delta
+                        )
+                        actual_prev_x, actual_prev_y = win32api.GetCursorPos()
+                    finally:
+                        win32api.SetCursorPos((input_cur_x, input_cur_y))
+
+                    def callback(event):
+                        nonlocal actual_event
+                        actual_event = event
+                        tk.quit()
+
+                    tk.after(1000, lambda: tk.quit())
+                    tk.bind("<MouseWheel>", callback)
+                    tk.mainloop()
+                finally:
+                    tk.destroy()
+
+                self.assertIsNotNone(actual_event)
+                self.assertEqual(actual_event.x, input_x)
+                self.assertEqual(actual_event.y, input_y)
+                self.assertEqual(actual_event.delta, input_delta)
+                self.assertEqual(actual_prev_x, input_prev_x)
+                self.assertEqual(actual_prev_y, input_prev_y)
+
+
 class TestStormworksControllerInit(unittest.TestCase):
     def test_winget_error(self):
         with self.assertRaises(RuntimeError):

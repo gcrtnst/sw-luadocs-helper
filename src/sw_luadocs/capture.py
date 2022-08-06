@@ -47,6 +47,28 @@ def check_window_fullscreen(hwnd):
     return win_x == 0 and win_y == 0 and win_w == scr_w and win_h == scr_h
 
 
+def send_mouse_wheel_to_fullscreen_window(hwnd, x, y, delta):
+    hwnd = int(hwnd)
+    x = int(x)
+    y = int(y)
+    delta = int(delta)
+
+    scr_w = win32api.GetSystemMetrics(0)
+    scr_h = win32api.GetSystemMetrics(1)
+    if x < 0 or scr_w <= x or y < 0 or scr_h <= y:
+        raise ValueError
+
+    if not check_window_fullscreen(hwnd):
+        raise RuntimeError
+
+    prev_x, prev_y = win32api.GetCursorPos()
+    try:
+        win32api.SetCursorPos((x, y))
+        win32api.mouse_event(win32con.MOUSEEVENTF_WHEEL, 0, 0, delta, 0)
+    finally:
+        win32api.SetCursorPos((prev_x, prev_y))
+
+
 def screenshot(capture_output="pil", region=None):
     # Do not run this function concurrently with itself or
     # with any other function that uses the Desktop Duplication API.
