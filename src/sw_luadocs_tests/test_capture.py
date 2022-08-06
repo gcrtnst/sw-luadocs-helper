@@ -106,7 +106,7 @@ class TestIsFullscreenWindow(unittest.TestCase):
 class TestScrollGame(unittest.TestCase):
     def test_invalid_hwnd(self):
         with self.assertRaises(RuntimeError):
-            sw_luadocs.capture.scroll_game(0, 0, 0, 0)
+            sw_luadocs.capture.scroll_game(0)
 
     def test_invalid_value(self):
         scr_w = win32api.GetSystemMetrics(0)
@@ -115,15 +115,34 @@ class TestScrollGame(unittest.TestCase):
         for x, y in [(-1, 0), (0, -1), (scr_w, 0), (0, scr_h)]:
             with self.subTest(x=x, y=y):
                 with self.assertRaises(ValueError):
-                    sw_luadocs.capture.scroll_game(0, x, y, 0)
+                    sw_luadocs.capture.scroll_game(0, x, y)
 
     def test_main(self):
         scr_w = win32api.GetSystemMetrics(0)
         scr_h = win32api.GetSystemMetrics(1)
 
-        for input_x, input_y, input_delta, input_prev_x, input_prev_y in [
-            (1, 2, 120, 3, 4),
-            (scr_w - 1, scr_h - 2, -240, scr_w - 3, scr_h - 4),
+        for (
+            input_x,
+            input_y,
+            input_delta,
+            input_prev_x,
+            input_prev_y,
+            expected_x,
+            expected_y,
+            expected_delta,
+        ) in [
+            (None, None, None, 3, 4, scr_w // 2, scr_h // 2, -120),
+            (1, 2, 120, 3, 4, 1, 2, 120),
+            (
+                scr_w - 1,
+                scr_h - 2,
+                -240,
+                scr_w - 3,
+                scr_h - 4,
+                scr_w - 1,
+                scr_h - 2,
+                -240,
+            ),
         ]:
             with self.subTest(
                 x=input_x,
@@ -166,9 +185,9 @@ class TestScrollGame(unittest.TestCase):
                     tk.destroy()
 
                 self.assertIsNotNone(actual_event)
-                self.assertEqual(actual_event.x, input_x)
-                self.assertEqual(actual_event.y, input_y)
-                self.assertEqual(actual_event.delta, input_delta)
+                self.assertEqual(actual_event.x, expected_x)
+                self.assertEqual(actual_event.y, expected_y)
+                self.assertEqual(actual_event.delta, expected_delta)
                 self.assertEqual(actual_prev_x, input_prev_x)
                 self.assertEqual(actual_prev_y, input_prev_y)
 

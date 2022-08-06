@@ -47,14 +47,21 @@ def is_fullscreen_window(hwnd):
     return win_x == 0 and win_y == 0 and win_w == scr_w and win_h == scr_h
 
 
-def scroll_game(hwnd, x, y, delta):
+def scroll_game(hwnd, x=None, y=None, delta=None):
+    scr_w = win32api.GetSystemMetrics(0)
+    scr_h = win32api.GetSystemMetrics(1)
+    if x is None:
+        x = scr_w // 2
+    if y is None:
+        y = scr_h // 2
+    if delta is None:
+        delta = -120
+
     hwnd = int(hwnd)
     x = int(x)
     y = int(y)
     delta = int(delta)
 
-    scr_w = win32api.GetSystemMetrics(0)
-    scr_h = win32api.GetSystemMetrics(1)
     if x < 0 or scr_w <= x or y < 0 or scr_h <= y:
         raise ValueError
 
