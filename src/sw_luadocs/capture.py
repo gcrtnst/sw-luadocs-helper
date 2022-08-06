@@ -318,7 +318,7 @@ def stitch_screenshot(iterable, *, template_ratio=0.25, scroll_threshold=0):
     return gen_img
 
 
-def capture(
+def main(
     *,
     ahk_exe,
     win_title,

@@ -350,7 +350,7 @@ def convert_ocrline_to_flatdoc(ocrline_list, *, body_line_h, code_line_h):
     return flatdoc
 
 
-def recognize(
+def main(
     capture_img,
     *,
     tesseract_lang,

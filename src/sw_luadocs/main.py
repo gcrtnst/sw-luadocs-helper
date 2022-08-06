@@ -17,7 +17,7 @@ def capture_main(ns):
         cfg = tomllib.load(fobj)
     capture_cfg = cfg["capture"]
 
-    img = dot_capture.capture(
+    img = dot_capture.main(
         ahk_exe=ns.ahk_exe,
         win_title=capture_cfg["win_title"],
         win_text=capture_cfg["win_text"],
@@ -52,7 +52,7 @@ def recognize_main(ns):
         pytesseract.pytesseract.tesseract_cmd = str(ns.tesseract_exe)
 
     capture_img = dot_image.imread(ns.capture_file)
-    flatdoc = dot_recognize.recognize(
+    flatdoc = dot_recognize.main(
         capture_img,
         tesseract_lang="eng",
         tesseract_config=shlex.join(
@@ -89,7 +89,7 @@ def extract_main(ns):
         exe_bin = fobj.read()
 
     ocr_flatdoc = dot_flatdoc.parse(ocr_txt)
-    ext_flatdoc = dot_extract.extract(
+    ext_flatdoc = dot_extract.main(
         ocr_flatdoc,
         exe_bin,
         body_sep="\n\n",
