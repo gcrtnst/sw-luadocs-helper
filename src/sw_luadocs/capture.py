@@ -136,6 +136,21 @@ def capture_game(hwnd, capture_area=None):
     return capture_screen(capture_area=capture_area)
 
 
+def capture_and_scroll_game(
+    hwnd,
+    *,
+    scroll_x=None,
+    scroll_y=None,
+    scroll_delta=None,
+    scroll_sleep_secs=0,
+    capture_area=None,
+):
+    while True:
+        yield capture_game(hwnd, capture_area=capture_area)
+        scroll_game(hwnd, x=scroll_x, y=scroll_y, delta=scroll_delta)
+        time.sleep(scroll_sleep_secs)
+
+
 class StormworksController:
     def __init__(
         self,
