@@ -61,12 +61,8 @@ def scroll_game(hwnd, x=None, y=None, delta=None):
     if not is_fullscreen_window(hwnd):
         raise RuntimeError
 
-    prev_x, prev_y = win32api.GetCursorPos()
-    try:
-        win32api.SetCursorPos((x, y))
-        win32api.mouse_event(win32con.MOUSEEVENTF_WHEEL, 0, 0, delta, 0)
-    finally:
-        win32api.SetCursorPos((prev_x, prev_y))
+    win32api.SetCursorPos((x, y))
+    win32api.mouse_event(win32con.MOUSEEVENTF_WHEEL, 0, 0, delta, 0)
 
 
 def screenshot(*, capture_output="pil", region=None):
