@@ -348,65 +348,55 @@ def stitch_screenshot(iterable, *, template_ratio=0.25, scroll_threshold=0):
 
 def main(
     *,
-    ahk_exe,
+    win_class,
     win_title,
-    win_text,
-    win_exclude_title,
-    win_exclude_text,
     screen_width,
     screen_height,
     scroll_x,
     scroll_y,
-    scroll_page_n,
-    scroll_once_n,
+    scroll_init_delta,
+    scroll_down_delta,
     scroll_threshold,
     capture_area,
     capture_template_ratio,
     activate_sleep_secs,
     scroll_sleep_secs,
 ):
+    win_class = str(win_class)
+    win_title = str(win_title)
     screen_width = int(screen_width)
     screen_height = int(screen_height)
-    scroll_page_n = int(scroll_page_n)
-    scroll_once_n = int(scroll_once_n)
+    scroll_init_delta = int(scroll_init_delta)
+    scroll_down_delta = int(scroll_down_delta)
 
-    if (
-        screen_width <= 0
-        or screen_height <= 0
-        or scroll_page_n <= 0
-        or scroll_once_n <= 0
-    ):
+    if scroll_init_delta <= 0 or 0 <= scroll_down_delta:
         raise ValueError
 
-    ctrl = StormworksController(
-        ahk_exe=ahk_exe,
-        win_title=win_title,
-        win_text=win_text,
-        win_exclude_title=win_exclude_title,
-        win_exclude_text=win_exclude_text,
-    )
+    hwnd = win32gui.FindWindow(win_class, win_title)
+    if hwnd == 0:
+        raise RuntimeError
 
-    ctrl.activate()
-    time.sleep(activate_sleep_secs)
     try:
-        ctrl.check_fullscreen()
-        scr_w, scr_h = get_screen_size()
+        activate_window(hwnd)
+        time.sleep(activate_sleep_secs)
+
+        if not is_fullscreen_window(hwnd):
+            raise RuntimeError
+
+        scr_w = win32api.GetSystemMetrics(0)
+        scr_h = win32api.GetSystemMetrics(1)
         if scr_w != screen_width or scr_h != screen_height:
             raise RuntimeError
 
-        ctrl.mouse_wheel(
-            "up",
-            x=scroll_x,
-            y=scroll_y,
-            n=scroll_page_n,
-        )
+        scroll_game(hwnd, x=scroll_x, y=scroll_y, delta=scroll_init_delta)
         time.sleep(scroll_sleep_secs)
-        img = stitch_screenshot(
-            ctrl.scroll_and_screenshot(
-                scroll_direction="down",
+
+        capture_img = stitch_screenshot(
+            capture_and_scroll_game(
+                hwnd,
                 scroll_x=scroll_x,
                 scroll_y=scroll_y,
-                scroll_n=scroll_once_n,
+                scroll_delta=scroll_down_delta,
                 scroll_sleep_secs=scroll_sleep_secs,
                 capture_area=capture_area,
             ),
@@ -414,5 +404,5 @@ def main(
             scroll_threshold=scroll_threshold,
         )
     finally:
-        ctrl.minimize()
-    return img
+        win32gui.ShowWindow(hwnd, win32con.SW_MINIMIZE)
+    return capture_img

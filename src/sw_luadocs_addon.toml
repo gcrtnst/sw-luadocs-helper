@@ -1,22 +1,20 @@
 [capture]
+win_class = "GLFW30"
 win_title = "Stormworks"
-win_text = ""
-win_exclude_title = ""
-win_exclude_text = ""
 
 screen_width = 1920
 screen_height = 1080
 
 scroll_x = 960
 scroll_y = 540
-scroll_page_n = 1024
-scroll_once_n = 3
+scroll_init_delta = 122880
+scroll_down_delta = -360
 scroll_threshold = 0
 
-capture_area_x1 = 312
-capture_area_y1 = 226
-capture_area_x2 = 1285
-capture_area_y2 = 763
+capture_area_x = 312
+capture_area_y = 226
+capture_area_w = 1285
+capture_area_h = 763
 capture_template_ratio = 0.25
 
 activate_sleep_secs = 5

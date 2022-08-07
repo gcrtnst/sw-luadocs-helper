@@ -18,30 +18,6 @@ def which(exe_list, *, mode=os.F_OK | os.X_OK):
     return None
 
 
-def ahk(*, mode=os.F_OK | os.X_OK):
-    return which(
-        filter(
-            lambda exe: exe is not None,
-            [
-                os.environ.get("AHK_PATH"),
-                shutil.which("AutoHotkey"),
-                shutil.which("AutoHotkeyU64"),
-                shutil.which("AutoHotkeyU32"),
-                shutil.which("AutoHotkeyA32"),
-                envpath("PROGRAMFILES", "AutoHotkey", "AutoHotkey.exe"),
-                envpath("PROGRAMFILES", "AutoHotkey", "AutoHotkeyU64.exe"),
-                envpath("PROGRAMFILES", "AutoHotkey", "AutoHotkeyU32.exe"),
-                envpath("PROGRAMFILES", "AutoHotkey", "AutoHotkeyA32.exe"),
-                envpath("PROGRAMFILES(X86)", "AutoHotkey", "AutoHotkey.exe"),
-                envpath("PROGRAMFILES(X86)", "AutoHotkey", "AutoHotkeyU64.exe"),
-                envpath("PROGRAMFILES(X86)", "AutoHotkey", "AutoHotkeyU32.exe"),
-                envpath("PROGRAMFILES(X86)", "AutoHotkey", "AutoHotkeyA32.exe"),
-            ],
-        ),
-        mode=mode,
-    )
-
-
 def tesseract(*, mode=os.F_OK | os.X_OK):
     return which(
         filter(

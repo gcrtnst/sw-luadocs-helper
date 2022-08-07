@@ -18,23 +18,20 @@ def capture_main(ns):
     capture_cfg = cfg["capture"]
 
     img = dot_capture.main(
-        ahk_exe=ns.ahk_exe,
+        win_class=capture_cfg["win_class"],
         win_title=capture_cfg["win_title"],
-        win_text=capture_cfg["win_text"],
-        win_exclude_title=capture_cfg["win_exclude_title"],
-        win_exclude_text=capture_cfg["win_exclude_text"],
         screen_width=capture_cfg["screen_width"],
         screen_height=capture_cfg["screen_height"],
         scroll_x=capture_cfg["scroll_x"],
         scroll_y=capture_cfg["scroll_y"],
-        scroll_page_n=capture_cfg["scroll_page_n"],
-        scroll_once_n=capture_cfg["scroll_once_n"],
+        scroll_init_delta=capture_cfg["scroll_init_delta"],
+        scroll_down_delta=capture_cfg["scroll_down_delta"],
         scroll_threshold=capture_cfg["scroll_threshold"],
         capture_area=(
-            capture_cfg["capture_area_x1"],
-            capture_cfg["capture_area_y1"],
-            capture_cfg["capture_area_x2"],
-            capture_cfg["capture_area_y2"],
+            capture_cfg["capture_area_x"],
+            capture_cfg["capture_area_y"],
+            capture_cfg["capture_area_w"],
+            capture_cfg["capture_area_h"],
         ),
         capture_template_ratio=capture_cfg["capture_template_ratio"],
         activate_sleep_secs=capture_cfg["activate_sleep_secs"],
@@ -109,7 +106,6 @@ def main(*, args=None, exit_on_error=True):
     parser_capture.set_defaults(func=capture_main)
     parser_capture.add_argument("capture_file", type=pathlib.Path)
     parser_capture.add_argument("-c", "--config", type=pathlib.Path, required=True)
-    parser_capture.add_argument("--ahk-exe", type=pathlib.Path, default=dot_which.ahk())
 
     parser_recognize = parser_group.add_parser("recognize")
     parser_recognize.set_defaults(func=recognize_main)
