@@ -3,24 +3,22 @@ import d3dshot
 import math
 import numpy as np
 import time
-import win32api
-import win32con
-import win32gui
 
 from . import image as dot_image
+from . import win32 as dot_win32
 
 
 def activate_window(hwnd):
     hwnd = int(hwnd)
 
-    is_iconic = win32gui.IsIconic(hwnd)
-    if hwnd != win32gui.GetForegroundWindow() and not is_iconic:
-        rslt = win32gui.ShowWindow(hwnd, win32con.SW_SHOWMINIMIZED)
+    is_iconic = dot_win32.IsIconic(hwnd)
+    if hwnd != dot_win32.GetForegroundWindow() and not is_iconic:
+        rslt = dot_win32.ShowWindow(hwnd, dot_win32.SW_SHOWMINIMIZED)
         if rslt == 0:
             return False
         is_iconic = True
     if is_iconic:
-        rslt = win32gui.ShowWindow(hwnd, win32con.SW_RESTORE)
+        rslt = dot_win32.ShowWindow(hwnd, dot_win32.SW_RESTORE)
         if rslt == 0:
             return False
     return True
@@ -28,21 +26,27 @@ def activate_window(hwnd):
 
 def is_fullscreen_window(hwnd):
     hwnd = int(hwnd)
-    if hwnd != win32gui.GetForegroundWindow():
-        return False
-    if win32gui.GetWindowLong(hwnd, win32con.GWL_EXSTYLE) & win32con.WS_EX_TOPMOST == 0:
+    if (
+        False
+        or (hwnd != dot_win32.GetForegroundWindow())
+        or (
+            dot_win32.GetWindowLong(hwnd, dot_win32.GWL_EXSTYLE)
+            & dot_win32.WS_EX_TOPMOST
+            == 0
+        )
+    ):
         return False
 
-    scr_w = win32api.GetSystemMetrics(0)
-    scr_h = win32api.GetSystemMetrics(1)
-    win_x, win_y = win32gui.ClientToScreen(hwnd, (0, 0))
-    _, _, win_w, win_h = win32gui.GetClientRect(hwnd)
+    scr_w = dot_win32.GetSystemMetrics(dot_win32.SM_CXSCREEN)
+    scr_h = dot_win32.GetSystemMetrics(dot_win32.SM_CYSCREEN)
+    win_x, win_y = dot_win32.ClientToScreen(hwnd, (0, 0))
+    _, _, win_w, win_h = dot_win32.GetClientRect(hwnd)
     return win_x == 0 and win_y == 0 and win_w == scr_w and win_h == scr_h
 
 
 def scroll_game(hwnd, x=None, y=None, delta=None):
-    scr_w = win32api.GetSystemMetrics(0)
-    scr_h = win32api.GetSystemMetrics(1)
+    scr_w = dot_win32.GetSystemMetrics(dot_win32.SM_CXSCREEN)
+    scr_h = dot_win32.GetSystemMetrics(dot_win32.SM_CYSCREEN)
     if x is None:
         x = scr_w // 2
     if y is None:
@@ -61,8 +65,8 @@ def scroll_game(hwnd, x=None, y=None, delta=None):
     if not is_fullscreen_window(hwnd):
         raise RuntimeError
 
-    win32api.SetCursorPos((x, y))
-    win32api.mouse_event(win32con.MOUSEEVENTF_WHEEL, 0, 0, delta, 0)
+    dot_win32.SetCursorPos(x, y)
+    dot_win32.mouse_event(dot_win32.MOUSEEVENTF_WHEEL, 0, 0, delta, 0)
 
 
 def screenshot(*, capture_output="pil", region=None):
@@ -94,8 +98,8 @@ def capture_screen(capture_area=None):
         cap_w = int(cap_w)
         cap_h = int(cap_h)
 
-        scr_w = win32api.GetSystemMetrics(0)
-        scr_h = win32api.GetSystemMetrics(1)
+        scr_w = dot_win32.GetSystemMetrics(dot_win32.SM_CXSCREEN)
+        scr_h = dot_win32.GetSystemMetrics(dot_win32.SM_CYSCREEN)
         if (
             cap_x < 0
             or scr_w <= cap_x
@@ -222,8 +226,8 @@ def main(
     if scroll_init_delta <= 0 or 0 <= scroll_down_delta:
         raise ValueError
 
-    hwnd = win32gui.FindWindow(win_class, win_title)
-    if hwnd == 0:
+    hwnd = dot_win32.FindWindow(win_class, win_title)
+    if hwnd is None:
         raise RuntimeError
 
     try:
@@ -233,8 +237,8 @@ def main(
         if not is_fullscreen_window(hwnd):
             raise RuntimeError
 
-        scr_w = win32api.GetSystemMetrics(0)
-        scr_h = win32api.GetSystemMetrics(1)
+        scr_w = dot_win32.GetSystemMetrics(dot_win32.SM_CXSCREEN)
+        scr_h = dot_win32.GetSystemMetrics(dot_win32.SM_CYSCREEN)
         if scr_w != screen_width or scr_h != screen_height:
             raise RuntimeError
 
@@ -254,5 +258,5 @@ def main(
             scroll_threshold=scroll_threshold,
         )
     finally:
-        win32gui.ShowWindow(hwnd, win32con.SW_MINIMIZE)
+        dot_win32.ShowWindow(hwnd, dot_win32.SW_MINIMIZE)
     return capture_img
