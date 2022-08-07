@@ -3,18 +3,6 @@ import sw_luadocs.capture
 import unittest
 
 
-class TestStormworksControllerInit(unittest.TestCase):
-    def test_winget_error(self):
-        with self.assertRaises(RuntimeError):
-            sw_luadocs.capture.StormworksController(
-                ahk_exe="",
-                win_title="ahk_id 0x0",
-                win_text="",
-                win_exclude_title="",
-                win_exclude_text="",
-            )
-
-
 class TestCalcScrollAmount(unittest.TestCase):
     def test_validate_convert(self):
         scroll_amount = sw_luadocs.capture.calc_scroll_amount(

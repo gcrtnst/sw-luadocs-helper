@@ -1,4 +1,3 @@
-import ahk
 import cv2
 import d3dshot
 import math
@@ -9,12 +8,6 @@ import win32con
 import win32gui
 
 from . import image as dot_image
-
-
-def get_screen_size():
-    scr_w = win32api.GetSystemMetrics(0)
-    scr_h = win32api.GetSystemMetrics(1)
-    return scr_w, scr_h
 
 
 def activate_window(hwnd):
@@ -149,145 +142,6 @@ def capture_and_scroll_game(
         yield capture_game(hwnd, capture_area=capture_area)
         scroll_game(hwnd, x=scroll_x, y=scroll_y, delta=scroll_delta)
         time.sleep(scroll_sleep_secs)
-
-
-class StormworksController:
-    def __init__(
-        self,
-        *,
-        ahk_exe=None,
-        win_title="Stormworks",
-        win_text="",
-        win_exclude_title="",
-        win_exclude_text="",
-    ):
-        self._ahk = ahk.AHK(executable_path=str(ahk_exe) if ahk_exe is not None else "")
-        self._win = self._ahk.win_get(
-            title=win_title,
-            text=win_text,
-            exclude_title=win_exclude_title,
-            exclude_text=win_exclude_text,
-        )
-        if self._win.id == "":
-            raise RuntimeError
-
-    def hwnd(self):
-        return int(self._win.id, base=16)
-
-    def client_area(self):
-        hwnd = self.hwnd()
-        _, _, w, h = win32gui.GetClientRect(hwnd)
-        x, y = win32gui.ClientToScreen(hwnd, (0, 0))
-        return x, y, w, h
-
-    def is_fullscreen(self):
-        if not self._win.exists() or not self._win.is_always_on_top():
-            return False
-        scr_w, scr_h = get_screen_size()
-        win_x, win_y, win_w, win_h = self.client_area()
-        return win_x == 0 and win_y == 0 and win_w == scr_w and win_h == scr_h
-
-    def check_exists(self):
-        if not self._win.exists():
-            raise RuntimeError
-
-    def check_fullscreen(self):
-        if not self.is_fullscreen():
-            raise RuntimeError
-
-    def activate(self):
-        self.check_exists()
-        self._win.activate()
-
-    def minimize(self):
-        self.check_exists()
-        self._win.minimize()
-
-    def mouse_wheel(self, direction, *, x=None, y=None, n=None):
-        self.check_fullscreen()
-        scr_w, scr_h = get_screen_size()
-        if x is None:
-            x = scr_w // 2
-        if y is None:
-            y = scr_h // 2
-
-        x = int(x)
-        y = int(y)
-
-        if x < 0 or y < 0:
-            raise ValueError
-        if scr_w <= x or scr_h <= y:
-            raise RuntimeError
-
-        self._ahk.mouse_wheel(
-            direction,
-            x=x,
-            y=y,
-            n=n,
-            relative=False,
-            blocking=True,
-            mode="Screen",
-        )
-
-    def screenshot(self, *, capture_area=None):
-        self.check_fullscreen()
-
-        region = None
-        capture_area_x = None
-        capture_area_y = None
-        capture_area_w = None
-        capture_area_h = None
-        if capture_area is not None:
-            capture_area_x, capture_area_y, capture_area_w, capture_area_h = map(
-                int, capture_area
-            )
-
-            if (
-                capture_area_x < 0
-                or capture_area_y < 0
-                or capture_area_w < 1
-                or capture_area_h < 1
-            ):
-                raise ValueError
-
-            scr_w, scr_h = get_screen_size()
-            if (
-                scr_w <= capture_area_x
-                or scr_h <= capture_area_y
-                or scr_w <= capture_area_x + capture_area_w - 1
-                or scr_h <= capture_area_y + capture_area_h - 1
-            ):
-                raise RuntimeError
-
-            region = (
-                capture_area_x,
-                capture_area_y,
-                capture_area_x + capture_area_w,
-                capture_area_y + capture_area_h,
-            )
-
-        capture_img = screenshot(capture_output="numpy", region=region)
-        capture_img = dot_image.convert_image(capture_img, dst_mode="RGB")
-        if capture_area_w is not None and capture_area_h is not None:
-            capture_img_h, capture_img_w, _ = capture_img.shape
-            if capture_img_w != capture_area_w or capture_img_h != capture_area_h:
-                raise RuntimeError
-        return capture_img
-
-    def scroll_and_screenshot(
-        self,
-        *,
-        scroll_direction="down",
-        scroll_x=None,
-        scroll_y=None,
-        scroll_n=None,
-        scroll_sleep_secs=0,
-        capture_area=None,
-    ):
-        while True:
-            yield self.screenshot(capture_area=capture_area)
-            self.mouse_wheel(scroll_direction, x=scroll_x, y=scroll_y, n=scroll_n)
-            time.sleep(scroll_sleep_secs)
 
 
 def calc_scroll_amount(old_img, new_img, *, template_ratio=0.25):
