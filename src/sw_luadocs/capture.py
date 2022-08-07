@@ -13,15 +13,10 @@ def activate_window(hwnd):
 
     is_iconic = dot_win32.IsIconic(hwnd)
     if hwnd != dot_win32.GetForegroundWindow() and not is_iconic:
-        rslt = dot_win32.ShowWindow(hwnd, dot_win32.SW_SHOWMINIMIZED)
-        if rslt == 0:
-            return False
+        dot_win32.ShowWindow(hwnd, dot_win32.SW_SHOWMINIMIZED)
         is_iconic = True
     if is_iconic:
-        rslt = dot_win32.ShowWindow(hwnd, dot_win32.SW_RESTORE)
-        if rslt == 0:
-            return False
-    return True
+        dot_win32.ShowWindow(hwnd, dot_win32.SW_RESTORE)
 
 
 def is_fullscreen_window(hwnd):
