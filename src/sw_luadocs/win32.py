@@ -6,9 +6,6 @@ GWL_EXSTYLE = -20
 INPUT_HARDWARE = 2
 INPUT_KEYBOARD = 1
 INPUT_MOUSE = 0
-MOUSEEVENTF_ABSOLUTE = 0x8000
-MOUSEEVENTF_MOVE = 0x0001
-MOUSEEVENTF_VIRTUALDESK = 0x4000
 MOUSEEVENTF_WHEEL = 0x0800
 SM_CXSCREEN = 0
 SM_CYSCREEN = 1
@@ -202,19 +199,6 @@ def IsIconic(hWnd):
     fp.argtypes = (ctypes.wintypes.HWND,)
     fp.restype = ctypes.wintypes.BOOL
     return fp(hWnd)
-
-
-def mouse_event(dwFlags, dx, dy, dwData, dwExtraInfo):
-    fp = ctypes.windll.user32.mouse_event
-    fp.argtypes = (
-        ctypes.wintypes.DWORD,
-        ctypes.wintypes.DWORD,
-        ctypes.wintypes.DWORD,
-        ctypes.wintypes.DWORD,
-        ctypes.c_void_p,
-    )
-    fp.restype = None
-    return fp(dwFlags, dx, dy, dwData, dwExtraInfo)
 
 
 def SendInput(pInputs):
