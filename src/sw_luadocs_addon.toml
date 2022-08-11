@@ -17,8 +17,9 @@ capture_area_w = 1285
 capture_area_h = 763
 capture_template_ratio = 0.25
 
-activate_sleep_secs = 5
-scroll_sleep_secs = 3
+activate_delay = 5
+scroll_mouse_delay = 0.1
+scroll_smooth_delay = 3
 
 [recognize]
 head_thresh_s = 9

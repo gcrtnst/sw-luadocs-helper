@@ -34,8 +34,9 @@ def capture_main(ns):
             capture_cfg["capture_area_h"],
         ),
         capture_template_ratio=capture_cfg["capture_template_ratio"],
-        activate_sleep_secs=capture_cfg["activate_sleep_secs"],
-        scroll_sleep_secs=capture_cfg["scroll_sleep_secs"],
+        activate_delay=capture_cfg["activate_delay"],
+        scroll_mouse_delay=capture_cfg["scroll_mouse_delay"],
+        scroll_smooth_delay=capture_cfg["scroll_smooth_delay"],
     )
     dot_image.imsave(ns.capture_file, img)
 

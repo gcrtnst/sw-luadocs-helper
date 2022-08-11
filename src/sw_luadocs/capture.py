@@ -39,7 +39,7 @@ def is_fullscreen_window(hwnd):
     return win_x == 0 and win_y == 0 and win_w == scr_w and win_h == scr_h
 
 
-def scroll_game(hwnd, x=None, y=None, delta=None):
+def scroll_game(hwnd, x=None, y=None, delta=None, mouse_delay=None):
     scr_w = dot_win32.GetSystemMetrics(dot_win32.SM_CXSCREEN)
     scr_h = dot_win32.GetSystemMetrics(dot_win32.SM_CYSCREEN)
     if x is None:
@@ -48,6 +48,8 @@ def scroll_game(hwnd, x=None, y=None, delta=None):
         y = scr_h // 2
     if delta is None:
         delta = -120
+    if mouse_delay is None:
+        mouse_delay = 0
 
     hwnd = int(hwnd)
     x = int(x)
@@ -61,9 +63,12 @@ def scroll_game(hwnd, x=None, y=None, delta=None):
         raise RuntimeError
 
     dot_win32.SetCursorPos(x, y)
+    time.sleep(mouse_delay)
+    dot_win32.SetCursorPos(x, y)
     dot_win32.SendInput(
         [dot_win32.MOUSEINPUT(mouseData=delta, dwFlags=dot_win32.MOUSEEVENTF_WHEEL)]
     )
+    time.sleep(mouse_delay)
 
 
 def screenshot(*, capture_output="pil", region=None):
@@ -132,13 +137,23 @@ def capture_and_scroll_game(
     scroll_x=None,
     scroll_y=None,
     scroll_delta=None,
-    scroll_sleep_secs=0,
+    scroll_mouse_delay=None,
+    scroll_smooth_delay=None,
     capture_area=None,
 ):
+    if scroll_smooth_delay is None:
+        scroll_smooth_delay = 0
+
     while True:
         yield capture_game(hwnd, capture_area=capture_area)
-        scroll_game(hwnd, x=scroll_x, y=scroll_y, delta=scroll_delta)
-        time.sleep(scroll_sleep_secs)
+        scroll_game(
+            hwnd,
+            x=scroll_x,
+            y=scroll_y,
+            delta=scroll_delta,
+            mouse_delay=scroll_mouse_delay,
+        )
+        time.sleep(scroll_smooth_delay)
 
 
 def calc_scroll_amount(old_img, new_img, *, template_ratio=0.25):
@@ -210,8 +225,9 @@ def main(
     scroll_threshold,
     capture_area,
     capture_template_ratio,
-    activate_sleep_secs,
-    scroll_sleep_secs,
+    activate_delay,
+    scroll_mouse_delay,
+    scroll_smooth_delay,
 ):
     win_class = str(win_class)
     win_title = str(win_title)
@@ -229,7 +245,7 @@ def main(
 
     try:
         activate_window(hwnd)
-        time.sleep(activate_sleep_secs)
+        time.sleep(activate_delay)
 
         if not is_fullscreen_window(hwnd):
             raise RuntimeError
@@ -239,8 +255,14 @@ def main(
         if scr_w != screen_width or scr_h != screen_height:
             raise RuntimeError
 
-        scroll_game(hwnd, x=scroll_x, y=scroll_y, delta=scroll_init_delta)
-        time.sleep(scroll_sleep_secs)
+        scroll_game(
+            hwnd,
+            x=scroll_x,
+            y=scroll_y,
+            delta=scroll_init_delta,
+            mouse_delay=scroll_mouse_delay,
+        )
+        time.sleep(scroll_smooth_delay)
 
         capture_img = stitch_screenshot(
             capture_and_scroll_game(
@@ -248,7 +270,8 @@ def main(
                 scroll_x=scroll_x,
                 scroll_y=scroll_y,
                 scroll_delta=scroll_down_delta,
-                scroll_sleep_secs=scroll_sleep_secs,
+                scroll_mouse_delay=scroll_mouse_delay,
+                scroll_smooth_delay=scroll_smooth_delay,
                 capture_area=capture_area,
             ),
             template_ratio=capture_template_ratio,
