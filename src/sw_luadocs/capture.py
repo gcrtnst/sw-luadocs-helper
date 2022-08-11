@@ -61,7 +61,9 @@ def scroll_game(hwnd, x=None, y=None, delta=None):
         raise RuntimeError
 
     dot_win32.SetCursorPos(x, y)
-    dot_win32.mouse_event(dot_win32.MOUSEEVENTF_WHEEL, 0, 0, delta, 0)
+    dot_win32.SendInput(
+        [dot_win32.MOUSEINPUT(mouseData=delta, dwFlags=dot_win32.MOUSEEVENTF_WHEEL)]
+    )
 
 
 def screenshot(*, capture_output="pil", region=None):
