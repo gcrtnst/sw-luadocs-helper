@@ -226,6 +226,37 @@ def group_ocrline(ocrline_list):
     return sl_list
 
 
+def recognize_image_to_tesstsv(
+    capture_img, tesseract_lang, tesseract_config, preprocess_scale, preprocess_resample
+):
+    capture_img = dot_image.convert_image(capture_img, dst_mode="RGB")
+    preprocess_scale = float(preprocess_scale)
+
+    if not math.isfinite(preprocess_scale) or preprocess_scale <= 0:
+        raise ValueError
+
+    capture_height, capture_width, _ = capture_img.shape
+    preprocess_width = max(1, round(capture_width * preprocess_scale))
+    preprocess_height = max(1, round(capture_height * preprocess_scale))
+
+    preprocess_img = 255 - np.amax(capture_img, axis=2)
+    preprocess_img = dot_image.resize_image(
+        preprocess_img,
+        (preprocess_width, preprocess_height),
+        resample=preprocess_resample,
+    )
+    tesstsv = pytesseract.image_to_data(
+        preprocess_img,
+        lang=tesseract_lang,
+        config=tesseract_config,
+        output_type=pytesseract.Output.DICT,
+    )
+    tesstsv = rescale_tesstsv(
+        tesstsv, 1 / preprocess_scale, (capture_width, capture_height)
+    )
+    return tesstsv
+
+
 def convert_tesstsv_to_tessline(tesstsv):
     tesstsv = as_tesstsv(tesstsv)
 
