@@ -12,8 +12,8 @@ from . import recognize as dot_recognize
 from . import which as dot_which
 
 
-def capture_main(ns):
-    with open(ns.config, mode="rb") as fobj:
+def capture(capture_file, cfg_file):
+    with open(cfg_file, mode="rb") as fobj:
         cfg = tomllib.load(fobj)
     capture_cfg = cfg["capture"]
 
@@ -38,18 +38,18 @@ def capture_main(ns):
         scroll_mouse_delay=capture_cfg["scroll_mouse_delay"],
         scroll_smooth_delay=capture_cfg["scroll_smooth_delay"],
     )
-    dot_image.imsave(ns.capture_file, img)
+    dot_image.imsave(capture_file, img)
 
 
-def recognize_main(ns):
-    with open(ns.config, mode="rb") as fobj:
+def recognize(capture_file, recognize_file, cfg_file, tesseract_exe):
+    with open(cfg_file, mode="rb") as fobj:
         cfg = tomllib.load(fobj)
     recognize_cfg = cfg["recognize"]
 
-    if ns.tesseract_exe is not None:
-        pytesseract.pytesseract.tesseract_cmd = str(ns.tesseract_exe)
+    if tesseract_exe is not None:
+        pytesseract.pytesseract.tesseract_cmd = str(tesseract_exe)
 
-    capture_img = dot_image.imread(ns.capture_file)
+    capture_img = dot_image.imread(capture_file)
     flatdoc = dot_recognize.main(
         capture_img,
         tesseract_lang="eng",
@@ -74,16 +74,16 @@ def recognize_main(ns):
         ),
     )
     txt = dot_flatdoc.format(flatdoc)
-    with open(ns.recognize_file, mode="w", encoding="utf-8", newline="\n") as fobj:
+    with open(recognize_file, mode="w", encoding="utf-8", newline="\n") as fobj:
         fobj.write(txt)
 
 
-def extract_main(ns):
-    with open(ns.config, mode="rb") as fobj:
+def extract(recognize_file, extract_file, cfg_file, stormworks_exe):
+    with open(cfg_file, mode="rb") as fobj:
         tomllib.load(fobj)
-    with open(ns.recognize_file, mode="r", encoding="utf-8", newline="\n") as fobj:
+    with open(recognize_file, mode="r", encoding="utf-8", newline="\n") as fobj:
         ocr_txt = fobj.read()
-    with open(ns.stormworks_exe, mode="rb") as fobj:
+    with open(stormworks_exe, mode="rb") as fobj:
         exe_bin = fobj.read()
 
     ocr_flatdoc = dot_flatdoc.parse(ocr_txt)
@@ -95,21 +95,21 @@ def extract_main(ns):
     )
     ext_txt = dot_flatdoc.format(ext_flatdoc)
 
-    with open(ns.extract_file, mode="w", encoding="utf-8", newline="\n") as fobj:
+    with open(extract_file, mode="w", encoding="utf-8", newline="\n") as fobj:
         fobj.write(ext_txt)
 
 
 def main(*, args=None, exit_on_error=True):
     parser = argparse.ArgumentParser(exit_on_error=exit_on_error)
-    parser_group = parser.add_subparsers(required=True, metavar="command")
+    parser_group = parser.add_subparsers(
+        required=True, dest="command", metavar="command"
+    )
 
     parser_capture = parser_group.add_parser("capture", help="")
-    parser_capture.set_defaults(func=capture_main)
     parser_capture.add_argument("capture_file", type=pathlib.Path)
     parser_capture.add_argument("-c", "--config", type=pathlib.Path, required=True)
 
     parser_recognize = parser_group.add_parser("recognize", help="")
-    parser_recognize.set_defaults(func=recognize_main)
     parser_recognize.add_argument("capture_file", type=pathlib.Path)
     parser_recognize.add_argument("recognize_file", type=pathlib.Path)
     parser_recognize.add_argument("-c", "--config", type=pathlib.Path, required=True)
@@ -118,7 +118,6 @@ def main(*, args=None, exit_on_error=True):
     )
 
     parser_extract = parser_group.add_parser("extract", help="")
-    parser_extract.set_defaults(func=extract_main)
     parser_extract.add_argument("recognize_file", type=pathlib.Path)
     parser_extract.add_argument("extract_file", type=pathlib.Path)
     parser_extract.add_argument("-c", "--config", type=pathlib.Path, required=True)
@@ -127,4 +126,23 @@ def main(*, args=None, exit_on_error=True):
     )
 
     ns = parser.parse_args(args=args)
-    ns.func(ns)
+    if ns.command == "capture":
+        return capture(
+            ns.capture_file,
+            ns.config,
+        )
+    if ns.command == "recognize":
+        return recognize(
+            ns.capture_file,
+            ns.recognize_file,
+            ns.config,
+            ns.tesseract_exe,
+        )
+    if ns.command == "extract":
+        return extract(
+            ns.recognize_file,
+            ns.extract_file,
+            ns.config,
+            ns.stormworks_exe,
+        )
+    raise RuntimeError
