@@ -113,7 +113,7 @@ def preprocess_image(capture_img):
     return 255 - np.amax(capture_img, axis=2)
 
 
-def rescale_tesstsv(tesstsv, factor, size):
+def rescale_tesstsv(tesstsv, *, factor, size):
     tesstsv = as_tesstsv(tesstsv)
     factor = float(factor)
     img_width, img_height = size
@@ -252,7 +252,7 @@ def recognize_image_to_tesstsv(
         output_type=pytesseract.Output.DICT,
     )
     tesstsv = rescale_tesstsv(
-        tesstsv, 1 / preprocess_scale, (capture_width, capture_height)
+        tesstsv, factor=1 / preprocess_scale, size=(capture_width, capture_height)
     )
     return tesstsv
 

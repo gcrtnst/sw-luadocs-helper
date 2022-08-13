@@ -681,7 +681,9 @@ class TestRescaleTessTSV(unittest.TestCase):
         ]:
             with self.subTest(tesstsv=tesstsv, factor=factor, size=size):
                 with self.assertRaises(ValueError):
-                    sw_luadocs.recognize.rescale_tesstsv(tesstsv, factor, size)
+                    sw_luadocs.recognize.rescale_tesstsv(
+                        tesstsv, factor=factor, size=size
+                    )
 
     def test_main(self):
         for input_tesstsv, input_factor, input_size, expected_tesstsv in [
@@ -1011,7 +1013,7 @@ class TestRescaleTessTSV(unittest.TestCase):
             ):
                 input_tesstsv_copy = input_tesstsv.copy()
                 actual_tesstsv = sw_luadocs.recognize.rescale_tesstsv(
-                    input_tesstsv_copy, input_factor, input_size
+                    input_tesstsv_copy, factor=input_factor, size=input_size
                 )
                 self.assertEqual(actual_tesstsv, expected_tesstsv)
                 self.assertIsNot(actual_tesstsv, input_tesstsv_copy)
