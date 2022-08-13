@@ -31,6 +31,23 @@ def as_tesstsv(v):
         if len(tesstsv[key]) != len(tesstsv["level"]):
             raise ValueError
 
+    for idx in range(len(tesstsv["level"])):
+        if (
+            tesstsv["level"][idx] < 1
+            or 5 < tesstsv["level"][idx]
+            or tesstsv["page_num"][idx] < 1
+            or tesstsv["block_num"][idx] < 0
+            or tesstsv["par_num"][idx] < 0
+            or tesstsv["line_num"][idx] < 0
+            or tesstsv["word_num"][idx] < 0
+            or tesstsv["left"][idx] < 0
+            or tesstsv["top"][idx] < 0
+            or tesstsv["width"][idx] < 1
+            or tesstsv["height"][idx] < 1
+            or not math.isfinite(tesstsv["conf"][idx])
+        ):
+            raise ValueError
+
     return tesstsv
 
 

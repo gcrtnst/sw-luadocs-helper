@@ -6,80 +6,278 @@ import unittest
 
 
 class TestAsTessTSV(unittest.TestCase):
-    def test_type(self):
-        v = {
-            "level": ("0", "1"),
-            "page_num": ("10", "11"),
-            "block_num": ("20", "21"),
-            "par_num": ("30", "31"),
-            "line_num": ("40", "41"),
-            "word_num": ("50", "51"),
-            "left": ("60", "61"),
-            "top": ("70", "71"),
-            "width": ("80", "81"),
-            "height": ("90", "91"),
-            "conf": ("0.5", "1.5"),
-            "text": (100, 101),
-        }
-        tesstsv = sw_luadocs.recognize.as_tesstsv(v)
-        self.assertEqual(
-            tesstsv,
+    def test_invalid_value(self):
+        for v in [
             {
-                "level": [0, 1],
-                "page_num": [10, 11],
-                "block_num": [20, 21],
-                "par_num": [30, 31],
-                "line_num": [40, 41],
-                "word_num": [50, 51],
-                "left": [60, 61],
-                "top": [70, 71],
-                "width": [80, 81],
-                "height": [90, 91],
-                "conf": [0.5, 1.5],
-                "text": ["100", "101"],
+                "level": [1, 2, 3, 4],
+                "page_num": [1, 1, 1],
+                "block_num": [0, 1, 1],
+                "par_num": [0, 0, 1],
+                "line_num": [0, 0, 0],
+                "word_num": [0, 0, 0],
+                "left": [0, 0, 0],
+                "top": [0, 0, 0],
+                "width": [1, 1, 1],
+                "height": [1, 1, 1],
+                "conf": [-1.0, -1.0, -1.0],
+                "text": ["", "", ""],
             },
-        )
-
-    def test_copy(self):
-        v = {
-            "level": [0, 1],
-            "page_num": [10, 11],
-            "block_num": [20, 21],
-            "par_num": [30, 31],
-            "line_num": [40, 41],
-            "word_num": [50, 51],
-            "left": [60, 61],
-            "top": [70, 71],
-            "width": [80, 81],
-            "height": [90, 91],
-            "conf": [0.5, 1.5],
-            "text": ["100", "101"],
-        }
-        tesstsv = sw_luadocs.recognize.as_tesstsv(v)
-        self.assertIsNot(tesstsv, v)
-        self.assertEqual(tesstsv, v)
-
-    def test_len(self):
-        v1 = {
-            "level": [0],
-            "page_num": [0],
-            "block_num": [0],
-            "par_num": [0],
-            "line_num": [0],
-            "word_num": [0],
-            "left": [0],
-            "top": [0],
-            "width": [0],
-            "height": [0],
-            "conf": [0],
-            "text": [0],
-        }
-        for key in v1:
-            with self.subTest(key=key):
-                v2 = copy.deepcopy(v1)
-                v2[key] = [0, 1]
+            {
+                "level": [1, 2, 3],
+                "page_num": [1, 1, 1, 1],
+                "block_num": [0, 1, 1],
+                "par_num": [0, 0, 1],
+                "line_num": [0, 0, 0],
+                "word_num": [0, 0, 0],
+                "left": [0, 0, 0],
+                "top": [0, 0, 0],
+                "width": [1, 1, 1],
+                "height": [1, 1, 1],
+                "conf": [-1.0, -1.0, -1.0],
+                "text": ["", "", ""],
+            },
+            {
+                "level": [1, 2, 0],
+                "page_num": [1, 1, 1],
+                "block_num": [0, 1, 1],
+                "par_num": [0, 0, 1],
+                "line_num": [0, 0, 0],
+                "word_num": [0, 0, 0],
+                "left": [0, 0, 0],
+                "top": [0, 0, 0],
+                "width": [1, 1, 1],
+                "height": [1, 1, 1],
+                "conf": [-1.0, -1.0, -1.0],
+                "text": ["", "", ""],
+            },
+            {
+                "level": [1, 2, 6],
+                "page_num": [1, 1, 1],
+                "block_num": [0, 1, 1],
+                "par_num": [0, 0, 1],
+                "line_num": [0, 0, 0],
+                "word_num": [0, 0, 0],
+                "left": [0, 0, 0],
+                "top": [0, 0, 0],
+                "width": [1, 1, 1],
+                "height": [1, 1, 1],
+                "conf": [-1.0, -1.0, -1.0],
+                "text": ["", "", ""],
+            },
+            {
+                "level": [1, 2, 3],
+                "page_num": [1, 1, 0],
+                "block_num": [0, 1, 1],
+                "par_num": [0, 0, 1],
+                "line_num": [0, 0, 0],
+                "word_num": [0, 0, 0],
+                "left": [0, 0, 0],
+                "top": [0, 0, 0],
+                "width": [1, 1, 1],
+                "height": [1, 1, 1],
+                "conf": [-1.0, -1.0, -1.0],
+                "text": ["", "", ""],
+            },
+            {
+                "level": [1, 2, 3],
+                "page_num": [1, 1, 1],
+                "block_num": [0, 1, -1],
+                "par_num": [0, 0, 1],
+                "line_num": [0, 0, 0],
+                "word_num": [0, 0, 0],
+                "left": [0, 0, 0],
+                "top": [0, 0, 0],
+                "width": [1, 1, 1],
+                "height": [1, 1, 1],
+                "conf": [-1.0, -1.0, -1.0],
+                "text": ["", "", ""],
+            },
+            {
+                "level": [1, 2, 3],
+                "page_num": [1, 1, 1],
+                "block_num": [0, 1, 1],
+                "par_num": [0, 0, -1],
+                "line_num": [0, 0, 0],
+                "word_num": [0, 0, 0],
+                "left": [0, 0, 0],
+                "top": [0, 0, 0],
+                "width": [1, 1, 1],
+                "height": [1, 1, 1],
+                "conf": [-1.0, -1.0, -1.0],
+                "text": ["", "", ""],
+            },
+            {
+                "level": [1, 2, 3],
+                "page_num": [1, 1, 1],
+                "block_num": [0, 1, 1],
+                "par_num": [0, 0, 1],
+                "line_num": [0, 0, -1],
+                "word_num": [0, 0, 0],
+                "left": [0, 0, 0],
+                "top": [0, 0, 0],
+                "width": [1, 1, 1],
+                "height": [1, 1, 1],
+                "conf": [-1.0, -1.0, -1.0],
+                "text": ["", "", ""],
+            },
+            {
+                "level": [1, 2, 3],
+                "page_num": [1, 1, 1],
+                "block_num": [0, 1, 1],
+                "par_num": [0, 0, 1],
+                "line_num": [0, 0, 0],
+                "word_num": [0, 0, -1],
+                "left": [0, 0, 0],
+                "top": [0, 0, 0],
+                "width": [1, 1, 1],
+                "height": [1, 1, 1],
+                "conf": [-1.0, -1.0, -1.0],
+                "text": ["", "", ""],
+            },
+            {
+                "level": [1, 2, 3],
+                "page_num": [1, 1, 1],
+                "block_num": [0, 1, 1],
+                "par_num": [0, 0, 1],
+                "line_num": [0, 0, 0],
+                "word_num": [0, 0, 0],
+                "left": [0, 0, -1],
+                "top": [0, 0, 0],
+                "width": [1, 1, 1],
+                "height": [1, 1, 1],
+                "conf": [-1.0, -1.0, -1.0],
+                "text": ["", "", ""],
+            },
+            {
+                "level": [1, 2, 3],
+                "page_num": [1, 1, 1],
+                "block_num": [0, 1, 1],
+                "par_num": [0, 0, 1],
+                "line_num": [0, 0, 0],
+                "word_num": [0, 0, 0],
+                "left": [0, 0, 0],
+                "top": [0, 0, -1],
+                "width": [1, 1, 1],
+                "height": [1, 1, 1],
+                "conf": [-1.0, -1.0, -1.0],
+                "text": ["", "", ""],
+            },
+            {
+                "level": [1, 2, 3],
+                "page_num": [1, 1, 1],
+                "block_num": [0, 1, 1],
+                "par_num": [0, 0, 1],
+                "line_num": [0, 0, 0],
+                "word_num": [0, 0, 0],
+                "left": [0, 0, 0],
+                "top": [0, 0, 0],
+                "width": [1, 1, 0],
+                "height": [1, 1, 1],
+                "conf": [-1.0, -1.0, -1.0],
+                "text": ["", "", ""],
+            },
+            {
+                "level": [1, 2, 3],
+                "page_num": [1, 1, 1],
+                "block_num": [0, 1, 1],
+                "par_num": [0, 0, 1],
+                "line_num": [0, 0, 0],
+                "word_num": [0, 0, 0],
+                "left": [0, 0, 0],
+                "top": [0, 0, 0],
+                "width": [1, 1, 1],
+                "height": [1, 1, 0],
+                "conf": [-1.0, -1.0, -1.0],
+                "text": ["", "", ""],
+            },
+            {
+                "level": [1, 2, 3],
+                "page_num": [1, 1, 1],
+                "block_num": [0, 1, 1],
+                "par_num": [0, 0, 1],
+                "line_num": [0, 0, 0],
+                "word_num": [0, 0, 0],
+                "left": [0, 0, 0],
+                "top": [0, 0, 0],
+                "width": [1, 1, 1],
+                "height": [1, 1, 1],
+                "conf": [-1.0, -1.0, float("nan")],
+                "text": ["", "", ""],
+            },
+        ]:
+            with self.subTest(v=v):
                 with self.assertRaises(ValueError):
-                    sw_luadocs.recognize.as_tesstsv(v2)
+                    sw_luadocs.recognize.as_tesstsv(v)
+
+    def test_main(self):
+        for input_v, expected_tesstsv in [
+            (
+                {
+                    "level": [1, 2, 3],
+                    "page_num": [11, 12, 13],
+                    "block_num": [21, 22, 23],
+                    "par_num": [31, 32, 33],
+                    "line_num": [41, 42, 43],
+                    "word_num": [51, 52, 53],
+                    "left": [61, 62, 63],
+                    "top": [71, 72, 73],
+                    "width": [81, 82, 83],
+                    "height": [91, 92, 93],
+                    "conf": [100.0, 101.0, 102.0],
+                    "text": ["110", "111", "112"],
+                },
+                {
+                    "level": [1, 2, 3],
+                    "page_num": [11, 12, 13],
+                    "block_num": [21, 22, 23],
+                    "par_num": [31, 32, 33],
+                    "line_num": [41, 42, 43],
+                    "word_num": [51, 52, 53],
+                    "left": [61, 62, 63],
+                    "top": [71, 72, 73],
+                    "width": [81, 82, 83],
+                    "height": [91, 92, 93],
+                    "conf": [100.0, 101.0, 102.0],
+                    "text": ["110", "111", "112"],
+                },
+            ),
+            (
+                {
+                    "level": ["1", "2", "3"],
+                    "page_num": ["11", "12", "13"],
+                    "block_num": ["21", "22", "23"],
+                    "par_num": ["31", "32", "33"],
+                    "line_num": ["41", "42", "43"],
+                    "word_num": ["51", "52", "53"],
+                    "left": ["61", "62", "63"],
+                    "top": ["71", "72", "73"],
+                    "width": ["81", "82", "83"],
+                    "height": ["91", "92", "93"],
+                    "conf": ["100.0", "101.0", "102.0"],
+                    "text": [110, 111, 112],
+                },
+                {
+                    "level": [1, 2, 3],
+                    "page_num": [11, 12, 13],
+                    "block_num": [21, 22, 23],
+                    "par_num": [31, 32, 33],
+                    "line_num": [41, 42, 43],
+                    "word_num": [51, 52, 53],
+                    "left": [61, 62, 63],
+                    "top": [71, 72, 73],
+                    "width": [81, 82, 83],
+                    "height": [91, 92, 93],
+                    "conf": [100.0, 101.0, 102.0],
+                    "text": ["110", "111", "112"],
+                },
+            ),
+        ]:
+            with self.subTest(v=input_v):
+                input_v_copy = copy.deepcopy(input_v)
+                actual_tesstsv = sw_luadocs.recognize.as_tesstsv(input_v_copy)
+                self.assertEqual(actual_tesstsv, expected_tesstsv)
+                self.assertIsNot(actual_tesstsv, input_v_copy)
+                self.assertEqual(input_v_copy, input_v)
 
 
 class TestAsBox(unittest.TestCase):
@@ -393,15 +591,15 @@ class TestRescaleTessTSV(unittest.TestCase):
             (
                 {
                     "level": [],
-                    "page_num": [0],
+                    "page_num": [1],
                     "block_num": [0],
                     "par_num": [0],
                     "line_num": [0],
                     "word_num": [0],
                     "left": [0],
                     "top": [0],
-                    "width": [0],
-                    "height": [0],
+                    "width": [1],
+                    "height": [1],
                     "conf": [0.0],
                     "text": [""],
                 },
@@ -409,16 +607,16 @@ class TestRescaleTessTSV(unittest.TestCase):
             ),
             (
                 {
-                    "level": [0],
-                    "page_num": [0],
+                    "level": [1],
+                    "page_num": [1],
                     "block_num": [0],
                     "par_num": [0],
                     "line_num": [0],
                     "word_num": [0],
                     "left": [0],
                     "top": [0],
-                    "width": [0],
-                    "height": [0],
+                    "width": [1],
+                    "height": [1],
                     "conf": [0.0],
                     "text": [""],
                 },
@@ -426,16 +624,16 @@ class TestRescaleTessTSV(unittest.TestCase):
             ),
             (
                 {
-                    "level": [0],
-                    "page_num": [0],
+                    "level": [1],
+                    "page_num": [1],
                     "block_num": [0],
                     "par_num": [0],
                     "line_num": [0],
                     "word_num": [0],
                     "left": [0],
                     "top": [0],
-                    "width": [0],
-                    "height": [0],
+                    "width": [1],
+                    "height": [1],
                     "conf": [0.0],
                     "text": [""],
                 },
@@ -481,7 +679,7 @@ class TestRescaleTessTSV(unittest.TestCase):
             ),
             (
                 {
-                    "level": [101],
+                    "level": [1],
                     "page_num": [102],
                     "block_num": [103],
                     "par_num": [104],
@@ -496,7 +694,7 @@ class TestRescaleTessTSV(unittest.TestCase):
                 },
                 1,
                 {
-                    "level": [101],
+                    "level": [1],
                     "page_num": [102],
                     "block_num": [103],
                     "par_num": [104],
@@ -512,7 +710,7 @@ class TestRescaleTessTSV(unittest.TestCase):
             ),
             (
                 {
-                    "level": [101],
+                    "level": [1],
                     "page_num": [102],
                     "block_num": [103],
                     "par_num": [104],
@@ -527,7 +725,7 @@ class TestRescaleTessTSV(unittest.TestCase):
                 },
                 "1",
                 {
-                    "level": [101],
+                    "level": [1],
                     "page_num": [102],
                     "block_num": [103],
                     "par_num": [104],
@@ -543,7 +741,7 @@ class TestRescaleTessTSV(unittest.TestCase):
             ),
             (
                 {
-                    "level": [101],
+                    "level": [1],
                     "page_num": [102],
                     "block_num": [103],
                     "par_num": [104],
@@ -558,7 +756,7 @@ class TestRescaleTessTSV(unittest.TestCase):
                 },
                 1.5,
                 {
-                    "level": [101],
+                    "level": [1],
                     "page_num": [102],
                     "block_num": [103],
                     "par_num": [104],
@@ -574,7 +772,7 @@ class TestRescaleTessTSV(unittest.TestCase):
             ),
             (
                 {
-                    "level": [101],
+                    "level": [1],
                     "page_num": [102],
                     "block_num": [103],
                     "par_num": [104],
@@ -589,7 +787,7 @@ class TestRescaleTessTSV(unittest.TestCase):
                 },
                 0.5,
                 {
-                    "level": [101],
+                    "level": [1],
                     "page_num": [102],
                     "block_num": [103],
                     "par_num": [104],
@@ -605,7 +803,7 @@ class TestRescaleTessTSV(unittest.TestCase):
             ),
             (
                 {
-                    "level": [101],
+                    "level": [1],
                     "page_num": [102],
                     "block_num": [103],
                     "par_num": [104],
@@ -620,7 +818,7 @@ class TestRescaleTessTSV(unittest.TestCase):
                 },
                 0,
                 {
-                    "level": [101],
+                    "level": [1],
                     "page_num": [102],
                     "block_num": [103],
                     "par_num": [104],
@@ -636,7 +834,7 @@ class TestRescaleTessTSV(unittest.TestCase):
             ),
             (
                 {
-                    "level": [101, 201, 301],
+                    "level": [1, 2, 3],
                     "page_num": [102, 202, 302],
                     "block_num": [103, 203, 303],
                     "par_num": [104, 204, 304],
@@ -651,7 +849,7 @@ class TestRescaleTessTSV(unittest.TestCase):
                 },
                 1.5,
                 {
-                    "level": [101, 201, 301],
+                    "level": [1, 2, 3],
                     "page_num": [102, 202, 302],
                     "block_num": [103, 203, 303],
                     "par_num": [104, 204, 304],
@@ -1253,23 +1451,6 @@ class TestConvertTessTSVToTessline(unittest.TestCase):
                     "text": ["4", "5", "6"],
                 },
                 [sw_luadocs.recognize.TesseractLine(txt="5 6", box=(4, 4, 4, 4))],
-            ),
-            (
-                {
-                    "level": [4, 5, 6, 5],
-                    "page_num": [1, 1, 1, 1],
-                    "block_num": [1, 1, 1, 1],
-                    "par_num": [1, 1, 1, 1],
-                    "line_num": [1, 1, 1, 1],
-                    "word_num": [1, 1, 1, 1],
-                    "left": [1, 2, 3, 4],
-                    "top": [1, 2, 3, 4],
-                    "width": [1, 2, 3, 4],
-                    "height": [1, 2, 3, 4],
-                    "conf": [0, 0, 0, 0],
-                    "text": ["1", "2", "3", "4"],
-                },
-                [sw_luadocs.recognize.TesseractLine(txt="2 4", box=(1, 1, 1, 1))],
             ),
             (
                 {
