@@ -109,11 +109,6 @@ def as_ocrline_list_monokind(v, *, kind=None):
     return ocrline_list
 
 
-def preprocess_image(capture_img):
-    capture_img = dot_image.convert_image(capture_img, dst_mode="RGB")
-    return 255 - np.amax(capture_img, axis=2)
-
-
 def rescale_tesstsv(tesstsv, *, factor, size):
     tesstsv = as_tesstsv(tesstsv)
     factor = float(factor)
