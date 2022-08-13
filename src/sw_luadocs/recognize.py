@@ -113,16 +113,31 @@ def preprocess_image(capture_img):
     return 255 - np.amax(capture_img, axis=2)
 
 
-def rescale_tesstsv(tesstsv, factor):
+def rescale_tesstsv(tesstsv, factor, size):
     tesstsv = as_tesstsv(tesstsv)
     factor = float(factor)
+    img_width, img_height = size
+    img_width = int(img_width)
+    img_height = int(img_height)
 
-    if not math.isfinite(factor) or factor < 0:
+    if not math.isfinite(factor) or factor < 0 or img_width < 1 or img_height < 1:
         raise ValueError
 
-    for key in ("left", "top", "width", "height"):
-        for idx in range(len(tesstsv[key])):
-            tesstsv[key][idx] = round(tesstsv[key][idx] * factor)
+    for idx in range(len(tesstsv["level"])):
+        tsv_left = tesstsv["left"][idx]
+        tsv_top = tesstsv["top"][idx]
+        tsv_width = tesstsv["width"][idx]
+        tsv_height = tesstsv["height"][idx]
+
+        tsv_left = max(0, min(img_width - 1, round(tsv_left * factor)))
+        tsv_top = max(0, min(img_height - 1, round(tsv_top * factor)))
+        tsv_width = max(1, min(img_width - tsv_left, round(tsv_width * factor)))
+        tsv_height = max(1, min(img_height - tsv_top, round(tsv_height * factor)))
+
+        tesstsv["left"][idx] = tsv_left
+        tesstsv["top"][idx] = tsv_top
+        tesstsv["width"][idx] = tsv_width
+        tesstsv["height"][idx] = tsv_height
     return tesstsv
 
 

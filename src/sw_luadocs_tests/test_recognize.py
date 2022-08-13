@@ -587,7 +587,7 @@ class TestPreprocessImage(unittest.TestCase):
 
 class TestRescaleTessTSV(unittest.TestCase):
     def test_invalid_value(self):
-        for tesstsv, factor in [
+        for tesstsv, factor, size in [
             (
                 {
                     "level": [],
@@ -604,6 +604,7 @@ class TestRescaleTessTSV(unittest.TestCase):
                     "text": [""],
                 },
                 0,
+                (1, 1),
             ),
             (
                 {
@@ -621,6 +622,7 @@ class TestRescaleTessTSV(unittest.TestCase):
                     "text": [""],
                 },
                 float("nan"),
+                (1, 1),
             ),
             (
                 {
@@ -638,14 +640,51 @@ class TestRescaleTessTSV(unittest.TestCase):
                     "text": [""],
                 },
                 -1,
+                (1, 1),
+            ),
+            (
+                {
+                    "level": [1],
+                    "page_num": [1],
+                    "block_num": [0],
+                    "par_num": [0],
+                    "line_num": [0],
+                    "word_num": [0],
+                    "left": [0],
+                    "top": [0],
+                    "width": [1],
+                    "height": [1],
+                    "conf": [0.0],
+                    "text": [""],
+                },
+                0,
+                (0, 1),
+            ),
+            (
+                {
+                    "level": [1],
+                    "page_num": [1],
+                    "block_num": [0],
+                    "par_num": [0],
+                    "line_num": [0],
+                    "word_num": [0],
+                    "left": [0],
+                    "top": [0],
+                    "width": [1],
+                    "height": [1],
+                    "conf": [0.0],
+                    "text": [""],
+                },
+                0,
+                (1, 0),
             ),
         ]:
-            with self.subTest(tesstsv=tesstsv, factor=factor):
+            with self.subTest(tesstsv=tesstsv, factor=factor, size=size):
                 with self.assertRaises(ValueError):
-                    sw_luadocs.recognize.rescale_tesstsv(tesstsv, factor)
+                    sw_luadocs.recognize.rescale_tesstsv(tesstsv, factor, size)
 
     def test_main(self):
-        for input_tesstsv, input_factor, expected_tesstsv in [
+        for input_tesstsv, input_factor, input_size, expected_tesstsv in [
             (
                 {
                     "level": [],
@@ -662,6 +701,7 @@ class TestRescaleTessTSV(unittest.TestCase):
                     "text": [],
                 },
                 1,
+                (1, 1),
                 {
                     "level": [],
                     "page_num": [],
@@ -693,6 +733,7 @@ class TestRescaleTessTSV(unittest.TestCase):
                     "text": ["112"],
                 },
                 1,
+                (1000, 1000),
                 {
                     "level": [1],
                     "page_num": [102],
@@ -724,6 +765,7 @@ class TestRescaleTessTSV(unittest.TestCase):
                     "text": ["112"],
                 },
                 "1",
+                ("1000", "1000"),
                 {
                     "level": [1],
                     "page_num": [102],
@@ -755,6 +797,7 @@ class TestRescaleTessTSV(unittest.TestCase):
                     "text": ["112"],
                 },
                 1.5,
+                (1000, 1000),
                 {
                     "level": [1],
                     "page_num": [102],
@@ -786,6 +829,7 @@ class TestRescaleTessTSV(unittest.TestCase):
                     "text": ["112"],
                 },
                 0.5,
+                (1000, 1000),
                 {
                     "level": [1],
                     "page_num": [102],
@@ -817,6 +861,7 @@ class TestRescaleTessTSV(unittest.TestCase):
                     "text": ["112"],
                 },
                 0,
+                (1000, 1000),
                 {
                     "level": [1],
                     "page_num": [102],
@@ -826,8 +871,104 @@ class TestRescaleTessTSV(unittest.TestCase):
                     "word_num": [106],
                     "left": [0],
                     "top": [0],
-                    "width": [0],
-                    "height": [0],
+                    "width": [1],
+                    "height": [1],
+                    "conf": [111.0],
+                    "text": ["112"],
+                },
+            ),
+            (
+                {
+                    "level": [1],
+                    "page_num": [102],
+                    "block_num": [103],
+                    "par_num": [104],
+                    "line_num": [105],
+                    "word_num": [106],
+                    "left": [107],
+                    "top": [108],
+                    "width": [109],
+                    "height": [110],
+                    "conf": [111.0],
+                    "text": ["112"],
+                },
+                1,
+                (1, 1),
+                {
+                    "level": [1],
+                    "page_num": [102],
+                    "block_num": [103],
+                    "par_num": [104],
+                    "line_num": [105],
+                    "word_num": [106],
+                    "left": [0],
+                    "top": [0],
+                    "width": [1],
+                    "height": [1],
+                    "conf": [111.0],
+                    "text": ["112"],
+                },
+            ),
+            (
+                {
+                    "level": [1],
+                    "page_num": [102],
+                    "block_num": [103],
+                    "par_num": [104],
+                    "line_num": [105],
+                    "word_num": [106],
+                    "left": [107],
+                    "top": [108],
+                    "width": [109],
+                    "height": [110],
+                    "conf": [111.0],
+                    "text": ["112"],
+                },
+                1,
+                (51, 52),
+                {
+                    "level": [1],
+                    "page_num": [102],
+                    "block_num": [103],
+                    "par_num": [104],
+                    "line_num": [105],
+                    "word_num": [106],
+                    "left": [50],
+                    "top": [51],
+                    "width": [1],
+                    "height": [1],
+                    "conf": [111.0],
+                    "text": ["112"],
+                },
+            ),
+            (
+                {
+                    "level": [1],
+                    "page_num": [102],
+                    "block_num": [103],
+                    "par_num": [104],
+                    "line_num": [105],
+                    "word_num": [106],
+                    "left": [107],
+                    "top": [108],
+                    "width": [109],
+                    "height": [110],
+                    "conf": [111.0],
+                    "text": ["112"],
+                },
+                1,
+                (151, 153),
+                {
+                    "level": [1],
+                    "page_num": [102],
+                    "block_num": [103],
+                    "par_num": [104],
+                    "line_num": [105],
+                    "word_num": [106],
+                    "left": [107],
+                    "top": [108],
+                    "width": [44],
+                    "height": [45],
                     "conf": [111.0],
                     "text": ["112"],
                 },
@@ -848,6 +989,7 @@ class TestRescaleTessTSV(unittest.TestCase):
                     "text": ["112", "212", "312"],
                 },
                 1.5,
+                (1000, 1000),
                 {
                     "level": [1, 2, 3],
                     "page_num": [102, 202, 302],
@@ -864,10 +1006,12 @@ class TestRescaleTessTSV(unittest.TestCase):
                 },
             ),
         ]:
-            with self.subTest(tesstsv=input_tesstsv, factor=input_factor):
+            with self.subTest(
+                tesstsv=input_tesstsv, factor=input_factor, size=input_size
+            ):
                 input_tesstsv_copy = input_tesstsv.copy()
                 actual_tesstsv = sw_luadocs.recognize.rescale_tesstsv(
-                    input_tesstsv_copy, input_factor
+                    input_tesstsv_copy, input_factor, input_size
                 )
                 self.assertEqual(actual_tesstsv, expected_tesstsv)
                 self.assertIsNot(actual_tesstsv, input_tesstsv_copy)
