@@ -96,6 +96,19 @@ def preprocess_image(capture_img):
     return 255 - np.amax(capture_img, axis=2)
 
 
+def rescale_tesstsv(tesstsv, factor):
+    tesstsv = as_tesstsv(tesstsv)
+    factor = float(factor)
+
+    if not math.isfinite(factor) or factor < 0:
+        raise ValueError
+
+    for key in ("left", "top", "width", "height"):
+        for idx in range(len(tesstsv[key])):
+            tesstsv[key][idx] = round(tesstsv[key][idx] * factor)
+    return tesstsv
+
+
 def categorize_line(
     *, tessline, capture_img, head_thresh_s, code_thresh_x, bg_thresh_rgb
 ):
