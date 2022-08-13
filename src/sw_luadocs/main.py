@@ -101,7 +101,7 @@ def extract_main(ns):
 
 def main(*, args=None, exit_on_error=True):
     parser = argparse.ArgumentParser(exit_on_error=exit_on_error)
-    parser_group = parser.add_subparsers(required=True, metavar="COMMAND")
+    parser_group = parser.add_subparsers(required=True, metavar="command")
 
     parser_capture = parser_group.add_parser("capture")
     parser_capture.set_defaults(func=capture_main)
