@@ -53,6 +53,7 @@ def recognize(capture_file, recognize_file, cfg_file, tesseract_exe):
     capture_img = dot_image.imread(capture_file)
     flatdoc = dot_recognize.main(
         capture_img,
+        preprocess_scale=recognize_cfg["preprocess_scale"],
         tesseract_lang="eng",
         tesseract_config=shlex.join(
             [

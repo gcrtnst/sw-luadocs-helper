@@ -22,6 +22,7 @@ scroll_mouse_delay = 0.1
 scroll_smooth_delay = 3
 
 [recognize]
+preprocess_scale = 2
 head_thresh_s = 9
 body_line_h = 21
 code_thresh_x = 9

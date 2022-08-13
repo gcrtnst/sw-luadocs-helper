@@ -2,6 +2,7 @@ import colorsys
 import dataclasses
 import math
 import numpy as np
+import PIL.Image
 import pytesseract
 import typing
 
@@ -434,6 +435,7 @@ def convert_ocrline_to_flatdoc(ocrline_list, *, body_line_h, code_line_h):
 def main(
     capture_img,
     *,
+    preprocess_scale,
     tesseract_lang,
     tesseract_config,
     head_thresh_s,
@@ -444,12 +446,14 @@ def main(
     code_line_h,
     bg_thresh_rgb,
 ):
-    preprocess_img = preprocess_image(capture_img)
-    tesstsv = pytesseract.image_to_data(
-        preprocess_img,
-        lang=tesseract_lang,
-        config=tesseract_config,
-        output_type=pytesseract.Output.DICT,
+    preprocess_resample = PIL.Image.Resampling.LANCZOS
+
+    tesstsv = recognize_image_to_tesstsv(
+        capture_img,
+        preprocess_scale=preprocess_scale,
+        preprocess_resample=preprocess_resample,
+        tesseract_lang=tesseract_lang,
+        tesseract_config=tesseract_config,
     )
     tessline_list = convert_tesstsv_to_tessline(tesstsv)
     ocrline_list = [
