@@ -19,6 +19,12 @@ def convert_image(
     return np.asarray(pil)
 
 
+def resize_image(img, size, *, resample=None, box=None, reducing_gap=None):
+    pil = PIL.Image.fromarray(img)
+    pil = pil.resize(size, resample=resample, box=box, reducing_gap=reducing_gap)
+    return np.asarray(pil)
+
+
 def imread(fname):
     pil = PIL.Image.open(fname)
     return np.asarray(pil)
