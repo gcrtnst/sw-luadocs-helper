@@ -79,18 +79,21 @@ def recognize(capture_file, recognize_file, cfg_file, tesseract_exe):
         fobj.write(txt)
 
 
-def extract(recognize_file, extract_file, cfg_file, stormworks_exe):
+def extract(recognize_file, extract_file, cfg_file, stormworks32_exe, stormworks64_exe):
     with open(cfg_file, mode="rb") as fobj:
         tomllib.load(fobj)
     with open(recognize_file, mode="r", encoding="utf-8", newline="\n") as fobj:
         ocr_txt = fobj.read()
-    with open(stormworks_exe, mode="rb") as fobj:
-        exe_bin = fobj.read()
+    with open(stormworks32_exe, mode="rb") as fobj:
+        exe32_bin = fobj.read()
+    with open(stormworks64_exe, mode="rb") as fobj:
+        exe64_bin = fobj.read()
 
     ocr_flatdoc = dot_flatdoc.parse(ocr_txt)
     ext_flatdoc = dot_extract.main(
         ocr_flatdoc,
-        exe_bin,
+        exe32_bin,
+        exe64_bin,
         body_sep="\n\n",
         code_sep="\n\n",
     )
@@ -125,9 +128,14 @@ def main(*, args=None, exit_on_error=True):
     parser_extract.add_argument("extract_file", type=pathlib.Path)
     parser_extract.add_argument("-c", "--config", type=pathlib.Path, required=True)
     parser_extract.add_argument(
-        "--stormworks-exe",
+        "--stormworks32-exe",
         type=pathlib.Path,
-        default=dot_which.stormworks(mode=os.F_OK | os.R_OK),
+        default=dot_which.stormworks32(mode=os.F_OK | os.R_OK),
+    )
+    parser_extract.add_argument(
+        "--stormworks64-exe",
+        type=pathlib.Path,
+        default=dot_which.stormworks64(mode=os.F_OK | os.R_OK),
     )
 
     ns = parser.parse_args(args=args)
@@ -148,6 +156,7 @@ def main(*, args=None, exit_on_error=True):
             ns.recognize_file,
             ns.extract_file,
             ns.config,
-            ns.stormworks_exe,
+            ns.stormworks32_exe,
+            ns.stormworks64_exe,
         )
     raise RuntimeError

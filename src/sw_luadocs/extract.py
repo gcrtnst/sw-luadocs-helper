@@ -269,9 +269,12 @@ def match_flatdoc(ocr_flatdoc, ext_txt_db, *, body_sep="\n\n", code_sep="\n\n"):
     return ext_flatdoc, min_score
 
 
-def main(ocr_flatdoc, exe_bin, *, body_sep, code_sep):
-    section_bin = extract_section(exe_bin, ".rdata", ignore_padding=True)
-    ext_txt_set = extract_strings(section_bin)
+def main(ocr_flatdoc, exe32_bin, exe64_bin, *, body_sep, code_sep):
+    sec32_bin = extract_section(exe32_bin, ".rdata", ignore_padding=True)
+    sec64_bin = extract_section(exe64_bin, ".rdata", ignore_padding=True)
+    s32_txt_set = extract_strings(sec32_bin)
+    s64_txt_set = extract_strings(sec64_bin)
+    ext_txt_set = s32_txt_set & s64_txt_set
     ext_txt_db = NgramDatabase(ext_txt_set, n=3)
     ext_flatdoc, _ = match_flatdoc(
         ocr_flatdoc, ext_txt_db, body_sep=body_sep, code_sep=code_sep
