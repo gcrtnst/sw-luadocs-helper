@@ -103,12 +103,12 @@ def main(*, args=None, exit_on_error=True):
     parser = argparse.ArgumentParser(exit_on_error=exit_on_error)
     parser_group = parser.add_subparsers(required=True, metavar="command")
 
-    parser_capture = parser_group.add_parser("capture")
+    parser_capture = parser_group.add_parser("capture", help="")
     parser_capture.set_defaults(func=capture_main)
     parser_capture.add_argument("capture_file", type=pathlib.Path)
     parser_capture.add_argument("-c", "--config", type=pathlib.Path, required=True)
 
-    parser_recognize = parser_group.add_parser("recognize")
+    parser_recognize = parser_group.add_parser("recognize", help="")
     parser_recognize.set_defaults(func=recognize_main)
     parser_recognize.add_argument("capture_file", type=pathlib.Path)
     parser_recognize.add_argument("recognize_file", type=pathlib.Path)
@@ -117,7 +117,7 @@ def main(*, args=None, exit_on_error=True):
         "--tesseract-exe", type=pathlib.Path, default=dot_which.tesseract()
     )
 
-    parser_extract = parser_group.add_parser("extract")
+    parser_extract = parser_group.add_parser("extract", help="")
     parser_extract.set_defaults(func=extract_main)
     parser_extract.add_argument("recognize_file", type=pathlib.Path)
     parser_extract.add_argument("extract_file", type=pathlib.Path)
