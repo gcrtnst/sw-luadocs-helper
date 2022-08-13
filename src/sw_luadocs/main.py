@@ -1,4 +1,5 @@
 import argparse
+import os
 import pathlib
 import pytesseract
 import shlex
@@ -114,7 +115,9 @@ def main(*, args=None, exit_on_error=True):
     parser_recognize.add_argument("recognize_file", type=pathlib.Path)
     parser_recognize.add_argument("-c", "--config", type=pathlib.Path, required=True)
     parser_recognize.add_argument(
-        "--tesseract-exe", type=pathlib.Path, default=dot_which.tesseract()
+        "--tesseract-exe",
+        type=pathlib.Path,
+        default=dot_which.tesseract(),
     )
 
     parser_extract = parser_group.add_parser("extract", help="")
@@ -122,7 +125,9 @@ def main(*, args=None, exit_on_error=True):
     parser_extract.add_argument("extract_file", type=pathlib.Path)
     parser_extract.add_argument("-c", "--config", type=pathlib.Path, required=True)
     parser_extract.add_argument(
-        "--stormworks-exe", type=pathlib.Path, default=dot_which.stormworks()
+        "--stormworks-exe",
+        type=pathlib.Path,
+        default=dot_which.stormworks(mode=os.F_OK | os.R_OK),
     )
 
     ns = parser.parse_args(args=args)
