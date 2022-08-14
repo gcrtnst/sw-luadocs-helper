@@ -393,3 +393,17 @@ print("hello world")
             with self.subTest(flatdoc=input_flatdoc):
                 actual_s = sw_luadocs.flatdoc.export_markdown(input_flatdoc)
                 self.assertEqual(actual_s, expected_s)
+
+
+class TestExport(unittest.TestCase):
+    def test_invalid_value(self):
+        with self.assertRaises(ValueError):
+            sw_luadocs.flatdoc.export([], "invalid")
+
+    def test_main(self):
+        for input_flatdoc, input_markup, expected_s in [
+            ([sw_luadocs.flatdoc.FlatElem(txt="h", kind="head")], "markdown", "# h\n"),
+        ]:
+            with self.subTest(flatdoc=input_flatdoc, markup=input_markup):
+                actual_s = sw_luadocs.flatdoc.export(input_flatdoc, input_markup)
+                self.assertEqual(actual_s, expected_s)

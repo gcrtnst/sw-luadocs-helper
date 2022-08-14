@@ -118,3 +118,9 @@ def export_markdown(flatdoc):
 
     s = "\n".join(block_list)
     return s
+
+
+def export(flatdoc, markup):
+    if markup == "markdown":
+        return export_markdown(flatdoc)
+    raise ValueError
