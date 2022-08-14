@@ -438,7 +438,6 @@ def main(
     code_base_x,
     code_indent_w,
     code_line_h,
-    bg_thresh_rgb,
 ):
     preprocess_resample = PIL.Image.Resampling.LANCZOS
     tesseract_config = shlex.join(
@@ -450,6 +449,7 @@ def main(
         ]
     )
     head_thresh_s = 9
+    bg_thresh_rgb = (40, 40, 40)
 
     tesstsv = recognize_image_to_tesstsv(
         capture_img,

@@ -29,6 +29,3 @@ code_thresh_x = 9
 code_base_x = 14
 code_indent_w = 38
 code_line_h = 16.5
-bg_thresh_r = 40
-bg_thresh_g = 40
-bg_thresh_b = 40

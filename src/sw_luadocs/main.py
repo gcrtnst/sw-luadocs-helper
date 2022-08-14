@@ -59,11 +59,6 @@ def recognize(capture_file, recognize_file, cfg_file, tesseract_exe):
         code_base_x=recognize_cfg["code_base_x"],
         code_indent_w=recognize_cfg["code_indent_w"],
         code_line_h=recognize_cfg["code_line_h"],
-        bg_thresh_rgb=(
-            recognize_cfg["bg_thresh_r"],
-            recognize_cfg["bg_thresh_g"],
-            recognize_cfg["bg_thresh_b"],
-        ),
     )
     txt = dot_flatdoc.format(flatdoc)
     with open(recognize_file, mode="w", encoding="utf-8", newline="\n") as fobj:
