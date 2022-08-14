@@ -1,7 +1,4 @@
 [capture]
-win_class = "GLFW30"
-win_title = "Stormworks"
-
 screen_width = 1920
 screen_height = 1080
 

@@ -18,8 +18,6 @@ def capture(capture_file, cfg_file):
     capture_cfg = cfg["capture"]
 
     img = dot_capture.main(
-        win_class=capture_cfg["win_class"],
-        win_title=capture_cfg["win_title"],
         screen_width=capture_cfg["screen_width"],
         screen_height=capture_cfg["screen_height"],
         scroll_x=capture_cfg["scroll_x"],

@@ -214,8 +214,6 @@ def stitch_screenshot(iterable, *, template_ratio=0.25, scroll_threshold=0):
 
 def main(
     *,
-    win_class,
-    win_title,
     screen_width,
     screen_height,
     scroll_x,
@@ -229,8 +227,9 @@ def main(
     scroll_mouse_delay,
     scroll_smooth_delay,
 ):
-    win_class = str(win_class)
-    win_title = str(win_title)
+    win_class = "GLFW30"
+    win_title = "Stormworks"
+
     screen_width = int(screen_width)
     screen_height = int(screen_height)
     scroll_init_delta = int(scroll_init_delta)
