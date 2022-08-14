@@ -12,6 +12,19 @@ from . import recognize as dot_recognize
 from . import which as dot_which
 
 
+def parse_newline_argument(s):
+    s = str(s)
+    l = s.upper()
+
+    if l == "LF":
+        return "\n"
+    if l == "CR":
+        return "\r"
+    if l == "CRLF":
+        return "\r\n"
+    raise ValueError
+
+
 def capture(*, capture_file, cfg_file):
     with open(cfg_file, mode="rb") as fobj:
         cfg = tomllib.load(fobj)
