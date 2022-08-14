@@ -4,6 +4,7 @@ import math
 import numpy as np
 import PIL.Image
 import pytesseract
+import shlex
 import typing
 
 from . import flatdoc as dot_flatdoc
@@ -432,7 +433,6 @@ def main(
     *,
     preprocess_scale,
     tesseract_lang,
-    tesseract_config,
     head_thresh_s,
     body_line_h,
     code_thresh_x,
@@ -442,6 +442,14 @@ def main(
     bg_thresh_rgb,
 ):
     preprocess_resample = PIL.Image.Resampling.LANCZOS
+    tesseract_config = shlex.join(
+        [
+            "--psm",
+            "6",
+            "-c",
+            "tessedit_char_whitelist= !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~",
+        ]
+    )
 
     tesstsv = recognize_image_to_tesstsv(
         capture_img,

@@ -2,7 +2,6 @@ import argparse
 import os
 import pathlib
 import pytesseract
-import shlex
 import tomli as tomllib
 
 from . import capture as dot_capture
@@ -55,14 +54,6 @@ def recognize(capture_file, recognize_file, cfg_file, tesseract_exe):
         capture_img,
         preprocess_scale=recognize_cfg["preprocess_scale"],
         tesseract_lang=recognize_cfg["tesseract_lang"],
-        tesseract_config=shlex.join(
-            [
-                "--psm",
-                "6",
-                "-c",
-                "tessedit_char_whitelist= !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~",
-            ]
-        ),
         head_thresh_s=recognize_cfg["head_thresh_s"],
         body_line_h=recognize_cfg["body_line_h"],
         code_thresh_x=recognize_cfg["code_thresh_x"],
