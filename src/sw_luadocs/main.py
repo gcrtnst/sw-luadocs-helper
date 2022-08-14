@@ -12,7 +12,7 @@ from . import recognize as dot_recognize
 from . import which as dot_which
 
 
-def capture(capture_file, cfg_file):
+def capture(*, capture_file, cfg_file):
     with open(cfg_file, mode="rb") as fobj:
         cfg = tomllib.load(fobj)
     capture_cfg = cfg["capture"]
@@ -39,7 +39,7 @@ def capture(capture_file, cfg_file):
     dot_image.imsave(capture_file, img)
 
 
-def recognize(capture_file, recognize_file, cfg_file, tesseract_exe):
+def recognize(*, capture_file, recognize_file, cfg_file, tesseract_exe):
     with open(cfg_file, mode="rb") as fobj:
         cfg = tomllib.load(fobj)
     recognize_cfg = cfg["recognize"]
@@ -63,7 +63,9 @@ def recognize(capture_file, recognize_file, cfg_file, tesseract_exe):
         fobj.write(txt)
 
 
-def extract(recognize_file, extract_file, cfg_file, stormworks32_exe, stormworks64_exe):
+def extract(
+    *, recognize_file, extract_file, cfg_file, stormworks32_exe, stormworks64_exe
+):
     with open(cfg_file, mode="rb") as fobj:
         tomllib.load(fobj)
     with open(recognize_file, mode="r", encoding="utf-8", newline="\n") as fobj:
@@ -125,22 +127,22 @@ def main(*, args=None, exit_on_error=True):
     ns = parser.parse_args(args=args)
     if ns.command == "capture":
         return capture(
-            ns.capture_file,
-            ns.config,
+            capture_file=ns.capture_file,
+            cfg_file=ns.config,
         )
     if ns.command == "recognize":
         return recognize(
-            ns.capture_file,
-            ns.recognize_file,
-            ns.config,
-            ns.tesseract_exe,
+            capture_file=ns.capture_file,
+            recognize_file=ns.recognize_file,
+            cfg_file=ns.config,
+            tesseract_exe=ns.tesseract_exe,
         )
     if ns.command == "extract":
         return extract(
-            ns.recognize_file,
-            ns.extract_file,
-            ns.config,
-            ns.stormworks32_exe,
-            ns.stormworks64_exe,
+            recognize_file=ns.recognize_file,
+            extract_file=ns.extract_file,
+            cfg_file=ns.config,
+            stormworks32_exe=ns.stormworks32_exe,
+            stormworks64_exe=ns.stormworks64_exe,
         )
     raise RuntimeError
