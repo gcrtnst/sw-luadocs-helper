@@ -98,3 +98,23 @@ def format(flatdoc):
     if parse(s) != flatdoc:
         raise ValueError
     return s
+
+
+def export_markdown(flatdoc):
+    flatdoc = as_flatdoc(flatdoc)
+
+    block_list = []
+    for flatelem in flatdoc:
+        if flatelem.kind == "head":
+            block_list.append("# " + flatelem.txt + "\n")
+            continue
+        if flatelem.kind == "body":
+            block_list.append(flatelem.txt + "\n")
+            continue
+        if flatelem.kind == "code":
+            block_list.append("```\n" + flatelem.txt + "\n```\n")
+            continue
+        raise RuntimeError
+
+    s = "\n".join(block_list)
+    return s
