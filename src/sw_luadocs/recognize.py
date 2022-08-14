@@ -225,10 +225,10 @@ def group_ocrline(ocrline_list):
 def recognize_image_to_tesstsv(
     capture_img,
     *,
-    tesseract_lang,
-    tesseract_config,
     preprocess_scale,
     preprocess_resample,
+    tesseract_lang,
+    tesseract_config,
 ):
     capture_img = dot_image.convert_image(capture_img, dst_mode="RGB")
     preprocess_scale = float(preprocess_scale)
