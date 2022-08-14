@@ -54,7 +54,6 @@ def recognize(capture_file, recognize_file, cfg_file, tesseract_exe):
         capture_img,
         preprocess_scale=recognize_cfg["preprocess_scale"],
         tesseract_lang=recognize_cfg["tesseract_lang"],
-        head_thresh_s=recognize_cfg["head_thresh_s"],
         body_line_h=recognize_cfg["body_line_h"],
         code_thresh_x=recognize_cfg["code_thresh_x"],
         code_base_x=recognize_cfg["code_base_x"],

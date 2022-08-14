@@ -433,7 +433,6 @@ def main(
     *,
     preprocess_scale,
     tesseract_lang,
-    head_thresh_s,
     body_line_h,
     code_thresh_x,
     code_base_x,
@@ -450,6 +449,7 @@ def main(
             "tessedit_char_whitelist= !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~",
         ]
     )
+    head_thresh_s = 9
 
     tesstsv = recognize_image_to_tesstsv(
         capture_img,
