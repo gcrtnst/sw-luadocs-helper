@@ -54,7 +54,7 @@ def recognize(capture_file, recognize_file, cfg_file, tesseract_exe):
     flatdoc = dot_recognize.main(
         capture_img,
         preprocess_scale=recognize_cfg["preprocess_scale"],
-        tesseract_lang="eng",
+        tesseract_lang=recognize_cfg["tesseract_lang"],
         tesseract_config=shlex.join(
             [
                 "--psm",
