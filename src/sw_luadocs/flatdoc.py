@@ -151,7 +151,23 @@ class MarkdownExporter(Exporter):
         return "```lua\n" + flatelem.txt + "\n```\n"
 
 
+class WikiWikiExporter(Exporter):
+    @classmethod
+    def _export_head(cls, flatelem):
+        return "* " + flatelem.txt + "\n"
+
+    @classmethod
+    def _export_body(cls, flatelem):
+        return flatelem.txt + "\n"
+
+    @classmethod
+    def _export_code(cls, flatelem):
+        return "#pre{{\n" + flatelem.txt + "\n}}\n"
+
+
 def export(flatdoc, markup):
     if markup == "markdown":
         return MarkdownExporter.export(flatdoc)
+    if markup == "wikiwiki":
+        return WikiWikiExporter.export(flatdoc)
     raise ValueError

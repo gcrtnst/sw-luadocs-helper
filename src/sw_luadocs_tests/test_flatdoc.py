@@ -469,6 +469,50 @@ this is code
         self.assertEqual(expected_s, actual_s)
 
 
+class TestWikiWikiExporterExportHead(unittest.TestCase):
+    def test_main(self):
+        input_flatelem = sw_luadocs.flatdoc.FlatElem(txt="e", kind="head")
+        expected_s = "* e\n"
+        actual_s = sw_luadocs.flatdoc.WikiWikiExporter._export_head(input_flatelem)
+        self.assertEqual(expected_s, actual_s)
+
+
+class TestWikiWikiExporterExportBody(unittest.TestCase):
+    def test_main(self):
+        input_flatelem = sw_luadocs.flatdoc.FlatElem(txt="e", kind="body")
+        expected_s = "e\n"
+        actual_s = sw_luadocs.flatdoc.WikiWikiExporter._export_body(input_flatelem)
+        self.assertEqual(expected_s, actual_s)
+
+
+class TestWikiWikiExporterExportCode(unittest.TestCase):
+    def test_main(self):
+        input_flatelem = sw_luadocs.flatdoc.FlatElem(txt="e", kind="code")
+        expected_s = "#pre{{\ne\n}}\n"
+        actual_s = sw_luadocs.flatdoc.WikiWikiExporter._export_code(input_flatelem)
+        self.assertEqual(expected_s, actual_s)
+
+
+class TestWikiWikiExporterExport(unittest.TestCase):
+    def test_main(self):
+        input_flatdoc = [
+            sw_luadocs.flatdoc.FlatElem(txt="this is head", kind="head"),
+            sw_luadocs.flatdoc.FlatElem(txt="this is body", kind="body"),
+            sw_luadocs.flatdoc.FlatElem(txt="this is code", kind="code"),
+        ]
+        expected_s = """\
+* this is head
+
+this is body
+
+#pre{{
+this is code
+}}
+"""
+        actual_s = sw_luadocs.flatdoc.WikiWikiExporter.export(input_flatdoc)
+        self.assertEqual(expected_s, actual_s)
+
+
 class TestExport(unittest.TestCase):
     def test_invalid_value(self):
         with self.assertRaises(ValueError):

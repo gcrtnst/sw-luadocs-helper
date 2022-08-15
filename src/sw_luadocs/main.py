@@ -149,13 +149,7 @@ def main(*, args=None, exit_on_error=True):
     parser_export = parser_group.add_parser("export", help="")
     parser_export.add_argument("load_file", type=pathlib.Path)
     parser_export.add_argument("save_file", type=pathlib.Path)
-    parser_export.add_argument(
-        "-f",
-        "--format",
-        default="markdown",
-        choices=["markdown"],
-        dest="markup",
-    )
+    parser_export.add_argument("-f", "--format", default="markdown", dest="markup")
     parser_export.add_argument("--encoding", default="utf-8")
     parser_export.add_argument("--newline", default="LF", type=parse_newline_argument)
 
