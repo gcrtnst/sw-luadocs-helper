@@ -147,7 +147,7 @@ class MarkdownExporter(Exporter):
     _head_suffix = "\n"
     _body_prefix = ""
     _body_suffix = "\n"
-    _code_prefix = "```\n"
+    _code_prefix = "```lua\n"
     _code_suffix = "\n```\n"
 
 
