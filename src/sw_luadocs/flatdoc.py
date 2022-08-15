@@ -151,11 +151,7 @@ class MarkdownExporter(Exporter):
     _code_suffix = "\n```\n"
 
 
-def export_markdown(flatdoc):
-    return MarkdownExporter.export(flatdoc)
-
-
 def export(flatdoc, markup):
     if markup == "markdown":
-        return export_markdown(flatdoc)
+        return MarkdownExporter.export(flatdoc)
     raise ValueError
