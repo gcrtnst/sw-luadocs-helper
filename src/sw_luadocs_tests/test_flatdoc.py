@@ -322,114 +322,151 @@ class TestFormat(unittest.TestCase):
 
 class TestExporterExport(unittest.TestCase):
     def test_invalid_notimplemented(self):
-        for (
-            _head_prefix,
-            _head_suffix,
-            _body_prefix,
-            _body_suffix,
-            _code_prefix,
-            _code_suffix,
-        ) in [
-            (None, "hs", "bp", "bs", "cp", "cs"),
-            ("hp", None, "bp", "bs", "cp", "cs"),
-            ("hp", "hs", None, "bs", "cp", "cs"),
-            ("hp", "hs", "bp", None, "cp", "cs"),
-            ("hp", "hs", "bp", "bs", None, "cs"),
-            ("hp", "hs", "bp", "bs", "cp", None),
+        for flatdoc in [
+            [sw_luadocs.flatdoc.FlatElem(txt="", kind="head")],
+            [sw_luadocs.flatdoc.FlatElem(txt="", kind="body")],
+            [sw_luadocs.flatdoc.FlatElem(txt="", kind="code")],
         ]:
-            with self.subTest(
-                _head_prefix=_head_prefix,
-                _head_suffix=_head_suffix,
-                _body_prefix=_body_prefix,
-                _body_suffix=_body_suffix,
-                _code_prefix=_code_prefix,
-                _code_suffix=_code_suffix,
-            ):
-                try:
-                    MockExporter._head_prefix = _head_prefix
-                    MockExporter._head_suffix = _head_suffix
-                    MockExporter._body_prefix = _body_prefix
-                    MockExporter._body_suffix = _body_suffix
-                    MockExporter._code_prefix = _code_prefix
-                    MockExporter._code_suffix = _code_suffix
-                    with self.assertRaises(NotImplementedError):
-                        MockExporter.export([])
-                finally:
-                    MockExporter._head_prefix = None
-                    MockExporter._head_suffix = None
-                    MockExporter._body_prefix = None
-                    MockExporter._body_suffix = None
-                    MockExporter._code_prefix = None
-                    MockExporter._code_suffix = None
+            with self.subTest(flatdoc=flatdoc):
+                with self.assertRaises(NotImplementedError):
+                    sw_luadocs.flatdoc.Exporter.export(flatdoc)
 
     def test_invalid_type(self):
-        try:
-            MockExporter._head_prefix = "hp"
-            MockExporter._head_suffix = "hs\n"
-            MockExporter._body_prefix = "bp"
-            MockExporter._body_suffix = "bs\n"
-            MockExporter._code_prefix = "cp"
-            MockExporter._code_suffix = "cs\n"
-
-            with self.assertRaises(TypeError):
-                MockExporter.export([None])
-        finally:
-            MockExporter._head_prefix = None
-            MockExporter._head_suffix = None
-            MockExporter._body_prefix = None
-            MockExporter._body_suffix = None
-            MockExporter._code_prefix = None
-            MockExporter._code_suffix = None
+        with self.assertRaises(TypeError):
+            sw_luadocs.flatdoc.Exporter.export([None])
 
     def test_main(self):
-        try:
-            MockExporter._head_prefix = "hp "
-            MockExporter._head_suffix = " hs\n"
-            MockExporter._body_prefix = "bp "
-            MockExporter._body_suffix = " bs\n"
-            MockExporter._code_prefix = "cp "
-            MockExporter._code_suffix = " cs\n"
+        for (
+            input_flatdoc,
+            expected_s,
+            expected_export_head_flatelem,
+            expected_export_body_flatelem,
+            expected_export_code_flatelem,
+        ) in [
+            ([], "", None, None, None),
+            (
+                [sw_luadocs.flatdoc.FlatElem(txt="e", kind="head")],
+                "h",
+                sw_luadocs.flatdoc.FlatElem(txt="e", kind="head"),
+                None,
+                None,
+            ),
+            (
+                [sw_luadocs.flatdoc.FlatElem(txt="e", kind="body")],
+                "b",
+                None,
+                sw_luadocs.flatdoc.FlatElem(txt="e", kind="body"),
+                None,
+            ),
+            (
+                [sw_luadocs.flatdoc.FlatElem(txt="e", kind="code")],
+                "c",
+                None,
+                None,
+                sw_luadocs.flatdoc.FlatElem(txt="e", kind="code"),
+            ),
+            (
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="e", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="e", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="e", kind="code"),
+                ],
+                "h\nb\nc",
+                sw_luadocs.flatdoc.FlatElem(txt="e", kind="head"),
+                sw_luadocs.flatdoc.FlatElem(txt="e", kind="body"),
+                sw_luadocs.flatdoc.FlatElem(txt="e", kind="code"),
+            ),
+            (
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="e", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="e", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="e", kind="head"),
+                ],
+                "b\nc\nh",
+                sw_luadocs.flatdoc.FlatElem(txt="e", kind="head"),
+                sw_luadocs.flatdoc.FlatElem(txt="e", kind="body"),
+                sw_luadocs.flatdoc.FlatElem(txt="e", kind="code"),
+            ),
+            (
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="e", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="e", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="e", kind="body"),
+                ],
+                "c\nh\nb",
+                sw_luadocs.flatdoc.FlatElem(txt="e", kind="head"),
+                sw_luadocs.flatdoc.FlatElem(txt="e", kind="body"),
+                sw_luadocs.flatdoc.FlatElem(txt="e", kind="code"),
+            ),
+        ]:
+            with self.subTest(flatdoc=input_flatdoc):
+                try:
+                    MockExporter._export_head_flatelem = None
+                    MockExporter._export_body_flatelem = None
+                    MockExporter._export_code_flatelem = None
 
-            for input_flatdoc, expected_s in [
-                ([], ""),
-                ([sw_luadocs.flatdoc.FlatElem(txt="he", kind="head")], "hp he hs\n"),
-                ([sw_luadocs.flatdoc.FlatElem(txt="be", kind="body")], "bp be bs\n"),
-                ([sw_luadocs.flatdoc.FlatElem(txt="ce", kind="code")], "cp ce cs\n"),
-                (
-                    [
-                        sw_luadocs.flatdoc.FlatElem(txt="he", kind="head"),
-                        sw_luadocs.flatdoc.FlatElem(txt="be", kind="body"),
-                        sw_luadocs.flatdoc.FlatElem(txt="ce", kind="code"),
-                    ],
-                    "hp he hs\n\nbp be bs\n\ncp ce cs\n",
-                ),
-                (
-                    [
-                        sw_luadocs.flatdoc.FlatElem(txt="be", kind="body"),
-                        sw_luadocs.flatdoc.FlatElem(txt="ce", kind="code"),
-                        sw_luadocs.flatdoc.FlatElem(txt="he", kind="head"),
-                    ],
-                    "bp be bs\n\ncp ce cs\n\nhp he hs\n",
-                ),
-                (
-                    [
-                        sw_luadocs.flatdoc.FlatElem(txt="ce", kind="code"),
-                        sw_luadocs.flatdoc.FlatElem(txt="he", kind="head"),
-                        sw_luadocs.flatdoc.FlatElem(txt="be", kind="body"),
-                    ],
-                    "cp ce cs\n\nhp he hs\n\nbp be bs\n",
-                ),
-            ]:
-                with self.subTest(flatdoc=input_flatdoc):
                     actual_s = MockExporter.export(input_flatdoc)
                     self.assertEqual(actual_s, expected_s)
-        finally:
-            MockExporter._head_prefix = None
-            MockExporter._head_suffix = None
-            MockExporter._body_prefix = None
-            MockExporter._body_suffix = None
-            MockExporter._code_prefix = None
-            MockExporter._code_suffix = None
+                    self.assertEqual(
+                        MockExporter._export_head_flatelem,
+                        expected_export_head_flatelem,
+                    )
+                    self.assertEqual(
+                        MockExporter._export_body_flatelem,
+                        expected_export_body_flatelem,
+                    )
+                    self.assertEqual(
+                        MockExporter._export_code_flatelem,
+                        expected_export_code_flatelem,
+                    )
+                finally:
+                    MockExporter._export_head_flatelem = None
+                    MockExporter._export_body_flatelem = None
+                    MockExporter._export_code_flatelem = None
+
+
+class TestMarkdownExporterExportHead(unittest.TestCase):
+    def test_main(self):
+        input_flatelem = sw_luadocs.flatdoc.FlatElem(txt="e", kind="head")
+        expected_s = "# e\n"
+        actual_s = sw_luadocs.flatdoc.MarkdownExporter._export_head(input_flatelem)
+        self.assertEqual(expected_s, actual_s)
+
+
+class TestMarkdownExporterExportBody(unittest.TestCase):
+    def test_main(self):
+        input_flatelem = sw_luadocs.flatdoc.FlatElem(txt="e", kind="body")
+        expected_s = "e\n"
+        actual_s = sw_luadocs.flatdoc.MarkdownExporter._export_body(input_flatelem)
+        self.assertEqual(expected_s, actual_s)
+
+
+class TestMarkdownExporterExportCode(unittest.TestCase):
+    def test_main(self):
+        input_flatelem = sw_luadocs.flatdoc.FlatElem(txt="e", kind="code")
+        expected_s = "```lua\ne\n```\n"
+        actual_s = sw_luadocs.flatdoc.MarkdownExporter._export_code(input_flatelem)
+        self.assertEqual(expected_s, actual_s)
+
+
+class TestMarkdownExporterExport(unittest.TestCase):
+    def test_main(self):
+        input_flatdoc = [
+            sw_luadocs.flatdoc.FlatElem(txt="this is head", kind="head"),
+            sw_luadocs.flatdoc.FlatElem(txt="this is body", kind="body"),
+            sw_luadocs.flatdoc.FlatElem(txt="this is code", kind="code"),
+        ]
+        expected_s = """\
+# this is head
+
+this is body
+
+```lua
+this is code
+```
+"""
+        actual_s = sw_luadocs.flatdoc.MarkdownExporter.export(input_flatdoc)
+        self.assertEqual(expected_s, actual_s)
 
 
 class TestExport(unittest.TestCase):
@@ -447,9 +484,21 @@ class TestExport(unittest.TestCase):
 
 
 class MockExporter(sw_luadocs.flatdoc.Exporter):
-    _head_prefix = None
-    _head_suffix = None
-    _body_prefix = None
-    _body_suffix = None
-    _code_prefix = None
-    _code_suffix = None
+    _export_head_flatelem = None
+    _export_body_flatelem = None
+    _export_code_flatelem = None
+
+    @classmethod
+    def _export_head(cls, flatelem):
+        cls._export_head_flatelem = flatelem
+        return "h"
+
+    @classmethod
+    def _export_body(cls, flatelem):
+        cls._export_body_flatelem = flatelem
+        return "b"
+
+    @classmethod
+    def _export_code(cls, flatelem):
+        cls._export_code_flatelem = flatelem
+        return "c"

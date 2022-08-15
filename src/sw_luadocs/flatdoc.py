@@ -101,39 +101,34 @@ def format(flatdoc):
 
 
 class Exporter:
-    _head_prefix = None
-    _head_suffix = None
-    _body_prefix = None
-    _body_suffix = None
-    _code_prefix = None
-    _code_suffix = None
+    @classmethod
+    def _export_head(cls, flatelem):
+        raise NotImplementedError
+
+    @classmethod
+    def _export_body(cls, flatelem):
+        raise NotImplementedError
+
+    @classmethod
+    def _export_code(cls, flatelem):
+        raise NotImplementedError
 
     @classmethod
     def export(cls, flatdoc):
-        if (
-            cls._head_prefix is None
-            or cls._head_suffix is None
-            or cls._body_prefix is None
-            or cls._body_suffix is None
-            or cls._code_prefix is None
-            or cls._code_suffix is None
-        ):
-            raise NotImplementedError
-
         flatdoc = as_flatdoc(flatdoc)
 
         block_list = []
         for flatelem in flatdoc:
             if flatelem.kind == "head":
-                block = cls._head_prefix + flatelem.txt + cls._head_suffix
+                block = str(cls._export_head(flatelem))
                 block_list.append(block)
                 continue
             if flatelem.kind == "body":
-                block = cls._body_prefix + flatelem.txt + cls._body_suffix
+                block = str(cls._export_body(flatelem))
                 block_list.append(block)
                 continue
             if flatelem.kind == "code":
-                block = cls._code_prefix + flatelem.txt + cls._code_suffix
+                block = str(cls._export_code(flatelem))
                 block_list.append(block)
                 continue
             raise RuntimeError
@@ -143,12 +138,17 @@ class Exporter:
 
 
 class MarkdownExporter(Exporter):
-    _head_prefix = "# "
-    _head_suffix = "\n"
-    _body_prefix = ""
-    _body_suffix = "\n"
-    _code_prefix = "```lua\n"
-    _code_suffix = "\n```\n"
+    @classmethod
+    def _export_head(cls, flatelem):
+        return "# " + flatelem.txt + "\n"
+
+    @classmethod
+    def _export_body(cls, flatelem):
+        return flatelem.txt + "\n"
+
+    @classmethod
+    def _export_code(cls, flatelem):
+        return "```lua\n" + flatelem.txt + "\n```\n"
 
 
 def export(flatdoc, markup):
