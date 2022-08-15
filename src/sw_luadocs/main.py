@@ -102,6 +102,15 @@ def extract(
         fobj.write(ext_txt)
 
 
+def export(*, load_file, save_file, markup, encoding, newline):
+    with open(load_file, mode="r", encoding="utf-8", newline="\n") as fobj:
+        load_txt = fobj.read()
+    flatdoc = dot_flatdoc.parse(load_txt)
+    save_txt = dot_flatdoc.export(flatdoc, markup)
+    with open(save_file, mode="w", encoding=encoding, newline=newline) as fobj:
+        fobj.write(save_txt)
+
+
 def main(*, args=None, exit_on_error=True):
     parser = argparse.ArgumentParser(exit_on_error=exit_on_error)
     parser_group = parser.add_subparsers(
@@ -137,6 +146,19 @@ def main(*, args=None, exit_on_error=True):
         default=dot_which.stormworks64(mode=os.F_OK | os.R_OK),
     )
 
+    parser_export = parser_group.add_parser("export", help="")
+    parser_export.add_argument("load_file", type=pathlib.Path)
+    parser_export.add_argument("save_file", type=pathlib.Path)
+    parser_export.add_argument(
+        "-f",
+        "--format",
+        default="markdown",
+        choices=["markdown"],
+        dest="markup",
+    )
+    parser_export.add_argument("--encoding", default="utf-8")
+    parser_export.add_argument("--newline", default="LF", type=parse_newline_argument)
+
     ns = parser.parse_args(args=args)
     if ns.command == "capture":
         return capture(
@@ -157,5 +179,13 @@ def main(*, args=None, exit_on_error=True):
             cfg_file=ns.config,
             stormworks32_exe=ns.stormworks32_exe,
             stormworks64_exe=ns.stormworks64_exe,
+        )
+    if ns.command == "export":
+        return export(
+            load_file=ns.load_file,
+            save_file=ns.save_file,
+            markup=ns.markup,
+            encoding=ns.encoding,
+            newline=ns.newline,
         )
     raise RuntimeError
