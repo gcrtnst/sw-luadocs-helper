@@ -339,113 +339,113 @@ class TestExporterExport(unittest.TestCase):
         for (
             input_flatdoc,
             expected_s,
-            expected_export_head_flatelem,
-            expected_export_body_flatelem,
-            expected_export_code_flatelem,
+            expected_export_head_txt,
+            expected_export_body_txt,
+            expected_export_code_txt,
         ) in [
             ([], "", None, None, None),
             (
-                [sw_luadocs.flatdoc.FlatElem(txt="e", kind="head")],
-                "h",
-                sw_luadocs.flatdoc.FlatElem(txt="e", kind="head"),
+                [sw_luadocs.flatdoc.FlatElem(txt="ha", kind="head")],
+                "hr",
+                "ha",
                 None,
                 None,
             ),
             (
-                [sw_luadocs.flatdoc.FlatElem(txt="e", kind="body")],
-                "b",
+                [sw_luadocs.flatdoc.FlatElem(txt="ba", kind="body")],
+                "br",
                 None,
-                sw_luadocs.flatdoc.FlatElem(txt="e", kind="body"),
+                "ba",
                 None,
             ),
             (
-                [sw_luadocs.flatdoc.FlatElem(txt="e", kind="code")],
-                "c",
+                [sw_luadocs.flatdoc.FlatElem(txt="ca", kind="code")],
+                "cr",
                 None,
                 None,
-                sw_luadocs.flatdoc.FlatElem(txt="e", kind="code"),
-            ),
-            (
-                [
-                    sw_luadocs.flatdoc.FlatElem(txt="e", kind="head"),
-                    sw_luadocs.flatdoc.FlatElem(txt="e", kind="body"),
-                    sw_luadocs.flatdoc.FlatElem(txt="e", kind="code"),
-                ],
-                "h\nb\nc",
-                sw_luadocs.flatdoc.FlatElem(txt="e", kind="head"),
-                sw_luadocs.flatdoc.FlatElem(txt="e", kind="body"),
-                sw_luadocs.flatdoc.FlatElem(txt="e", kind="code"),
+                "ca",
             ),
             (
                 [
-                    sw_luadocs.flatdoc.FlatElem(txt="e", kind="body"),
-                    sw_luadocs.flatdoc.FlatElem(txt="e", kind="code"),
-                    sw_luadocs.flatdoc.FlatElem(txt="e", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="ha", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="ba", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="ca", kind="code"),
                 ],
-                "b\nc\nh",
-                sw_luadocs.flatdoc.FlatElem(txt="e", kind="head"),
-                sw_luadocs.flatdoc.FlatElem(txt="e", kind="body"),
-                sw_luadocs.flatdoc.FlatElem(txt="e", kind="code"),
+                "hr\nbr\ncr",
+                "ha",
+                "ba",
+                "ca",
             ),
             (
                 [
-                    sw_luadocs.flatdoc.FlatElem(txt="e", kind="code"),
-                    sw_luadocs.flatdoc.FlatElem(txt="e", kind="head"),
-                    sw_luadocs.flatdoc.FlatElem(txt="e", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="ba", kind="body"),
+                    sw_luadocs.flatdoc.FlatElem(txt="ca", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="ha", kind="head"),
                 ],
-                "c\nh\nb",
-                sw_luadocs.flatdoc.FlatElem(txt="e", kind="head"),
-                sw_luadocs.flatdoc.FlatElem(txt="e", kind="body"),
-                sw_luadocs.flatdoc.FlatElem(txt="e", kind="code"),
+                "br\ncr\nhr",
+                "ha",
+                "ba",
+                "ca",
+            ),
+            (
+                [
+                    sw_luadocs.flatdoc.FlatElem(txt="ca", kind="code"),
+                    sw_luadocs.flatdoc.FlatElem(txt="ha", kind="head"),
+                    sw_luadocs.flatdoc.FlatElem(txt="ba", kind="body"),
+                ],
+                "cr\nhr\nbr",
+                "ha",
+                "ba",
+                "ca",
             ),
         ]:
             with self.subTest(flatdoc=input_flatdoc):
                 try:
-                    MockExporter._export_head_flatelem = None
-                    MockExporter._export_body_flatelem = None
-                    MockExporter._export_code_flatelem = None
+                    MockExporter._export_head_txt = None
+                    MockExporter._export_body_txt = None
+                    MockExporter._export_code_txt = None
 
                     actual_s = MockExporter.export(input_flatdoc)
                     self.assertEqual(actual_s, expected_s)
                     self.assertEqual(
-                        MockExporter._export_head_flatelem,
-                        expected_export_head_flatelem,
+                        MockExporter._export_head_txt,
+                        expected_export_head_txt,
                     )
                     self.assertEqual(
-                        MockExporter._export_body_flatelem,
-                        expected_export_body_flatelem,
+                        MockExporter._export_body_txt,
+                        expected_export_body_txt,
                     )
                     self.assertEqual(
-                        MockExporter._export_code_flatelem,
-                        expected_export_code_flatelem,
+                        MockExporter._export_code_txt,
+                        expected_export_code_txt,
                     )
                 finally:
-                    MockExporter._export_head_flatelem = None
-                    MockExporter._export_body_flatelem = None
-                    MockExporter._export_code_flatelem = None
+                    MockExporter._export_head_txt = None
+                    MockExporter._export_body_txt = None
+                    MockExporter._export_code_txt = None
 
 
 class TestMarkdownExporterExportHead(unittest.TestCase):
     def test_main(self):
-        input_flatelem = sw_luadocs.flatdoc.FlatElem(txt="e", kind="head")
+        input_txt = "e"
         expected_s = "# e\n"
-        actual_s = sw_luadocs.flatdoc.MarkdownExporter._export_head(input_flatelem)
+        actual_s = sw_luadocs.flatdoc.MarkdownExporter._export_head(input_txt)
         self.assertEqual(expected_s, actual_s)
 
 
 class TestMarkdownExporterExportBody(unittest.TestCase):
     def test_main(self):
-        input_flatelem = sw_luadocs.flatdoc.FlatElem(txt="e", kind="body")
+        input_txt = "e"
         expected_s = "e\n"
-        actual_s = sw_luadocs.flatdoc.MarkdownExporter._export_body(input_flatelem)
+        actual_s = sw_luadocs.flatdoc.MarkdownExporter._export_body(input_txt)
         self.assertEqual(expected_s, actual_s)
 
 
 class TestMarkdownExporterExportCode(unittest.TestCase):
     def test_main(self):
-        input_flatelem = sw_luadocs.flatdoc.FlatElem(txt="e", kind="code")
+        input_txt = "e"
         expected_s = "```lua\ne\n```\n"
-        actual_s = sw_luadocs.flatdoc.MarkdownExporter._export_code(input_flatelem)
+        actual_s = sw_luadocs.flatdoc.MarkdownExporter._export_code(input_txt)
         self.assertEqual(expected_s, actual_s)
 
 
@@ -471,25 +471,25 @@ this is code
 
 class TestWikiWikiExporterExportHead(unittest.TestCase):
     def test_main(self):
-        input_flatelem = sw_luadocs.flatdoc.FlatElem(txt="e", kind="head")
+        input_txt = "e"
         expected_s = "* e\n"
-        actual_s = sw_luadocs.flatdoc.WikiWikiExporter._export_head(input_flatelem)
+        actual_s = sw_luadocs.flatdoc.WikiWikiExporter._export_head(input_txt)
         self.assertEqual(expected_s, actual_s)
 
 
 class TestWikiWikiExporterExportBody(unittest.TestCase):
     def test_main(self):
-        input_flatelem = sw_luadocs.flatdoc.FlatElem(txt="e", kind="body")
+        input_txt = "e"
         expected_s = "e\n"
-        actual_s = sw_luadocs.flatdoc.WikiWikiExporter._export_body(input_flatelem)
+        actual_s = sw_luadocs.flatdoc.WikiWikiExporter._export_body(input_txt)
         self.assertEqual(expected_s, actual_s)
 
 
 class TestWikiWikiExporterExportCode(unittest.TestCase):
     def test_main(self):
-        input_flatelem = sw_luadocs.flatdoc.FlatElem(txt="e", kind="code")
+        input_txt = "e"
         expected_s = "#pre{{\ne\n}}\n"
-        actual_s = sw_luadocs.flatdoc.WikiWikiExporter._export_code(input_flatelem)
+        actual_s = sw_luadocs.flatdoc.WikiWikiExporter._export_code(input_txt)
         self.assertEqual(expected_s, actual_s)
 
 
@@ -528,21 +528,21 @@ class TestExport(unittest.TestCase):
 
 
 class MockExporter(sw_luadocs.flatdoc.Exporter):
-    _export_head_flatelem = None
-    _export_body_flatelem = None
-    _export_code_flatelem = None
+    _export_head_txt = None
+    _export_body_txt = None
+    _export_code_txt = None
 
     @classmethod
-    def _export_head(cls, flatelem):
-        cls._export_head_flatelem = flatelem
-        return "h"
+    def _export_head(cls, txt):
+        cls._export_head_txt = txt
+        return "hr"
 
     @classmethod
-    def _export_body(cls, flatelem):
-        cls._export_body_flatelem = flatelem
-        return "b"
+    def _export_body(cls, txt):
+        cls._export_body_txt = txt
+        return "br"
 
     @classmethod
-    def _export_code(cls, flatelem):
-        cls._export_code_flatelem = flatelem
-        return "c"
+    def _export_code(cls, txt):
+        cls._export_code_txt = txt
+        return "cr"
