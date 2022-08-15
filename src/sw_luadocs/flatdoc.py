@@ -102,15 +102,15 @@ def format(flatdoc):
 
 class Exporter:
     @classmethod
-    def _export_head(cls, txt):
+    def export_head(cls, txt):
         raise NotImplementedError
 
     @classmethod
-    def _export_body(cls, txt):
+    def export_body(cls, txt):
         raise NotImplementedError
 
     @classmethod
-    def _export_code(cls, txt):
+    def export_code(cls, txt):
         raise NotImplementedError
 
     @classmethod
@@ -120,15 +120,15 @@ class Exporter:
         block_list = []
         for flatelem in flatdoc:
             if flatelem.kind == "head":
-                block = str(cls._export_head(flatelem.txt))
+                block = str(cls.export_head(flatelem.txt))
                 block_list.append(block)
                 continue
             if flatelem.kind == "body":
-                block = str(cls._export_body(flatelem.txt))
+                block = str(cls.export_body(flatelem.txt))
                 block_list.append(block)
                 continue
             if flatelem.kind == "code":
-                block = str(cls._export_code(flatelem.txt))
+                block = str(cls.export_code(flatelem.txt))
                 block_list.append(block)
                 continue
             raise RuntimeError
@@ -139,34 +139,34 @@ class Exporter:
 
 class MarkdownExporter(Exporter):
     @classmethod
-    def _export_head(cls, txt):
+    def export_head(cls, txt):
         txt = str(txt)
         return "# " + txt + "\n"
 
     @classmethod
-    def _export_body(cls, txt):
+    def export_body(cls, txt):
         txt = str(txt)
         return txt + "\n"
 
     @classmethod
-    def _export_code(cls, txt):
+    def export_code(cls, txt):
         txt = str(txt)
         return "```lua\n" + txt + "\n```\n"
 
 
 class WikiWikiExporter(Exporter):
     @classmethod
-    def _export_head(cls, txt):
+    def export_head(cls, txt):
         txt = str(txt)
         return "* " + txt + "\n"
 
     @classmethod
-    def _export_body(cls, txt):
+    def export_body(cls, txt):
         txt = str(txt)
         return txt + "\n"
 
     @classmethod
-    def _export_code(cls, txt):
+    def export_code(cls, txt):
         txt = str(txt)
         return "#pre{{\n" + txt + "\n}}\n"
 

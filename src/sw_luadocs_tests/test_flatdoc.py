@@ -429,7 +429,7 @@ class TestMarkdownExporterExportHead(unittest.TestCase):
     def test_main(self):
         input_txt = "e"
         expected_s = "# e\n"
-        actual_s = sw_luadocs.flatdoc.MarkdownExporter._export_head(input_txt)
+        actual_s = sw_luadocs.flatdoc.MarkdownExporter.export_head(input_txt)
         self.assertEqual(expected_s, actual_s)
 
 
@@ -437,7 +437,7 @@ class TestMarkdownExporterExportBody(unittest.TestCase):
     def test_main(self):
         input_txt = "e"
         expected_s = "e\n"
-        actual_s = sw_luadocs.flatdoc.MarkdownExporter._export_body(input_txt)
+        actual_s = sw_luadocs.flatdoc.MarkdownExporter.export_body(input_txt)
         self.assertEqual(expected_s, actual_s)
 
 
@@ -445,7 +445,7 @@ class TestMarkdownExporterExportCode(unittest.TestCase):
     def test_main(self):
         input_txt = "e"
         expected_s = "```lua\ne\n```\n"
-        actual_s = sw_luadocs.flatdoc.MarkdownExporter._export_code(input_txt)
+        actual_s = sw_luadocs.flatdoc.MarkdownExporter.export_code(input_txt)
         self.assertEqual(expected_s, actual_s)
 
 
@@ -473,7 +473,7 @@ class TestWikiWikiExporterExportHead(unittest.TestCase):
     def test_main(self):
         input_txt = "e"
         expected_s = "* e\n"
-        actual_s = sw_luadocs.flatdoc.WikiWikiExporter._export_head(input_txt)
+        actual_s = sw_luadocs.flatdoc.WikiWikiExporter.export_head(input_txt)
         self.assertEqual(expected_s, actual_s)
 
 
@@ -481,7 +481,7 @@ class TestWikiWikiExporterExportBody(unittest.TestCase):
     def test_main(self):
         input_txt = "e"
         expected_s = "e\n"
-        actual_s = sw_luadocs.flatdoc.WikiWikiExporter._export_body(input_txt)
+        actual_s = sw_luadocs.flatdoc.WikiWikiExporter.export_body(input_txt)
         self.assertEqual(expected_s, actual_s)
 
 
@@ -489,7 +489,7 @@ class TestWikiWikiExporterExportCode(unittest.TestCase):
     def test_main(self):
         input_txt = "e"
         expected_s = "#pre{{\ne\n}}\n"
-        actual_s = sw_luadocs.flatdoc.WikiWikiExporter._export_code(input_txt)
+        actual_s = sw_luadocs.flatdoc.WikiWikiExporter.export_code(input_txt)
         self.assertEqual(expected_s, actual_s)
 
 
@@ -533,16 +533,16 @@ class MockExporter(sw_luadocs.flatdoc.Exporter):
     _export_code_txt = None
 
     @classmethod
-    def _export_head(cls, txt):
+    def export_head(cls, txt):
         cls._export_head_txt = txt
         return "hr"
 
     @classmethod
-    def _export_body(cls, txt):
+    def export_body(cls, txt):
         cls._export_body_txt = txt
         return "br"
 
     @classmethod
-    def _export_code(cls, txt):
+    def export_code(cls, txt):
         cls._export_code_txt = txt
         return "cr"
