@@ -320,6 +320,118 @@ class TestFormat(unittest.TestCase):
                 self.assertEqual(actual_s, expected_s)
 
 
+class TestExporterExport(unittest.TestCase):
+    def test_invalid_notimplemented(self):
+        for (
+            _head_prefix,
+            _head_suffix,
+            _body_prefix,
+            _body_suffix,
+            _code_prefix,
+            _code_suffix,
+        ) in [
+            (None, "hs", "bp", "bs", "cp", "cs"),
+            ("hp", None, "bp", "bs", "cp", "cs"),
+            ("hp", "hs", None, "bs", "cp", "cs"),
+            ("hp", "hs", "bp", None, "cp", "cs"),
+            ("hp", "hs", "bp", "bs", None, "cs"),
+            ("hp", "hs", "bp", "bs", "cp", None),
+        ]:
+            with self.subTest(
+                _head_prefix=_head_prefix,
+                _head_suffix=_head_suffix,
+                _body_prefix=_body_prefix,
+                _body_suffix=_body_suffix,
+                _code_prefix=_code_prefix,
+                _code_suffix=_code_suffix,
+            ):
+                try:
+                    MockExporter._head_prefix = _head_prefix
+                    MockExporter._head_suffix = _head_suffix
+                    MockExporter._body_prefix = _body_prefix
+                    MockExporter._body_suffix = _body_suffix
+                    MockExporter._code_prefix = _code_prefix
+                    MockExporter._code_suffix = _code_suffix
+                    with self.assertRaises(NotImplementedError):
+                        MockExporter.export([])
+                finally:
+                    MockExporter._head_prefix = None
+                    MockExporter._head_suffix = None
+                    MockExporter._body_prefix = None
+                    MockExporter._body_suffix = None
+                    MockExporter._code_prefix = None
+                    MockExporter._code_suffix = None
+
+    def test_invalid_type(self):
+        try:
+            MockExporter._head_prefix = "hp"
+            MockExporter._head_suffix = "hs\n"
+            MockExporter._body_prefix = "bp"
+            MockExporter._body_suffix = "bs\n"
+            MockExporter._code_prefix = "cp"
+            MockExporter._code_suffix = "cs\n"
+
+            with self.assertRaises(TypeError):
+                MockExporter.export([None])
+        finally:
+            MockExporter._head_prefix = None
+            MockExporter._head_suffix = None
+            MockExporter._body_prefix = None
+            MockExporter._body_suffix = None
+            MockExporter._code_prefix = None
+            MockExporter._code_suffix = None
+
+    def test_main(self):
+        try:
+            MockExporter._head_prefix = "hp "
+            MockExporter._head_suffix = " hs\n"
+            MockExporter._body_prefix = "bp "
+            MockExporter._body_suffix = " bs\n"
+            MockExporter._code_prefix = "cp "
+            MockExporter._code_suffix = " cs\n"
+
+            for input_flatdoc, expected_s in [
+                ([], ""),
+                ([sw_luadocs.flatdoc.FlatElem(txt="he", kind="head")], "hp he hs\n"),
+                ([sw_luadocs.flatdoc.FlatElem(txt="be", kind="body")], "bp be bs\n"),
+                ([sw_luadocs.flatdoc.FlatElem(txt="ce", kind="code")], "cp ce cs\n"),
+                (
+                    [
+                        sw_luadocs.flatdoc.FlatElem(txt="he", kind="head"),
+                        sw_luadocs.flatdoc.FlatElem(txt="be", kind="body"),
+                        sw_luadocs.flatdoc.FlatElem(txt="ce", kind="code"),
+                    ],
+                    "hp he hs\n\nbp be bs\n\ncp ce cs\n",
+                ),
+                (
+                    [
+                        sw_luadocs.flatdoc.FlatElem(txt="be", kind="body"),
+                        sw_luadocs.flatdoc.FlatElem(txt="ce", kind="code"),
+                        sw_luadocs.flatdoc.FlatElem(txt="he", kind="head"),
+                    ],
+                    "bp be bs\n\ncp ce cs\n\nhp he hs\n",
+                ),
+                (
+                    [
+                        sw_luadocs.flatdoc.FlatElem(txt="ce", kind="code"),
+                        sw_luadocs.flatdoc.FlatElem(txt="he", kind="head"),
+                        sw_luadocs.flatdoc.FlatElem(txt="be", kind="body"),
+                    ],
+                    "cp ce cs\n\nhp he hs\n\nbp be bs\n",
+                ),
+            ]:
+                with self.subTest(flatdoc=input_flatdoc):
+                    actual_s = MockExporter.export(input_flatdoc)
+                    self.assertEqual(actual_s, expected_s)
+        finally:
+            MockExporter._head_prefix = None
+            MockExporter._head_suffix = None
+            MockExporter._body_prefix = None
+            MockExporter._body_suffix = None
+            MockExporter._code_prefix = None
+            MockExporter._code_suffix = None
+
+
 class TestExportMarkdown(unittest.TestCase):
     def test_invalid_type(self):
         with self.assertRaises(TypeError):
@@ -407,3 +519,12 @@ class TestExport(unittest.TestCase):
             with self.subTest(flatdoc=input_flatdoc, markup=input_markup):
                 actual_s = sw_luadocs.flatdoc.export(input_flatdoc, input_markup)
                 self.assertEqual(actual_s, expected_s)
+
+
+class MockExporter(sw_luadocs.flatdoc.Exporter):
+    _head_prefix = None
+    _head_suffix = None
+    _body_prefix = None
+    _body_suffix = None
+    _code_prefix = None
+    _code_suffix = None

@@ -100,6 +100,48 @@ def format(flatdoc):
     return s
 
 
+class Exporter:
+    _head_prefix = None
+    _head_suffix = None
+    _body_prefix = None
+    _body_suffix = None
+    _code_prefix = None
+    _code_suffix = None
+
+    @classmethod
+    def export(cls, flatdoc):
+        if (
+            cls._head_prefix is None
+            or cls._head_suffix is None
+            or cls._body_prefix is None
+            or cls._body_suffix is None
+            or cls._code_prefix is None
+            or cls._code_suffix is None
+        ):
+            raise NotImplementedError
+
+        flatdoc = as_flatdoc(flatdoc)
+
+        block_list = []
+        for flatelem in flatdoc:
+            if flatelem.kind == "head":
+                block = cls._head_prefix + flatelem.txt + cls._head_suffix
+                block_list.append(block)
+                continue
+            if flatelem.kind == "body":
+                block = cls._body_prefix + flatelem.txt + cls._body_suffix
+                block_list.append(block)
+                continue
+            if flatelem.kind == "code":
+                block = cls._code_prefix + flatelem.txt + cls._code_suffix
+                block_list.append(block)
+                continue
+            raise RuntimeError
+
+        s = "\n".join(block_list)
+        return s
+
+
 def export_markdown(flatdoc):
     flatdoc = as_flatdoc(flatdoc)
 
