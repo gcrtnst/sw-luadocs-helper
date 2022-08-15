@@ -1,0 +1,28 @@
+[capture]
+screen_width = 1920
+screen_height = 1080
+
+scroll_x = 960
+scroll_y = 540
+scroll_init_delta = 122880
+scroll_down_delta = -360
+scroll_threshold = 0
+
+capture_area_x = 312
+capture_area_y = 159
+capture_area_w = 1285
+capture_area_h = 830
+capture_template_ratio = 0.25
+
+activate_delay = 5
+scroll_mouse_delay = 0.1
+scroll_smooth_delay = 3
+
+[recognize]
+preprocess_scale = 2
+tesseract_lang = "eng"
+body_line_h = 21
+code_thresh_x = 9
+code_base_x = 14
+code_indent_w = 38
+code_line_h = 16.5
