@@ -448,7 +448,7 @@ def main(
             "tessedit_char_whitelist= !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~",
         ]
     )
-    head_thresh_s = 9
+    head_thresh_s = 44
     bg_thresh_rgb = (40, 40, 40)
 
     tesstsv = recognize_image_to_tesstsv(
