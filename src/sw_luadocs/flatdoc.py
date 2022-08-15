@@ -142,24 +142,17 @@ class Exporter:
         return s
 
 
+class MarkdownExporter(Exporter):
+    _head_prefix = "# "
+    _head_suffix = "\n"
+    _body_prefix = ""
+    _body_suffix = "\n"
+    _code_prefix = "```\n"
+    _code_suffix = "\n```\n"
+
+
 def export_markdown(flatdoc):
-    flatdoc = as_flatdoc(flatdoc)
-
-    block_list = []
-    for flatelem in flatdoc:
-        if flatelem.kind == "head":
-            block_list.append("# " + flatelem.txt + "\n")
-            continue
-        if flatelem.kind == "body":
-            block_list.append(flatelem.txt + "\n")
-            continue
-        if flatelem.kind == "code":
-            block_list.append("```\n" + flatelem.txt + "\n```\n")
-            continue
-        raise RuntimeError
-
-    s = "\n".join(block_list)
-    return s
+    return MarkdownExporter.export(flatdoc)
 
 
 def export(flatdoc, markup):
