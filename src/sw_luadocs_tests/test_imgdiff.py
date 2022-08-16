@@ -3,7 +3,7 @@ import sw_luadocs.imgdiff
 import unittest
 
 
-class TestImagePiecePostInit(unittest.TestCase):
+class TestImagePieceInit(unittest.TestCase):
     def test_invalid_value(self):
         with self.assertRaises(ValueError):
             sw_luadocs.imgdiff.ImagePiece(
@@ -152,5 +152,51 @@ class TestImagePiecePostInit(unittest.TestCase):
                 actual_ipc = sw_luadocs.imgdiff.ImagePiece(
                     img=input_img, is_fg=input_is_blank
                 )
-                self.assertTrue(np.array_equal(actual_ipc.img, expected_img))
-                self.assertEqual(actual_ipc.is_fg, expected_is_fg)
+                self.assertTrue(np.array_equal(actual_ipc._img, expected_img))
+                self.assertFalse(np.shares_memory(actual_ipc._img, input_img))
+                self.assertTrue(actual_ipc._img.flags.c_contiguous)
+                self.assertFalse(actual_ipc._img.flags.writeable)
+                self.assertEqual(actual_ipc._is_fg, expected_is_fg)
+
+
+class TestImagePieceEq(unittest.TestCase):
+    def test_main(self):
+        for input_self, input_other, expected_result in [
+            (
+                sw_luadocs.imgdiff.ImagePiece(
+                    img=np.zeros((1, 1), dtype=np.uint8), is_fg=False
+                ),
+                None,
+                False,
+            ),
+            (
+                sw_luadocs.imgdiff.ImagePiece(
+                    img=np.zeros((1, 1), dtype=np.uint8), is_fg=False
+                ),
+                sw_luadocs.imgdiff.ImagePiece(
+                    img=np.ones((1, 1), dtype=np.uint8), is_fg=False
+                ),
+                False,
+            ),
+            (
+                sw_luadocs.imgdiff.ImagePiece(
+                    img=np.zeros((1, 1), dtype=np.uint8), is_fg=False
+                ),
+                sw_luadocs.imgdiff.ImagePiece(
+                    img=np.zeros((1, 1), dtype=np.uint8), is_fg=True
+                ),
+                False,
+            ),
+            (
+                sw_luadocs.imgdiff.ImagePiece(
+                    img=np.zeros((1, 1), dtype=np.uint8), is_fg=False
+                ),
+                sw_luadocs.imgdiff.ImagePiece(
+                    img=np.zeros((1, 1), dtype=np.uint8), is_fg=False
+                ),
+                True,
+            ),
+        ]:
+            with self.subTest(_self=input_self, other=input_other):
+                actual_result = input_self == input_other
+                self.assertEqual(actual_result, expected_result)
