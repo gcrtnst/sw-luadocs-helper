@@ -20,6 +20,9 @@ class ImagePiece:
     img = property(lambda self: self._img.view())
     is_fg = property(lambda self: self._is_fg)
 
+    def __repr__(self):
+        return f"{type(self).__name__}(img={repr(self.img)}, is_fg={repr(self.is_fg)})"
+
     def __eq__(self, other):
         if type(self) is type(other):
             return np.array_equal(self.img, other.img) and self.is_fg == other.is_fg
