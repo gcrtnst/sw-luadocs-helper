@@ -1,0 +1,88 @@
+# `capture` サブコマンド
+このページでは、`capture` サブコマンドの使い方を説明します。
+
+## 概要
+```
+python -m sw_luadocs capture [-h] -c CONFIG capture_file
+```
+
+## 説明
+`capture` サブコマンドは、Stormworks のゲーム画面上で表示されている Lua ヘルプのスクリーンショットを撮影します。以下は撮影されたスクリーンショットの例です。
+
+![capture サブコマンドによって撮影されたスクリーンショットの例](https://i.imgur.com/fOfsdKn.png)
+
+`capture` サブコマンドを使用するには、まず下記の準備作業が必要です。
+- インストールがまだの場合は、[README.md](README.md) に従いインストールを済ませてください。
+- 予め Stormworks を起動して、撮影したい Lua ヘルプを表示させておいてください。この際、Stormworks を 1920x1080 フルスクリーンモードにしてください。
+
+準備が出来たら、`capture` コマンドを実行します。引数は以下の通りに設定してください。
+- `-c CONFIG` オプションで設定ファイルを指定してください。設定ファイルは本リポジトリの `cfg/` ディレクトリにあります。Addon Lua を撮影する場合は `sw_luadocs_addon.toml` を、Vehicle Lua を撮影する場合は `sw_luadocs_vehicle.toml` を指定してください。
+- 位置引数で、撮影したスクリーンショットの保存先ファイルを指定してください。
+
+以下はコマンド例です。
+```sh
+# 準備
+cd src/                     # 本リポジトリの src/ ディレクトリに移動
+.venv/Scripts/activate.bat  # 仮想環境の有効化
+
+# Addon Lua ヘルプを撮影して、結果を Addon.png に保存する場合
+python -m sw_luadocs capture -c ..\cfg\sw_luadocs_addon.toml Addon.png
+
+# Vehicle Lua ヘルプを撮影して、結果を Vehicle.png に保存する場合
+python -m sw_luadocs capture -c ..\cfg\sw_luadocs_vehicle.toml Vehicle.png
+```
+
+`capture` サブコマンドは以下の順で動作します。
+1. Stormworks のウィンドウをアクティブ化します。
+2. Lua ヘルプの一番上までスクロールします。
+3. 画面を撮影します。
+4. 少し下にスクロールします。
+5. Lua ヘルプの一番下に到達するまで 3, 4 を繰り返します。
+6. Stormworks のウィンドウを最小化します。
+7. 撮影したスクリーンショットを全て連結して、ファイルに保存します。
+
+`capture` コマンドの実行中はマウスやキーボードに触れないでください。実行中に操作すると、自動マウス制御と干渉したり、うまくスクリーンショットが撮影できない恐れがあります。
+
+## コマンドラインオプション
+### 位置引数
+- `capture_file`：撮影したスクリーンショットの出力先ファイル
+
+### オプション
+- `-h`：ヘルプメッセージを出力して終了
+- `-c CONFIG`：設定ファイル（指定必須）
+
+## 設定ファイル
+`capture` サブコマンドは以下の設定を使用します。
+
+```toml
+[capture]
+screen_width = 1920
+screen_height = 1080
+
+scroll_x = 960
+scroll_y = 540
+scroll_init_delta = 122880
+scroll_down_delta = -360
+scroll_threshold = 0
+
+capture_area_x = 312
+capture_area_y = 226
+capture_area_w = 1285
+capture_area_h = 763
+capture_template_ratio = 0.25
+
+activate_delay = 5
+scroll_mouse_delay = 0.1
+scroll_smooth_delay = 3
+```
+
+- `screen_width`, `screen_height`：画面解像度。sw_luadocs は、撮影開始前に画面解像度がこの設定項目と一致しているかどうかを確認し、不一致の場合は例外を出力します。設定ファイルの他の設定項目は、画面解像度がこの設定項目と一致していることを前提とした値が設定されています。
+- `scroll_x`, `scroll_y`：スクロール時のマウスカーソル位置。Lua ヘルプをスクロールする際、マウスカーソルをこの位置まで移動させた上で、マウスホイールの回転をシミュレートします。
+- `scroll_init_delta`：Lua ヘルプの一番上までスクロールする際の、マウスホイールの回転量。正数を指定してください。マウスホールのノッチ1つ分の回転量は120です。
+- `scroll_down_delta`：Lua ヘルプを1回分下スクロールする際の、マウスホイールの回転量。負数を指定してください。マウスホールのノッチ1つ分の回転量は120です。絶対値が大きすぎると、撮影した画像の連結に失敗する場合があります。
+- `scroll_threshold`：スクロールが一番下まで到達したかどうか判断するための閾値。マウスホイールを回転させた後、実際に画面がスクロールしたピクセル数がこの数値以下であれば、スクロールが一番下まで到達したと判断します。
+- `capture_area_x`, `capture_area_y`, `capture_area_w`, `capture_area_h`：画面の撮影領域。Lua ヘルプが表示されている領域を指定してください。それぞれ、撮影領域の左上の X 座標、Y 座標、幅、高さです。
+- `capture_template_ratio`：テンプレートマッチングに使用する領域の割合。スクロールの移動ピクセル量を計算するために、スクロール前の画像の中央からこの割合だけ画像を切り出して、スクロール後の画像とのテンプレートマッチングを行います。
+- `activate_delay`：Stormworks のウィンドウをアクティブ化してから、画面が表示されるまでの待機時間。
+- `scroll_mouse_delay`：マウスカーソルを移動させてから、Stormworks にそれが検知されるまでの待機時間。
+- `scroll_smooth_delay`：マウスホイールを回転させてから、スクロールアニメーションが終了するまでの待機時間。
