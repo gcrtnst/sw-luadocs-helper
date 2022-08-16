@@ -52,13 +52,36 @@ def capture(*, capture_file, cfg_file):
     dot_image.imsave(capture_file, img)
 
 
-def recognize(*, capture_file, recognize_file, cfg_file, tesseract_exe):
+def recognize(*, capture_path, recognize_path, cfg_file, tesseract_exe):
     with open(cfg_file, mode="rb") as fobj:
         cfg = tomllib.load(fobj)
     recognize_cfg = cfg["recognize"]
 
     if tesseract_exe is not None:
         pytesseract.pytesseract.tesseract_cmd = str(tesseract_exe)
+
+    capture_path = pathlib.Path(capture_path)
+    if not capture_path.is_dir():
+        recognize_one(
+            capture_file=capture_path,
+            recognize_file=recognize_path,
+            recognize_cfg=recognize_cfg,
+        )
+        return
+
+    for capture_file in capture_path.iterdir():
+        if not capture_file.is_file():
+            continue
+        recognize_file = pathlib.Path(recognize_path, capture_file.stem + ".txt")
+        recognize_one(
+            capture_file=capture_file,
+            recognize_file=recognize_file,
+            recognize_cfg=recognize_cfg,
+        )
+
+
+def recognize_one(*, capture_file, recognize_file, recognize_cfg):
+    recognize_cfg = dict(recognize_cfg)
 
     capture_img = dot_image.imread(capture_file)
     flatdoc = dot_recognize.main(
@@ -122,8 +145,8 @@ def main(*, args=None, exit_on_error=True):
     parser_capture.add_argument("-c", "--config", type=pathlib.Path, required=True)
 
     parser_recognize = parser_group.add_parser("recognize", help="")
-    parser_recognize.add_argument("capture_file", type=pathlib.Path)
-    parser_recognize.add_argument("recognize_file", type=pathlib.Path)
+    parser_recognize.add_argument("capture_path", type=pathlib.Path)
+    parser_recognize.add_argument("recognize_path", type=pathlib.Path)
     parser_recognize.add_argument("-c", "--config", type=pathlib.Path, required=True)
     parser_recognize.add_argument(
         "--tesseract-exe",
@@ -161,8 +184,8 @@ def main(*, args=None, exit_on_error=True):
         )
     if ns.command == "recognize":
         return recognize(
-            capture_file=ns.capture_file,
-            recognize_file=ns.recognize_file,
+            capture_path=ns.capture_path,
+            recognize_path=ns.recognize_path,
             cfg_file=ns.config,
             tesseract_exe=ns.tesseract_exe,
         )
