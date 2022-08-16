@@ -200,3 +200,472 @@ class TestImagePieceEq(unittest.TestCase):
             with self.subTest(_self=input_self, other=input_other):
                 actual_result = input_self == input_other
                 self.assertEqual(actual_result, expected_result)
+
+
+class TestSplitImageIntoPieces(unittest.TestCase):
+    def test_invalid_value(self):
+        for capture_img, fg_mergin_h, bg_thresh_rgb in [
+            (np.zeros((0, 0), dtype=np.uint8), -1, (0, 0, 0)),
+            (np.zeros((0, 0), dtype=np.uint8), 0, (-1, 0, 0)),
+            (np.zeros((0, 0), dtype=np.uint8), 0, (256, 0, 0)),
+            (np.zeros((0, 0), dtype=np.uint8), 0, (0, -1, 0)),
+            (np.zeros((0, 0), dtype=np.uint8), 0, (0, 256, 0)),
+            (np.zeros((0, 0), dtype=np.uint8), 0, (0, 0, -1)),
+            (np.zeros((0, 0), dtype=np.uint8), 0, (0, 0, 256)),
+        ]:
+            with self.subTest(
+                capture_img=capture_img,
+                fg_mergin_h=fg_mergin_h,
+                bg_thresh_rgb=bg_thresh_rgb,
+            ):
+                with self.assertRaises(ValueError):
+                    sw_luadocs.imgdiff.split_image_into_pieces(
+                        capture_img,
+                        fg_mergin_h=fg_mergin_h,
+                        bg_thresh_rgb=bg_thresh_rgb,
+                    )
+
+    def test_main(self):
+        for (
+            input_capture_img,
+            input_fg_mergin_h,
+            input_bg_thresh_rgb,
+            expected_ipc_list,
+        ) in [
+            (np.zeros((0, 0), dtype=np.uint8), 0, (0, 0, 0), []),
+            (
+                np.array([[[127, 127, 127]]], dtype=np.uint8),
+                0,
+                (127, 127, 127),
+                [
+                    sw_luadocs.imgdiff.ImagePiece(
+                        img=np.array([[[127, 127, 127]]], dtype=np.uint8), is_fg=False
+                    )
+                ],
+            ),
+            (
+                np.array([[[128, 127, 127]]], dtype=np.uint8),
+                0,
+                (127, 255, 255),
+                [
+                    sw_luadocs.imgdiff.ImagePiece(
+                        img=np.array([[[128, 127, 127]]], dtype=np.uint8), is_fg=True
+                    )
+                ],
+            ),
+            (
+                np.array([[[127, 128, 127]]], dtype=np.uint8),
+                0,
+                (255, 127, 255),
+                [
+                    sw_luadocs.imgdiff.ImagePiece(
+                        img=np.array([[[127, 128, 127]]], dtype=np.uint8), is_fg=True
+                    )
+                ],
+            ),
+            (
+                np.array([[[127, 127, 128]]], dtype=np.uint8),
+                0,
+                (255, 255, 127),
+                [
+                    sw_luadocs.imgdiff.ImagePiece(
+                        img=np.array([[[127, 127, 128]]], dtype=np.uint8), is_fg=True
+                    )
+                ],
+            ),
+            (
+                np.array(
+                    [[[127, 127, 127], [127, 127, 127], [127, 127, 127]]],
+                    dtype=np.uint8,
+                ),
+                0,
+                (127, 127, 127),
+                [
+                    sw_luadocs.imgdiff.ImagePiece(
+                        img=np.array(
+                            [[[127, 127, 127], [127, 127, 127], [127, 127, 127]]],
+                            dtype=np.uint8,
+                        ),
+                        is_fg=False,
+                    )
+                ],
+            ),
+            (
+                np.array(
+                    [[[127, 127, 127], [127, 127, 127], [128, 127, 127]]],
+                    dtype=np.uint8,
+                ),
+                0,
+                (127, 255, 255),
+                [
+                    sw_luadocs.imgdiff.ImagePiece(
+                        img=np.array(
+                            [[[127, 127, 127], [127, 127, 127], [128, 127, 127]]],
+                            dtype=np.uint8,
+                        ),
+                        is_fg=True,
+                    )
+                ],
+            ),
+            (
+                np.array(
+                    [[[127, 127, 127], [127, 127, 127], [127, 128, 127]]],
+                    dtype=np.uint8,
+                ),
+                0,
+                (255, 127, 255),
+                [
+                    sw_luadocs.imgdiff.ImagePiece(
+                        img=np.array(
+                            [[[127, 127, 127], [127, 127, 127], [127, 128, 127]]],
+                            dtype=np.uint8,
+                        ),
+                        is_fg=True,
+                    )
+                ],
+            ),
+            (
+                np.array(
+                    [[[127, 127, 127], [127, 127, 127], [127, 127, 128]]],
+                    dtype=np.uint8,
+                ),
+                0,
+                (255, 255, 127),
+                [
+                    sw_luadocs.imgdiff.ImagePiece(
+                        img=np.array(
+                            [[[127, 127, 127], [127, 127, 127], [127, 127, 128]]],
+                            dtype=np.uint8,
+                        ),
+                        is_fg=True,
+                    )
+                ],
+            ),
+            (
+                np.array(
+                    [[[127, 127, 127]], [[127, 127, 127]], [[127, 127, 127]]],
+                    dtype=np.uint8,
+                ),
+                0,
+                (127, 127, 127),
+                [
+                    sw_luadocs.imgdiff.ImagePiece(
+                        img=np.array(
+                            [[[127, 127, 127]], [[127, 127, 127]], [[127, 127, 127]]],
+                            dtype=np.uint8,
+                        ),
+                        is_fg=False,
+                    )
+                ],
+            ),
+            (
+                np.array(
+                    [[[128, 128, 128]], [[127, 127, 127]], [[127, 127, 127]]],
+                    dtype=np.uint8,
+                ),
+                0,
+                (127, 127, 127),
+                [
+                    sw_luadocs.imgdiff.ImagePiece(
+                        img=np.array([[[128, 128, 128]]], dtype=np.uint8),
+                        is_fg=True,
+                    ),
+                    sw_luadocs.imgdiff.ImagePiece(
+                        img=np.array(
+                            [[[127, 127, 127]], [[127, 127, 127]]], dtype=np.uint8
+                        ),
+                        is_fg=False,
+                    ),
+                ],
+            ),
+            (
+                np.array(
+                    [[[127, 127, 127]], [[128, 128, 128]], [[127, 127, 127]]],
+                    dtype=np.uint8,
+                ),
+                0,
+                (127, 127, 127),
+                [
+                    sw_luadocs.imgdiff.ImagePiece(
+                        img=np.array([[[127, 127, 127]]], dtype=np.uint8),
+                        is_fg=False,
+                    ),
+                    sw_luadocs.imgdiff.ImagePiece(
+                        img=np.array([[[128, 128, 128]]], dtype=np.uint8),
+                        is_fg=True,
+                    ),
+                    sw_luadocs.imgdiff.ImagePiece(
+                        img=np.array([[[127, 127, 127]]], dtype=np.uint8),
+                        is_fg=False,
+                    ),
+                ],
+            ),
+            (
+                np.array(
+                    [[[127, 127, 127]], [[127, 127, 127]], [[128, 128, 128]]],
+                    dtype=np.uint8,
+                ),
+                0,
+                (127, 127, 127),
+                [
+                    sw_luadocs.imgdiff.ImagePiece(
+                        img=np.array(
+                            [[[127, 127, 127]], [[127, 127, 127]]], dtype=np.uint8
+                        ),
+                        is_fg=False,
+                    ),
+                    sw_luadocs.imgdiff.ImagePiece(
+                        img=np.array([[[128, 128, 128]]], dtype=np.uint8),
+                        is_fg=True,
+                    ),
+                ],
+            ),
+            (
+                np.array(
+                    [[[127, 127, 127]], [[127, 127, 127]], [[127, 127, 127]]],
+                    dtype=np.uint8,
+                ),
+                2,
+                (127, 127, 127),
+                [
+                    sw_luadocs.imgdiff.ImagePiece(
+                        img=np.array(
+                            [[[127, 127, 127]], [[127, 127, 127]], [[127, 127, 127]]],
+                            dtype=np.uint8,
+                        ),
+                        is_fg=False,
+                    )
+                ],
+            ),
+            (
+                np.array(
+                    [[[127, 127, 127]], [[127, 127, 127]], [[127, 127, 127]]],
+                    dtype=np.uint8,
+                ),
+                3,
+                (127, 127, 127),
+                [
+                    sw_luadocs.imgdiff.ImagePiece(
+                        img=np.array(
+                            [[[127, 127, 127]], [[127, 127, 127]], [[127, 127, 127]]],
+                            dtype=np.uint8,
+                        ),
+                        is_fg=True,
+                    )
+                ],
+            ),
+            (
+                np.array(
+                    [
+                        [[128, 128, 128]],
+                        [[128, 128, 128]],
+                        [[127, 127, 127]],
+                        [[127, 127, 127]],
+                        [[127, 127, 127]],
+                        [[128, 128, 128]],
+                        [[128, 128, 128]],
+                    ],
+                    dtype=np.uint8,
+                ),
+                2,
+                (127, 127, 127),
+                [
+                    sw_luadocs.imgdiff.ImagePiece(
+                        img=np.array(
+                            [[[128, 128, 128]], [[128, 128, 128]]], dtype=np.uint8
+                        ),
+                        is_fg=True,
+                    ),
+                    sw_luadocs.imgdiff.ImagePiece(
+                        img=np.array(
+                            [[[127, 127, 127]], [[127, 127, 127]], [[127, 127, 127]]],
+                            dtype=np.uint8,
+                        ),
+                        is_fg=False,
+                    ),
+                    sw_luadocs.imgdiff.ImagePiece(
+                        img=np.array(
+                            [[[128, 128, 128]], [[128, 128, 128]]], dtype=np.uint8
+                        ),
+                        is_fg=True,
+                    ),
+                ],
+            ),
+            (
+                np.array(
+                    [
+                        [[128, 128, 128]],
+                        [[128, 128, 128]],
+                        [[127, 127, 127]],
+                        [[127, 127, 127]],
+                        [[127, 127, 127]],
+                        [[128, 128, 128]],
+                        [[128, 128, 128]],
+                    ],
+                    dtype=np.uint8,
+                ),
+                3,
+                (127, 127, 127),
+                [
+                    sw_luadocs.imgdiff.ImagePiece(
+                        img=np.array(
+                            [
+                                [[128, 128, 128]],
+                                [[128, 128, 128]],
+                                [[127, 127, 127]],
+                                [[127, 127, 127]],
+                                [[127, 127, 127]],
+                                [[128, 128, 128]],
+                                [[128, 128, 128]],
+                            ],
+                            dtype=np.uint8,
+                        ),
+                        is_fg=True,
+                    ),
+                ],
+            ),
+            (
+                np.array(
+                    [
+                        [[127, 127, 127]],
+                        [[128, 128, 128]],
+                        [[127, 127, 127]],
+                        [[128, 128, 128]],
+                        [[127, 127, 127]],
+                    ],
+                    dtype=np.uint8,
+                ),
+                0,
+                (127, 127, 127),
+                [
+                    sw_luadocs.imgdiff.ImagePiece(
+                        img=np.array([[[127, 127, 127]]], dtype=np.uint8),
+                        is_fg=False,
+                    ),
+                    sw_luadocs.imgdiff.ImagePiece(
+                        img=np.array([[[128, 128, 128]]], dtype=np.uint8),
+                        is_fg=True,
+                    ),
+                    sw_luadocs.imgdiff.ImagePiece(
+                        img=np.array([[[127, 127, 127]]], dtype=np.uint8),
+                        is_fg=False,
+                    ),
+                    sw_luadocs.imgdiff.ImagePiece(
+                        img=np.array([[[128, 128, 128]]], dtype=np.uint8),
+                        is_fg=True,
+                    ),
+                    sw_luadocs.imgdiff.ImagePiece(
+                        img=np.array([[[127, 127, 127]]], dtype=np.uint8),
+                        is_fg=False,
+                    ),
+                ],
+            ),
+            (
+                np.array(
+                    [
+                        [[127, 127, 127]],
+                        [[128, 128, 128]],
+                        [[127, 127, 127]],
+                        [[128, 128, 128]],
+                        [[127, 127, 127]],
+                    ],
+                    dtype=np.uint8,
+                ),
+                1,
+                (127, 127, 127),
+                [
+                    sw_luadocs.imgdiff.ImagePiece(
+                        img=np.array(
+                            [
+                                [[127, 127, 127]],
+                                [[128, 128, 128]],
+                                [[127, 127, 127]],
+                                [[128, 128, 128]],
+                                [[127, 127, 127]],
+                            ],
+                            dtype=np.uint8,
+                        ),
+                        is_fg=True,
+                    ),
+                ],
+            ),
+            (
+                np.array(
+                    [
+                        [[0, 1, 2], [3, 4, 5]],
+                        [[128, 129, 130], [131, 132, 133]],
+                        [[6, 7, 8], [9, 10, 11]],
+                        [[12, 13, 14], [15, 16, 17]],
+                        [[18, 19, 20], [21, 22, 23]],
+                        [[134, 135, 136], [137, 138, 139]],
+                        [[140, 141, 142], [143, 144, 145]],
+                        [[146, 147, 148], [149, 150, 151]],
+                        [[152, 153, 154], [155, 156, 157]],
+                    ],
+                    dtype=np.uint8,
+                ),
+                0,
+                (127, 127, 127),
+                [
+                    sw_luadocs.imgdiff.ImagePiece(
+                        img=np.array(
+                            [[[0, 1, 2], [3, 4, 5]]],
+                            dtype=np.uint8,
+                        ),
+                        is_fg=False,
+                    ),
+                    sw_luadocs.imgdiff.ImagePiece(
+                        img=np.array(
+                            [[[128, 129, 130], [131, 132, 133]]],
+                            dtype=np.uint8,
+                        ),
+                        is_fg=True,
+                    ),
+                    sw_luadocs.imgdiff.ImagePiece(
+                        img=np.array(
+                            [
+                                [[6, 7, 8], [9, 10, 11]],
+                                [[12, 13, 14], [15, 16, 17]],
+                                [[18, 19, 20], [21, 22, 23]],
+                            ],
+                            dtype=np.uint8,
+                        ),
+                        is_fg=False,
+                    ),
+                    sw_luadocs.imgdiff.ImagePiece(
+                        img=np.array(
+                            [
+                                [[134, 135, 136], [137, 138, 139]],
+                                [[140, 141, 142], [143, 144, 145]],
+                                [[146, 147, 148], [149, 150, 151]],
+                                [[152, 153, 154], [155, 156, 157]],
+                            ],
+                            dtype=np.uint8,
+                        ),
+                        is_fg=True,
+                    ),
+                ],
+            ),
+            (
+                np.zeros((1, 2), dtype=np.uint8),
+                "0",
+                ("127", "127", "127"),
+                [
+                    sw_luadocs.imgdiff.ImagePiece(
+                        img=np.zeros((1, 2, 3), dtype=np.uint8),
+                        is_fg=False,
+                    ),
+                ],
+            ),
+        ]:
+            with self.subTest(
+                capture_img=input_capture_img,
+                fg_mergin_h=input_fg_mergin_h,
+                bg_thresh_rgb=input_bg_thresh_rgb,
+            ):
+                actual_ipc_list = sw_luadocs.imgdiff.split_image_into_pieces(
+                    input_capture_img,
+                    fg_mergin_h=input_fg_mergin_h,
+                    bg_thresh_rgb=input_bg_thresh_rgb,
+                )
+                self.assertEqual(actual_ipc_list, expected_ipc_list)
