@@ -145,7 +145,32 @@ def extract_one(*, recognize_file, extract_file, exe32_bin, exe64_bin):
         fobj.write(ext_txt)
 
 
-def export(*, load_file, save_file, markup, encoding, newline):
+def export(*, load_path, save_path, markup, encoding, newline):
+    load_path = pathlib.Path(load_path)
+    if not load_path.is_dir():
+        export_one(
+            load_file=load_path,
+            save_file=save_path,
+            markup=markup,
+            encoding=encoding,
+            newline=newline,
+        )
+        return
+
+    for load_file in load_path.iterdir():
+        if not load_file.is_file():
+            continue
+        save_file = pathlib.Path(save_path, load_file.stem + ".md")
+        export_one(
+            load_file=load_file,
+            save_file=save_file,
+            markup=markup,
+            encoding=encoding,
+            newline=newline,
+        )
+
+
+def export_one(*, load_file, save_file, markup, encoding, newline):
     with open(load_file, mode="r", encoding="utf-8", newline="\n") as fobj:
         load_txt = fobj.read()
     flatdoc = dot_flatdoc.parse(load_txt)
@@ -189,8 +214,8 @@ def main(*, args=None, exit_on_error=True):
     )
 
     parser_export = parser_group.add_parser("export", help="")
-    parser_export.add_argument("load_file", type=pathlib.Path)
-    parser_export.add_argument("save_file", type=pathlib.Path)
+    parser_export.add_argument("load_path", type=pathlib.Path)
+    parser_export.add_argument("save_path", type=pathlib.Path)
     parser_export.add_argument("-f", "--format", default="markdown", dest="markup")
     parser_export.add_argument("--encoding", default="utf-8")
     parser_export.add_argument("--newline", default="LF", type=parse_newline_argument)
@@ -217,8 +242,8 @@ def main(*, args=None, exit_on_error=True):
         )
     if ns.command == "export":
         return export(
-            load_file=ns.load_file,
-            save_file=ns.save_file,
+            load_path=ns.load_path,
+            save_path=ns.save_path,
             markup=ns.markup,
             encoding=ns.encoding,
             newline=ns.newline,
