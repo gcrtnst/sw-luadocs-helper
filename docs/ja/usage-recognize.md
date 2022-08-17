@@ -60,3 +60,4 @@ python -m sw_luadocs recognize -c ../cfg/sw_luadocs_vehicle.toml Vehicle.png Veh
 - `-h`：ヘルプメッセージを出力して終了
 - `-c CONFIG`, `--config CONFIG`：設定ファイル（必須）
 - `--tesseract-exe TESSERACT_EXE`：`tesseract` 実行可能ファイルの場所
+  - 未指定の場合は自動検出します。
