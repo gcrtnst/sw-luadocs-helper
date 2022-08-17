@@ -16,7 +16,8 @@ python -m sw_luadocs recognize [-h] -c CONFIG [--tesseract-exe TESSERACT_EXE] ca
 
 `recognize` サブコマンドを実行するには、まず下記の準備作業が必要です。
 - インストールがまだの場合は、[README.md](README.md) に従いインストールを済ませてください。
-- 先に `capture` サブコマンドを実行して、スクリーンショットを用意してください。`capture` サブコマンドの使い方は [usage-capture.md](usage-capture.md) を参照ください。
+- 先に `capture` サブコマンドを実行して、スクリーンショットを用意してください。
+  - `capture` サブコマンドの使い方は [usage-capture.md](usage-capture.md) を参照ください。
 
 準備が出来たら、`recognize` コマンドを実行します。引数は以下の通りに設定してください。
 - `-c CONFIG` オプションで設定ファイルを指定してください。
