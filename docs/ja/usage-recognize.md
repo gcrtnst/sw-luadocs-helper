@@ -47,10 +47,10 @@ python -m sw_luadocs recognize -c ../cfg/sw_luadocs_vehicle.toml Vehicle.png Veh
 
 ## コマンドラインオプション
 ### 位置引数
-- `capture_path`：`capture` サブコマンドで撮影されたスクリーンショットの保存場所。
+- `capture_path`：`capture` サブコマンドで撮影されたスクリーンショットの保存場所
   - ファイルが指定された場合は、そのファイルを処理します。
   - フォルダが指定された場合は、そのフォルダの直下にあるファイルを全て処理します。
-- `recognize_path`：処理結果出力先の場所。
+- `recognize_path`：処理結果の出力先
   - `capture_path` でファイルを指定した場合は、この項目もファイルを指定してください。
   - `capture_path` でフォルダを指定した場合は、この項目もフォルダを指定してください。
 
