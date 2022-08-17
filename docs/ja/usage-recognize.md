@@ -61,3 +61,30 @@ python -m sw_luadocs recognize -c ../cfg/sw_luadocs_vehicle.toml Vehicle.png Veh
 - `-c CONFIG`, `--config CONFIG`：設定ファイル（必須）
 - `--tesseract-exe TESSERACT_EXE`：`tesseract` 実行可能ファイルの場所
   - 未指定の場合は自動検出します。
+
+## 設定ファイル
+`recognize` サブコマンドは以下の設定を使用します。
+
+```toml
+[recognize]
+preprocess_scale = 2
+tesseract_lang = "eng"
+body_line_h = 21
+code_thresh_x = 9
+code_base_x = 14
+code_indent_w = 38
+code_line_h = 16.5
+```
+
+- `preprocess_scale`：画像前処理における拡大率
+  - Tesseract-OCR を使って文字認識をする前に、この設定値に従い画像をリサイズします。
+  - 1 より値が大きいと拡大され、小さいと縮小されます。
+  - [tessdoc](https://tesseract-ocr.github.io/tessdoc/ImproveQuality.html#rescaling) によると、Tesseract は 300dpi 以上の DPI を持つ画像に対して最適に動作します。
+- `tesseract_lang`：Tesseract の言語コード文字列
+- `body_line_h`：本文の文字高さ（ピクセル単位）
+- `code_thresh_x`：認識した文字列がコードかどうか判定するための X 座標閾値
+  - 認識した文字列の X 座標が、この設定項目で指定した X 座標より右にある場合、その文字列はコードであると判定します。
+- `code_base_x`：コードの左端 X 座標
+  - インデントレベルの計算に使用されます。
+- `code_indent_w`：タブ文字の幅（ピクセル単位）
+- `code_line_h`：コードの文字高さ（ピクセル単位）
