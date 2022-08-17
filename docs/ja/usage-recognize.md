@@ -81,10 +81,10 @@ code_line_h = 16.5
   - 1 より値が大きいと拡大され、小さいと縮小されます。
   - [tessdoc](https://tesseract-ocr.github.io/tessdoc/ImproveQuality.html#rescaling) によると、Tesseract は 300dpi 以上の DPI を持つ画像に対して最適に動作します。
 - `tesseract_lang`：Tesseract の言語コード文字列
-- `body_line_h`：本文の文字高さ（ピクセル単位）
+- `body_line_h`：本文1行あたりの高さ（ピクセル単位）
 - `code_thresh_x`：認識した文字列がコードかどうか判定するための X 座標閾値
   - 認識した文字列の左端が、この設定項目で指定した X 座標より右にある場合、その文字列はコードであると判定します。
 - `code_base_x`：コードの左端 X 座標
   - インデントレベルの計算に使用されます。
-- `code_indent_w`：タブ文字の幅（ピクセル単位）
-- `code_line_h`：コードの文字高さ（ピクセル単位）
+- `code_indent_w`：コードにおけるタブ文字の幅（ピクセル単位）
+- `code_line_h`：コード一行あたりの高さ（ピクセル単位）
