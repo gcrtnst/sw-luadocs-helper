@@ -19,7 +19,7 @@ python -m sw_luadocs recognize [-h] -c CONFIG [--tesseract-exe TESSERACT_EXE] ca
 - 先に `capture` サブコマンドを実行して、スクリーンショットを用意してください。
   - `capture` サブコマンドの使い方は [usage-capture.md](usage-capture.md) を参照ください。
 
-準備が出来たら、`recognize` コマンドを実行します。引数は以下の通りに設定してください。
+準備が出来たら、`recognize` サブコマンドを実行します。引数は以下の通りに設定してください。
 - `-c CONFIG` オプションで設定ファイルを指定してください。
   - 設定ファイルは本リポジトリの `cfg/` フォルダにあります。
   - Addon Lua のヘルプを処理する場合は `sw_luadocs_addon.toml` を、Vehicle Lua のヘルプを処理する場合は `sw_luadocs_vehicle.toml` を指定してください。
