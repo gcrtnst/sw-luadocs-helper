@@ -34,13 +34,13 @@ cd src/                     # 本リポジトリの src/ ディレクトリに�
 .venv/Scripts/activate.bat  # 仮想環境の有効化
 
 # Addon.png に保存されている、Addon Lua ヘルプのスクリーンショットを処理して、結果を Addon.ocr.txt に保存する場合
-python -m sw_luadocs recognize -c ..\cfg\sw_luadocs_addon.toml Addon.png Addon.ocr.txt
+python -m sw_luadocs recognize -c ../cfg/sw_luadocs_addon.toml Addon.png Addon.ocr.txt
 
 # Input/ に保存されている Addon Lua ヘルプのスクリーンショットを一括処理して、結果を Output/ に保存する場合
-python -m sw_luadocs recognize -c ..\cfg\sw_luadocs_addon.toml Input/ Output/
+python -m sw_luadocs recognize -c ../cfg/sw_luadocs_addon.toml Input/ Output/
 
 # Vehicle.png に保存されている、Vehicle Lua ヘルプのスクリーンショットを処理して、結果を Vehicle.ocr.txt に保存する場合
-python -m sw_luadocs recognize -c ..\cfg\sw_luadocs_vehicle.toml Vehicle.png Vehicle.ocr.txt
+python -m sw_luadocs recognize -c ../cfg/sw_luadocs_vehicle.toml Vehicle.png Vehicle.ocr.txt
 ```
 
 ## コマンドラインオプション
