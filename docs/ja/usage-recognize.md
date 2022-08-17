@@ -44,8 +44,8 @@ python -m sw_luadocs recognize -c ../cfg/sw_luadocs_vehicle.toml Vehicle.png Veh
 ```
 
 もし、実行時に `pytesseract.pytesseract.TesseractNotFoundError` という例外が発生した場合は、以下の手順で対処してください。
-- まだ Tesseract-OCR をインストールしていない場合は、[README.md](README.md) に従ってインストールしてください。
-- Tesseract-OCR を既にインストールしているにもかかわらず上記の例外が発生する場合は、`--tesseract-exe` 引数で `tesseract` コマンドの場所を手動で指定してください。
+- まだ Tesseract をインストールしていない場合は、[README.md](README.md) に従ってインストールしてください。
+- Tesseract を既にインストールしているにもかかわらず上記の例外が発生する場合は、`--tesseract-exe` 引数で `tesseract` コマンドの場所を手動で指定してください。
 
 ## コマンドラインオプション
 ### 位置引数
@@ -77,7 +77,7 @@ code_line_h = 16.5
 ```
 
 - `preprocess_scale`：画像前処理における拡大率
-  - Tesseract-OCR を使って文字認識をする前に、この設定値に従い画像をリサイズします。
+  - Tesseract を使って文字認識をする前に、この設定値に従い画像をリサイズします。
   - 1 より値が大きいと拡大され、小さいと縮小されます。
   - [tessdoc](https://tesseract-ocr.github.io/tessdoc/ImproveQuality.html#rescaling) によると、Tesseract は 300dpi 以上の DPI を持つ画像に対して最適に動作します。
 - `tesseract_lang`：Tesseract の言語コード文字列
