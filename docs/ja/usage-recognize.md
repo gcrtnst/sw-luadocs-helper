@@ -20,7 +20,7 @@ python -m sw_luadocs recognize [-h] -c CONFIG [--tesseract-exe TESSERACT_EXE] ca
 
 準備が出来たら、`recognize` コマンドを実行します。引数は以下の通りに設定してください。
 - `-c CONFIG` オプションで設定ファイルを指定してください。
-  - 設定ファイルは本リポジトリの `cfg/` ディレクトリにあります。
+  - 設定ファイルは本リポジトリの `cfg/` フォルダにあります。
   - Addon Lua のヘルプを処理する場合は `sw_luadocs_addon.toml` を、Vehicle Lua のヘルプを処理する場合は `sw_luadocs_vehicle.toml` を指定してください。
 - `--tesseract-exe TESSERACT_EXE` オプションで `tesseract` コマンドの場所を指定できます。
   - 通常は自動的に検出するため、明示的に指定する必要はありませんが、もし `pytesseract.pytesseract.TesseractNotFoundError` という例外が発生した場合は指定してください。
@@ -30,7 +30,7 @@ python -m sw_luadocs recognize [-h] -c CONFIG [--tesseract-exe TESSERACT_EXE] ca
 以下はコマンド例です。
 ```sh
 # 準備
-cd src/                     # 本リポジトリの src/ ディレクトリに移動
+cd src/                     # 本リポジトリの src/ フォルダに移動
 .venv/Scripts/activate.bat  # 仮想環境の有効化
 
 # Addon.png に保存されている、Addon Lua ヘルプのスクリーンショットを処理して、結果を Addon.ocr.txt に保存する場合
@@ -47,10 +47,10 @@ python -m sw_luadocs recognize -c ../cfg/sw_luadocs_vehicle.toml Vehicle.png Veh
 ### 位置引数
 - `capture_path`：`capture` サブコマンドで撮影されたスクリーンショットの保存場所。
   - ファイルが指定された場合は、そのファイルを処理します。
-  - ディレクトリが指定された場合は、そのディレクトリの直下にあるファイルを全て処理します。
+  - フォルダが指定された場合は、そのフォルダの直下にあるファイルを全て処理します。
 - `recognize_path`：処理結果出力先の場所。
   - `capture_path` でファイルを指定した場合は、この項目もファイルを指定してください。
-  - `capture_path` でディレクトリを指定した場合は、この項目もディレクトリを指定してください。
+  - `capture_path` でフォルダを指定した場合は、この項目もフォルダを指定してください。
 
 ### オプション
 - `-h`：ヘルプメッセージを出力して終了
