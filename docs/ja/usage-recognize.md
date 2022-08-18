@@ -91,4 +91,4 @@ code_line_h = 16.5
 
 以下の画像は、座標関連の設定項目を視覚的に説明したものです。
 
-![座標関連の設定項目についての説明](https://user-images.githubusercontent.com/52910071/185276298-ff0cad0a-2808-4e49-901f-e835ca42eb9d.png)
+![座標関連の設定項目についての説明](https://i.imgur.com/NRopEaE.png)
