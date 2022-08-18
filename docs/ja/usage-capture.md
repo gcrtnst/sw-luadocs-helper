@@ -26,10 +26,10 @@ cd src/                     # 本リポジトリの src/ ディレクトリに�
 .venv/Scripts/activate.bat  # 仮想環境の有効化
 
 # Addon Lua ヘルプを撮影して、結果を Addon.png に出力する場合
-python -m sw_luadocs capture -c ..\cfg\sw_luadocs_addon.toml Addon.png
+python -m sw_luadocs capture -c ../cfg/sw_luadocs_addon.toml Addon.png
 
 # Vehicle Lua ヘルプを撮影して、結果を Vehicle.png に出力する場合
-python -m sw_luadocs capture -c ..\cfg\sw_luadocs_vehicle.toml Vehicle.png
+python -m sw_luadocs capture -c ../cfg/sw_luadocs_vehicle.toml Vehicle.png
 ```
 
 `capture` サブコマンドは以下の順で動作します。
