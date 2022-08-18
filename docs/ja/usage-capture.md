@@ -49,7 +49,7 @@ python -m sw_luadocs capture -c ../cfg/sw_luadocs_vehicle.toml Vehicle.png
 
 ### オプション
 - `-h`：ヘルプメッセージを出力して終了
-- `-c CONFIG`：設定ファイル（必須）
+- `-c CONFIG`, `--config CONFIG`：設定ファイル（必須）
 
 ## 設定ファイル
 `capture` サブコマンドは以下の設定を使用します。
