@@ -44,3 +44,21 @@ python -m sw_luadocs extract Input/ Output/
   - `--stormworks32-exe` では `stormworks.exe`（32bit 版の Stormworks バイナリ）を指定してください。
   - `--stormworks64-exe` では `stormworks64.exe`（64bit 版の Stormworks バイナリ）を指定してください。
   - `--stormworks32-exe` と `--stormworks64-exe` を両方とも指定してください。片方のみでは動作しません。
+
+## コマンドラインオプション
+### 位置引数
+- `recognize_path`：`recognize` サブコマンドから出力されたテキストファイルの格納場所
+  - ファイルが指定された場合は、そのファイルを処理します。
+  - フォルダが指定された場合は、そのフォルダの直下にあるファイルを全て処理します。
+- `extract_path`：テキストファイルの出力先
+  - `recognize_path` でファイルを指定した場合は、この項目もファイルを指定してください。
+  - `recognize_path` でフォルダを指定した場合は、この項目もフォルダを指定してください。このフォルダの直下にファイルを出力します。各出力ファイルの名前は、入力ファイルの名前と同じになります。
+
+### オプション
+- `-h`：ヘルプメッセージを出力して終了
+- `--stormworks32-exe`：32bit 版 Stormworks バイナリの場所
+  - 未指定の場合は自動検出します。
+  - 32bit 版と 64bit 版両方の Stormworks バイナリが必要です。片方のみでは動作しません。
+- `--stormworks64-exe`：64bit 版 Stormworks バイナリの場所
+  - 未指定の場合は自動検出します。
+  - 32bit 版と 64bit 版両方の Stormworks バイナリが必要です。片方のみでは動作しません。
