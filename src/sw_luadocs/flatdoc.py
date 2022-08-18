@@ -168,7 +168,7 @@ class WikiWikiExporter(Exporter):
     @classmethod
     def export_code(cls, txt):
         txt = str(txt)
-        return "#pre{{\n" + txt + "\n}}\n"
+        return "#code(lua){{\n" + txt + "\n}}\n"
 
 
 def export(flatdoc, markup):
