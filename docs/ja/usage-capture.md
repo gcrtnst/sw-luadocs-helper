@@ -17,7 +17,9 @@ python -m sw_luadocs capture [-h] -c CONFIG capture_file
 - 予め Stormworks を起動して、撮影したい Lua ヘルプを表示させておいてください。
 
 準備が出来たら、`capture` サブコマンドを実行します。引数は以下の通りに設定してください。
-- `-c CONFIG` オプションで設定ファイルを指定してください。設定ファイルは本リポジトリの `cfg/` フォルダにあります。Addon Lua のヘルプを撮影する場合は `sw_luadocs_addon.toml` を、Vehicle Lua のヘルプを撮影する場合は `sw_luadocs_vehicle.toml` を指定してください。
+- `-c CONFIG` オプションで設定ファイルを指定してください。
+  - 設定ファイルは本リポジトリの `cfg/` フォルダにあります。
+  - Addon Lua のヘルプを撮影する場合は `sw_luadocs_addon.toml` を、Vehicle Lua のヘルプを撮影する場合は `sw_luadocs_vehicle.toml` を指定してください。
 - 位置引数で、撮影したスクリーンショットの出力先ファイルを指定してください。
 
 以下はコマンド例です。
