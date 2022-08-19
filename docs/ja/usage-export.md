@@ -71,6 +71,7 @@ python -m sw_luadocs export -f wikiwiki --save-suffix .txt Input/ Output/
   - 空文字列にすると拡張子が無いファイルが出力されます。
   - デフォルトは `.md` です。
 - `--encoding ENCODING`：出力ファイルのエンコーディング
+  - 指定できるエンコーディングの一覧は [Python のドキュメント](https://docs.python.org/3/library/codecs.html#standard-encodings) を参照ください。
   - デフォルトは `utf-8` です。
 - `--newline NEWLINE`：出力ファイルの改行コード
   - 指定できる改行コードは `LF`、`CR`、`CRLF` のいずれかです。
