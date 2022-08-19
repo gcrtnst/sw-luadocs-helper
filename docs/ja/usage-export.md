@@ -3,7 +3,7 @@
 
 ## 概要
 ```
-python -m sw_luadocs export [-h] [-f MARKUP] [--suffix SUFFIX] [--encoding ENCODING] [--newline NEWLINE] load_path save_path
+python -m sw_luadocs export [-h] [-f FORMAT] [--suffix SUFFIX] [--encoding ENCODING] [--newline NEWLINE] load_path save_path
 ```
 
 ## 説明
@@ -19,7 +19,7 @@ python -m sw_luadocs export [-h] [-f MARKUP] [--suffix SUFFIX] [--encoding ENCOD
 - インストールがまだの場合は、[README.md](README.md) に従いインストールを済ませてください。
 
 準備が出来たら、`export` サブコマンドを実行します。引数は以下の通りに設定してください。
-- `-f MARKUP` でマークアップ形式を指定してください。
+- `-f FORMAT` でマークアップ形式を指定してください。
   - 指定できるマークアップ形式は `markdown` または `wikiwiki` です。
   - `wikiwiki` とは、主に日本で展開されている無料レンタル Wiki サービス [WikiWiki](https://wikiwiki.jp/) で使用されている記法のことです。[PukiWiki](https://pukiwiki.osdn.jp/) の記法と同じですが、[code プラグイン](https://wikiwiki.jp/sample/Manual/A-D#sd91fd21) が存在することを前提としています。
   - デフォルトでは `markdown` となります。
@@ -61,7 +61,7 @@ python -m sw_luadocs export -f wikiwiki --suffix .txt Input/ Output/
   - `load_path` でフォルダを指定した場合は、この引数もフォルダを指定してください。このフォルダの直下にファイルを出力します。各出力ファイルの名前は、入力ファイルの名前を `--suffix` で指定された拡張子でリネームしたものとなります。
 
 ### オプション
-- `-f MARKUP`, `--format MARKUP`：変換先のマークアップ形式
+- `-f FORMAT`, `--format FORMAT`：変換先のマークアップ形式
   - 指定できるマークアップ形式は `markdown` または `wikiwiki` です。
   - デフォルトでは `markdown` となります。
 - `--suffix SUFFIX`：出力ファイルの拡張子
