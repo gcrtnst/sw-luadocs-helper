@@ -145,7 +145,7 @@ def extract_one(*, recognize_file, extract_file, exe32_bin, exe64_bin):
         fobj.write(ext_txt)
 
 
-def export(*, load_path, save_path, markup, save_suffix, encoding, newline):
+def export(*, load_path, save_path, markup, suffix, encoding, newline):
     load_path = pathlib.Path(load_path)
     if not load_path.is_dir():
         export_one(
@@ -161,7 +161,7 @@ def export(*, load_path, save_path, markup, save_suffix, encoding, newline):
         if not load_file.is_file():
             continue
         save_file = pathlib.Path(save_path, load_file.name)
-        save_file = save_file.with_suffix(save_suffix)
+        save_file = save_file.with_suffix(suffix)
         export_one(
             load_file=load_file,
             save_file=save_file,
@@ -218,7 +218,7 @@ def main(*, args=None, exit_on_error=True):
     parser_export.add_argument("load_path", type=pathlib.Path)
     parser_export.add_argument("save_path", type=pathlib.Path)
     parser_export.add_argument("-f", "--format", default="markdown", dest="markup")
-    parser_export.add_argument("--save-suffix", default=".md")
+    parser_export.add_argument("--suffix", default=".md")
     parser_export.add_argument("--encoding", default="utf-8")
     parser_export.add_argument("--newline", default="LF", type=parse_newline_argument)
 
@@ -247,7 +247,7 @@ def main(*, args=None, exit_on_error=True):
             load_path=ns.load_path,
             save_path=ns.save_path,
             markup=ns.markup,
-            save_suffix=ns.save_suffix,
+            suffix=ns.suffix,
             encoding=ns.encoding,
             newline=ns.newline,
         )
