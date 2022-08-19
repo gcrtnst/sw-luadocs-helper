@@ -28,7 +28,7 @@ python -m sw_luadocs export [-h] [-f MARKUP] [--save-suffix SAVE_SUFFIX] [--enco
     - `recognize` サブコマンドおよび `extract` サブコマンドから出力されるテキストファイルは flatdoc 形式です。
     - flatdoc 形式の詳細は [flatdoc](#flatdoc) の章を参照ください。
   - なお、入出力の両方にファイルではなくフォルダを指定すると、入力フォルダ直下のファイルを一括処理して、結果を出力フォルダ直下に格納します。各出力ファイルの名前は、入力ファイルの名前を拡張子 `.md` でリネームしたものとなります。
-    - 出力ファイルの拡張子を変更したい場合は `--save-suffix` 引数を使用してください。
+    - 出力ファイルの拡張子を変更したい場合は `--save-suffix` 引数を使用してください。例えは、`--save-suffix .txt` と指定します。
 
 以下はコマンド例です。
 ```sh
