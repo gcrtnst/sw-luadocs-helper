@@ -45,7 +45,7 @@ python -m sw_luadocs recognize -c ../cfg/sw_luadocs_vehicle.toml Vehicle.png Veh
 
 もし、実行時に `pytesseract.pytesseract.TesseractNotFoundError` という例外が発生した場合は、以下の手順で対処してください。
 - まだ Tesseract をインストールしていない場合は、[README.md](README.md) に従ってインストールしてください。
-- Tesseract を既にインストールしているにもかかわらず上記の例外が発生する場合は、`--tesseract-exe` 引数で `tesseract` コマンドの場所を手動で指定してください。
+- Tesseract を既にインストールしているにもかかわらず上記の例外が発生する場合は、`--tesseract-exe` 引数で `tesseract.exe` の場所を手動で指定してください。
 
 ## コマンドラインオプション
 ### 位置引数
@@ -59,7 +59,7 @@ python -m sw_luadocs recognize -c ../cfg/sw_luadocs_vehicle.toml Vehicle.png Veh
 ### オプション
 - `-h`：ヘルプメッセージを出力して終了
 - `-c CONFIG`, `--config CONFIG`：設定ファイル（必須）
-- `--tesseract-exe TESSERACT_EXE`：`tesseract` 実行可能ファイルの場所
+- `--tesseract-exe TESSERACT_EXE`：`tesseract.exe` の場所
   - 未指定の場合は自動検出します。
 
 ## 設定ファイル
