@@ -33,13 +33,13 @@ python -m sw_luadocs recognize [-h] -c CONFIG [--tesseract-exe TESSERACT_EXE] ca
 cd src/                     # 本リポジトリの src/ フォルダに移動
 .venv/Scripts/activate.bat  # 仮想環境の有効化
 
-# Addon.png に格納されている Addon Lua ヘルプのスクリーンショットを処理して、結果を Addon.ocr.txt に出力する場合
+# Addon Lua ヘルプのスクリーンショットファイル Addon.png を処理して、結果を Addon.ocr.txt に出力する場合
 python -m sw_luadocs recognize -c ../cfg/sw_luadocs_addon.toml Addon.png Addon.ocr.txt
 
-# Input フォルダに格納されている Addon Lua ヘルプのスクリーンショットを一括処理して、結果を Output フォルダに出力する場合
+# Input フォルダに格納されている Addon Lua ヘルプのスクリーンショットファイルを一括処理して、結果を Output フォルダに出力する場合
 python -m sw_luadocs recognize -c ../cfg/sw_luadocs_addon.toml Input/ Output/
 
-# Vehicle.png に格納されている Vehicle Lua ヘルプのスクリーンショットを処理して、結果を Vehicle.ocr.txt に出力する場合
+# Vehicle Lua ヘルプのスクリーンショットファイル Vehicle.png を処理して、結果を Vehicle.ocr.txt に出力する場合
 python -m sw_luadocs recognize -c ../cfg/sw_luadocs_vehicle.toml Vehicle.png Vehicle.ocr.txt
 ```
 
