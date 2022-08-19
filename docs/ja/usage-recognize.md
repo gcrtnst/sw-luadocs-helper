@@ -77,7 +77,7 @@ code_line_h = 16.5
 ```
 
 - `preprocess_scale`：画像前処理における拡大率
-  - Tesseract を使って文字認識をする前に、この設定値に従い画像をリサイズします。
+  - Tesseract を使って文字認識をする前に、この設定項目に従い画像をリサイズします。
   - 1 より値が大きいと拡大され、小さいと縮小されます。
   - [tessdoc](https://tesseract-ocr.github.io/tessdoc/ImproveQuality.html#rescaling) によると、Tesseract は 300dpi 以上の DPI を持つ画像に対して最適に動作します。
 - `tesseract_lang`：Tesseract の言語コード文字列
