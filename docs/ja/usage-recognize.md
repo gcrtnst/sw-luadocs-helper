@@ -50,11 +50,13 @@ python -m sw_luadocs recognize -c ../cfg/sw_luadocs_vehicle.toml Vehicle.png Veh
 ## コマンドラインオプション
 ### 位置引数
 - `capture_path`：`capture` サブコマンドで撮影されたスクリーンショットの格納場所
+  - `capture` サブコマンドで撮影したスクリーンショットを指定してください。
   - ファイルが指定された場合は、そのファイルを処理します。
   - フォルダが指定された場合は、そのフォルダの直下にあるファイルを全て処理します。
 - `recognize_path`：テキストファイルの出力先
   - `capture_path` でファイルを指定した場合は、この引数もファイルを指定してください。
   - `capture_path` でフォルダを指定した場合は、この引数もフォルダを指定してください。このフォルダの直下にファイルを出力します。各出力ファイルの名前は、入力ファイルの名前を拡張子 `.txt` でリネームしたものとなります。
+  - flatdoc 形式のテキストファイルが出力されます。flatdoc については [usage-export.md](usage-export.md#flatdoc) の flatdoc 章を参照ください。
 
 ### オプション
 - `-h`：ヘルプメッセージを出力して終了
