@@ -21,7 +21,7 @@ python -m sw_luadocs export [-h] [-f MARKUP] [--save-suffix SAVE_SUFFIX] [--enco
 準備が出来たら、`export` サブコマンドを実行します。引数は以下の通りに設定してください。
 - `-f MARKUP` でマークアップ形式を指定してください。
   - 指定できるマークアップ形式は `markdown` または `wikiwiki` です。
-  - `wikiwiki` とは、日本で主に展開されている無料レンタル Wiki サービス [WikiWiki](https://wikiwiki.jp/) で使用されている記法のことです。[PukiWiki](https://pukiwiki.osdn.jp/) の記法と同じですが、[code プラグイン](https://wikiwiki.jp/sample/Manual/A-D#sd91fd21) が存在することを前提としています。
+  - `wikiwiki` とは、主に日本で展開されている無料レンタル Wiki サービス [WikiWiki](https://wikiwiki.jp/) で使用されている記法のことです。[PukiWiki](https://pukiwiki.osdn.jp/) の記法と同じですが、[code プラグイン](https://wikiwiki.jp/sample/Manual/A-D#sd91fd21) が存在することを前提としています。
   - デフォルトでは `markdown` となります。
 - 位置引数で、入出力するテキストファイルを指定してください。
   - 入力するテキストファイルは、flatdoc 形式のものを使用してください。
