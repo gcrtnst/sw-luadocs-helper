@@ -3,7 +3,7 @@
 
 ## 概要
 ```
-python -m sw_luadocs export [-h] [-f MARKUP] [--save-suffix SAVE_SUFFIX] [--encoding ENCODING] [--newline NEWLINE] load_path save_path
+python -m sw_luadocs export [-h] [-f MARKUP] [--suffix SUFFIX] [--encoding ENCODING] [--newline NEWLINE] load_path save_path
 ```
 
 ## 説明
@@ -28,7 +28,7 @@ python -m sw_luadocs export [-h] [-f MARKUP] [--save-suffix SAVE_SUFFIX] [--enco
     - `recognize` サブコマンドおよび `extract` サブコマンドから出力されるテキストファイルは flatdoc 形式です。
     - flatdoc 形式の詳細は [flatdoc](#flatdoc) の章を参照ください。
   - なお、入出力の両方にファイルではなくフォルダを指定すると、入力フォルダ直下のファイルを一括処理して、結果を出力フォルダ直下に格納します。各出力ファイルの名前は、入力ファイルの名前を拡張子 `.md` でリネームしたものとなります。
-    - 出力ファイルの拡張子を変更したい場合は `--save-suffix` 引数を使用してください。例えは、`--save-suffix .txt` と指定します。
+    - 出力ファイルの拡張子を変更したい場合は `--suffix` 引数を使用してください。例えは、`--suffix .txt` と指定します。
 
 以下はコマンド例です。
 ```sh
@@ -46,7 +46,7 @@ python -m sw_luadocs export -f wikiwiki Addon.txt WikiWiki.txt
 python -m sw_luadocs export Input/ Output/
 
 # Input/ 直下にあるファイルを全て WikiWiki 形式に変換して、結果を Output/ 直下に拡張子 .txt で出力する場合
-python -m sw_luadocs export -f wikiwiki --save-suffix .txt Input/ Output/
+python -m sw_luadocs export -f wikiwiki --suffix .txt Input/ Output/
 ```
 
 `export` サブコマンドによる変換処理は簡易的であり、インライン HTML や特殊記号などのエスケープを実施しません。そのため、入力されるテキストデータによっては、意図しないマークアップが出力されることがあります。ユーザーは `export` サブコマンドから出力されるテキストファイルを目視で確認して、必要に応じてマークアップを修正する必要があります。
@@ -58,13 +58,13 @@ python -m sw_luadocs export -f wikiwiki --save-suffix .txt Input/ Output/
   - フォルダが指定された場合は、そのフォルダの直下にあるファイルを全て処理します。
 - `save_path`：出力ファイルの場所
   - `load_path` でファイルを指定した場合は、この引数もファイルを指定してください。
-  - `load_path` でフォルダを指定した場合は、この引数もフォルダを指定してください。このフォルダの直下にファイルを出力します。各出力ファイルの名前は、入力ファイルの名前を `--save-suffix` で指定された拡張子でリネームしたものとなります。
+  - `load_path` でフォルダを指定した場合は、この引数もフォルダを指定してください。このフォルダの直下にファイルを出力します。各出力ファイルの名前は、入力ファイルの名前を `--suffix` で指定された拡張子でリネームしたものとなります。
 
 ### オプション
 - `-f MARKUP`, `--format MARKUP`：変換先のマークアップ形式
   - 指定できるマークアップ形式は `markdown` または `wikiwiki` です。
   - デフォルトでは `markdown` となります。
-- `--save-suffix SAVE_SUFFIX`：出力ファイルの拡張子
+- `--suffix SUFFIX`：出力ファイルの拡張子
   - `load_path` でファイルを指定した場合は、無視されます。
   - `load_path` でフォルダを指定した場合は、出力ファイルの拡張子がこの引数で設定したものになります。
   - ピリオド付きで指定してください。
