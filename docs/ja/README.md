@@ -1,7 +1,7 @@
 # sw-luadocs-helper
 sw-luadocs-helper は、Stormworks 内の Lua ヘルプをゲーム外に複写する手助けをします。
 
-## バックグラウンド
+## 背景
 [Stormworks: Build and Rescue](https://store.steampowered.com/app/573090/Stormworks_Build_and_Rescue/) はサンドボックス型シミュレーションゲームです。このゲームでは、プレイヤーはビークルやアドオンを設計して、それをサンドボックス環境内で動作させることができます。これらのビークルやアドオンは Lua を使用してプログラミングすることができます。
 
 Stormworks で実行される Lua では、いくつかの Lua 標準ライブラリに加えて、ビークルやアドオンを制御するための独自ライブラリを使うことができます。これらの独自ライブラリについてはゲーム内で閲覧できる Lua ヘルプで説明されています。しかし、この Lua ヘルプには以下のような問題点があります。
