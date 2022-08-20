@@ -10,11 +10,13 @@ Stormworks で実行される Lua では、いくつかの Lua 標準ライブ�
   - 出先など、ゲームをプレイできない環境では閲覧できません。
 - 検索機能がありません。
   - プレイヤーは目的の記述を目視で探し当てる必要があります。
+- 翻訳機能がありません。
+  - プレイヤーは英語に習熟している必要があります。
 
 上記のような問題点を解決するために、sw-luadocs-helper を開発しました。
 
 ## 機能
-sw-luadocs-helper は、OCR やバイナリからのデータ抽出などの手段を使って、Stormworks 内の Lua ヘルプをゲーム外に複写します。複写された Lua ヘルプは Markdown 等の一般的なマークアップ形式で記述されたテキストファイルとなるため、ユーザーはテキストエディタやブラウザ等の一般的なツールを使用して、それらを閲覧・検索することができます。
+sw-luadocs-helper は、OCR やバイナリからのデータ抽出などの手段を使って、Stormworks 内の Lua ヘルプをゲーム外に複写します。複写された Lua ヘルプは Markdown 等の一般的なマークアップ形式で記述されたテキストファイルとなるため、ユーザーはテキストエディタやブラウザ等の一般的なツールを使用して、それらを快適に閲覧することができます。
 
 なお、sw-luadocs-helper は 100% 正確に Lua ヘルプを複写できるわけではありません。Stormworks の全ての Lua ヘルプを複写させると、数件の誤りが発生します。そのため、ユーザーは複写された Lua ヘルプを目視で確認して、誤りを修正しないといけません。とはいえ、手動で複写するよりは圧倒的に楽でしょう。
 
@@ -32,19 +34,19 @@ sw-luadocs-helper を使用するには下記の環境が必要です。
   - UB Mannheim が公開している Windows 向けインストーラは[こちら](https://github.com/UB-Mannheim/tesseract/wiki)。
   - `winget install UB-Mannheim.TesseractOCR`
 
-次に、以下の手順で仮想環境をセットアップしてください。
+次に、以下の手順で sw-luadocs-helper をセットアップしてください。
 
 ```sh
-git clone "https://github.com/gcrtnst/sw-luadocs-helper"  # 本リポジトリをローカルにクローン
-cd sw-luadocs-helper/src                                  # 本リポジトリの src/ フォルダに移動
-python -m venv .venv --upgrade-deps                       # 仮想環境を作成
-.venv/Scripts/activate.bat                                # 仮想環境の有効化
-pip install -r requirements.txt                           # 依存パッケージのインストール
+git clone "https://github.com/gcrtnst/sw-luadocs-helper.git"  # 本リポジトリをローカルにクローン
+cd sw-luadocs-helper/src                                      # 本リポジトリの src/ フォルダに移動
+python -m venv .venv --upgrade-deps                           # 仮想環境を作成
+.venv/Scripts/activate.bat                                    # 仮想環境の有効化
+pip install -r requirements.txt                               # 依存パッケージのインストール
 ```
 
 これでインストールは完了です。
 
-以降、sw-luadocs-helper を使用する際は、本リポジトリの src/ フォルダをカレントディレクトリにして、仮想環境を有効化（`.venv/Scripts\activate.bat`）してから、コマンドを実行してください。
+以降、sw-luadocs-helper を使用する際は、本リポジトリの src/ フォルダをカレントディレクトリにして、仮想環境を有効化（`.venv/Scripts/activate.bat`）してから、コマンドを実行してください。
 
 ## 使い方
 sw-luadocs-helper を使用して Lua ヘルプを複写するには、以下の手順に従います。
@@ -58,3 +60,7 @@ sw-luadocs-helper を使用して Lua ヘルプを複写するには、以下の
 2. [usage-recognize.md](usage-recognize.md)
 3. [usage-extract.md](usage-extract.md)
 4. [usage-export.md](usage-export.md)
+
+## ライセンス
+sw-luadocs-helper については、本リポジトリのルートフォルダに格納されている LICENSE ファイルを参照ください。
+
