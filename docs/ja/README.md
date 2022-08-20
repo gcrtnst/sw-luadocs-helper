@@ -30,6 +30,8 @@ sw-luadocs-helper を使用するには下記の環境が必要です。
 - [Stormworks: Build and Rescue](https://store.steampowered.com/app/573090/Stormworks_Build_and_Rescue/)
 - [Python](https://www.python.org/)
   - `winget install Python.Python.3.X`（X はマイナー番号）
+- [Git](https://git-scm.com/)
+  - `winget install Git.Git`
 - [Tesseract](https://github.com/tesseract-ocr/tesseract)
   - UB Mannheim が公開している Windows 向けインストーラは[こちら](https://github.com/UB-Mannheim/tesseract/wiki)。
   - `winget install UB-Mannheim.TesseractOCR`
