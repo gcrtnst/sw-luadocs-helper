@@ -57,11 +57,11 @@ sw-luadocs-helper は複数のサブコマンドで構成されています。sw
 3. `extract` サブコマンドを使用して、認識した文字列をもとに Stormworks バイナリから文字列を取得
 4. `export` サブコマンドを使用して、複写したテキストデータを Markdown などのマークアップ形式に変換
 
-それぞれのサブコマンドの使い方は以下のドキュメントを参照ください。
-1. [usage-capture.md](usage-capture.md)
-2. [usage-recognize.md](usage-recognize.md)
-3. [usage-extract.md](usage-extract.md)
-4. [usage-export.md](usage-export.md)
+それぞれのサブコマンドの使い方は以下のドキュメントに記載されています。まずは `capture` サブコマンドから始めてください。
+1. `capture` サブコマンド：[usage-capture.md](usage-capture.md)
+2. `recognize` サブコマンド：[usage-recognize.md](usage-recognize.md)
+3. `extract` サブコマンド：[usage-extract.md](usage-extract.md)
+4. `export` サブコマンド：[usage-export.md](usage-export.md)
 
 ## ライセンス
 sw-luadocs-helper のライセンスについては、本リポジトリのルートフォルダに格納されている LICENSE ファイルを参照ください。
