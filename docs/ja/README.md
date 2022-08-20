@@ -62,5 +62,5 @@ sw-luadocs-helper を使用して Lua ヘルプを複写するには、以下の
 4. [usage-export.md](usage-export.md)
 
 ## ライセンス
-sw-luadocs-helper については、本リポジトリのルートフォルダに格納されている LICENSE ファイルを参照ください。
+sw-luadocs-helper のライセンスについては、本リポジトリのルートフォルダに格納されている LICENSE ファイルを参照ください。
 
