@@ -36,7 +36,7 @@ sw-luadocs-helper を使用するには下記の環境が必要です。
   - UB Mannheim が公開している Windows 向けインストーラは[こちら](https://github.com/UB-Mannheim/tesseract/wiki)。
   - `winget install UB-Mannheim.TesseractOCR`
 
-次に、以下の手順で sw-luadocs-helper をセットアップしてください。
+次に、適当な場所でコマンドプロンプトを開いて、以下の手順で sw-luadocs-helper をセットアップしてください。
 
 ```sh
 git clone "https://github.com/gcrtnst/sw-luadocs-helper.git"  # 本リポジトリをローカルにクローン
