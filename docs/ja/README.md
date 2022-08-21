@@ -65,5 +65,5 @@ sw-luadocs-helper は複数のサブコマンドで構成されています。sw
     - `export` サブコマンドのドキュメント：[usage-export.md](usage-export.md)
 
 ## ライセンス
-sw-luadocs-helper のライセンスについては、本リポジトリのルートフォルダに格納されている LICENSE ファイルを参照ください。
+sw-luadocs-helper のライセンスについては、本リポジトリのルートフォルダに格納されている [LICENSE](../../LICENSE) ファイルを参照ください。
 
