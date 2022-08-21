@@ -53,17 +53,15 @@ pip install -r requirements.txt                               # 依存パッケ�
 以降、sw-luadocs-helper を使用する際は、本リポジトリの src/ フォルダをカレントディレクトリにして、仮想環境を有効化（`.venv/Scripts/activate.bat`）してから、コマンドを実行してください。
 
 ## 使い方
-sw-luadocs-helper は複数のサブコマンドで構成されています。sw-luadocs-helper を使用して Lua ヘルプを複写するには、以下の手順に従います。
+sw-luadocs-helper は複数のサブコマンドで構成されています。sw-luadocs-helper を使用して Lua ヘルプを複写するには、以下の手順に従います。各手順の実施方法は、それぞれのサブコマンドのドキュメントを参照ください。
 1. `capture` サブコマンドを使用して、ゲーム画面上に表示されている Lua ヘルプを撮影
+    - `capture` サブコマンドのドキュメント：[usage-capture.md](usage-capture.md)
 2. `recognize` サブコマンドを使用して、撮影したスクリーンショットに対して文字認識を実施
+    - `recognize` サブコマンドのドキュメント：[usage-recognize.md](usage-recognize.md)
 3. `extract` サブコマンドを使用して、認識した文字列をもとに Stormworks バイナリから文字列を取得
+    - `extract` サブコマンドのドキュメント：[usage-extract.md](usage-extract.md)
 4. `export` サブコマンドを使用して、複写したテキストデータを Markdown などのマークアップ形式に変換
-
-それぞれのサブコマンドの使い方は以下のドキュメントに記載されています。まずは `capture` サブコマンドから始めてください。
-1. `capture` サブコマンド：[usage-capture.md](usage-capture.md)
-2. `recognize` サブコマンド：[usage-recognize.md](usage-recognize.md)
-3. `extract` サブコマンド：[usage-extract.md](usage-extract.md)
-4. `export` サブコマンド：[usage-export.md](usage-export.md)
+    - `export` サブコマンドのドキュメント：[usage-export.md](usage-export.md)
 
 ## ライセンス
 sw-luadocs-helper のライセンスについては、本リポジトリのルートフォルダに格納されている LICENSE ファイルを参照ください。
