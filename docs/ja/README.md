@@ -40,7 +40,7 @@ sw-luadocs-helper を使用するには下記の環境が必要です。
   - UB Mannheim が公開している Windows 向けインストーラは[こちら](https://github.com/UB-Mannheim/tesseract/wiki)。
   - `winget install UB-Mannheim.TesseractOCR`
 - [tessdata_best](https://github.com/tesseract-ocr/tessdata_best) / [eng.traineddata](https://github.com/tesseract-ocr/tessdata_best/blob/main/eng.traineddata)
-  - Tesseract の tessdata ディレクトリに格納してください。
+  - Tesseract の tessdata フォルダに格納してください。
 
 次に、適当な場所でコマンドプロンプトを開いて、以下の手順で sw-luadocs-helper をセットアップしてください。
 
