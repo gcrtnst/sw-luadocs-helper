@@ -6,7 +6,7 @@ sw-luadocs-helper は、OCR やバイナリからのデータ抽出などの手�
 
 ![](https://i.imgur.com/GiOi9kp.png)
 
-なお、sw-luadocs-helper は 100% 正確に Lua ヘルプを複写できるわけではありません。Stormworks の全ての Lua ヘルプを複写させると、数件の誤りが発生します。そのため、ユーザーは複写された Lua ヘルプを目視で確認して、誤りを修正しないといけません。とはいえ、手動で複写するよりは圧倒的に楽でしょう。
+なお、sw-luadocs-helper は 100% 正確に Lua ヘルプを読み取れるわけではありません。Stormworks の全ての Lua ヘルプに対して sw-luadocs-helper を実行すると、数件の誤りが発生します。そのため、ユーザーは出力された Lua ヘルプを目視で確認して、誤りを修正しないといけません。とはいえ、手動で書き写すよりは圧倒的に楽でしょう。
 
 ## 背景
 [Stormworks: Build and Rescue](https://store.steampowered.com/app/573090/Stormworks_Build_and_Rescue/) はサンドボックス型シミュレーションゲームです。このゲームでは、プレイヤーはビークルやアドオンを設計して、それをサンドボックス環境内で動作させることができます。これらのビークルやアドオンは Lua を使用してプログラミングすることができます。
