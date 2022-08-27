@@ -68,7 +68,7 @@ sw-luadocs-helper は複数のサブコマンドで構成されています。sw
     - `export` サブコマンドのドキュメント：[usage-export.md](usage-export.md)
 
 ## 開発
-sw-luadocs-helper の開発時は以下のアプリケーションを使用します。いずれも最新のバージョンを使用します。
+sw-luadocs-helper の開発時は以下のアプリケーションを使用します。いずれも最新のバージョンを選択してください。
 - [Black](https://github.com/psf/black)
   - sw-luadocs-helper の Python コードはすべて Black を使用して整形します。
   - 設定はすべてデフォルトです。
