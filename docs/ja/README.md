@@ -67,6 +67,17 @@ sw-luadocs-helper は複数のサブコマンドで構成されています。sw
 4. `export` サブコマンドを使用して、取得したテキストデータを Markdown などのマークアップ形式に変換
     - `export` サブコマンドのドキュメント：[usage-export.md](usage-export.md)
 
+## 開発
+sw-luadocs-helper の開発時は以下のアプリケーションを使用します。
+- [Black](https://github.com/psf/black)
+  - sw-luadocs-helper の Python コードはすべて Black を使用して整形します。
+  - 設定はすべてデフォルトです。
+  - `pip install black`
+- [Flake8](https://github.com/pycqa/flake8)
+  - sw-luadocs-helper の Python コードすべてに対して警告が発生しないようにします。
+  - 設定ファイルは本リポジトリの src/.flake8 にあります。
+  - `pip install flake8`
+
 ## ライセンス
 sw-luadocs-helper のライセンスについては、本リポジトリのルートフォルダに格納されている [LICENSE](../../LICENSE) ファイルを参照ください。
 
