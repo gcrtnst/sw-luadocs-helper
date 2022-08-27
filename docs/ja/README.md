@@ -1,10 +1,10 @@
 # sw-luadocs-helper
-sw-luadocs-helper は、Stormworks 内の Lua ヘルプをゲーム外に複写する手助けをします。
+sw-luadocs-helper は、Stormworks の Lua ヘルプを読み取って Markdown 化するコンソールアプリケーションです。
 
 ## 機能
-sw-luadocs-helper は、OCR やバイナリからのデータ抽出などの手段を使って、Stormworks 内の Lua ヘルプをゲーム外に複写します。複写された Lua ヘルプは Markdown 等の一般的なマークアップ形式で記述されたテキストファイルとなるため、ユーザーはテキストエディタやブラウザ等の一般的なツールを使用して、それらを快適に閲覧することができます。
+sw-luadocs-helper は、OCR やバイナリからのデータ抽出などの手段を使って、Stormworks 内の Lua ヘルプを読み取ります。読み取った Lua ヘルプは Markdown 等の一般的なマークアップ形式で記述されたテキストファイルとして出力されるため、ユーザーはテキストエディタやブラウザ等の使い慣れたアプリケーションを使用して、それらを快適に閲覧することができます。
 
-![Stormworks 内の Lua ヘルプと、複写された Markdown 形式のファイル](https://i.imgur.com/GiOi9kp.png)
+![](https://i.imgur.com/GiOi9kp.png)
 
 なお、sw-luadocs-helper は 100% 正確に Lua ヘルプを複写できるわけではありません。Stormworks の全ての Lua ヘルプを複写させると、数件の誤りが発生します。そのため、ユーザーは複写された Lua ヘルプを目視で確認して、誤りを修正しないといけません。とはいえ、手動で複写するよりは圧倒的に楽でしょう。
 
