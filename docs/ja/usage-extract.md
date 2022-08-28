@@ -50,9 +50,11 @@ python -m sw_luadocs extract Input/ Output/
 - `recognize_path`：`recognize` サブコマンドから出力されたテキストファイルの格納場所
   - ファイルが指定された場合は、そのファイルを処理します。
   - フォルダが指定された場合は、そのフォルダの直下にあるファイルを全て処理します。
+  - flatdoc 形式のテキストファイルを入力してください。flatdoc については [usage-export.md](usage-export.md#flatdoc) の flatdoc 章を参照ください。
 - `extract_path`：テキストファイルの出力先
   - `recognize_path` でファイルを指定した場合は、この引数もファイルを指定してください。
   - `recognize_path` でフォルダを指定した場合は、この引数もフォルダを指定してください。このフォルダの直下にファイルを出力します。各出力ファイルの名前は、対応する入力ファイルの名前と同じになります。
+  - flatdoc 形式のテキストファイルが出力されます。flatdoc については [usage-export.md](usage-export.md#flatdoc) の flatdoc 章を参照ください。
 
 ### オプション
 - `-h`：ヘルプメッセージを出力して終了
