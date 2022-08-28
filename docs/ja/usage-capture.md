@@ -51,6 +51,7 @@ python -m sw_luadocs capture -c ../cfg/sw_luadocs_vehicle.toml Vehicle.png
 ## コマンドラインオプション
 ### 位置引数
 - `capture_file`：撮影したスクリーンショットの出力先ファイル
+  - Pillow を使用して画像を書き出します。サポートされている画像フォーマットの一覧は `python -m PIL` を参照ください。
 
 ### オプション
 - `-h`：ヘルプメッセージを出力して終了
