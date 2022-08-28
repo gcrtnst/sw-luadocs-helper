@@ -12,7 +12,7 @@ python -m sw_luadocs recognize [-h] -c CONFIG [--tesseract-exe TESSERACT_EXE] ca
 - 認識した文字列を次のいずれかの種類に分類する：見出し、本文、コード
 
 以下は実際に出力されたテキストファイルの例です。
-![recognize サブコマンドから出力されたテキストファイルの例](https://i.imgur.com/PlaDsP6.png)
+![](https://i.imgur.com/PlaDsP6.png)
 
 `recognize` サブコマンドを実行するには、まず下記の準備作業が必要です。
 - インストールがまだの場合は、[README.md](README.md) に従いインストールを済ませてください。
@@ -96,6 +96,6 @@ code_line_h = 16.5
 - `code_indent_w`：コードにおけるタブ文字の幅（ピクセル単位）
 - `code_line_h`：コード一行あたりの高さ（ピクセル単位）
 
-以下の画像は、座標関連の設定項目を視覚的に説明したものです。
+以下の画像は、座標関連の設定項目を視覚的に表したものです。
 
-![座標関連の設定項目についての説明](https://i.imgur.com/NRopEaE.png)
+![](https://i.imgur.com/NRopEaE.png)
