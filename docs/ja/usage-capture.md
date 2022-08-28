@@ -28,7 +28,7 @@ python -m sw_luadocs capture [-h] -c CONFIG capture_file
 ```sh
 # 準備
 cd src/                     # 本リポジトリの src/ フォルダに移動
-.venv/Scripts/activate.bat  # 仮想環境の有効化
+.venv\Scripts\activate.bat  # 仮想環境の有効化
 
 # Addon Lua ヘルプを撮影して、結果を Addon.png に出力する場合
 python -m sw_luadocs capture -c ../cfg/sw_luadocs_addon.toml Addon.png
