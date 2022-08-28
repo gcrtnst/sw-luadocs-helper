@@ -56,9 +56,11 @@ python -m sw_luadocs export -f wikiwiki --suffix .txt Input/ Output/
 - `load_path`：入力ファイルの場所
   - ファイルが指定された場合は、そのファイルを処理します。
   - フォルダが指定された場合は、そのフォルダの直下にあるファイルを全て処理します。
+  - flatdoc 形式のテキストファイルを入力してください。flatdoc については [flatdoc](#flatdoc) 章を参照ください。
 - `save_path`：出力ファイルの場所
   - `load_path` でファイルを指定した場合は、この引数もファイルを指定してください。
   - `load_path` でフォルダを指定した場合は、この引数もフォルダを指定してください。このフォルダの直下にファイルを出力します。各出力ファイルの名前は、入力ファイルの名前を `--suffix` で指定された拡張子でリネームしたものとなります。
+  - flatdoc 形式のテキストファイルが出力されます。flatdoc については [flatdoc](#flatdoc) 章を参照ください。
 
 ### オプション
 - `-f FORMAT`, `--format FORMAT`：変換先のマークアップ形式
