@@ -2,6 +2,7 @@ import ctypes
 import ctypes.wintypes
 
 
+DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2 = -4
 GWL_EXSTYLE = -20
 INPUT_HARDWARE = 2
 INPUT_KEYBOARD = 1
@@ -233,6 +234,19 @@ def SetLastError(dwErrCode):
     fp.argtypes = (ctypes.wintypes.DWORD,)
     fp.restype = None
     return fp(dwErrCode)
+
+
+def SetThreadDpiAwarenessContext(dpiContext):
+    def errcheck(result, func, args):
+        if result is None:
+            raise ctypes.WinError()
+        return result
+
+    fp = ctypes.windll.user32.SetThreadDpiAwarenessContext
+    fp.argtypes = (ctypes.wintypes.HANDLE,)
+    fp.restype = ctypes.wintypes.HANDLE
+    fp.errcheck = errcheck
+    return fp(dpiContext)
 
 
 def ShowWindow(hWnd, nCmdShow):

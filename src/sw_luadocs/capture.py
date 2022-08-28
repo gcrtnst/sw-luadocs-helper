@@ -8,6 +8,20 @@ from . import image as dot_image
 from . import win32 as dot_win32
 
 
+def get_screen_size():
+    dpictx = None
+    try:
+        dpictx = dot_win32.SetThreadDpiAwarenessContext(
+            dot_win32.DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2
+        )
+        scr_w = dot_win32.GetSystemMetrics(dot_win32.SM_CXSCREEN)
+        scr_h = dot_win32.GetSystemMetrics(dot_win32.SM_CYSCREEN)
+    finally:
+        if dpictx is not None:
+            dot_win32.SetThreadDpiAwarenessContext(dpictx)
+    return scr_w, scr_h
+
+
 def activate_window(hwnd):
     hwnd = int(hwnd)
 
@@ -32,16 +46,14 @@ def is_fullscreen_window(hwnd):
     ):
         return False
 
-    scr_w = dot_win32.GetSystemMetrics(dot_win32.SM_CXSCREEN)
-    scr_h = dot_win32.GetSystemMetrics(dot_win32.SM_CYSCREEN)
+    scr_w, scr_h = get_screen_size()
     win_x, win_y = dot_win32.ClientToScreen(hwnd, (0, 0))
     _, _, win_w, win_h = dot_win32.GetClientRect(hwnd)
     return win_x == 0 and win_y == 0 and win_w == scr_w and win_h == scr_h
 
 
 def scroll_game(hwnd, x=None, y=None, delta=None, mouse_delay=None):
-    scr_w = dot_win32.GetSystemMetrics(dot_win32.SM_CXSCREEN)
-    scr_h = dot_win32.GetSystemMetrics(dot_win32.SM_CYSCREEN)
+    scr_w, scr_h = get_screen_size()
     if x is None:
         x = scr_w // 2
     if y is None:
@@ -100,8 +112,7 @@ def capture_screen(capture_area=None):
         cap_w = int(cap_w)
         cap_h = int(cap_h)
 
-        scr_w = dot_win32.GetSystemMetrics(dot_win32.SM_CXSCREEN)
-        scr_h = dot_win32.GetSystemMetrics(dot_win32.SM_CYSCREEN)
+        scr_w, scr_h = get_screen_size()
         if (
             cap_x < 0
             or scr_w <= cap_x
@@ -249,8 +260,7 @@ def main(
         if not is_fullscreen_window(hwnd):
             raise RuntimeError
 
-        scr_w = dot_win32.GetSystemMetrics(dot_win32.SM_CXSCREEN)
-        scr_h = dot_win32.GetSystemMetrics(dot_win32.SM_CYSCREEN)
+        scr_w, scr_h = get_screen_size()
         if scr_w != screen_width or scr_h != screen_height:
             raise RuntimeError
 
