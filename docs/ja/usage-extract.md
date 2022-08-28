@@ -38,6 +38,8 @@ python -m sw_luadocs extract Input/ Output/
 
 `extract` サブコマンドによりほとんどの誤記は自動的に修正できますが、完璧ではありません。時折、Stormworks バイナリの中から誤ったテキストデータを選択して出力することがあります。ユーザーは、`extract` サブコマンドから出力されるテキストファイルを目視で確認して、必要に応じて誤記を修正する必要があります。
 
+`extract` サブコマンドでの作業が完了したら、次は `export` サブコマンドでテキストエディタを Markdown などのマークアップ形式に変換します。[usage-export.md](usage-export.md) を参照ください。
+
 `extract` サブコマンドは、システムにインストールされている Stormworks バイナリの場所を自動的に検出します。もし自動検出に失敗した場合は例外が発生します。この場合は、以下の手順で対処してください。
 - まだ Stormworks をインストールしていない場合は、[README.md](README.md#インストール) に従ってインストールしてください。
 - Stormworks を既にインストールしているにもかかわらず上記の例外が発生する場合は、`--stormworks32-exe` 引数および `--stormworks64-exe` 引数で Stormworks バイナリの場所を指定してください。
