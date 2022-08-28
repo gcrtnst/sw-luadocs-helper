@@ -31,7 +31,7 @@ python -m sw_luadocs recognize [-h] -c CONFIG [--tesseract-exe TESSERACT_EXE] ca
 ```sh
 # 準備
 cd src/                     # 本リポジトリの src/ フォルダに移動
-.venv/Scripts/activate.bat  # 仮想環境の有効化
+.venv\Scripts\activate.bat  # 仮想環境の有効化
 
 # Addon.png を Addon Lua のスクリーンショットとして処理して、結果を Addon.ocr.txt に出力する場合
 python -m sw_luadocs recognize -c ../cfg/sw_luadocs_addon.toml Addon.png Addon.ocr.txt
