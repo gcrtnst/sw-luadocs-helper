@@ -48,6 +48,8 @@ python -m sw_luadocs capture -c ../cfg/sw_luadocs_vehicle.toml Vehicle.png
 
 `capture` サブコマンドの実行中はマウスやキーボードに触れないでください。実行中に操作すると、スクリーンショットの撮影に失敗する恐れがあります。
 
+`capture` サブコマンドでの作業が完了したら、次は `recognize` サブコマンドで文字認識を行います。[usage-recognize.md](usage-recognize.md) を参照ください。
+
 ## コマンドラインオプション
 ### 位置引数
 - `capture_file`：撮影したスクリーンショットの出力先ファイル
