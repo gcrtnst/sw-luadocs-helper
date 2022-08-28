@@ -48,7 +48,7 @@ sw-luadocs-helper を使用するには下記の環境が必要です。
 git clone "https://github.com/gcrtnst/sw-luadocs-helper.git"  # 本リポジトリをローカルにクローン
 cd sw-luadocs-helper/src                                      # 本リポジトリの src/ フォルダに移動
 python -m venv .venv --upgrade-deps                           # 仮想環境を作成
-.venv/Scripts/activate.bat                                    # 仮想環境の有効化
+.venv\Scripts\activate.bat                                    # 仮想環境の有効化
 pip install -r requirements.txt                               # 依存パッケージのインストール
 ```
 
