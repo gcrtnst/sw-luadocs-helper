@@ -52,7 +52,6 @@ python -m sw_luadocs recognize -c ../cfg/sw_luadocs_vehicle.toml Vehicle.png Veh
 ## コマンドラインオプション
 ### 位置引数
 - `capture_path`：`capture` サブコマンドで撮影されたスクリーンショットの格納場所
-  - `capture` サブコマンドで撮影したスクリーンショットを指定してください。
   - ファイルが指定された場合は、そのファイルを処理します。
   - フォルダが指定された場合は、そのフォルダの直下にあるファイルを全て処理します。
   - Pillow を使用して画像を読み込みます。サポートされている画像フォーマットの一覧は `python -m PIL` を参照ください。
