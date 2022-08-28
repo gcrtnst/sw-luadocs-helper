@@ -488,7 +488,7 @@ class TestWikiWikiExporterExportBody(unittest.TestCase):
 class TestWikiWikiExporterExportCode(unittest.TestCase):
     def test_main(self):
         input_txt = "e"
-        expected_s = "#pre{{\ne\n}}\n"
+        expected_s = "#code(lua){{\ne\n}}\n"
         actual_s = sw_luadocs.flatdoc.WikiWikiExporter.export_code(input_txt)
         self.assertEqual(expected_s, actual_s)
 
@@ -505,7 +505,7 @@ class TestWikiWikiExporterExport(unittest.TestCase):
 
 this is body
 
-#pre{{
+#code(lua){{
 this is code
 }}
 """
