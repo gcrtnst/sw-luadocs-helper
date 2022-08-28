@@ -11,7 +11,7 @@ python -m sw_luadocs extract [-h] [--stormworks32-exe STORMWORKS32_EXE] [--storm
 
 以下の画像は、`extract` サブコマンドで処理する前後のテキストデータを比較したものです。左が処理前、右が処理後です。処理前のテキストデータでは "1" を "l" と間違えるなどの誤認識が散見されるのに対して、処理後のテキストデータではそれらの誤認識が適切に修正されています。
 
-![extract サブコマンドでの処理前後の比較](https://i.imgur.com/dqRFsTD.png)
+![](https://i.imgur.com/dqRFsTD.png)
 
 `extract` サブコマンドを実行するには、まず下記の準備作業が必要です。
 - インストールがまだの場合は、[README.md](README.md) に従いインストールを済ませてください。
