@@ -27,7 +27,7 @@ python -m sw_luadocs extract [-h] [--stormworks32-exe STORMWORKS32_EXE] [--storm
 ```sh
 # 準備
 cd src/                     # 本リポジトリの src/ フォルダに移動
-.venv/Scripts/activate.bat  # 仮想環境の有効化
+.venv\Scripts\activate.bat  # 仮想環境の有効化
 
 # Addon.ocr.txt を処理して、結果を Addon.ext.txt に出力する場合
 python -m sw_luadocs extract Addon.ocr.txt Addon.ext.txt
