@@ -9,7 +9,7 @@ python -m sw_luadocs recognize [-h] -c CONFIG [--tesseract-exe TESSERACT_EXE] ca
 ## 説明
 `recognize` サブコマンドは、`capture` サブコマンドで撮影されたスクリーンショットに対して以下の処理を実施します。
 - スクリーンショット内の文章に対して文字認識を行い、テキストデータにする。
-- 認識した文章を次のいずれかの種類に分類する：見出し、本文、コード
+- 認識した文字列を次のいずれかの種類に分類する：見出し、本文、コード
 
 以下は実際に出力されたテキストファイルの例です。
 ![recognize サブコマンドから出力されたテキストファイルの例](https://i.imgur.com/PlaDsP6.png)
