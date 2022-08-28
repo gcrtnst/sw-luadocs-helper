@@ -46,7 +46,7 @@ python -m sw_luadocs recognize -c ../cfg/sw_luadocs_vehicle.toml Vehicle.png Veh
 `recognize` サブコマンドでの作業が完了したら、次は `extract` サブコマンドで誤記の自動修正を行います。[usage-extract.md](usage-extract.md) を参照ください。
 
 もし、実行時に `pytesseract.pytesseract.TesseractNotFoundError` という例外が発生した場合は、以下の手順で対処してください。
-- まだ Tesseract をインストールしていない場合は、[README.md](README.md) に従ってインストールしてください。
+- まだ Tesseract をインストールしていない場合は、[README.md](README.md#インストール) に従ってインストールしてください。
 - Tesseract を既にインストールしているにもかかわらず上記の例外が発生する場合は、`--tesseract-exe` 引数で `tesseract.exe` の場所を手動で指定してください。
 
 ## コマンドラインオプション
