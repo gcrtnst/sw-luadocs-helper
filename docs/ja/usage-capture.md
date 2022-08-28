@@ -14,7 +14,7 @@ python -m sw_luadocs capture [-h] -c CONFIG capture_file
 ![](https://i.imgur.com/fOfsdKn.png)
 
 `capture` サブコマンドを使用するには、まず下記の準備作業が必要です。
-- インストールがまだの場合は、[README.md](README.md) に従いインストールを済ませてください。
+- インストールがまだの場合は、[README.md](README.md#インストール) に従いインストールを済ませてください。
 - Stormworks の設定で、ウィンドウモードをフルスクリーンに、解像度を 1920x1080 に設定してください。
 - 予め Stormworks を起動して、撮影したい Lua ヘルプを表示させておいてください。
 
