@@ -11,7 +11,7 @@ python -m sw_luadocs recognize [-h] -c CONFIG [--tesseract-exe TESSERACT_EXE] ca
 - スクリーンショット内の文章に対して文字認識を行い、テキストデータにする。
 - 認識した文字列を次のいずれかの種類に分類する：見出し、本文、コード
 
-以下は実際に出力されたテキストファイルの例です。
+以下は実際に出力されたテキストファイルの例です。各行の先頭に分類された種類が記載され、その後に認識した文字列が記載されています。（このテキストファイルの形式については [usage-export.md](usage-export.md#flatdoc) の flatdoc 章を参照ください）
 ![](https://i.imgur.com/PlaDsP6.png)
 
 `recognize` サブコマンドを実行するには、まず下記の準備作業が必要です。
