@@ -1,5 +1,6 @@
 import cv2
 import d3dshot
+import functools
 import math
 import numpy as np
 import time
@@ -8,18 +9,21 @@ from . import image as dot_image
 from . import win32 as dot_win32
 
 
-def get_screen_size():
-    dpictx = None
-    try:
-        dpictx = dot_win32.SetThreadDpiAwarenessContext(
-            dot_win32.DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2
-        )
-        scr_w = dot_win32.GetSystemMetrics(dot_win32.SM_CXSCREEN)
-        scr_h = dot_win32.GetSystemMetrics(dot_win32.SM_CYSCREEN)
-    finally:
-        if dpictx is not None:
-            dot_win32.SetThreadDpiAwarenessContext(dpictx)
-    return scr_w, scr_h
+def dpi_aware(dpictx):
+    def decorator(func):
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            oldctx = None
+            try:
+                oldctx = dot_win32.SetThreadDpiAwarenessContext(dpictx)
+                return func(*args, **kwargs)
+            finally:
+                if oldctx is not None:
+                    dot_win32.SetThreadDpiAwarenessContext(oldctx)
+
+        return wrapper
+
+    return decorator
 
 
 def activate_window(hwnd):
@@ -46,14 +50,16 @@ def is_fullscreen_window(hwnd):
     ):
         return False
 
-    scr_w, scr_h = get_screen_size()
+    scr_w = dot_win32.GetSystemMetrics(dot_win32.SM_CXSCREEN)
+    scr_h = dot_win32.GetSystemMetrics(dot_win32.SM_CYSCREEN)
     win_x, win_y = dot_win32.ClientToScreen(hwnd, (0, 0))
     _, _, win_w, win_h = dot_win32.GetClientRect(hwnd)
     return win_x == 0 and win_y == 0 and win_w == scr_w and win_h == scr_h
 
 
 def scroll_game(hwnd, x=None, y=None, delta=None, mouse_delay=None):
-    scr_w, scr_h = get_screen_size()
+    scr_w = dot_win32.GetSystemMetrics(dot_win32.SM_CXSCREEN)
+    scr_h = dot_win32.GetSystemMetrics(dot_win32.SM_CYSCREEN)
     if x is None:
         x = scr_w // 2
     if y is None:
@@ -112,7 +118,8 @@ def capture_screen(capture_area=None):
         cap_w = int(cap_w)
         cap_h = int(cap_h)
 
-        scr_w, scr_h = get_screen_size()
+        scr_w = dot_win32.GetSystemMetrics(dot_win32.SM_CXSCREEN)
+        scr_h = dot_win32.GetSystemMetrics(dot_win32.SM_CYSCREEN)
         if (
             cap_x < 0
             or scr_w <= cap_x
@@ -223,6 +230,7 @@ def stitch_screenshot(iterable, *, template_ratio=0.25, scroll_threshold=0):
     return gen_img
 
 
+@dpi_aware(dot_win32.DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2)
 def main(
     *,
     screen_width,
@@ -260,7 +268,8 @@ def main(
         if not is_fullscreen_window(hwnd):
             raise RuntimeError
 
-        scr_w, scr_h = get_screen_size()
+        scr_w = dot_win32.GetSystemMetrics(dot_win32.SM_CXSCREEN)
+        scr_h = dot_win32.GetSystemMetrics(dot_win32.SM_CYSCREEN)
         if scr_w != screen_width or scr_h != screen_height:
             raise RuntimeError
 
