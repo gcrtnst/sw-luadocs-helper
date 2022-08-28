@@ -13,7 +13,7 @@ python -m sw_luadocs export [-h] [-f FORMAT] [--suffix SUFFIX] [--encoding ENCOD
 
 以下の画像は、`export` サブコマンドにより変換される前後のテキストファイルの例です。左が変換前、右が変換後です。
 
-![export サブコマンドでの処理前後の比較](https://i.imgur.com/jhQdxd2.png)
+![](https://i.imgur.com/jhQdxd2.png)
 
 `export` サブコマンドを使用するには、まず下記の準備作業が必要です。
 - インストールがまだの場合は、[README.md](README.md) に従いインストールを済ませてください。
