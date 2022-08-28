@@ -32,7 +32,7 @@ cd src/                     # 本リポジトリの src/ フォルダに移動
 # Addon.ocr.txt を処理して、結果を Addon.ext.txt に出力する場合
 python -m sw_luadocs extract Addon.ocr.txt Addon.ext.txt
 
-# Input/ 直下に格納されているファイルを一括処理して、結果を Output/ 直下に出力する場合
+# Input/ フォルダに格納されているファイルを一括処理して、結果を Output/ フォルダに出力する場合
 python -m sw_luadocs extract Input/ Output/
 ```
 
