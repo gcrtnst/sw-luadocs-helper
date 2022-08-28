@@ -34,7 +34,7 @@ python -m sw_luadocs export [-h] [-f FORMAT] [--suffix SUFFIX] [--encoding ENCOD
 ```sh
 # 準備
 cd src/                     # 本リポジトリの src/ フォルダに移動
-.venv/Scripts/activate.bat  # 仮想環境の有効化
+.venv\Scripts\activate.bat  # 仮想環境の有効化
 
 # Addon.txt を Markdown 形式に変換して、結果を Addon.md に出力する場合
 python -m sw_luadocs export Addon.txt Addon.md
