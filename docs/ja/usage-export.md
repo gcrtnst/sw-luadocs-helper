@@ -42,10 +42,10 @@ python -m sw_luadocs export Addon.txt Addon.md
 # Addon.txt を WikiWiki 形式に変換して、結果を WikiWiki.txt に出力する場合
 python -m sw_luadocs export -f wikiwiki Addon.txt WikiWiki.txt
 
-# Input/ 直下にあるファイルを全て Markdown 形式に変換して、結果を Output/ 直下に拡張子 .md で出力する場合
+# Input/ フォルダにあるファイルを全て Markdown 形式に変換して、結果を Output/ フォルダに拡張子 .md で出力する場合
 python -m sw_luadocs export Input/ Output/
 
-# Input/ 直下にあるファイルを全て WikiWiki 形式に変換して、結果を Output/ 直下に拡張子 .txt で出力する場合
+# Input/ フォルダにあるファイルを全て WikiWiki 形式に変換して、結果を Output/ フォルダに拡張子 .txt で出力する場合
 python -m sw_luadocs export -f wikiwiki --suffix .txt Input/ Output/
 ```
 
