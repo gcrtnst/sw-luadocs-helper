@@ -16,7 +16,7 @@ python -m sw_luadocs export [-h] [-f FORMAT] [--suffix SUFFIX] [--encoding ENCOD
 ![](https://i.imgur.com/jhQdxd2.png)
 
 `export` サブコマンドを使用するには、まず下記の準備作業が必要です。
-- インストールがまだの場合は、[README.md](README.md) に従いインストールを済ませてください。
+- インストールがまだの場合は、[README.md](README.md#インストール) に従いインストールを済ませてください。
 
 準備が出来たら、`export` サブコマンドを実行します。引数は以下の通りに設定してください。
 - `-f FORMAT` でマークアップ形式を指定してください。
