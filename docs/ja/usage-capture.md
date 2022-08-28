@@ -11,7 +11,7 @@ python -m sw_luadocs capture [-h] -c CONFIG capture_file
 
 以下は撮影されたスクリーンショットの例です。
 
-![capture サブコマンドによって撮影されたスクリーンショットの例](https://i.imgur.com/fOfsdKn.png)
+![](https://i.imgur.com/fOfsdKn.png)
 
 `capture` サブコマンドを使用するには、まず下記の準備作業が必要です。
 - インストールがまだの場合は、[README.md](README.md) に従いインストールを済ませてください。
