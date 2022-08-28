@@ -70,7 +70,7 @@ python -m sw_luadocs recognize -c ../cfg/sw_luadocs_vehicle.toml Vehicle.png Veh
   - 未指定の場合は自動検出します。
 
 ## 設定ファイル
-`recognize` サブコマンドは以下の設定を使用します。
+`recognize` サブコマンドは以下の設定項目を使用します。
 
 ```toml
 [recognize]
