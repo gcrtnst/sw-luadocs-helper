@@ -54,7 +54,7 @@ pip install -r requirements.txt                               # 依存パッケ�
 
 これでインストールは完了です。
 
-以降、sw-luadocs-helper を使用する際は、本リポジトリの src/ フォルダをカレントディレクトリにして、仮想環境を有効化（`.venv/Scripts/activate.bat`）してから、コマンドを実行してください。
+以降、sw-luadocs-helper を使用する際は、本リポジトリの `src/` フォルダをカレントディレクトリにして、仮想環境を有効化（`.venv/Scripts/activate.bat`）してから、コマンドを実行してください。
 
 ## 使い方
 sw-luadocs-helper は複数のサブコマンドで構成されています。sw-luadocs-helper を使用して Lua ヘルプを書き写すには、以下の手順に従います。各手順の実施方法は、それぞれのサブコマンドのドキュメントを参照ください。
@@ -75,9 +75,8 @@ sw-luadocs-helper の開発時は以下のアプリケーションを使用し�
   - `pip install black`
 - [Flake8](https://github.com/pycqa/flake8)
   - sw-luadocs-helper の Python コードすべてに対して警告が発生しないようにします。
-  - 設定ファイルは本リポジトリの src/.flake8 にあります。
+  - 設定ファイルは本リポジトリの `src/.flake8` にあります。
   - `pip install flake8`
 
 ## ライセンス
 sw-luadocs-helper のライセンスについては、本リポジトリのルートフォルダに格納されている [LICENSE](../../LICENSE) ファイルを参照ください。
-
