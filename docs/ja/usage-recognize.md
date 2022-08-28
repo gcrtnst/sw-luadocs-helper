@@ -63,7 +63,9 @@ python -m sw_luadocs recognize -c ../cfg/sw_luadocs_vehicle.toml Vehicle.png Veh
 
 ### オプション
 - `-h`：ヘルプメッセージを出力して終了
-- `-c CONFIG`, `--config CONFIG`：設定ファイル（必須）
+- `-c CONFIG`, `--config CONFIG`：TOML 形式の設定ファイル（必須）
+  - 本リポジトリの `cfg/` フォルダに格納されているファイルを指定してください。`sw_luadocs_addon.toml` は Addon Lua のヘルプ用、`sw_luadocs_vehicle.toml` は Vehicle Lua のヘルプ用です。
+  - 使用する設定項目の一覧は[設定ファイル](#設定ファイル)の章を参照ください。
 - `--tesseract-exe TESSERACT_EXE`：`tesseract.exe` の場所
   - 未指定の場合は自動検出します。
 
