@@ -145,7 +145,7 @@ def extract_one(*, recognize_file, extract_file, exe32_bin, exe64_bin):
         fobj.write(ext_txt)
 
 
-def export(*, load_path, save_path, markup, suffix, encoding, newline):
+def export(*, load_path, save_path, markup, encoding, newline):
     load_path = pathlib.Path(load_path)
     if not load_path.is_dir():
         export_one(
@@ -156,6 +156,10 @@ def export(*, load_path, save_path, markup, suffix, encoding, newline):
             newline=newline,
         )
         return
+
+    suffix = ".txt"
+    if markup == "markdown":
+        suffix = ".md"
 
     for load_file in load_path.iterdir():
         if not load_file.is_file():
@@ -224,7 +228,6 @@ def main(*, args=None, exit_on_error=True):
         dest="markup",
         metavar="FORMAT",
     )
-    parser_export.add_argument("--suffix", default=".md")
     parser_export.add_argument("--encoding", default="utf-8")
     parser_export.add_argument("--newline", default="LF", type=parse_newline_argument)
 
@@ -253,7 +256,6 @@ def main(*, args=None, exit_on_error=True):
             load_path=ns.load_path,
             save_path=ns.save_path,
             markup=ns.markup,
-            suffix=ns.suffix,
             encoding=ns.encoding,
             newline=ns.newline,
         )
