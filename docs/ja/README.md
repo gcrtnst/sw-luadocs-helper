@@ -54,7 +54,7 @@ pip install -r requirements.txt                               # 依存パッケ�
 
 これでインストールは完了です。
 
-以降、sw-luadocs-helper を使用する際は、本リポジトリの `src/` フォルダをカレントディレクトリにして、仮想環境を有効化（`.venv/Scripts/activate.bat`）してから、コマンドを実行してください。
+以降、sw-luadocs-helper を使用する際は、本リポジトリの `src/` フォルダをカレントディレクトリにして、仮想環境を有効化（`.venv\Scripts\activate.bat`）してから、コマンドを実行してください。
 
 ## 使い方
 sw-luadocs-helper は複数のサブコマンドで構成されています。sw-luadocs-helper を使用して Lua ヘルプを書き写すには、以下の手順に従います。各手順の実施方法は、それぞれのサブコマンドのドキュメントを参照ください。
