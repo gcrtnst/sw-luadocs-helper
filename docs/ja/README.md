@@ -1,7 +1,7 @@
 # sw-luadocs-helper
 sw-luadocs-helper は、Stormworks の Lua ヘルプを読み取って Markdown 化するコンソールアプリケーションです。
 
-## 機能
+## 説明
 sw-luadocs-helper は、OCR やバイナリからのデータ抽出などの手段を使って、Stormworks 内の Lua ヘルプを読み取ります。読み取った Lua ヘルプは Markdown 等の一般的なマークアップ形式で記述されたテキストファイルとして出力されるため、ユーザーはテキストエディタやブラウザ等の使い慣れたアプリケーションを使用して、それらを快適に閲覧することができます。
 
 ![](https://i.imgur.com/GiOi9kp.png)
