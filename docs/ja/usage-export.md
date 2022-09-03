@@ -3,7 +3,7 @@
 
 ## 概要
 ```
-python -m sw_luadocs export [-h] [-f FORMAT] [--suffix SUFFIX] [--encoding ENCODING] [--newline NEWLINE] load_path save_path
+python -m sw_luadocs export [-h] [-f FORMAT] [--encoding ENCODING] [--newline NEWLINE] load_path save_path
 ```
 
 ## 説明
@@ -27,8 +27,9 @@ python -m sw_luadocs export [-h] [-f FORMAT] [--suffix SUFFIX] [--encoding ENCOD
   - 入力するテキストファイルは、flatdoc 形式のものを使用してください。
     - `recognize` サブコマンドおよび `extract` サブコマンドから出力されるテキストファイルは flatdoc 形式です。
     - flatdoc 形式の詳細は [flatdoc](#flatdoc) の章を参照ください。
-  - なお、入出力の両方にファイルではなくフォルダを指定すると、入力フォルダ直下のファイルを一括処理して、結果を出力フォルダ直下に格納します。各出力ファイルの名前は、入力ファイルの名前を拡張子 `.md` でリネームしたものとなります。
-    - 出力ファイルの拡張子を変更したい場合は `--suffix` 引数を使用してください。例えば、`--suffix .txt` と指定します。
+  - なお、入出力の両方にファイルではなくフォルダを指定すると、入力フォルダ直下のファイルを一括処理して、結果を出力フォルダ直下に格納します。各出力ファイルの名前は、入力ファイルの名前を下記の拡張子でリネームしたものとなります。
+    - マークアップ形式が `markdown` の場合、拡張子は `.md` となります。
+    - マークアップ形式が `wikiwiki` の場合、拡張子は `.txt` となります。
 
 以下はコマンド例です。
 ```sh
@@ -42,11 +43,11 @@ python -m sw_luadocs export Addon.txt Addon.md
 # Addon.txt を WikiWiki 形式に変換して、結果を WikiWiki.txt に出力する場合
 python -m sw_luadocs export -f wikiwiki Addon.txt WikiWiki.txt
 
-# Input/ フォルダにあるファイルを全て Markdown 形式に変換して、結果を Output/ フォルダに拡張子 .md で出力する場合
+# Input/ フォルダにあるファイルを全て Markdown 形式に変換して、結果を Output/ フォルダに出力する場合
 python -m sw_luadocs export Input/ Output/
 
-# Input/ フォルダにあるファイルを全て WikiWiki 形式に変換して、結果を Output/ フォルダに拡張子 .txt で出力する場合
-python -m sw_luadocs export -f wikiwiki --suffix .txt Input/ Output/
+# Input/ フォルダにあるファイルを全て WikiWiki 形式に変換して、結果を Output/ フォルダに出力する場合
+python -m sw_luadocs export -f wikiwiki Input/ Output/
 ```
 
 `export` サブコマンドによる変換処理は簡易的であり、インライン HTML や特殊記号などのエスケープを実施しません。そのため、入力されるテキストデータによっては、意図しないマークアップが出力されることがあります。ユーザーは `export` サブコマンドから出力されるテキストファイルを目視で確認して、必要に応じてマークアップを修正する必要があります。
@@ -59,19 +60,15 @@ python -m sw_luadocs export -f wikiwiki --suffix .txt Input/ Output/
   - flatdoc 形式のテキストファイルを入力してください。flatdoc については [flatdoc](#flatdoc) 章を参照ください。
 - `save_path`：出力ファイルの場所
   - `load_path` でファイルを指定した場合は、この引数もファイルを指定してください。
-  - `load_path` でフォルダを指定した場合は、この引数もフォルダを指定してください。このフォルダの直下にファイルを出力します。各出力ファイルの名前は、入力ファイルの名前を `--suffix` で指定された拡張子でリネームしたものとなります。
+  - `load_path` でフォルダを指定した場合は、この引数もフォルダを指定してください。このフォルダの直下にファイルを出力します。各出力ファイルの名前は、入力ファイルの名前を下記の拡張子でリネームしたものとなります。
+    - マークアップ形式が `markdown` の場合、拡張子は `.md` となります。
+    - マークアップ形式が `wikiwiki` の場合、拡張子は `.txt` となります。
   - flatdoc 形式のテキストファイルが出力されます。flatdoc については [flatdoc](#flatdoc) 章を参照ください。
 
 ### オプション
 - `-f FORMAT`, `--format FORMAT`：変換先のマークアップ形式
   - 指定できるマークアップ形式は `markdown` または `wikiwiki` です。
   - デフォルトでは `markdown` となります。
-- `--suffix SUFFIX`：出力ファイルの拡張子
-  - `load_path` でファイルを指定した場合は、無視されます。
-  - `load_path` でフォルダを指定した場合は、出力ファイルの拡張子がこの引数で設定したものになります。
-  - ピリオド付きで指定してください。
-  - 空文字列にすると拡張子が無いファイルが出力されます。
-  - デフォルトは `.md` です。
 - `--encoding ENCODING`：出力ファイルのエンコーディング
   - 指定できるエンコーディングの一覧は [Python のドキュメント](https://docs.python.org/3/library/codecs.html#standard-encodings) を参照ください。
   - デフォルトは `utf-8` です。
