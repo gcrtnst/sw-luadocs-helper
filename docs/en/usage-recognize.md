@@ -56,8 +56,8 @@ If you get an exception `pytesseract.pytesseract.TesseractNotFoundError` at runt
   - If a folder is specified, the application processes all files directly under that folder.
   - It uses Pillow to save images. See `python -m PIL` for a list of supported image formats.
 - `recognize_path`: Output destination for text files
-  - If `capture_path` specifies a file, this argument must also specify a file.
-  - If `capture_path` specifies a folder, this argument must also be a folder. Files will be output directly under this folder. Each output file is renamed from the input file name with `.txt` extension.
+  - If a file is specified in `capture_path`, this argument must also be a file.
+  - If a folder is specified in `capture_path`, this argument must also be a folder. Files will be output directly under this folder. Each output file is renamed from the input file name with `.txt` extension.
   - The application outputs a text file in flatdoc format, see the flatdoc chapter in [usage-export.md](usage-export.md#flatdoc) for more information about flatdoc.
 
 ### Options
