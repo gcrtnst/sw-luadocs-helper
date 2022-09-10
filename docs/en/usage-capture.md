@@ -30,10 +30,10 @@ Below are example commands.
 cd src/                     # go to the src/ folder of this repository
 .venv\Scripts\activate.bat  # activate venv
 
-# Capture the Addon Lua document and output the result to Addon.png
+# Capture the Addon Lua documentation and output the result to Addon.png
 python -m sw_luadocs capture -c ../cfg/sw_luadocs_addon.toml Addon.png
 
-# Capture the Vehicle Lua document and output the result to Vehicle.png
+# Capture the Vehicle Lua documentation and output the result to Vehicle.png
 python -m sw_luadocs capture -c ../cfg/sw_luadocs_vehicle.toml Vehicle.png
 ```
 
