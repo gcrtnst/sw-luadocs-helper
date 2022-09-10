@@ -2,7 +2,7 @@
 sw-luadocs-helper is a console application that reads Stormworks Lua API documentation and converts it to Markdown.
 
 ## Description
-sw-luadocs-helper reads Lua API documentation in Stormworks using methods such as OCR or data extraction from binaries. It outputs the retrieved documentation as text files written in common markup formats such as Markdown, so you can comfortably read them using familiar applications such as a text editor or browser.
+sw-luadocs-helper reads Stormworks Lua API documentation using methods such as OCR or data extraction from binaries. It outputs the retrieved documentation as text files written in common markup formats such as Markdown, so you can comfortably read them using familiar applications such as a text editor or browser.
 
 ![](https://i.imgur.com/GiOi9kp.png)
 
