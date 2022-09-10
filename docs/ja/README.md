@@ -33,7 +33,7 @@ sw-luadocs-helper を使用するには下記の環境が必要です。
 まず、sw-luadocs-helper が依存している下記のソフトウェアをインストールしてください。いずれも最新のバージョンを選択してください。
 - [Stormworks: Build and Rescue](https://store.steampowered.com/app/573090/Stormworks_Build_and_Rescue/)
 - [Python](https://www.python.org/)
-  - `winget install Python.Python.3.X`（X はマイナー番号）
+  - `winget install Python.Python.3.X`（X はマイナーバージョン番号）
 - [Git](https://git-scm.com/)
   - `winget install Git.Git`
 - [Tesseract](https://github.com/tesseract-ocr/tesseract)
