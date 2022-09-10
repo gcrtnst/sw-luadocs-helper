@@ -46,7 +46,7 @@ The `capture` subcommand works as follows:
 6. Minimize the Stormworks window.
 7. Combines all screenshots taken and outputs them to a file.
 
-Do not touch the mouse or keyboard while the `capture` subcommand is executing. Any manipulation during execution may cause the screenshot to fail.
+Do not touch the mouse or keyboard while the `capture` subcommand is executing. Any operation during execution may cause the screenshot to fail.
 
 After working with the `capture` subcommand, the next step is character recognition with the `recognize` subcommand, see [usage-recognize.md](usage-recognize.md).
 
