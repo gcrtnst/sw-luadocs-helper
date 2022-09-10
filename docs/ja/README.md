@@ -57,7 +57,7 @@ pip install -r requirements.txt                               # 依存パッケ�
 以降、sw-luadocs-helper を使用する際は、本リポジトリの `src/` フォルダをカレントディレクトリにして、仮想環境を有効化（`.venv\Scripts\activate.bat`）してから、コマンドを実行してください。
 
 ## 使い方
-sw-luadocs-helper は複数のサブコマンドで構成されています。sw-luadocs-helper を使用して Lua ヘルプを書き写すには、以下の手順に従います。各手順の実施方法は、それぞれのサブコマンドのドキュメントを参照ください。
+sw-luadocs-helper は複数のサブコマンドで構成されています。sw-luadocs-helper を使用して Lua ヘルプを Markdown 化するには、以下の手順に従います。各手順の実施方法は、それぞれのサブコマンドのドキュメントを参照ください。
 1. `capture` サブコマンドを使用して、ゲーム画面上に表示されている Lua ヘルプを撮影
     - `capture` サブコマンドのドキュメント：[usage-capture.md](usage-capture.md)
 2. `recognize` サブコマンドを使用して、撮影したスクリーンショットに対して文字認識を実施
