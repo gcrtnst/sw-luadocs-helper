@@ -19,10 +19,10 @@ To use the `capture` subcommand, you must first prepare the following:
 - Please start Stormworks beforehand and display the document you wish to capture.
 
 After the above preparations, execute the `capture` subcommand. Specify the arguments as follows:
-- Specify a configuration file with the `-c CONFIG` option.
+- Specify a configuration file as the `-c CONFIG` option.
   - The configuration files are located in the `cfg/` folder of this repository.
   - Specify `sw_luadocs_addon.toml` for Addon Lua documentation or `sw_luadocs_vehicle.toml` for Vehicle Lua documentation.
-- Specify the destination file for screenshots taken with the positional argument.
+- Specify the destination file for screenshots taken as the positional argument.
 
 Below are example commands.
 ```sh
