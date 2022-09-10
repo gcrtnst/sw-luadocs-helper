@@ -53,7 +53,7 @@ python -m venv .venv --upgrade-deps                           # create venv
 pip install -r requirements.txt                               # install dependent packages
 ```
 
-Installation is now complete.
+That's all for installation.
 
 From now on, when using sw-luadocs-helper, change directory to the `src/` folder of this repository and activate the virtual environment (`.venv\Scripts\activate.bat`) before running the command.
 
