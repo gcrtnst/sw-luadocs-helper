@@ -34,7 +34,7 @@ The following environment is required to use sw-luadocs-helper.
 First, install the following dependent software. Please select the latest version of any of them.
 - [Stormworks: Build and Rescue](https://store.steampowered.com/app/573090/Stormworks_Build_and_Rescue/)
 - [Python](https://www.python.org/)
-  - `winget install Python.Python.3.X` (X is the minor number)
+  - `winget install Python.Python.3.X` (X is the minor version number)
 - [Git](https://git-scm.com/)
   - `winget install Git.Git`
 - [Tesseract](https://github.com/tesseract-ocr/tesseract)
