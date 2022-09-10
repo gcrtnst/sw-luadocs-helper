@@ -21,7 +21,7 @@ In addition to several standard libraries, you can use APIs to control vehicles 
 - No translation function is available.
   - You must be able to read English. (This may be easy for you reading this, but difficult for me.)
 
-So I wanted to transcribe this documentation into a Markdown file. This would allow us to read the document out of game, search it, and machine translate it easily. However, Stormworks is upgraded every two weeks, and manually transcribing the documentation each time was a chore. So I decided to develop an application that could automatically transcribe the documentation.
+So I wanted to transcribe this documentation into a Markdown file. This would allow us to read the documentation out of game, search it, and machine translate it easily. However, Stormworks is upgraded every two weeks, and manually transcribing the documentation each time was a chore. So I decided to develop an application that could automatically transcribe the documentation.
 
 ## Requirements
 The following environment is required to use sw-luadocs-helper.
