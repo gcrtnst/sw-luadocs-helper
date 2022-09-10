@@ -15,7 +15,7 @@ In addition to several standard libraries, you can use APIs to control vehicles 
 
 - The documentation is only available in-game.
   - To read it, you must launch the game each time.
-  - You cannot read the documentation when you are away from home or in other environments where you cannot play the game.
+  - You cannot read the documentation when you don't have access to a PC.
 - No search function is available.
   - You must manually find the desired description.
 - No translation function is available.
