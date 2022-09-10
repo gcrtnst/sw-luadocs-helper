@@ -7,7 +7,7 @@ python -m sw_luadocs capture [-h] -c CONFIG capture_file
 ```
 
 ## Description
-The `capture` subcommand takes a screenshot of the Stormworks Lua API documentation. It automatically scrolls through the document to capture the entire image, rather than just the displayed area.
+The `capture` subcommand takes a screenshot of the Stormworks Lua API documentation. It captures the entire document, not just the displayed area, by automatically scrolling through the document.
 
 Below is an example of a screenshot taken.
 
