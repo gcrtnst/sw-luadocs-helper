@@ -47,7 +47,7 @@ After working with the `recognize` subcommand, the next step is to automatically
 
 If you get an exception `pytesseract.pytesseract.TesseractNotFoundError`, please follow the steps below.
 - If you have not yet installed Tesseract, follow the instructions in [README.md](README.md#Installation).
-- If you have already installed Tesseract and still get the above exception, manually specify the location of `tesseract.exe` with the `--tesseract-exe` argument.
+- If you have already installed Tesseract and still get the above exception, manually specify the location of `tesseract.exe` as the `--tesseract-exe` argument.
 
 ## Command Line Options
 ### Positional Arguments
