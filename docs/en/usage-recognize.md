@@ -11,7 +11,7 @@ The `recognize` subcommand performs the following operations on screenshots take
 - Perform character recognition on screenshots and convert to text data.
 - Classify recognized strings into one of the following types: headline, body, code
 
-The following is an example of an actual output text file. The classified type is listed at the beginning of each line, followed by the recognized string. (See the flatdoc chapter of [usage-export.md](usage-export.md#flatdoc) for the format of this text file.)
+The following is an example of an output text file. The classified type is listed at the beginning of each line, followed by the recognized string. (See the flatdoc chapter of [usage-export.md](usage-export.md#flatdoc) for the format of this text file.)
 ![](https://i.imgur.com/PlaDsP6.png)
 
 To use the `recognize` subcommand, you must first prepare the following:
