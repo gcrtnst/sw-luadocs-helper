@@ -19,7 +19,7 @@ To use the `export` subcommand, you must first prepare the following:
 - Install sw-luadocs-helper according to [README.md](README.md#Installation), if not already installed.
 
 After the above preparations, execute the `export` subcommand. Specify the arguments as follows:
-- Specify the markup format with the `-f FORMAT` option.
+- Specify the markup format as the `-f FORMAT` option.
   - Available markup formats are `markdown` or `wikiwiki`.
   - `wikiwiki` is the format used by [WikiWiki](https://wikiwiki.jp/), a free rental wiki service primarily in Japan. `wikiwiki` is similar to the [PukiWiki](https://pukiwiki.osdn.jp/) format, but assumes that the [code plugin](https://wikiwiki.jp/sample/Manual/A-D#sd91fd21) is installed.
   - The default is `markdown`.
