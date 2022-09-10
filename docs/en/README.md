@@ -6,7 +6,7 @@ sw-luadocs-helper reads Stormworks Lua API documentation using methods such as O
 
 ![](https://i.imgur.com/GiOi9kp.png)
 
-Note that sw-luadocs-helper does not read the documentation 100% accurately; running sw-luadocs-helper against all of the Stormworks Lua API documentation will result in a few errors. Therefore, you will have to manually review the output documentation and correct the errors. However, this would be much easier than manually transcribing it.
+Note that sw-luadocs-helper does not read the documentation 100% accurately; running sw-luadocs-helper against all of the Stormworks Lua API documentation will result in a few errors. Therefore, you will have to manually review the output documentation and correct the errors. However, this would be much easier than manually transcribing the document.
 
 ## Background
 [Stormworks: Build and Rescue](https://store.steampowered.com/app/573090/Stormworks_Build_and_Rescue/) is a sandbox simulation game. It allows players to design vehicles and addons and make them work within a sandbox environment. These vehicles and addons can be programmed using Lua.
