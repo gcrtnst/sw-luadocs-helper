@@ -13,7 +13,7 @@ Note that sw-luadocs-helper does not read the documentation 100% accurately; run
 
 In addition to several standard libraries, you can use APIs to control vehicles and addons in Stormworks Lua. These APIs are described in the documentation available in-game. However, this documentation has the following issues:
 
-- This documentation is only available in-game.
+- The documentation is only available in-game.
   - To read it, you must launch the game each time.
   - You cannot read the documentation when you are away from home or in other environments where you cannot play the game.
 - No search function is available.
