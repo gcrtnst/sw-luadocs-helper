@@ -23,7 +23,7 @@ After the above preparations, execute the `recognize` subcommand. Specify the ar
 - Specify a configuration file as the `-c CONFIG` option.
   - The configuration files are located in the `cfg/` folder of this repository.
   - Specify `sw_luadocs_addon.toml` for Addon Lua documentation or `sw_luadocs_vehicle.toml` for Vehicle Lua documentation.
-- Specify the screenshot file to be input and the text file to be output as the positional argument.
+- Specify the screenshot file to be input and the text file to be output as the positional arguments.
   - The screenshot file to be entered should be one taken with the `capture` subcommand.
   - Note that if you specify a folder instead of a file for both input and output, the application will batch process files directly under the input folder and store the results directly under the output folder.
 
