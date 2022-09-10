@@ -58,7 +58,7 @@ That's all for installation.
 From now on, when using sw-luadocs-helper, change directory to the `src/` folder of this repository and activate the virtual environment (`.venv\Scripts\activate.bat`) before running the command.
 
 ## Usage
-sw-luadocs-helper consists of several subcommands. sw-luadocs-helper can be used to transcribe Lua API documentation by following these steps. Please refer to the documentation for each subcommand for instructions on how to perform each step.
+sw-luadocs-helper consists of several subcommands. sw-luadocs-helper can be used to convert Lua API documentation to Markdown by following these steps. For details on each step, please refer to the documentation of the respective subcommand.
 1. Use the `capture` subcommand to capture in-game documentation
     - Documentation for the `capture` subcommand: [usage-capture.md](usage-capture.md)
 2. Use the `recognize` subcommand to perform character recognition on the screenshot taken
