@@ -54,7 +54,7 @@ If you get an exception `pytesseract.pytesseract.TesseractNotFoundError`, please
 - `capture_path`: Location of screenshots taken with the `capture` subcommand.
   - If a file is specified, the application processes that file.
   - If a folder is specified, the application processes all files directly under that folder.
-  - It uses Pillow to save images. See `python -m PIL` for a list of supported image formats.
+  - It uses Pillow to load images. See `python -m PIL` for a list of supported image formats.
 - `recognize_path`: Output destination for text files
   - If a file is specified in `capture_path`, this argument must also be a file.
   - If a folder is specified in `capture_path`, this argument must also be a folder. Files will be output directly under this folder. Each output file is renamed from the input file name with `.txt` extension.
