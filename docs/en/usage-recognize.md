@@ -20,7 +20,7 @@ To use the `recognize` subcommand, you must first prepare the following:
   - See [usage-capture.md](usage-capture.md) for usage of the `capture` subcommand.
 
 After the above preparations, execute the `recognize` subcommand. Specify the arguments as follows:
-- Specify a configuration file with the `-c CONFIG` option.
+- Specify a configuration file as the `-c CONFIG` option.
   - The configuration files are located in the `cfg/` folder of this repository.
   - Specify `sw_luadocs_addon.toml` for Addon Lua documentation or `sw_luadocs_vehicle.toml` for Vehicle Lua documentation.
 - Specify the screenshot file to be input and the text file to be output as the positional argument.
