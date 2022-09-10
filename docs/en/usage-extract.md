@@ -38,7 +38,7 @@ python -m sw_luadocs extract Input/ Output/
 
 The `extract` subcommand automatically corrects most misrecognitions, but it is not perfect. Occasionally, it will select and output incorrect text data from Stormworks binaries. You should manually review the text file output from the `extract` subcommand and correct the misrecognitions as necessary.
 
-After working with the `extract` subcommand, the next step is to convert the text editor to Markdown or other markup format with the `export` subcommand, see [usage-export.md](usage-export.md).
+After working with the `extract` subcommand, the next step is to convert the text data to Markdown or other markup format with the `export` subcommand, see [usage-export.md](usage-export.md).
 
 The `extract` subcommand will automatically detect the location of the Stormworks binaries installed on your system. If the automatic detection fails, an exception will be raised. In this case, please follow the steps below.
 - If you have not yet installed Stormworks, follow the instructions in [README.md](README.md#Installation).
