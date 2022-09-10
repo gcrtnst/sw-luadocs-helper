@@ -36,7 +36,7 @@ cd src/                     # go to the src/ folder of this repository
 # Process Addon.png as a screenshot of Addon Lua documentation and output the result to Addon.ocr.txt
 python -m sw_luadocs recognize -c ../cfg/sw_luadocs_addon.toml Addon.png Addon.ocr.txt
 
-# Batch process files in the Input folder as screenshots of Addon Lua documentation and output the results to the Output folder
+# Batch process files in the Input/ folder as screenshots of Addon Lua documentation and output the results to the Output/ folder
 python -m sw_luadocs recognize -c ../cfg/sw_luadocs_addon.toml Input/ Output/
 
 # Process Vehicle.png as a screenshot of Vehicle Lua documentation and output the result to Vehicle.ocr.txt
