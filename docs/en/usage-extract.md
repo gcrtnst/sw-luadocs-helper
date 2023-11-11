@@ -3,7 +3,7 @@ This page describes how to use the `extract` subcommand.
 
 ## Synopsis
 ```
-python -m sw_luadocs extract [-h] [--stormworks32-exe STORMWORKS32_EXE] [--stormworks64-exe STORMWORKS64_EXE] recognize_path extract_path
+python -m sw_luadocs extract [-h] [--stormworks-exe STORMWORKS_EXE] recognize_path extract_path
 ```
 
 ## Description
@@ -42,10 +42,8 @@ After working with the `extract` subcommand, the next step is to convert the tex
 
 The `extract` subcommand will automatically detect the location of the Stormworks binaries installed on your system. If the automatic detection fails, an exception will be raised. In this case, please follow the steps below.
 - If you have not yet installed Stormworks, follow the instructions in [README.md](README.md#Installation).
-- If you have already installed Stormworks and still get the above exception, use the `--stormworks32-exe` and `--stormworks64-exe` arguments to specify the location of the Stormworks binaries.
-  - For `--stormworks32-exe`, specify `stormworks.exe` (the 32-bit version of the Stormworks binary).
-  - For `--stormworks64-exe`, specify `stormworks64.exe` (the 64-bit version of the Stormworks binary).
-  - Both `--stormworks32-exe` and `--stormworks64-exe` must be specified. Otherwise, it will not work.
+- If you have already installed Stormworks and still get the above exception, use the `--stormworks-exe` arguments to specify the location of the Stormworks binaries.
+  - Please specify the 64-bit version of the Stormworks binary; if you specify the 32-bit version, the accuracy will be degraded.
 
 ## Command Line Options
 ### Positional Arguments
@@ -60,9 +58,6 @@ The `extract` subcommand will automatically detect the location of the Stormwork
 
 ### Options
 - `-h`: Show help message and exit
-- `--stormworks32-exe`: 32-bit Stormworks Binary Locations
+- `--stormworks-exe`: Stormworks Binary Locations
   - If not specified, it will be auto-detected.
-  - Both the 32-bit and 64-bit Stormworks binaries are required. Only one will not work.
-- `--stormworks64-exe`: 64-bit Stormworks Binary Locations
-  - If not specified, it will be auto-detected.
-  - Both the 32-bit and 64-bit Stormworks binaries are required. Only one will not work.
+  - Please specify the 64-bit version of the Stormworks binary; if you specify the 32-bit version, the accuracy will be degraded.
