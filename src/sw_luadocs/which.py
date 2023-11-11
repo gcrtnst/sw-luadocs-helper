@@ -32,34 +32,7 @@ def tesseract(*, mode=os.F_OK | os.X_OK):
     )
 
 
-def stormworks32(*, mode=os.F_OK | os.X_OK):
-    return which(
-        filter(
-            lambda exe: exe is not None,
-            [
-                envpath(
-                    "PROGRAMFILES",
-                    "Steam",
-                    "steamapps",
-                    "common",
-                    "Stormworks",
-                    "stormworks.exe",
-                ),
-                envpath(
-                    "PROGRAMFILES(X86)",
-                    "Steam",
-                    "steamapps",
-                    "common",
-                    "Stormworks",
-                    "stormworks.exe",
-                ),
-            ],
-        ),
-        mode=mode,
-    )
-
-
-def stormworks64(*, mode=os.F_OK | os.X_OK):
+def stormworks(*, mode=os.F_OK | os.X_OK):
     return which(
         filter(
             lambda exe: exe is not None,
@@ -79,6 +52,22 @@ def stormworks64(*, mode=os.F_OK | os.X_OK):
                     "common",
                     "Stormworks",
                     "stormworks64.exe",
+                ),
+                envpath(
+                    "PROGRAMFILES",
+                    "Steam",
+                    "steamapps",
+                    "common",
+                    "Stormworks",
+                    "stormworks.exe",
+                ),
+                envpath(
+                    "PROGRAMFILES(X86)",
+                    "Steam",
+                    "steamapps",
+                    "common",
+                    "Stormworks",
+                    "stormworks.exe",
                 ),
             ],
         ),

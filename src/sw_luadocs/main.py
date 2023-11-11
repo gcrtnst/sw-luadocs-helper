@@ -99,19 +99,16 @@ def recognize_one(*, capture_file, recognize_file, recognize_cfg):
         fobj.write(txt)
 
 
-def extract(*, recognize_path, extract_path, stormworks32_exe, stormworks64_exe):
-    with open(stormworks32_exe, mode="rb") as fobj:
-        exe32_bin = fobj.read()
-    with open(stormworks64_exe, mode="rb") as fobj:
-        exe64_bin = fobj.read()
+def extract(*, recognize_path, extract_path, stormworks_exe):
+    with open(stormworks_exe, mode="rb") as fobj:
+        exe_bin = fobj.read()
 
     recognize_path = pathlib.Path(recognize_path)
     if not recognize_path.is_dir():
         extract_one(
             recognize_file=recognize_path,
             extract_file=extract_path,
-            exe32_bin=exe32_bin,
-            exe64_bin=exe64_bin,
+            exe_bin=exe_bin,
         )
         return
 
@@ -122,20 +119,18 @@ def extract(*, recognize_path, extract_path, stormworks32_exe, stormworks64_exe)
         extract_one(
             recognize_file=recognize_file,
             extract_file=extract_file,
-            exe32_bin=exe32_bin,
-            exe64_bin=exe64_bin,
+            exe_bin=exe_bin,
         )
 
 
-def extract_one(*, recognize_file, extract_file, exe32_bin, exe64_bin):
+def extract_one(*, recognize_file, extract_file, exe_bin):
     with open(recognize_file, mode="r", encoding="utf-8", newline="\n") as fobj:
         ocr_txt = fobj.read()
 
     ocr_flatdoc = dot_flatdoc.parse(ocr_txt)
     ext_flatdoc = dot_extract.main(
         ocr_flatdoc,
-        exe32_bin,
-        exe64_bin,
+        exe_bin,
         body_sep="\n\n",
         code_sep="\n\n",
     )
@@ -208,14 +203,9 @@ def main(*, args=None, exit_on_error=True):
     parser_extract.add_argument("recognize_path", type=pathlib.Path)
     parser_extract.add_argument("extract_path", type=pathlib.Path)
     parser_extract.add_argument(
-        "--stormworks32-exe",
+        "--stormworks-exe",
         type=pathlib.Path,
-        default=dot_which.stormworks32(mode=os.F_OK | os.R_OK),
-    )
-    parser_extract.add_argument(
-        "--stormworks64-exe",
-        type=pathlib.Path,
-        default=dot_which.stormworks64(mode=os.F_OK | os.R_OK),
+        default=dot_which.stormworks(mode=os.F_OK | os.R_OK),
     )
 
     parser_export = parser_group.add_parser("export", help="")
@@ -248,8 +238,7 @@ def main(*, args=None, exit_on_error=True):
         return extract(
             recognize_path=ns.recognize_path,
             extract_path=ns.extract_path,
-            stormworks32_exe=ns.stormworks32_exe,
-            stormworks64_exe=ns.stormworks64_exe,
+            stormworks_exe=ns.stormworks_exe,
         )
     if ns.command == "export":
         return export(
