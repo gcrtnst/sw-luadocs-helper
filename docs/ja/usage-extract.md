@@ -3,7 +3,7 @@
 
 ## 概要
 ```
-python -m sw_luadocs extract [-h] [--stormworks32-exe STORMWORKS32_EXE] [--stormworks64-exe STORMWORKS64_EXE] recognize_path extract_path
+python -m sw_luadocs extract [-h] [--stormworks-exe STORMWORKS_EXE] recognize_path extract_path
 ```
 
 ## 説明
@@ -42,10 +42,8 @@ python -m sw_luadocs extract Input/ Output/
 
 `extract` サブコマンドは、システムにインストールされている Stormworks バイナリの場所を自動的に検出します。もし自動検出に失敗した場合は例外が発生します。この場合は、以下の手順で対処してください。
 - まだ Stormworks をインストールしていない場合は、[README.md](README.md#インストール) に従ってインストールしてください。
-- Stormworks を既にインストールしているにもかかわらず上記の例外が発生する場合は、`--stormworks32-exe` 引数および `--stormworks64-exe` 引数で Stormworks バイナリの場所を指定してください。
-  - `--stormworks32-exe` では `stormworks.exe`（32bit 版の Stormworks バイナリ）を指定してください。
-  - `--stormworks64-exe` では `stormworks64.exe`（64bit 版の Stormworks バイナリ）を指定してください。
-  - `--stormworks32-exe` と `--stormworks64-exe` を両方とも指定してください。片方のみでは動作しません。
+- Stormworks を既にインストールしているにもかかわらず上記の例外が発生する場合は、`--stormworks-exe` 引数で Stormworks バイナリの場所を指定してください。
+  - 64bit 版の Stormworks バイナリを指定してください。32bit 版を指定した場合、精度が低下します。
 
 ## コマンドラインオプション
 ### 位置引数
@@ -60,9 +58,6 @@ python -m sw_luadocs extract Input/ Output/
 
 ### オプション
 - `-h`：ヘルプメッセージを出力して終了
-- `--stormworks32-exe`：32bit 版 Stormworks バイナリの場所
+- `--stormworks-exe`：Stormworks バイナリの場所
   - 未指定の場合は自動検出します。
-  - 32bit 版と 64bit 版両方の Stormworks バイナリが必要です。片方のみでは動作しません。
-- `--stormworks64-exe`：64bit 版 Stormworks バイナリの場所
-  - 未指定の場合は自動検出します。
-  - 32bit 版と 64bit 版両方の Stormworks バイナリが必要です。片方のみでは動作しません。
+  - 64bit 版の Stormworks バイナリを指定してください。32bit 版を指定した場合、精度が低下します。
