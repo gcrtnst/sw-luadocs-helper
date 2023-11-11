@@ -1,3 +1,4 @@
+import collections
 import sw_luadocs.extract
 import sw_luadocs.flatdoc
 import unittest
@@ -32,30 +33,142 @@ class TestExtractStrings(unittest.TestCase):
         with self.assertRaises(TypeError):
             sw_luadocs.extract.extract_strings("")
 
+    def test_validate_value_error(self):
+        with self.assertRaises(ValueError):
+            sw_luadocs.extract.extract_strings(b"", align=0)
+
     def test_main(self):
-        for input_section_bin, expected_ext_txt_set in [
-            (b"", set()),
-            (b" ", set()),
-            (b"\x00", set()),
-            (b" \x00", {" "}),
-            (b"~\x00", {"~"}),
-            (b"\t\x00", {"\t"}),
-            (b"\r\x00", {"\r"}),
-            (b"\n\x00", {"\n"}),
-            (b"\x00 \x00", {" "}),
-            (b"a\x00b", {"a"}),
-            (b"a\x00b\x00", {"a", "b"}),
-            (b"a\x00b\x00", {"a", "b"}),
-            (
-                b"\x1F\xF3\xAB\x03abc\x00\x5e\xc2\x5c\x81def\x00\x07\x31\x56\xa8",
-                {"abc", "def"},
+        tt = collections.namedtuple(
+            "tt", ("input_section_bin", "input_align", "expected_ext_txt_set")
+        )
+
+        for tt in [
+            tt(
+                input_section_bin=b"",
+                input_align=1,
+                expected_ext_txt_set=set(),
+            ),
+            tt(
+                input_section_bin=b" ",
+                input_align=1,
+                expected_ext_txt_set=set(),
+            ),
+            tt(
+                input_section_bin=b"\x00",
+                input_align=1,
+                expected_ext_txt_set=set(),
+            ),
+            tt(
+                input_section_bin=b" \x00",
+                input_align=1,
+                expected_ext_txt_set={" "},
+            ),
+            tt(
+                input_section_bin=b"~\x00",
+                input_align=1,
+                expected_ext_txt_set={"~"},
+            ),
+            tt(
+                input_section_bin=b"\t\x00",
+                input_align=1,
+                expected_ext_txt_set={"\t"},
+            ),
+            tt(
+                input_section_bin=b"\r\x00",
+                input_align=1,
+                expected_ext_txt_set={"\r"},
+            ),
+            tt(
+                input_section_bin=b"\n\x00",
+                input_align=1,
+                expected_ext_txt_set={"\n"},
+            ),
+            tt(
+                input_section_bin=b"\x00 \x00",
+                input_align=1,
+                expected_ext_txt_set={" "},
+            ),
+            tt(
+                input_section_bin=b"a\x00b",
+                input_align=1,
+                expected_ext_txt_set={"a"},
+            ),
+            tt(
+                input_section_bin=b"a\x00b\x00",
+                input_align=1,
+                expected_ext_txt_set={"a", "b"},
+            ),
+            tt(
+                input_section_bin=b"\x1F\xF3\xAB\x03abc\x00\x5e\xc2\x5c\x81def\x00\x07\x31\x56\xa8",
+                input_align=1,
+                expected_ext_txt_set={"abc", "def"},
+            ),
+            tt(
+                input_section_bin=b"\x00 \x00",
+                input_align=4,
+                expected_ext_txt_set=set(),
+            ),
+            tt(
+                input_section_bin=b"\x00\x00\x00\x00 \x00",
+                input_align=4,
+                expected_ext_txt_set=set(),
+            ),
+            tt(
+                input_section_bin=b"\x00\x00\x00\x00 \x00\x00\x00",
+                input_align=4,
+                expected_ext_txt_set={" "},
+            ),
+            tt(
+                input_section_bin=b"ab\x00\x00",
+                input_align=4,
+                expected_ext_txt_set={"ab"},
+            ),
+            tt(
+                input_section_bin=b"\x00ab\x00",
+                input_align=4,
+                expected_ext_txt_set=set(),
+            ),
+            tt(
+                input_section_bin=b"\x01ab\x00",
+                input_align=4,
+                expected_ext_txt_set=set(),
+            ),
+            tt(
+                input_section_bin=b"ab\x01\x00",
+                input_align=4,
+                expected_ext_txt_set=set(),
+            ),
+            tt(
+                input_section_bin=b"ab\x00\x01",
+                input_align=4,
+                expected_ext_txt_set=set(),
+            ),
+            tt(
+                input_section_bin=b"ab\x00c",
+                input_align=4,
+                expected_ext_txt_set=set(),
+            ),
+            tt(
+                input_section_bin=b"abc\x00",
+                input_align=4,
+                expected_ext_txt_set={"abc"},
+            ),
+            tt(
+                input_section_bin=b"ab\x00cde\x00\x00",
+                input_align=4,
+                expected_ext_txt_set={"de"},
+            ),
+            tt(
+                input_section_bin=b"foobar\x00\x00baz\x00",
+                input_align=4,
+                expected_ext_txt_set={"foobar", "baz"},
             ),
         ]:
-            with self.subTest(section_bin=input_section_bin):
+            with self.subTest(tt=tt):
                 actual_ext_txt_set = sw_luadocs.extract.extract_strings(
-                    input_section_bin
+                    tt.input_section_bin, align=tt.input_align
                 )
-                self.assertEqual(actual_ext_txt_set, expected_ext_txt_set)
+                self.assertEqual(actual_ext_txt_set, tt.expected_ext_txt_set)
 
 
 class TestNgramInit(unittest.TestCase):

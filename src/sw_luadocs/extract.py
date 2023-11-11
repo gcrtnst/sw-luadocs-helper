@@ -33,15 +33,50 @@ def extract_section(
     raise ValueError
 
 
-def extract_strings(section_bin):
+def extract_strings(section_bin, *, align=1):
     if not isinstance(section_bin, bytes):
         raise TypeError
 
+    align = int(align)
+    if align < 1:
+        raise ValueError
+
     ext_txt_set = set()
-    robj = re.compile(rb"[\x20-\x7E\t\r\n]+\x00", flags=re.ASCII)
-    for ext_txt_bin in robj.findall(section_bin):
-        ext_txt = ext_txt_bin[:-1].decode(encoding="ascii", errors="strict")
-        ext_txt_set.add(ext_txt)
+    ext_txt_start = None
+    ext_txt_stop = None
+    for section_idx, section_byte in enumerate(section_bin):
+        if ext_txt_start is None:
+            if section_idx % align == 0 and section_byte != 0x00:
+                ext_txt_start = section_idx
+                ext_txt_stop = None
+                # fallthrough
+        if ext_txt_start is not None and ext_txt_stop is None:
+            if (
+                section_byte != 0x00
+                and section_byte != ord("\t")
+                and section_byte != ord("\r")
+                and section_byte != ord("\n")
+                and (section_byte < 0x20 or 0x7F <= section_byte)
+            ):
+                ext_txt_start = None
+                ext_txt_stop = None
+                continue
+            if section_byte == 0x00:
+                ext_txt_stop = section_idx
+                # fallthrough
+        if ext_txt_start is not None and ext_txt_stop is not None:
+            if section_byte != 0x00:
+                ext_txt_start = None
+                ext_txt_stop = None
+                continue
+            if section_idx % align == align - 1:
+                ext_txt = section_bin[ext_txt_start:ext_txt_stop]
+                ext_txt = ext_txt.decode(encoding="ascii", errors="strict")
+                ext_txt_set.add(ext_txt)
+
+                ext_txt_start = None
+                ext_txt_stop = None
+                continue
     return ext_txt_set
 
 
@@ -272,8 +307,8 @@ def match_flatdoc(ocr_flatdoc, ext_txt_db, *, body_sep="\n\n", code_sep="\n\n"):
 def main(ocr_flatdoc, exe32_bin, exe64_bin, *, body_sep, code_sep):
     sec32_bin = extract_section(exe32_bin, ".rdata", ignore_padding=True)
     sec64_bin = extract_section(exe64_bin, ".rdata", ignore_padding=True)
-    s32_txt_set = extract_strings(sec32_bin)
-    s64_txt_set = extract_strings(sec64_bin)
+    s32_txt_set = extract_strings(sec32_bin, align=4)
+    s64_txt_set = extract_strings(sec64_bin, align=4)
     ext_txt_set = s32_txt_set & s64_txt_set
     ext_txt_db = NgramDatabase(ext_txt_set, n=3)
     ext_flatdoc, _ = match_flatdoc(
