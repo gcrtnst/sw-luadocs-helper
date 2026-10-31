@@ -6,7 +6,9 @@ import unittest
 class TestCalcScrollAmount(unittest.TestCase):
     def test_validate_convert(self):
         scroll_amount = sw_luadocs.capture.calc_scroll_amount(
-            np.zeros(1, dtype=int), np.zeros(1, dtype=int), template_ratio="0.25"
+            np.zeros(1, dtype=np.uint8),
+            np.zeros(1, dtype=np.uint8),
+            template_ratio="0.25",
         )
         self.assertEqual(scroll_amount, 0)
 
@@ -128,7 +130,7 @@ class TestStitchScreenshot(unittest.TestCase):
         self.assertIsNone(img)
 
     def test_validate_convert_iterable(self):
-        img = sw_luadocs.capture.stitch_screenshot([np.zeros((1, 2), dtype=int)])
+        img = sw_luadocs.capture.stitch_screenshot([np.zeros((1, 2), dtype=np.uint8)])
         self.assertTrue(np.array_equal(img, np.zeros((1, 2, 3), dtype=np.uint8)))
 
     def test_validate_value_pass(self):
